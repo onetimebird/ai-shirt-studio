@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Wand2, Palette, Shirt } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Wand2, Palette, Shirt, RotateCcw, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { DesignCanvas } from "./DesignCanvas";
+import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import tshirtMockup from "@/assets/tshirt-mockup.png";
 
 interface Design {
@@ -14,23 +17,36 @@ interface Design {
   timestamp: Date;
 }
 
+interface DesignElement {
+  id: string;
+  type: "text" | "image";
+  content: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation: number;
+  fontSize?: number;
+  fontFamily?: string;
+  color?: string;
+}
+
 export const TShirtDesigner = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedColor, setSelectedColor] = useState("white");
+  const [selectedColor, setSelectedColor] = useState("White");
   const [selectedSize, setSelectedSize] = useState("M");
   const [currentDesign, setCurrentDesign] = useState<Design | null>(null);
   const [designHistory, setDesignHistory] = useState<Design[]>([]);
-
-  const tshirtColors = [
-    { name: "white", value: "#ffffff", label: "White" },
-    { name: "black", value: "#000000", label: "Black" },
-    { name: "navy", value: "#1e3a8a", label: "Navy" },
-    { name: "red", value: "#dc2626", label: "Red" },
-    { name: "green", value: "#16a34a", label: "Green" },
-  ];
+  const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
+  const [frontElements, setFrontElements] = useState<DesignElement[]>([]);
+  const [backElements, setBackElements] = useState<DesignElement[]>([]);
+  const [viewMode, setViewMode] = useState<"design" | "preview">("design");
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
+
+  const currentElements = currentSide === "front" ? frontElements : backElements;
+  const setCurrentElements = currentSide === "front" ? setFrontElements : setBackElements;
 
   const generateDesign = async () => {
     if (!prompt.trim()) {
@@ -71,80 +87,76 @@ export const TShirtDesigner = () => {
   };
 
   return (
-    <section id="designer" className="py-20 px-6">
+    <section id="designer" className="py-12 px-6">
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
             AI T-Shirt Designer
-          </h2>
+          </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Describe your perfect design and watch AI bring it to life instantly
+            Design custom t-shirts with AI, text, and images
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Design Input Section */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Design Tools */}
           <div className="space-y-6">
+            {/* AI Design Generator */}
             <Card className="bg-gradient-card shadow-creative">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Wand2 className="w-5 h-5 text-primary" />
-                  Describe Your Design
+                  AI Design Generator
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Input
-                    placeholder="e.g., A cool dragon breathing fire with mountains in the background"
+                    placeholder="e.g., A cool dragon breathing fire with mountains"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    className="text-lg"
                     onKeyPress={(e) => e.key === 'Enter' && generateDesign()}
                   />
-                  <p className="text-sm text-muted-foreground">
-                    Be specific! The more details you provide, the better your design will be.
-                  </p>
                 </div>
                 
                 <Button
                   onClick={generateDesign}
                   disabled={isGenerating || !prompt.trim()}
                   variant="creative"
-                  size="lg"
                   className="w-full"
                 >
                   {isGenerating ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Generating Magic...
+                      Generating...
                     </>
                   ) : (
                     <>
                       <Wand2 className="w-4 h-4" />
-                      Generate Design
+                      Generate
                     </>
                   )}
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Customization Options */}
+            {/* T-Shirt Customization */}
             <Card className="bg-gradient-card shadow-soft">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Palette className="w-5 h-5 text-primary" />
-                  Customize Your T-Shirt
+                  T-Shirt Options
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4">
                 <div>
-                  <h4 className="font-semibold mb-3">T-Shirt Color</h4>
-                  <div className="flex gap-2 flex-wrap">
-                    {tshirtColors.map((color) => (
+                  <h4 className="font-semibold mb-3">Bella Canvas 3001c Colors</h4>
+                  <div className="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto">
+                    {BELLA_3001C_COLORS.map((color) => (
                       <button
                         key={color.name}
                         onClick={() => setSelectedColor(color.name)}
-                        className={`w-12 h-12 rounded-full border-4 transition-all ${
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${
                           selectedColor === color.name 
                             ? "border-primary scale-110" 
                             : "border-border hover:border-primary/50"
@@ -158,7 +170,7 @@ export const TShirtDesigner = () => {
 
                 <div>
                   <h4 className="font-semibold mb-3">Size</h4>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="grid grid-cols-3 gap-2">
                     {sizes.map((size) => (
                       <Button
                         key={size}
@@ -178,11 +190,11 @@ export const TShirtDesigner = () => {
             {designHistory.length > 0 && (
               <Card className="bg-gradient-card shadow-soft">
                 <CardHeader>
-                  <CardTitle>Recent Designs</CardTitle>
+                  <CardTitle>Recent AI Designs</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-3 gap-3">
-                    {designHistory.map((design) => (
+                  <div className="grid grid-cols-2 gap-2">
+                    {designHistory.slice(0, 4).map((design) => (
                       <button
                         key={design.id}
                         onClick={() => setCurrentDesign(design)}
@@ -205,83 +217,104 @@ export const TShirtDesigner = () => {
             )}
           </div>
 
-          {/* Preview Section */}
+          {/* Design Canvas */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Tabs value={currentSide} onValueChange={(value) => setCurrentSide(value as "front" | "back")}>
+                <TabsList>
+                  <TabsTrigger value="front">Front</TabsTrigger>
+                  <TabsTrigger value="back">Back</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setViewMode(viewMode === "design" ? "preview" : "design")}
+              >
+                <Eye className="w-4 h-4 mr-1" />
+                {viewMode === "design" ? "Preview" : "Design"}
+              </Button>
+            </div>
+
+            {viewMode === "design" ? (
+              <DesignCanvas
+                side={currentSide}
+                elements={currentElements}
+                onElementsChange={setCurrentElements}
+              />
+            ) : (
+              <div className="w-80 h-96 mx-auto relative bg-white/5 border rounded-lg overflow-hidden">
+                <div
+                  className="absolute inset-0"
+                  style={{ 
+                    backgroundColor: BELLA_3001C_COLORS.find(c => c.name === selectedColor)?.value || "#ffffff",
+                    backgroundImage: `url(${tshirtMockup})`,
+                    backgroundSize: "contain",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center"
+                  }}
+                />
+                {/* Design preview overlay would go here */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-muted-foreground">
+                    <Shirt className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Preview Mode</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Order Summary */}
           <div className="sticky top-6">
             <Card className="bg-gradient-card shadow-creative">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shirt className="w-5 h-5 text-primary" />
-                  Preview
+                  Order Summary
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="relative aspect-square max-w-md mx-auto">
-                  {/* T-Shirt Base */}
-                  <div
-                    className="absolute inset-0 rounded-lg"
-                    style={{ 
-                      backgroundColor: tshirtColors.find(c => c.name === selectedColor)?.value || "#ffffff",
-                      backgroundImage: `url(${tshirtMockup})`,
-                      backgroundSize: "contain",
-                      backgroundRepeat: "no-repeat",
-                      backgroundPosition: "center"
-                    }}
-                  />
-                  
-                  {/* Design Overlay */}
-                  {currentDesign && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-48 h-48 bg-white/10 rounded-lg flex items-center justify-center">
-                        <img
-                          src={currentDesign.imageUrl}
-                          alt={currentDesign.prompt}
-                          className="w-40 h-40 object-contain rounded-lg"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {!currentDesign && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        <Shirt className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                        <p>Generate a design to see preview</p>
-                      </div>
-                    </div>
-                  )}
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Model:</span>
+                    <span>Bella Canvas 3001c</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Color:</span>
+                    <span>{BELLA_3001C_COLORS.find(c => c.name === selectedColor)?.label}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Size:</span>
+                    <span>{selectedSize}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Front Elements:</span>
+                    <span>{frontElements.length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Back Elements:</span>
+                    <span>{backElements.length}</span>
+                  </div>
                 </div>
 
-                {currentDesign && (
-                  <div className="mt-6 space-y-4">
-                    <div className="text-center">
-                      <Badge variant="secondary" className="text-sm">
-                        {currentDesign.prompt}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex gap-2 text-sm text-muted-foreground">
-                      <span>Color: {tshirtColors.find(c => c.name === selectedColor)?.label}</span>
-                      <span>•</span>
-                      <span>Size: {selectedSize}</span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-lg font-semibold">
-                        <span>Total:</span>
-                        <span className="text-primary">$24.99</span>
-                      </div>
-                      
-                      <Button
-                        onClick={handleOrder}
-                        variant="hero"
-                        size="lg"
-                        className="w-full"
-                      >
-                        Order Now
-                      </Button>
-                    </div>
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-lg font-semibold">
+                    <span>Total:</span>
+                    <span className="text-primary">$24.99</span>
                   </div>
-                )}
+                  
+                  <Button
+                    onClick={handleOrder}
+                    variant="hero"
+                    size="lg"
+                    className="w-full mt-4"
+                    disabled={frontElements.length === 0 && backElements.length === 0 && !currentDesign}
+                  >
+                    Order Now
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
