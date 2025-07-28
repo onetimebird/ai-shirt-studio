@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { openAIService } from "@/services/openai";
 import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
+import { ProductSelector } from "@/components/ProductSelector";
 import {
   Type,
   Palette,
@@ -220,6 +221,8 @@ export const RightPanel = ({
         return "ai";
       case "color":
         return "color";
+      case "products":
+        return "products";
       default:
         return "properties";
     }
@@ -245,6 +248,11 @@ export const RightPanel = ({
           // AI tool - only AI tab
           <TabsList className="grid grid-cols-1 gap-2">
             <TabsTrigger value="ai">AI Image Generator</TabsTrigger>
+          </TabsList>
+        ) : activeTool === "products" ? (
+          // Products tool - only products tab
+          <TabsList className="grid grid-cols-1 gap-2">
+            <TabsTrigger value="products">Change Product</TabsTrigger>
           </TabsList>
         ) : (
           // Default - all tabs
@@ -743,6 +751,20 @@ export const RightPanel = ({
               (window as any).designCanvas.addImageFromUrl(url);
             }
           }} />
+        </TabsContent>
+
+        <TabsContent value="products" className="space-y-4 mt-4">
+          <ProductSelector 
+            selectedProduct="bella-3001c"
+            selectedColor="White"
+            onProductChange={(productId) => {
+              console.log("Product changed:", productId);
+            }}
+            onColorChange={(color) => {
+              console.log("Color changed:", color);
+              onProductColorChange(color);
+            }}
+          />
         </TabsContent>
       </Tabs>
     </div>
