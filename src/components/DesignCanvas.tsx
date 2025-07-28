@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Canvas as FabricCanvas, FabricText, FabricImage, Control } from "fabric";
+import { Canvas as FabricCanvas, Text as FabricText, Textbox as FabricTextbox, FabricImage } from "fabric";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
@@ -176,8 +176,8 @@ export const DesignCanvas = ({
     // Add selection events - Simple approach without custom controls
     // Function to update overlay bounds for text objects
     const updateOverlayBounds = (obj: any) => {
-      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-        const bounds = obj.getBoundingRect();
+      if (obj && (obj.type === 'textbox' || obj.type === 'text' || obj.type === 'i-text')) {
+        const bounds = obj.getBoundingRect(true); // true accounts for rotation & scale
         setOverlayBounds({
           x: bounds.left,
           y: bounds.top,
@@ -193,7 +193,7 @@ export const DesignCanvas = ({
       onSelectedObjectChange?.(obj);
       
       // Switch to edit mode for text objects
-      if (obj?.type === "textbox" || obj?.type === "text") {
+      if (obj?.type === "textbox" || obj?.type === "text" || obj?.type === "i-text") {
         setTool("editText");
         onToolChange?.("editText");
         // Hide default Fabric.js controls to use React overlay instead
@@ -215,7 +215,7 @@ export const DesignCanvas = ({
       onSelectedObjectChange?.(obj);
       
       // Switch to edit mode for text objects
-      if (obj?.type === "textbox" || obj?.type === "text") {
+      if (obj?.type === "textbox" || obj?.type === "text" || obj?.type === "i-text") {
         setTool("editText");
         onToolChange?.("editText");
         updateOverlayBounds(obj);

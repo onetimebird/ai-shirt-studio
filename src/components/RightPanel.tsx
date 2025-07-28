@@ -6,8 +6,10 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { openAIService } from "@/services/openai";
+import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import {
   Type,
   Palette,
@@ -56,7 +58,7 @@ export const RightPanel = ({
   onProductColorChange,
 }: RightPanelProps) => {
   // Text states
-  const [textContent, setTextContent] = useState("Sample Text");
+  const [textContent, setTextContent] = useState("New multi-line text\nType here...");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [fontSize, setFontSize] = useState<number>(24);
   const [textColor, setTextColor] = useState("#000000");
@@ -122,20 +124,37 @@ export const RightPanel = ({
   };
 
   const handleAddText = () => {
-    if ((window as any).designCanvas?.addText) {
-      (window as any).designCanvas.addText(textContent, {
-        fontFamily,
-        fontSize,
-        fill: textColor,
-        fontWeight: isBold ? 'bold' : 'normal',
-        fontStyle: isItalic ? 'italic' : 'normal',
-        underline: isUnderline,
-        textAlign,
-        scaleX: scalePercent / 100,
-        scaleY: scalePercent / 100,
-        rotation,
-      });
+    const fabricCanvas = (window as any).designCanvas?.canvas;
+    if (!fabricCanvas) {
+      toast.error("Canvas not ready");
+      return;
     }
+
+    const textbox = new FabricTextbox(textContent, {
+      left: fabricCanvas.width! / 2,
+      top: fabricCanvas.height! / 2,
+      width: 300, // initial wrap width
+      fontFamily,
+      fontSize,
+      fill: textColor,
+      fontWeight: isBold ? 'bold' : 'normal',
+      fontStyle: isItalic ? 'italic' : 'normal',
+      underline: isUnderline,
+      textAlign: textAlign as any,
+      originX: 'center',
+      originY: 'center',
+      editable: true,
+      objectCaching: false, // better for dynamic editing
+    });
+
+    fabricCanvas.add(textbox);
+    fabricCanvas.setActiveObject(textbox);
+    fabricCanvas.requestRenderAll();
+    
+    // Reset text content for next text
+    setTextContent("New multi-line text\nType here...");
+    
+    toast.success("Text added to design");
   };
 
   const handleDelete = () => (window as any).designCanvas?.deleteSelected();
@@ -250,10 +269,11 @@ export const RightPanel = ({
                   {/* Text Content */}
                   <div>
                     <Label className="text-xs">Text</Label>
-                    <Input
+                    <Textarea
                       value={textContent}
                       onChange={e => setTextContent(e.target.value)}
-                      placeholder="Enter text…"
+                      placeholder="Enter multi-line text..."
+                      rows={4}
                       className="mt-1"
                     />
                   </div>
@@ -417,13 +437,14 @@ export const RightPanel = ({
                 {/* Text Content */}
                 <div>
                   <Label className="text-xs">Text</Label>
-                  <Input
+                  <Textarea
                     value={textContent}
                     onChange={e => {
                       setTextContent(e.target.value);
                       updateTextProperty('text', e.target.value);
                     }}
-                    placeholder="Enter text…"
+                    placeholder="Enter multi-line text..."
+                    rows={4}
                     className="mt-1"
                   />
                 </div>
