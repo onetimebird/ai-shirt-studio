@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Canvas as FabricCanvas, FabricText, FabricImage } from "fabric";
+import { Canvas as FabricCanvas, FabricText, FabricImage, Control } from "fabric";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
@@ -51,9 +51,143 @@ export const DesignCanvas = ({
       selection: true,
     });
 
+    // Custom control functions
+    const deleteIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M3%206h18m-2%200v14a2%202%200%2001-2%202H7a2%202%200%2001-2-2V6m3%200V4a2%202%200%20012-2h4a2%202%200%20012%202v2m-6%205v6m4-6v6'%20stroke='%23dc2626'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
+    const rotateIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M1%204v6h6M23%2020v-6h-6'%20stroke='%232563eb'%20stroke-width='2'%20fill='none'/%3e%3cpath%20d='M20.49%209A9%209%200%200%200%205.64%205.64L1%2010m22%204l-4.64%204.36A9%209%200%200%201%203.51%2015'%20stroke='%232563eb'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
+    const cloneIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M16%204h2a2%202%200%20012%202v14a2%202%200%2001-2%202H6a2%202%200%2001-2-2V6a2%202%200%20012-2h2M12%201v6M9%204l3-3%203%203'%20stroke='%2316a34a'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
+    const layerIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M12%202L2%207l10%205%2010-5-10-5z'%20stroke='%236366f1'%20stroke-width='2'%20fill='none'/%3e%3cpath%20d='M2%2017l10%205%2010-5M2%2012l10%205%2010-5'%20stroke='%236366f1'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
+
+    // Define custom controls
+    const customControls = {
+      'deleteControl': {
+        x: -0.5,
+        y: -0.5,
+        offsetY: 0,
+        offsetX: 0,
+        cursorStyle: 'pointer',
+        mouseUpHandler: function(eventData: any, transformData: any, x: any, y: any) {
+          const target = transformData.target;
+          canvas.remove(target);
+          canvas.requestRenderAll();
+        },
+        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
+          const size = 24;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.rotate(fabricObject.angle * Math.PI / 180);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 24
+      },
+      'rotateControl': {
+        x: 0.5,
+        y: -0.5,
+        offsetY: 0,
+        offsetX: 0,
+        cursorStyle: 'grab',
+        actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
+          const target = transformData.target;
+          const center = target.getCenterPoint();
+          const angle = Math.atan2(y - center.y, x - center.x) * 180 / Math.PI;
+          target.rotate(angle);
+          return true;
+        },
+        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
+          const size = 24;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.rotate(fabricObject.angle * Math.PI / 180);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 24
+      },
+      'cloneControl': {
+        x: -0.5,
+        y: 0.5,
+        offsetY: 0,
+        offsetX: 0,
+        cursorStyle: 'pointer',
+        mouseUpHandler: function(eventData: any, transformData: any, x: any, y: any) {
+          const target = transformData.target;
+          target.clone((cloned: any) => {
+            cloned.set({
+              left: cloned.left + 10,
+              top: cloned.top + 10,
+            });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            canvas.requestRenderAll();
+          });
+        },
+        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
+          const size = 24;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.rotate(fabricObject.angle * Math.PI / 180);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 24
+      },
+      'layerControl': {
+        x: 0,
+        y: -0.5,
+        offsetY: 0,
+        offsetX: 0,
+        cursorStyle: 'pointer',
+        mouseUpHandler: function(eventData: any, transformData: any, x: any, y: any) {
+          const target = transformData.target;
+          target.bringToFront();
+          canvas.requestRenderAll();
+        },
+        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
+          const size = 24;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.rotate(fabricObject.angle * Math.PI / 180);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 24
+      }
+    };
+
+    // Load control icons
+    Object.keys(customControls).forEach(key => {
+      const img = new Image();
+      const iconMap: any = {
+        'deleteControl': deleteIcon,
+        'rotateControl': rotateIcon,
+        'cloneControl': cloneIcon,
+        'layerControl': layerIcon
+      };
+      img.src = iconMap[key];
+      (customControls as any)[key].img = img;
+    });
+
     // Add selection events
     canvas.on('selection:created', (e) => {
       const obj = e.selected[0];
+      if (obj && obj.type === 'textbox') {
+        obj.setControlsVisibility({
+          mt: false, // middle top
+          mb: false, // middle bottom
+          ml: false, // middle left
+          mr: true,  // middle right - keep for horizontal stretch
+          tl: false, // top left
+          tr: false, // top right
+          bl: false, // bottom left
+          br: true,  // bottom right - keep for scale
+          mtr: false // rotation handle
+        });
+        
+        // Add custom controls
+        Object.keys(customControls).forEach(key => {
+          obj.controls[key] = new Control((customControls as any)[key]);
+        });
+      }
       setSelectedObject(obj);
       onSelectedObjectChange?.(obj);
     });
