@@ -38,7 +38,7 @@ export const TopControls = ({
             <img 
               src="/lovable-uploads/a0349764-8639-451a-9faa-ceef05c751d0.png" 
               alt="CoolShirt.Ai Logo" 
-              className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-125 hover:scale-y-110"
+              className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
             />
           </div>
           {/* Product Selector */}
