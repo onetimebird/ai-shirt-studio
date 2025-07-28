@@ -194,15 +194,14 @@ export const DesignCanvas = ({
       const rect = canvasRef.current?.getBoundingClientRect();
       if (!rect) return;
       
-      const pointer = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-      
       if (isRotating) {
         const center = selectedObject.getCenterPoint();
-        const angle = Math.atan2(pointer.y - center.y, pointer.x - center.x) * 180 / Math.PI;
-        selectedObject.rotate(angle);
+        const cx = rect.left + center.x;
+        const cy = rect.top + center.y;
+        const currentAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+        const degrees = startAngle + (currentAngle - startAngle) * (180 / Math.PI);
+        
+        selectedObject.rotate(degrees);
         fabricCanvas.requestRenderAll();
         
         // Update overlay bounds
@@ -217,18 +216,17 @@ export const DesignCanvas = ({
       
       if (isScaling) {
         const center = selectedObject.getCenterPoint();
-        const currentDistance = Math.sqrt(
-          Math.pow(pointer.x - center.x, 2) + Math.pow(pointer.y - center.y, 2)
-        );
-        const startDistance = Math.sqrt(
-          Math.pow(startPointer.x - center.x, 2) + Math.pow(startPointer.y - center.y, 2)
-        );
+        const cx = rect.left + center.x;
+        const cy = rect.top + center.y;
+        
+        const currentDistance = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const startDistance = Math.hypot(startPointer.x - cx, startPointer.y - cy);
         
         if (startDistance > 0) {
-          const scaleFactor = Math.max(0.1, currentDistance / startDistance);
+          const factor = Math.max(0.1, currentDistance / startDistance);
           selectedObject.set({
-            scaleX: startScale.x * scaleFactor,
-            scaleY: startScale.y * scaleFactor
+            scaleX: startScale.x * factor,
+            scaleY: startScale.y * factor
           });
           fabricCanvas.requestRenderAll();
           
@@ -245,22 +243,28 @@ export const DesignCanvas = ({
       
       if (isStretching) {
         const center = selectedObject.getCenterPoint();
-        const deltaX = pointer.x - startPointer.x;
-        const scaleFactorX = Math.max(0.1, 1 + deltaX / 100);
+        const cx = rect.left + center.x;
+        const cy = rect.top + center.y;
         
-        selectedObject.set({
-          scaleX: startScale.x * scaleFactorX
-        });
-        fabricCanvas.requestRenderAll();
+        const currentDistance = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const startDistance = Math.hypot(startPointer.x - cx, startPointer.y - cy);
         
-        // Update overlay bounds
-        const bounds = selectedObject.getBoundingRect();
-        setOverlayBounds({
-          x: bounds.left,
-          y: bounds.top,
-          width: bounds.width,
-          height: bounds.height
-        });
+        if (startDistance > 0) {
+          const factor = Math.max(0.1, currentDistance / startDistance);
+          selectedObject.set({
+            scaleX: startScale.x * factor
+          });
+          fabricCanvas.requestRenderAll();
+          
+          // Update overlay bounds
+          const bounds = selectedObject.getBoundingRect();
+          setOverlayBounds({
+            x: bounds.left,
+            y: bounds.top,
+            width: bounds.width,
+            height: bounds.height
+          });
+        }
       }
     };
     
@@ -271,15 +275,15 @@ export const DesignCanvas = ({
     };
     
     if (isRotating || isScaling || isStretching) {
-      document.addEventListener('pointermove', handlePointerMove);
-      document.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
       
       return () => {
-        document.removeEventListener('pointermove', handlePointerMove);
-        document.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerup', handlePointerUp);
       };
     }
-  }, [isRotating, isScaling, isStretching, selectedObject, fabricCanvas, startPointer, startScale]);
+  }, [isRotating, isScaling, isStretching, selectedObject, fabricCanvas, startPointer, startScale, startAngle]);
 
   // Expose canvas methods globally
   useEffect(() => {
@@ -744,23 +748,33 @@ export const DesignCanvas = ({
                         }}
                         onRotateStart={(e) => {
                           const rect = canvasRef.current?.getBoundingClientRect();
-                          if (!rect) return;
+                          if (!rect || !selectedObject) return;
                           
-                          setStartPointer({
-                            x: e.clientX - rect.left,
-                            y: e.clientY - rect.top
-                          });
+                          const center = selectedObject.getCenterPoint();
+                          const cx = rect.left + center.x;
+                          const cy = rect.top + center.y;
+                          const startAngleRad = Math.atan2(e.clientY - cy, e.clientX - cx);
+                          
                           setStartAngle(selectedObject.angle || 0);
+                          setStartPointer({
+                            x: e.clientX,
+                            y: e.clientY
+                          });
                           setIsRotating(true);
                           e.preventDefault();
+                          e.stopPropagation();
                         }}
                         onStretchStart={(e) => {
                           const rect = canvasRef.current?.getBoundingClientRect();
-                          if (!rect) return;
+                          if (!rect || !selectedObject) return;
+                          
+                          const center = selectedObject.getCenterPoint();
+                          const cx = rect.left + center.x;
+                          const cy = rect.top + center.y;
                           
                           setStartPointer({
-                            x: e.clientX - rect.left,
-                            y: e.clientY - rect.top
+                            x: e.clientX,
+                            y: e.clientY
                           });
                           setStartScale({
                             x: selectedObject.scaleX || 1,
@@ -768,14 +782,19 @@ export const DesignCanvas = ({
                           });
                           setIsStretching(true);
                           e.preventDefault();
+                          e.stopPropagation();
                         }}
                         onScaleStart={(e) => {
                           const rect = canvasRef.current?.getBoundingClientRect();
-                          if (!rect) return;
+                          if (!rect || !selectedObject) return;
+                          
+                          const center = selectedObject.getCenterPoint();
+                          const cx = rect.left + center.x;
+                          const cy = rect.top + center.y;
                           
                           setStartPointer({
-                            x: e.clientX - rect.left,
-                            y: e.clientY - rect.top
+                            x: e.clientX,
+                            y: e.clientY
                           });
                           setStartScale({
                             x: selectedObject.scaleX || 1,
@@ -783,6 +802,7 @@ export const DesignCanvas = ({
                           });
                           setIsScaling(true);
                           e.preventDefault();
+                          e.stopPropagation();
                         }}
                         onDuplicate={() => {
                           (selectedObject as any).clone((cloned: any) => {
