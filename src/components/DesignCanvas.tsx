@@ -194,7 +194,7 @@ export const DesignCanvas = ({
       },
 
       updateSelectedTextProperty: (property: string, value: any) => {
-        if (!selectedObject || selectedObject.type !== "textbox") return;
+        if (!selectedObject || (selectedObject.type !== "textbox" && selectedObject.type !== "text")) return;
         selectedObject.set(property, value);
         selectedObject.setCoords();
         fabricCanvas.renderAll();

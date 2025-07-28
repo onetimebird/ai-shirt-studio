@@ -67,7 +67,7 @@ export const RightPanel = ({
 
   // Update selected object properties when changed
   useEffect(() => {
-    if (selectedObject && selectedObject.type === "textbox") {
+    if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
       setTextContent(selectedObject.text || "");
       setFontSize([selectedObject.fontSize || 24]);
       setFontFamily(selectedObject.fontFamily || "Arial");
@@ -216,7 +216,7 @@ export const RightPanel = ({
             )}
 
             {/* Text Properties - Only show when text is selected */}
-            {selectedObject?.type === "textbox" && (
+            {(selectedObject?.type === "textbox" || selectedObject?.type === "text") && (
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
@@ -581,7 +581,6 @@ export const RightPanel = ({
                 </CardContent>
               </Card>
             )}
-          </TabsContent>
 
             {/* Image Upload */}
             {activeTool === "upload" && (
@@ -642,6 +641,8 @@ export const RightPanel = ({
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
           <TabsContent value="color" className="space-y-4 mt-4">
             <Card>
               <CardHeader className="pb-3">
@@ -660,7 +661,7 @@ export const RightPanel = ({
                       className="w-8 h-8 rounded border-2 border-border hover:scale-110 transition-transform"
                       style={{ backgroundColor: color }}
                       onClick={() => {
-                        if (selectedObject && selectedObject.type === "textbox") {
+                        if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
                           setTextColor(color);
                           updateTextProperty("fill", color);
                         }
