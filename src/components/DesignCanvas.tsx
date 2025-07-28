@@ -8,64 +8,70 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Canvas, IText, Control, controlsUtils, util, Textbox, FabricImage } from "fabric";
+import { Canvas, Textbox, Control, controlsUtils, util as fabricUtil, IText, FabricImage } from "fabric";
+import deleteSvg from "@/assets/icons/delete.svg";
+import layerSvg  from "@/assets/icons/layer.svg";
+import cloneSvg  from "@/assets/icons/clone.svg";
+import stretchSvg from "@/assets/icons/stretch.svg";
+import scaleSvg  from "@/assets/icons/scale.svg";
+import rotateSvg from "@/assets/icons/rotate.svg";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
 import tshirtBackTemplate from "@/assets/tshirt-back-template.png";
-import deleteIcon from "@/assets/icons/delete.svg";
-import cloneIcon from "@/assets/icons/clone.svg";
-import rotateIcon from "@/assets/icons/rotate.svg";
-import scaleIcon from "@/assets/icons/scale.svg";
-import stretchIcon from "@/assets/icons/stretch.svg";
-import layerIcon from "@/assets/icons/layer.svg";
 
-// Patch IText prototype at module level before any instances are created
-(async () => {
-  const [del, clo, rot, sca, str, lay] = await Promise.all([
-    util.loadImage(deleteIcon),
-    util.loadImage(cloneIcon),
-    util.loadImage(rotateIcon),
-    util.loadImage(scaleIcon),
-    util.loadImage(stretchIcon),
-    util.loadImage(layerIcon),
+// Load icons and patch Textbox prototype - wrapped to avoid top-level await
+let iconsLoaded = false;
+const initializeControls = async () => {
+  if (iconsLoaded) return;
+  
+  const [deleteImg, layerImg, cloneImg, stretchImg, scaleImg, rotateImg] = await Promise.all([
+    fabricUtil.loadImage(deleteSvg),
+    fabricUtil.loadImage(layerSvg),
+    fabricUtil.loadImage(cloneSvg),
+    fabricUtil.loadImage(stretchSvg),
+    fabricUtil.loadImage(scaleSvg),
+    fabricUtil.loadImage(rotateSvg),
   ]);
 
-  const mk = (img: HTMLImageElement, handler: any, pos: { x: number; y: number }) =>
-    new Control({
+  function makeControl(icon: HTMLImageElement, handler: any, pos: { x:number,y:number }) {
+    return new Control({
       x: pos.x, y: pos.y,
-      actionHandler: handler,
       cursorStyle: "pointer",
-      render(ctx, left, top, styleOverride, obj) {
-        const size = Math.max(28, obj.getScaledHeight() * 0.12);
+      actionHandler: handler,
+      render(ctx, left, top, _, obj) {
+        const size = Math.max(28, obj.getScaledHeight()*0.12);
         ctx.save();
         ctx.translate(left, top);
-        ctx.rotate((obj.angle * Math.PI)/180);
+        ctx.rotate(obj.angle * Math.PI/180);
+        // draw background
         ctx.beginPath();
         ctx.arc(0,0,size/2,0,2*Math.PI);
         ctx.fillStyle = "#fff"; ctx.fill();
         ctx.strokeStyle = "#ddd"; ctx.stroke();
-        ctx.drawImage(img, -size*0.3, -size*0.3, size*0.6, size*0.6);
+        // draw icon
+        ctx.drawImage(icon, -size*0.3, -size*0.3, size*0.6, size*0.6);
         ctx.restore();
       }
     });
+  }
 
-  const delH = (_e: any, t: any) => { t.target.canvas.remove(t.target); return true; };
-  const layH = (_e: any, t: any) => { t.target.canvas.bringObjectToFront(t.target); return true; };
-  const cloH = (_e: any, t: any) => { t.target.clone((c: any) => { t.target.canvas.add(c).setActiveObject(c); }); return true; };
-
-  IText.prototype.controls = {
-    tl: mk(del, delH, {x:-0.5,y:-0.5}),
-    mt: mk(lay, layH, {x:0,   y:-0.5}),
-    tr: mk(clo, cloH, {x: 0.5,y:-0.5}),
-    mr: mk(str, controlsUtils.scalingXOrSkewingY, {x:0.5,y:0}),
-    br: mk(sca, controlsUtils.scalingEqually,     {x:0.5,y:0.5}),
-    bl: mk(rot, controlsUtils.rotationWithSnapping,{x:-0.5,y:0.5}),
-    mtr:mk(rot, controlsUtils.rotationWithSnapping,{x:0,   y:-0.75}),
+  Textbox.prototype.controls = {
+    tl: makeControl(deleteImg,   (_e,t) => { t.target.canvas.remove(t.target); return true; }, { x:-0.5,y:-0.5 }),
+    mt: makeControl(layerImg,    (_e,t) => { t.target.canvas.bringObjectToFront(t.target); return true; }, { x:  0 ,y:-0.5 }),
+    tr: makeControl(cloneImg,    (_e,t) => { t.target.clone(c=>{ t.target.canvas.add(c).setActiveObject(c)}); return true; }, { x: 0.5,y:-0.5 }),
+    mr: makeControl(stretchImg,  controlsUtils.scalingXOrSkewingY,   { x: 0.5,y:  0  }),
+    br: makeControl(scaleImg,    controlsUtils.scalingEqually,      { x: 0.5,y: 0.5 }),
+    bl: makeControl(rotateImg,   controlsUtils.rotationWithSnapping, { x:-0.5,y: 0.5 }),
+    mtr:makeControl(rotateImg,   controlsUtils.rotationWithSnapping, { x:  0 ,y:-0.75}),
   };
+  Textbox.prototype.objectCaching = false;
+  
+  iconsLoaded = true;
+};
 
-  IText.prototype.objectCaching = false;
-})();
+// Initialize controls immediately
+initializeControls();
 
 
 
@@ -216,12 +222,8 @@ export const DesignCanvas = ({
   const tshirtImage = currentSide === "front" ? tshirtFrontTemplate : tshirtBackTemplate;
 
   useEffect(() => {
-    // 1. Verify SVG URLs resolve to images
-    console.log("deleteIcon URL is", deleteIcon);
-    const testImg = new Image();
-    testImg.onload  = () => console.log("✅ deleteIcon loaded OK", testImg.width, testImg.height);
-    testImg.onerror = () => console.error("❌ deleteIcon failed to load");
-    testImg.src     = deleteIcon;
+    // Ensure custom controls are loaded before creating canvas
+    initializeControls();
 
     if (!canvasRef.current || !canvasWrapperRef.current) return;
 
@@ -504,7 +506,7 @@ export const DesignCanvas = ({
     // Expose canvas globally for tool access
     (window as any).designCanvas = {
       addText: (text: string = "New multi-line text\nType here...", options: any = {}) => {
-        const textObj = new IText(text, {
+        const textObj = new Textbox(text, {
           left: 200,
           top: 200,
           width: 300,
