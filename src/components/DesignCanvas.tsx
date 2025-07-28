@@ -45,6 +45,7 @@ export const DesignCanvas = ({
   const [zoom, setZoom] = useState(1);
   const [canvasZoom, setCanvasZoom] = useState(1);
   const [tool, setTool] = useState(activeTool);
+  const [textObjects, setTextObjects] = useState<any[]>([]);
 
   // Scale sensitivity for smooth, controlled scaling
   const DIAG_DIV = 150; // Adjust for scaling speed - smaller = faster scaling
@@ -184,8 +185,22 @@ export const DesignCanvas = ({
           width: bounds.width,
           height: bounds.height
         });
+        setSelectedObject(obj);
       }
     };
+
+    // Function to update text objects list
+    const updateTextObjects = () => {
+      const objects = canvas.getObjects();
+      const texts = objects.filter((obj: any) => obj.type === "textbox" || obj.type === "text");
+      setTextObjects(texts);
+    };
+
+    // Listen to all transform events for sticky overlay handles
+    const events = ['selection:created', 'selection:updated', 'object:moving', 'object:scaling', 'object:rotating'];
+    events.forEach(evt => {
+      canvas.on(evt as any, ({ target }: any) => updateOverlayBounds(target));
+    });
 
     canvas.on('selection:created', (e) => {
       const obj = e.selected[0];
@@ -224,12 +239,6 @@ export const DesignCanvas = ({
       }
     });
 
-    // Keep overlay in sync with object transforms
-    canvas.on('object:modified', (e) => updateOverlayBounds(e.target));
-    canvas.on('object:moving', (e) => updateOverlayBounds(e.target));
-    canvas.on('object:scaling', (e) => updateOverlayBounds(e.target));
-    canvas.on('object:rotating', (e) => updateOverlayBounds(e.target));
-
     canvas.on('selection:cleared', () => {
       setSelectedObject(null);
       onSelectedObjectChange?.(null);
@@ -239,30 +248,10 @@ export const DesignCanvas = ({
       onToolChange?.("text");
     });
 
-    // Update overlay position when objects move
-    canvas.on('object:moving', (e) => {
-      if (e.target && (e.target.type === 'textbox' || e.target.type === 'text')) {
-        const bounds = e.target.getBoundingRect();
-        setOverlayBounds({
-          x: bounds.left,
-          y: bounds.top,
-          width: bounds.width,
-          height: bounds.height
-        });
-      }
-    });
+    // Track text objects
+    canvas.on('object:added', updateTextObjects);
+    canvas.on('object:removed', updateTextObjects);
 
-    canvas.on('object:scaling', (e) => {
-      if (e.target && (e.target.type === 'textbox' || e.target.type === 'text')) {
-        const bounds = e.target.getBoundingRect();
-        setOverlayBounds({
-          x: bounds.left,
-          y: bounds.top,
-          width: bounds.width,
-          height: bounds.height
-        });
-      }
-    });
 
     // Add keyboard event listener to document for better handling
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -302,6 +291,8 @@ export const DesignCanvas = ({
             setSelectedObject(null);
             setOverlayBounds(null);
             fabricCanvas.requestRenderAll();
+            setTool("text");
+            onToolChange?.("text");
             toast.success("Text deleted");
           }
           break;
@@ -465,10 +456,11 @@ export const DesignCanvas = ({
 
     // Expose canvas globally for tool access
     (window as any).designCanvas = {
-      addText: (text: string = "Sample Text", options: any = {}) => {
-        const textObj = new FabricText(text, {
-          left: 150,
-          top: 150,
+      addText: (text: string = "New multi-line text\nType here...", options: any = {}) => {
+        const textObj = new FabricTextbox(text, {
+          left: 200,
+          top: 200,
+          width: 300,
           fontFamily: options.fontFamily || 'Arial',
           fontSize: options.fontSize || 24,
           fill: options.fill || (currentColor?.name === "White" || currentColor?.name === "Vintage White" || 
@@ -654,7 +646,9 @@ export const DesignCanvas = ({
           onSelectedObjectChange?.(img);
           toast.success("AI image added to design");
         });
-      }
+      },
+
+      textObjects
     };
 
     return () => {

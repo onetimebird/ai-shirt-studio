@@ -37,6 +37,7 @@ interface RightPanelProps {
   onTextPropertiesChange: (properties: any) => void;
   onImageUpload: (file: File) => void;
   onProductColorChange: (color: string) => void;
+  textObjects?: any[];
 }
 
 const fonts = [
@@ -56,6 +57,7 @@ export const RightPanel = ({
   onTextPropertiesChange,
   onImageUpload,
   onProductColorChange,
+  textObjects = [],
 }: RightPanelProps) => {
   // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
@@ -78,10 +80,7 @@ export const RightPanel = ({
   const [showApiKey, setShowApiKey] = useState(false);
   const [recentImages, setRecentImages] = useState<string[]>([]);
 
-  // Text elements state
-  const [textElements, setTextElements] = useState<any[]>([]);
-
-  // Sync with selectedObject and track text elements
+  // Sync with selectedObject 
   useEffect(() => {
     if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
       setTextContent(selectedObject.text || "");
@@ -96,26 +95,6 @@ export const RightPanel = ({
       setRotation(selectedObject.rotation || 0);
     }
   }, [selectedObject]);
-
-  // Update text elements list when canvas changes
-  useEffect(() => {
-    if ((window as any).designCanvas?.canvas) {
-      const canvas = (window as any).designCanvas.canvas;
-      const updateTextElements = () => {
-        const objects = canvas.getObjects();
-        const texts = objects.filter((obj: any) => obj.type === "textbox" || obj.type === "text");
-        setTextElements(texts);
-      };
-      
-      canvas.on('object:added', updateTextElements);
-      canvas.on('object:removed', updateTextElements);
-      
-      return () => {
-        canvas.off('object:added', updateTextElements);
-        canvas.off('object:removed', updateTextElements);
-      };
-    }
-  }, []);
 
   const updateTextProperty = (property: string, value: any) => {
     if ((window as any).designCanvas?.updateSelectedTextProperty) {
@@ -354,7 +333,7 @@ export const RightPanel = ({
               </Card>
 
               {/* Text Elements List */}
-              {textElements.length > 0 && (
+              {textObjects.length > 0 && (
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -362,7 +341,7 @@ export const RightPanel = ({
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    {textElements.map((textObj, index) => (
+                    {textObjects.map((textObj, index) => (
                       <div
                         key={index}
                         className={`p-3 rounded border-2 cursor-pointer transition-all ${
@@ -380,7 +359,7 @@ export const RightPanel = ({
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
                             <p className="text-sm font-medium truncate">
-                              {textObj.text || "Text Element"}
+                              {textObj.text?.split('\n')[0] || "Text Element"}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               {textObj.fontFamily} • {Math.round(textObj.fontSize)}px

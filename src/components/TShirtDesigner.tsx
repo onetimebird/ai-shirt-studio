@@ -87,6 +87,7 @@ export const TShirtDesigner = () => {
           onTextPropertiesChange={handleTextPropertiesChange}
           onImageUpload={handleImageUpload}
           onProductColorChange={handleProductColorChange}
+          textObjects={(window as any).designCanvas?.textObjects || []}
         />
       </div>
     </div>
