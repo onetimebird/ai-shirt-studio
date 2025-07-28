@@ -13,8 +13,8 @@ export const GILDAN_2000_COLORS: Gildan2000Color[] = [
     name: "cherry-red",
     label: "Cherry Red",
     value: "#DC143C",
-    frontImage: "/lovable-uploads/7c9871bb-d86f-48e4-9a25-f359574d24cb.png",
-    backImage: "/lovable-uploads/f1eaded1-4e15-4fb5-89e9-1cfae0bddd65.png",
+    frontImage: "/lovable-uploads/3851f8cf-1f20-45e3-ab85-d7a359385550.png",
+    backImage: "/lovable-uploads/ae7310e8-e1a0-4784-a7da-9be679d6ba34.png",
     available: true,
   },
   {

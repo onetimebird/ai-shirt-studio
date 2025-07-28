@@ -20,7 +20,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
     const canvas = new FabricCanvas(canvasRef.current, {
       width: 600,
       height: 700,
-      backgroundColor: "#f8f9fa",
+      backgroundColor: "transparent",
       selection: true,
       preserveObjectStacking: true,
     });
