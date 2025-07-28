@@ -209,9 +209,25 @@ export const RightPanel = ({
     toast.success("Image uploaded successfully!");
   };
 
+  // Determine which tab should be active based on the current tool
+  const getActiveTab = () => {
+    switch (activeTool) {
+      case "text":
+      case "editText":
+      case "upload":
+        return "properties";
+      case "ai":
+        return "ai";
+      case "color":
+        return "color";
+      default:
+        return "properties";
+    }
+  };
+
   return (
     <div className="w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
-      <Tabs defaultValue="properties" className="w-full p-4">
+      <Tabs value={getActiveTab()} className="w-full p-4">
         {/* Only show tabs based on context */}
         {activeTool === "text" || activeTool === "editText" ? (
           // Text tool - only properties for add/edit
