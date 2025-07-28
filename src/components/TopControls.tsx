@@ -76,7 +76,7 @@ export const TopControls = ({
           </div>
 
           {/* Add Product Button */}
-          <Button variant="glass" size="sm" className="shimmer">
+          <Button variant="glass" size="sm" className="shimmer-hover">
             <Plus className="w-4 h-4 mr-2 icon-hover" />
             Add Product
           </Button>

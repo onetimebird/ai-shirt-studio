@@ -132,11 +132,11 @@ export function ProductSelector({
 
       {/* Current Selection */}
       {selectedProductData && (
-        <Card className="border-2 border-primary bg-gradient-premium/10 shimmer pulse-glow">
+        <Card className="border-2 border-primary bg-gradient-premium/10 shimmer-hover">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">{selectedProductData.name}</CardTitle>
-              <Badge variant="outline" className="shimmer">Selected</Badge>
+              <Badge variant="outline">Selected</Badge>
             </div>
             <p className="text-sm text-muted-foreground">{selectedProductData.description}</p>
           </CardHeader>
@@ -148,7 +148,7 @@ export function ProductSelector({
                   alt={selectedProductData.name}
                   className="w-20 h-20 object-cover rounded-lg border-2 border-primary shadow-glow"
                 />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow floating">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow gentle-pulse">
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
               </div>
@@ -185,8 +185,8 @@ export function ProductSelector({
               key={product.id} 
               className={`cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                 product.id === selectedProduct 
-                  ? 'border-primary bg-gradient-premium/10 shadow-elevated shimmer pulse-glow' 
-                  : 'hover:border-primary/50 hover:shadow-glass bg-gradient-card'
+                  ? 'border-primary bg-gradient-premium/10 shadow-elevated shimmer-hover' 
+                  : 'hover:border-primary/50 hover:shadow-glass bg-gradient-sidebar'
               }`}
               onClick={() => handleProductSelect(product.id)}
             >
@@ -209,7 +209,7 @@ export function ProductSelector({
                     </div>
                   </div>
                   {product.id === selectedProduct && (
-                    <div className="w-5 h-5 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow floating">
+                    <div className="w-5 h-5 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow gentle-pulse">
                       <Check className="w-3 h-3 text-primary-foreground" />
                     </div>
                   )}
@@ -223,7 +223,7 @@ export function ProductSelector({
       {/* Add Products Section */}
       <Card className="border-dashed border-2 border-muted-foreground/30 hover:border-primary/50 transition-all duration-300 hover:shadow-glass cursor-pointer">
         <CardContent className="p-6 text-center">
-          <Plus className="w-8 h-8 text-muted-foreground mx-auto mb-2 icon-hover floating" />
+          <Plus className="w-8 h-8 text-muted-foreground mx-auto mb-2 icon-hover gentle-pulse" />
           <h4 className="font-medium text-muted-foreground">Add Products</h4>
           <p className="text-xs text-muted-foreground mt-1">More products coming soon!</p>
         </CardContent>
@@ -233,13 +233,13 @@ export function ProductSelector({
       <div className="space-y-3">
         <h3 className="font-semibold text-lg">Customization Method</h3>
         <div className="grid grid-cols-2 gap-3">
-          <Card className="border-2 border-primary bg-gradient-premium/10 cursor-pointer hover:shadow-elevated transform hover:scale-105 transition-all duration-300 shimmer">
+          <Card className="border-2 border-primary bg-gradient-premium/10 cursor-pointer hover:shadow-elevated transform hover:scale-105 transition-all duration-300 shimmer-hover">
             <CardContent className="p-4 text-center">
               <h4 className="font-medium">Printing</h4>
               <p className="text-xs text-muted-foreground mt-1">No Minimum</p>
             </CardContent>
           </Card>
-          <Card className="border border-muted cursor-pointer hover:border-primary/50 transition-all duration-300 hover:shadow-glass transform hover:scale-105 bg-gradient-card">
+          <Card className="border border-muted cursor-pointer hover:border-primary/50 transition-all duration-300 hover:shadow-glass transform hover:scale-105 bg-gradient-sidebar">
             <CardContent className="p-4 text-center">
               <h4 className="font-medium text-muted-foreground">Embroidery</h4>
               <p className="text-xs text-muted-foreground mt-1">Coming Soon</p>

@@ -9,19 +9,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-primary text-primary-foreground hover:shadow-elevated transform hover:scale-105 shimmer glow-effect",
+        default: "bg-gradient-primary text-primary-foreground hover:shadow-elevated transform hover:scale-105 shimmer-hover glow-effect",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-glow transform hover:scale-105",
         outline:
           "border border-input bg-gradient-glass backdrop-blur-sm hover:bg-gradient-card hover:text-accent-foreground hover:shadow-glass transform hover:scale-105",
         secondary:
-          "bg-gradient-card text-secondary-foreground hover:shadow-soft transform hover:scale-105 shimmer",
+          "bg-gradient-card text-secondary-foreground hover:shadow-soft transform hover:scale-105 shimmer-hover",
         ghost: "hover:bg-gradient-glass hover:text-accent-foreground transform hover:scale-105 icon-hover",
         link: "text-primary underline-offset-4 hover:underline transform hover:scale-105",
-        hero: "bg-gradient-aurora text-primary-foreground hover:shadow-elevated transform hover:scale-110 font-semibold shimmer glow-effect pulse-glow",
-        creative: "bg-gradient-premium text-primary-foreground hover:shadow-creative transform hover:-translate-y-2 hover:scale-105 shimmer glow-effect",
+        hero: "bg-gradient-aurora text-primary-foreground hover:shadow-elevated transform hover:scale-110 font-semibold shimmer-hover glow-effect",
+        creative: "bg-gradient-premium text-primary-foreground hover:shadow-creative transform hover:-translate-y-2 hover:scale-105 shimmer-hover glow-effect",
         glass: "glass-effect text-foreground hover:shadow-glass transform hover:scale-105 backdrop-blur-xl",
-        premium: "bg-gradient-aurora text-primary-foreground hover:shadow-elevated transform hover:scale-110 shimmer glow-effect floating",
+        premium: "bg-gradient-aurora text-primary-foreground hover:shadow-elevated transform hover:scale-110 shimmer-hover glow-effect",
       },
       size: {
         default: "h-10 px-4 py-2",

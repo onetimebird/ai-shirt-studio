@@ -27,7 +27,7 @@ const tools = [
 export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
   return (
     <TooltipProvider>
-      <div className="w-16 lg:w-64 bg-gradient-card border-r border-border flex flex-col shadow-glass backdrop-blur-sm">
+      <div className="w-16 lg:w-64 bg-gradient-sidebar border-r border-border flex flex-col shadow-glass backdrop-blur-sm">
         {/* Logo/Brand */}
         <div className="p-4 border-b border-border">
           <div className="hidden lg:block">
@@ -35,7 +35,7 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
             <p className="text-xs text-muted-foreground">Create your custom design</p>
           </div>
           <div className="lg:hidden flex justify-center">
-            <Palette className="w-6 h-6 text-primary icon-hover floating" />
+            <Palette className="w-6 h-6 text-primary icon-hover gentle-pulse" />
           </div>
         </div>
 

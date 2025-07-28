@@ -71,7 +71,8 @@ export default {
 				'gradient-shimmer': 'var(--gradient-shimmer)',
 				'gradient-glass': 'var(--gradient-glass)',
 				'gradient-aurora': 'var(--gradient-aurora)',
-				'gradient-premium': 'var(--gradient-premium)'
+				'gradient-premium': 'var(--gradient-premium)',
+				'gradient-sidebar': 'var(--gradient-sidebar)'
 			},
 			boxShadow: {
 				'creative': 'var(--shadow-creative)',

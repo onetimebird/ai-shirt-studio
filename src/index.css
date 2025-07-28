@@ -37,14 +37,15 @@ All colors MUST be HSL.
     --input: 220 30% 94%;
     --ring: 262 100% 65%;
 
-    /* Vibrant gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(220 100% 70%), hsl(45 100% 60%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 100% 98%), hsl(262 50% 98%));
+    /* Refined gradients with warmer purple tones */
+    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(320 70% 80%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(260 30% 98%), hsl(280 20% 98%));
     --gradient-shimmer: linear-gradient(45deg, transparent 30%, hsl(0 0% 100% / 0.5) 50%, transparent 70%);
     --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
-    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%), hsl(180 100% 60%));
-    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 85% 70%), hsl(310 100% 70%));
+    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 85% 70%), hsl(295 80% 72%));
+    --gradient-sidebar: linear-gradient(145deg, hsl(260 30% 98%), hsl(280 25% 97%));
     
     /* Enhanced shadows */
     --shadow-creative: 0 20px 60px -10px hsl(var(--primary) / 0.4);
@@ -102,14 +103,15 @@ All colors MUST be HSL.
     --input: 217.2 32.6% 17.5%;
     --ring: 262 100% 65%;
     
-    /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(220 100% 70%), hsl(45 100% 60%));
-    --gradient-card: linear-gradient(145deg, hsl(222.2 84% 6%), hsl(217.2 32.6% 17.5%), hsl(262 50% 8%));
+    /* Dark mode gradients with warmer purples */
+    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(320 70% 80%));
+    --gradient-card: linear-gradient(145deg, hsl(222.2 84% 6%), hsl(260 40% 8%), hsl(280 30% 10%));
     --gradient-shimmer: linear-gradient(45deg, transparent 30%, hsl(0 0% 100% / 0.1) 50%, transparent 70%);
     --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
-    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%), hsl(180 100% 60%));
-    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 85% 70%), hsl(310 100% 70%));
+    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 85% 70%), hsl(295 80% 72%));
+    --gradient-sidebar: linear-gradient(145deg, hsl(260 40% 8%), hsl(280 35% 10%));
     
     /* Enhanced dark shadows */
     --shadow-creative: 0 20px 60px -10px hsl(var(--primary) / 0.4);
@@ -143,13 +145,13 @@ All colors MUST be HSL.
 }
 
 @layer components {
-  /* Shimmer animation */
-  .shimmer {
+  /* Shimmer animation - only on hover */
+  .shimmer-hover {
     position: relative;
     overflow: hidden;
   }
   
-  .shimmer::before {
+  .shimmer-hover::before {
     content: '';
     position: absolute;
     top: 0;
@@ -157,8 +159,14 @@ All colors MUST be HSL.
     width: 100%;
     height: 100%;
     background: var(--gradient-shimmer);
-    animation: shimmer 2s infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
     z-index: 1;
+  }
+  
+  .shimmer-hover:hover::before {
+    opacity: 1;
+    animation: shimmer 1.5s ease-out;
   }
   
   @keyframes shimmer {
@@ -228,17 +236,19 @@ All colors MUST be HSL.
     height: 300%;
   }
   
-  /* Floating animation */
-  .floating {
-    animation: floating 3s ease-in-out infinite;
+  /* Gentle pulse animation for sidebar */
+  .gentle-pulse {
+    animation: gentle-pulse 4s ease-in-out infinite;
   }
   
-  @keyframes floating {
+  @keyframes gentle-pulse {
     0%, 100% {
-      transform: translateY(0px);
+      transform: scale(1);
+      opacity: 1;
     }
     50% {
-      transform: translateY(-8px);
+      transform: scale(1.02);
+      opacity: 0.95;
     }
   }
   
