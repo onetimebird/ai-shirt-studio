@@ -260,46 +260,49 @@ export const DesignCanvas = ({
       const obj = e.selected[0];
       console.log("Selection created:", obj.type, obj);
       
-      if (obj && obj.type === 'textbox') {
-        // Hide ALL default controls first
-        obj.setControlsVisibility({
-          mt: false, mb: false, ml: false, mr: false,
-          tl: false, tr: false, bl: false, br: false,
-          mtr: false
-        });
-        
-        // Clear existing custom controls to avoid duplicates
+      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
+        // FIRST: Completely hide all default controls by setting visible to false
         Object.keys(obj.controls).forEach(key => {
-          if (['deleteControl', 'layerControl', 'rotateControl', 'stretchControl', 'scaleControl', 'cloneControl'].includes(key)) {
-            delete obj.controls[key];
-          }
+          obj.controls[key].visible = false;
         });
         
-        // Add all custom controls with proper initialization
-        Object.keys(customControls).forEach(key => {
-          const controlConfig = (customControls as any)[key];
-          obj.controls[key] = new Control({
-            x: controlConfig.x,
-            y: controlConfig.y,
-            offsetX: controlConfig.offsetX,
-            offsetY: controlConfig.offsetY,
-            cursorStyle: controlConfig.cursorStyle,
-            mouseUpHandler: controlConfig.mouseUpHandler,
-            actionHandler: controlConfig.actionHandler,
-            render: controlConfig.render
-          });
+        console.log("Hiding default controls, adding custom ones...");
+        
+        // Create simple custom controls with basic styling
+        obj.controls.deleteControl = new Control({
+          x: -0.5,
+          y: -0.5,
+          offsetX: -20,
+          offsetY: -20,
+          cursorStyle: 'pointer',
+          mouseUpHandler: function() {
+            canvas.remove(obj);
+            canvas.requestRenderAll();
+            toast.success("Text deleted");
+          },
+          render: function(ctx: any, left: any, top: any) {
+            // Draw a simple red circle with X
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 16, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            // Draw X
+            ctx.beginPath();
+            ctx.moveTo(-6, -6);
+            ctx.lineTo(6, 6);
+            ctx.moveTo(6, -6);
+            ctx.lineTo(-6, 6);
+            ctx.stroke();
+            ctx.restore();
+          }
         });
         
         console.log("Custom controls added:", Object.keys(obj.controls));
-
-        // Enable double-click for inline editing
-        obj.on('mousedblclick', () => {
-          if (obj.type === 'textbox') {
-            (obj as any).enterEditing?.();
-          }
-        });
-        
-        // Force canvas re-render to show new controls
         canvas.requestRenderAll();
       }
       setSelectedObject(obj);
@@ -308,40 +311,6 @@ export const DesignCanvas = ({
 
     canvas.on('selection:updated', (e) => {
       const obj = e.selected[0];
-      console.log("Selection updated:", obj.type, obj);
-      
-      if (obj && obj.type === 'textbox') {
-        // Apply same custom controls logic as selection:created
-        obj.setControlsVisibility({
-          mt: false, mb: false, ml: false, mr: false,
-          tl: false, tr: false, bl: false, br: false,
-          mtr: false
-        });
-        
-        // Clear existing custom controls to avoid duplicates
-        Object.keys(obj.controls).forEach(key => {
-          if (['deleteControl', 'layerControl', 'rotateControl', 'stretchControl', 'scaleControl', 'cloneControl'].includes(key)) {
-            delete obj.controls[key];
-          }
-        });
-        
-        Object.keys(customControls).forEach(key => {
-          const controlConfig = (customControls as any)[key];
-          obj.controls[key] = new Control({
-            x: controlConfig.x,
-            y: controlConfig.y,
-            offsetX: controlConfig.offsetX,
-            offsetY: controlConfig.offsetY,
-            cursorStyle: controlConfig.cursorStyle,
-            mouseUpHandler: controlConfig.mouseUpHandler,
-            actionHandler: controlConfig.actionHandler,
-            render: controlConfig.render
-          });
-        });
-        
-        console.log("Custom controls updated:", Object.keys(obj.controls));
-        canvas.requestRenderAll();
-      }
       setSelectedObject(obj);
       onSelectedObjectChange?.(obj);
     });
