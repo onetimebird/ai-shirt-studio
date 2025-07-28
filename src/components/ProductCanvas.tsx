@@ -38,12 +38,20 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
 
   // Load product image when color or side changes
   useEffect(() => {
+    console.log("ProductCanvas useEffect triggered:", { fabricCanvas: !!fabricCanvas, selectedColor, currentSide });
+    
     if (!fabricCanvas) return;
 
     const colorData = getColorByName(selectedColor);
-    if (!colorData || !colorData.available) return;
+    console.log("Color data found:", colorData);
+    
+    if (!colorData || !colorData.available) {
+      console.log("Color not available or not found:", { colorData, available: colorData?.available });
+      return;
+    }
 
     const imageUrl = currentSide === "front" ? colorData.frontImage : colorData.backImage;
+    console.log("Loading image from URL:", imageUrl);
 
     // Remove existing product image
     if (productImage) {
@@ -55,6 +63,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
     FabricImage.fromURL(imageUrl, {
       crossOrigin: "anonymous",
     }).then((img) => {
+      console.log("Image loaded successfully:", img);
+      
       // Scale image to fit canvas while maintaining aspect ratio
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
@@ -77,6 +87,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
       fabricCanvas.sendObjectToBack(img);
       setProductImage(img);
       fabricCanvas.renderAll();
+      console.log("Image added to canvas successfully");
     }).catch((error) => {
       console.error("Failed to load product image:", error);
     });
