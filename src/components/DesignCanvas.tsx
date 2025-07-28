@@ -312,201 +312,127 @@ export const DesignCanvas = ({
 
   // Setup custom Fabric.js controls for text objects
   const setupCustomControls = (canvas: FabricCanvas) => {
-    // Helper to create a control with custom icon
-    const makeControl = (iconName: string, actionHandler: any, position: { x: number; y: number }) => {
-      return new Control({
-        x: position.x,
-        y: position.y,
-        offsetX: 0,
-        offsetY: 0,
-        cursorStyle: 'pointer',
-        actionHandler,
-        render: function(ctx, left, top, styleOverride, fabricObject) {
-          const size = Math.max(28, fabricObject.getScaledHeight() * 0.12);
-          
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.rotate((fabricObject.angle * Math.PI) / 180);
-          
-          // Draw background circle
-          ctx.beginPath();
-          ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-          ctx.fillStyle = '#fff';
-          ctx.fill();
-          ctx.strokeStyle = '#ddd';
-          ctx.lineWidth = 1;
-          ctx.stroke();
-          
-          // Draw icon
-          ctx.strokeStyle = '#333';
-          ctx.fillStyle = '#333';
-          ctx.lineWidth = 2;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-          
-          const iconSize = size * 0.4;
-          
-          switch(iconName) {
-            case 'delete':
-              // Trash can
-              ctx.beginPath();
-              ctx.rect(-iconSize/3, -iconSize/2.5, iconSize*2/3, iconSize*0.8);
-              ctx.stroke();
-              // Lid
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/2.5, -iconSize/2.5);
-              ctx.lineTo(iconSize/2.5, -iconSize/2.5);
-              ctx.stroke();
-              // Handle
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/6, -iconSize/2.5);
-              ctx.lineTo(-iconSize/6, -iconSize/1.8);
-              ctx.moveTo(iconSize/6, -iconSize/2.5);
-              ctx.lineTo(iconSize/6, -iconSize/1.8);
-              ctx.stroke();
-              // Vertical lines
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/6, -iconSize/4);
-              ctx.lineTo(-iconSize/6, iconSize/8);
-              ctx.moveTo(0, -iconSize/4);
-              ctx.lineTo(0, iconSize/8);
-              ctx.moveTo(iconSize/6, -iconSize/4);
-              ctx.lineTo(iconSize/6, iconSize/8);
-              ctx.stroke();
-              break;
-              
-            case 'clone':
-              // Copy squares
-              ctx.beginPath();
-              ctx.rect(-iconSize/4, -iconSize/4, iconSize/2, iconSize/2);
-              ctx.stroke();
-              ctx.beginPath();
-              ctx.rect(-iconSize/6, -iconSize/6, iconSize/2, iconSize/2);
-              ctx.stroke();
-              break;
-              
-            case 'rotate':
-              // Curved arrow
-              ctx.beginPath();
-              ctx.arc(0, 0, iconSize/3, -Math.PI/2, Math.PI/2, false);
-              ctx.stroke();
-              // Arrow head
-              ctx.beginPath();
-              ctx.moveTo(iconSize/4, iconSize/4);
-              ctx.lineTo(iconSize/3, iconSize/6);
-              ctx.lineTo(iconSize/2.5, iconSize/3);
-              ctx.stroke();
-              break;
-              
-            case 'scale':
-              // Diagonal arrows
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/3, -iconSize/3);
-              ctx.lineTo(iconSize/3, iconSize/3);
-              ctx.moveTo(iconSize/3, -iconSize/3);
-              ctx.lineTo(-iconSize/3, iconSize/3);
-              ctx.stroke();
-              // Arrow heads
-              ctx.beginPath();
-              ctx.moveTo(iconSize/4, iconSize/4);
-              ctx.lineTo(iconSize/3, iconSize/5);
-              ctx.lineTo(iconSize/5, iconSize/3);
-              ctx.moveTo(-iconSize/4, -iconSize/4);
-              ctx.lineTo(-iconSize/3, -iconSize/5);
-              ctx.lineTo(-iconSize/5, -iconSize/3);
-              ctx.fill();
-              break;
-              
-            case 'stretch':
-              // Horizontal arrows
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/2.5, 0);
-              ctx.lineTo(iconSize/2.5, 0);
-              ctx.stroke();
-              // Arrow heads
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/3, -iconSize/8);
-              ctx.lineTo(-iconSize/2.5, 0);
-              ctx.lineTo(-iconSize/3, iconSize/8);
-              ctx.moveTo(iconSize/3, -iconSize/8);
-              ctx.lineTo(iconSize/2.5, 0);
-              ctx.lineTo(iconSize/3, iconSize/8);
-              ctx.stroke();
-              break;
-              
-            case 'layer':
-              // Layered squares
-              ctx.beginPath();
-              ctx.rect(-iconSize/3, -iconSize/4, iconSize/2, iconSize/3);
-              ctx.stroke();
-              ctx.beginPath();
-              ctx.rect(-iconSize/6, -iconSize/6, iconSize/2, iconSize/3);
-              ctx.stroke();
-              // Arrow up
-              ctx.beginPath();
-              ctx.moveTo(0, -iconSize/2);
-              ctx.lineTo(0, -iconSize/6);
-              ctx.moveTo(-iconSize/8, -iconSize/3);
-              ctx.lineTo(0, -iconSize/2);
-              ctx.lineTo(iconSize/8, -iconSize/3);
-              ctx.stroke();
-              break;
+    // Preload all SVG icons as Image elements
+    const loadIcon = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    };
+
+    // Load all icons and wait for them to complete
+    Promise.all([
+      loadIcon(deleteIcon),
+      loadIcon(cloneIcon), 
+      loadIcon(rotateIcon),
+      loadIcon(scaleIcon),
+      loadIcon(stretchIcon),
+      loadIcon(layerIcon)
+    ]).then(([deleteImg, cloneImg, rotateImg, scaleImg, stretchImg, layerImg]) => {
+      
+      // Helper to create a control with preloaded SVG icon
+      const makeControl = (iconImg: HTMLImageElement, actionHandler: any, position: { x: number; y: number }) => {
+        return new Control({
+          x: position.x,
+          y: position.y,
+          offsetX: 0,
+          offsetY: 0,
+          cursorStyle: 'pointer',
+          actionHandler,
+          render: function(ctx, left, top, styleOverride, fabricObject) {
+            const size = Math.max(28, fabricObject.getScaledHeight() * 0.12);
+            
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.rotate((fabricObject.angle * Math.PI) / 180);
+            
+            // Draw background circle
+            ctx.beginPath();
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Draw the loaded SVG icon
+            if (iconImg && iconImg.complete) {
+              const iconSize = size * 0.6;
+              ctx.filter = 'brightness(0) saturate(100%)'; // Make icon black
+              ctx.drawImage(iconImg, -iconSize/2, -iconSize/2, iconSize, iconSize);
+              ctx.filter = 'none';
+            }
+            
+            ctx.restore();
           }
-          
-          ctx.restore();
+        });
+      };
+
+      // Control handlers
+      const deleteHandler = (eventData: any, transform: any) => {
+        const obj = transform.target;
+        canvas.remove(obj);
+        canvas.discardActiveObject();
+        setSelectedObject(null);
+        setOverlayBounds(null);
+        setTool("text");
+        onToolChange?.("text");
+        canvas.requestRenderAll();
+        toast.success("Text deleted");
+        return true;
+      };
+
+      const cloneHandler = (eventData: any, transform: any) => {
+        const obj = transform.target;
+        obj.clone((cloned: any) => {
+          cloned.set({
+            left: obj.left + 20,
+            top: obj.top + 20,
+          });
+          canvas.add(cloned);
+          canvas.setActiveObject(cloned);
+          canvas.requestRenderAll();
+          toast.success("Text duplicated");
+        });
+        return true;
+      };
+
+      const layerHandler = (eventData: any, transform: any) => {
+        const obj = transform.target;
+        canvas.bringObjectToFront(obj);
+        canvas.requestRenderAll();
+        return true;
+      };
+
+      // Apply custom controls to textbox prototype with loaded images
+      FabricTextbox.prototype.controls = {
+        tl: makeControl(deleteImg, deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
+        mt: makeControl(layerImg, layerHandler, { x: 0, y: -0.5 }),           // top-center: layer
+        tr: makeControl(cloneImg, cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
+        mr: makeControl(stretchImg, controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
+        br: makeControl(scaleImg, controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
+        bl: makeControl(rotateImg, controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
+        mtr: makeControl(rotateImg, controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
+        // Keep some default controls
+        ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
+        mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+      };
+
+      // Force re-render of any existing textboxes
+      canvas.getObjects().forEach(obj => {
+        if (obj.type === 'textbox') {
+          obj.set('objectCaching', false);
         }
       });
-    };
-
-    // Control handlers
-    const deleteHandler = (eventData: any, transform: any) => {
-      const obj = transform.target;
-      canvas.remove(obj);
-      canvas.discardActiveObject();
-      setSelectedObject(null);
-      setOverlayBounds(null);
-      setTool("text");
-      onToolChange?.("text");
       canvas.requestRenderAll();
-      toast.success("Text deleted");
-      return true;
-    };
-
-    const cloneHandler = (eventData: any, transform: any) => {
-      const obj = transform.target;
-      obj.clone((cloned: any) => {
-        cloned.set({
-          left: obj.left + 20,
-          top: obj.top + 20,
-        });
-        canvas.add(cloned);
-        canvas.setActiveObject(cloned);
-        canvas.requestRenderAll();
-        toast.success("Text duplicated");
-      });
-      return true;
-    };
-
-    const layerHandler = (eventData: any, transform: any) => {
-      const obj = transform.target;
-      canvas.bringObjectToFront(obj);
-      canvas.requestRenderAll();
-      return true;
-    };
-
-    // Apply custom controls to textbox prototype
-    FabricTextbox.prototype.controls = {
-      tl: makeControl('delete', deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
-      mt: makeControl('layer', layerHandler, { x: 0, y: -0.5 }), // top-center: layer
-      tr: makeControl('clone', cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
-      mr: makeControl('stretch', controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
-      br: makeControl('scale', controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
-      bl: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
-      mtr: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
-      // Keep some default controls but hide others
-      ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
-      mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
-    };
+      
+    }).catch(error => {
+      console.error('Failed to load icon images:', error);
+      // Fallback to text labels if icons fail to load
+      console.log('Using fallback text controls');
+    });
   };
 
   // Add pointer event handlers for interactions
@@ -678,6 +604,7 @@ export const DesignCanvas = ({
           // Visual styling for controls
           cornerSize: 12,
           transparentCorners: false,
+          objectCaching: false, // Disable caching for better icon rendering
           cornerColor: '#4F46E5',
           cornerStyle: 'rect',
           borderColor: '#4F46E5',
