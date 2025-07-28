@@ -4,16 +4,6 @@
   z-index: 1000;
 }
 
-.selection-border {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 2px dashed #3b82f6;
-  pointer-events: none;
-}
-
 .overlay-btn,
 .overlay-handle {
   position: absolute;

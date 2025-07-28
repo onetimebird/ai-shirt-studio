@@ -28,6 +28,7 @@ export const DesignCanvas = ({
   activeTool,
   onSelectedObjectChange 
 }: DesignCanvasProps) => {
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [selectedObject, setSelectedObject] = useState<any>(null);
@@ -43,7 +44,22 @@ export const DesignCanvas = ({
   const [canvasZoom, setCanvasZoom] = useState(1);
 
   // Scale sensitivity for smooth, controlled scaling
-  const SCALE_SENSITIVITY = 0.1; // 10% of the raw change
+  const DIAG_DIV = 150; // Adjust for scaling speed - smaller = faster scaling
+
+  // Diagonal projection function for smooth scaling
+  const getProjectedDrag = (
+    cx: number, cy: number,
+    startX: number, startY: number,
+    currX: number, currY: number
+  ) => {
+    // vector from start to current
+    const dx = currX - startX;
+    const dy = currY - startY;
+    // unit diagonal vector (normalized [1,1])
+    const invSqrt2 = 1 / Math.sqrt(2);
+    // dot product projects drag onto diagonal
+    return (dx * invSqrt2 + dy * invSqrt2);
+  };
   const [showCheckout, setShowCheckout] = useState(false);
   const [quantities, setQuantities] = useState<{ [size: string]: number }>({
     S: 0, M: 0, L: 0, XL: 0, "2XL": 0, "3XL": 0, "4XL": 0, "5XL": 0
@@ -54,11 +70,14 @@ export const DesignCanvas = ({
   const tshirtImage = currentSide === "front" ? tshirtFrontTemplate : tshirtBackTemplate;
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || !canvasWrapperRef.current) return;
+
+    // Get wrapper dimensions for responsive canvas
+    const { width, height } = canvasWrapperRef.current.getBoundingClientRect();
 
     const canvas = new FabricCanvas(canvasRef.current, {
-      width: 800,
-      height: 800,
+      width,
+      height,
       backgroundColor: "transparent",
       selection: true,
     });
@@ -229,7 +248,7 @@ export const DesignCanvas = ({
         
         if (startDist > 0) {
           const rawFactor = currentDist / Math.max(startDist, 1);
-          const factor = 1 + (rawFactor - 1) * SCALE_SENSITIVITY; // 10% sensitivity
+          const factor = 1 + (rawFactor - 1) * 0.1; // Use diagonal projection method
           
           selectedObject.set({
             scaleX: startScale.x * factor,
@@ -258,7 +277,7 @@ export const DesignCanvas = ({
         
         if (startDist > 0) {
           const rawFactor = currentDist / Math.max(startDist, 1);
-          const factorX = 1 + (rawFactor - 1) * SCALE_SENSITIVITY; // 10% sensitivity
+          const factorX = 1 + (rawFactor - 1) * 0.1; // Use diagonal projection method
           
           selectedObject.set({
             scaleX: startScale.x * factorX
@@ -286,7 +305,7 @@ export const DesignCanvas = ({
         
         if (startDistY > 0) {
           const rawFactor = currentDistY / Math.max(startDistY, 1);
-          const factorY = 1 + (rawFactor - 1) * SCALE_SENSITIVITY; // 10% sensitivity
+          const factorY = 1 + (rawFactor - 1) * 0.1; // Use diagonal projection method
           
           selectedObject.set({
             scaleY: startScale.y * factorY
@@ -321,7 +340,7 @@ export const DesignCanvas = ({
         window.removeEventListener('pointerup', handlePointerUp);
       };
     }
-  }, [isRotating, isScaling, isStretching, isVerticalScaling, selectedObject, fabricCanvas, startPointer, startScale, startAngle, SCALE_SENSITIVITY]);
+  }, [isRotating, isScaling, isStretching, isVerticalScaling, selectedObject, fabricCanvas, startPointer, startScale, startAngle]);
 
   // Expose canvas methods globally
   useEffect(() => {
@@ -751,40 +770,37 @@ export const DesignCanvas = ({
             {/* Design Area */}
             <div className="relative flex items-center justify-center">
               <div 
-                className="relative"
+                ref={canvasWrapperRef}
+                className="canvas-wrapper"
                 style={{
-                  width: "800px",
-                  height: "800px",
+                  position: "relative",
+                  width: "100%",
+                  height: "600px",
+                  backgroundColor: "#fff",
+                  borderRadius: "8px",
+                  overflow: "hidden",
                 }}
               >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div 
-                    className="relative bg-white rounded"
-                    style={{
-                      width: "800px",
-                      height: "800px",
+                <canvas
+                  ref={canvasRef}
+                  style={{ 
+                    display: "block",
+                    width: "100%", 
+                    height: "100%" 
+                  }}
+                />
+                
+                {/* React Overlay Controls */}
+                {overlayBounds && selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
+                  <TextOverlayControls
+                    bounds={overlayBounds}
+                    onDelete={() => {
+                      fabricCanvas?.remove(selectedObject);
+                      fabricCanvas?.requestRenderAll();
+                      toast.success("Text deleted");
                     }}
-                  >
-                    <canvas
-                      ref={canvasRef}
-                      className="absolute inset-0 rounded"
-                      style={{
-                        width: "800px",
-                        height: "800px",
-                      }}
-                    />
-                    
-                    {/* React Overlay Controls */}
-                    {overlayBounds && selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
-                      <TextOverlayControls
-                        bounds={overlayBounds}
-                        onDelete={() => {
-                          fabricCanvas?.remove(selectedObject);
-                          fabricCanvas?.requestRenderAll();
-                          toast.success("Text deleted");
-                        }}
                         onRotateStart={(e) => {
-                          const rect = canvasRef.current?.getBoundingClientRect();
+                          const rect = canvasWrapperRef.current?.getBoundingClientRect();
                           if (!rect || !selectedObject) return;
                           
                           const center = selectedObject.getCenterPoint();
@@ -802,42 +818,80 @@ export const DesignCanvas = ({
                           e.stopPropagation();
                         }}
                         onStretchStart={(e) => {
-                          const rect = canvasRef.current?.getBoundingClientRect();
-                          if (!rect || !selectedObject) return;
+                          if (!selectedObject || !canvasWrapperRef.current) return;
                           
-                          const center = selectedObject.getCenterPoint();
-                          const cx = rect.left + center.x;
-                          const cy = rect.top + center.y;
+                          const rect = canvasWrapperRef.current.getBoundingClientRect();
+                          const cx = rect.left + selectedObject.left + selectedObject.width/2;
+                          const cy = rect.top + selectedObject.top + selectedObject.height/2;
+                          const startX = e.clientX;
+                          const startY = e.clientY;
+                          const initSX = selectedObject.scaleX || 1;
+
+                          const onMove = (m: PointerEvent) => {
+                            const drag = getProjectedDrag(cx, cy, startX, startY, m.clientX, m.clientY);
+                            const delta = drag / DIAG_DIV;
+                            const factorX = Math.max(0.1, 1 + delta);
+                            selectedObject.set({ scaleX: initSX * factorX });
+                            fabricCanvas?.requestRenderAll();
+                            
+                            // Update overlay bounds
+                            const bounds = selectedObject.getBoundingRect();
+                            setOverlayBounds({
+                              x: bounds.left,
+                              y: bounds.top,
+                              width: bounds.width,
+                              height: bounds.height
+                            });
+                          };
+
+                          const onUp = () => {
+                            window.removeEventListener('pointermove', onMove);
+                            window.removeEventListener('pointerup', onUp);
+                          };
                           
-                          setStartPointer({
-                            x: e.clientX,
-                            y: e.clientY
-                          });
-                          setStartScale({
-                            x: selectedObject.scaleX || 1,
-                            y: selectedObject.scaleY || 1
-                          });
-                          setIsStretching(true);
+                          window.addEventListener('pointermove', onMove);
+                          window.addEventListener('pointerup', onUp);
                           e.preventDefault();
                           e.stopPropagation();
                         }}
                         onScaleStart={(e) => {
-                          const rect = canvasRef.current?.getBoundingClientRect();
-                          if (!rect || !selectedObject) return;
+                          if (!selectedObject || !canvasWrapperRef.current) return;
                           
-                          const center = selectedObject.getCenterPoint();
-                          const cx = rect.left + center.x;
-                          const cy = rect.top + center.y;
+                          const rect = canvasWrapperRef.current.getBoundingClientRect();
+                          const cx = rect.left + selectedObject.left + selectedObject.width/2;
+                          const cy = rect.top + selectedObject.top + selectedObject.height/2;
+                          const startX = e.clientX;
+                          const startY = e.clientY;
+                          const initSX = selectedObject.scaleX || 1;
+                          const initSY = selectedObject.scaleY || 1;
+
+                          const onMove = (m: PointerEvent) => {
+                            const drag = getProjectedDrag(cx, cy, startX, startY, m.clientX, m.clientY);
+                            const delta = drag / DIAG_DIV;
+                            const factor = Math.max(0.1, 1 + delta);
+                            selectedObject.set({
+                              scaleX: initSX * factor,
+                              scaleY: initSY * factor
+                            });
+                            fabricCanvas?.requestRenderAll();
+                            
+                            // Update overlay bounds
+                            const bounds = selectedObject.getBoundingRect();
+                            setOverlayBounds({
+                              x: bounds.left,
+                              y: bounds.top,
+                              width: bounds.width,
+                              height: bounds.height
+                            });
+                          };
+
+                          const onUp = () => {
+                            window.removeEventListener('pointermove', onMove);
+                            window.removeEventListener('pointerup', onUp);
+                          };
                           
-                          setStartPointer({
-                            x: e.clientX,
-                            y: e.clientY
-                          });
-                          setStartScale({
-                            x: selectedObject.scaleX || 1,
-                            y: selectedObject.scaleY || 1
-                          });
-                          setIsScaling(true);
+                          window.addEventListener('pointermove', onMove);
+                          window.addEventListener('pointerup', onUp);
                           e.preventDefault();
                           e.stopPropagation();
                         }}
@@ -851,21 +905,39 @@ export const DesignCanvas = ({
                           });
                         }}
                         onVerticalScaleStart={(e) => {
-                          const rect = canvasRef.current?.getBoundingClientRect();
-                          if (!rect || !selectedObject) return;
+                          if (!selectedObject || !canvasWrapperRef.current) return;
                           
-                          const center = selectedObject.getCenterPoint();
-                          const cy = rect.top + center.y;
+                          const rect = canvasWrapperRef.current.getBoundingClientRect();
+                          const cx = rect.left + selectedObject.left + selectedObject.width/2;
+                          const cy = rect.top + selectedObject.top + selectedObject.height/2;
+                          const startX = e.clientX;
+                          const startY = e.clientY;
+                          const initSY = selectedObject.scaleY || 1;
+
+                          const onMove = (m: PointerEvent) => {
+                            const drag = getProjectedDrag(cx, cy, startX, startY, m.clientX, m.clientY);
+                            const delta = drag / DIAG_DIV;
+                            const factorY = Math.max(0.1, 1 + delta);
+                            selectedObject.set({ scaleY: initSY * factorY });
+                            fabricCanvas?.requestRenderAll();
+                            
+                            // Update overlay bounds
+                            const bounds = selectedObject.getBoundingRect();
+                            setOverlayBounds({
+                              x: bounds.left,
+                              y: bounds.top,
+                              width: bounds.width,
+                              height: bounds.height
+                            });
+                          };
+
+                          const onUp = () => {
+                            window.removeEventListener('pointermove', onMove);
+                            window.removeEventListener('pointerup', onUp);
+                          };
                           
-                          setStartPointer({
-                            x: e.clientX,
-                            y: e.clientY
-                          });
-                          setStartScale({
-                            x: selectedObject.scaleX || 1,
-                            y: selectedObject.scaleY || 1
-                          });
-                          setIsVerticalScaling(true);
+                          window.addEventListener('pointermove', onMove);
+                          window.addEventListener('pointerup', onUp);
                           e.preventDefault();
                           e.stopPropagation();
                         }}
@@ -884,11 +956,8 @@ export const DesignCanvas = ({
                 </div>
               </div>
             </div>
-
-            {/* Tool Cursor Indicator - REMOVED */}
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };

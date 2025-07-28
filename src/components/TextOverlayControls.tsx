@@ -25,9 +25,6 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
 
   return (
     <div className="overlay-container" style={{ left: x, top: y, width, height }}>
-      {/* Blue dashed border */}
-      <div className="selection-border" />
-      
       {/* Delete - Top Left */}
       <button
         className="overlay-btn top-left"
