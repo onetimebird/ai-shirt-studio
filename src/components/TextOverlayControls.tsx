@@ -4,21 +4,21 @@ import './TextOverlayControls.css';
 
 interface TextOverlayProps {
   onDelete: () => void;
+  onVerticalScaleStart: (e: React.PointerEvent) => void;
   onRotateStart: (e: React.PointerEvent) => void;
   onStretchStart: (e: React.PointerEvent) => void;
   onScaleStart: (e: React.PointerEvent) => void;
   onDuplicate: () => void;
-  onLayerChange: () => void;
   bounds: { x: number; y: number; width: number; height: number };
 }
 
 export const TextOverlayControls: React.FC<TextOverlayProps> = ({
   onDelete,
+  onVerticalScaleStart,
   onRotateStart,
   onStretchStart,
   onScaleStart,
   onDuplicate,
-  onLayerChange,
   bounds,
 }) => {
   const { x, y, width, height } = bounds;
@@ -37,14 +37,14 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
         <Trash2 size={14} />
       </button>
 
-      {/* Layer Up/Down - Top Center */}
-      <button
-        className="overlay-btn top-center"
-        onClick={onLayerChange}
-        title="Move Layer"
+      {/* Vertical Scale (Font Height) - Top Center */}
+      <div
+        className="overlay-handle top-center"
+        onPointerDown={onVerticalScaleStart}
+        title="Scale Font Height"
       >
         <ChevronsUpDown size={14} />
-      </button>
+      </div>
 
       {/* Rotate - Top Right */}
       <div

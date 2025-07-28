@@ -35,11 +35,15 @@ export const DesignCanvas = ({
   const [isRotating, setIsRotating] = useState(false);
   const [isScaling, setIsScaling] = useState(false);
   const [isStretching, setIsStretching] = useState(false);
+  const [isVerticalScaling, setIsVerticalScaling] = useState(false);
   const [startAngle, setStartAngle] = useState(0);
   const [startScale, setStartScale] = useState({ x: 1, y: 1 });
   const [startPointer, setStartPointer] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [canvasZoom, setCanvasZoom] = useState(1);
+
+  // Scale sensitivity for smooth, controlled scaling
+  const SCALE_SENSITIVITY = 0.1; // 10% of the raw change
   const [showCheckout, setShowCheckout] = useState(false);
   const [quantities, setQuantities] = useState<{ [size: string]: number }>({
     S: 0, M: 0, L: 0, XL: 0, "2XL": 0, "3XL": 0, "4XL": 0, "5XL": 0
@@ -216,7 +220,6 @@ export const DesignCanvas = ({
       }
       
       if (isScaling) {
-        const bounds = selectedObject.getBoundingRect();
         const center = selectedObject.getCenterPoint();
         const cx = rect.left + center.x;
         const cy = rect.top + center.y;
@@ -225,9 +228,8 @@ export const DesignCanvas = ({
         const startDist = Math.hypot(startPointer.x - cx, startPointer.y - cy);
         
         if (startDist > 0) {
-          // Apply sensitivity multiplier for controlled scaling
-          const rawFactor = currentDist / startDist;
-          const factor = 1 + (rawFactor - 1) * 0.3; // 0.3 sensitivity
+          const rawFactor = currentDist / Math.max(startDist, 1);
+          const factor = 1 + (rawFactor - 1) * SCALE_SENSITIVITY; // 10% sensitivity
           
           selectedObject.set({
             scaleX: startScale.x * factor,
@@ -255,12 +257,39 @@ export const DesignCanvas = ({
         const startDist = Math.hypot(startPointer.x - cx, startPointer.y - cy);
         
         if (startDist > 0) {
-          // Apply sensitivity multiplier for controlled horizontal stretching
-          const rawFactor = currentDist / startDist;
-          const factorX = 1 + (rawFactor - 1) * 0.3; // same 0.3 sensitivity
+          const rawFactor = currentDist / Math.max(startDist, 1);
+          const factorX = 1 + (rawFactor - 1) * SCALE_SENSITIVITY; // 10% sensitivity
           
           selectedObject.set({
             scaleX: startScale.x * factorX
+          });
+          fabricCanvas.requestRenderAll();
+          
+          // Update overlay bounds
+          const bounds = selectedObject.getBoundingRect();
+          setOverlayBounds({
+            x: bounds.left,
+            y: bounds.top,
+            width: bounds.width,
+            height: bounds.height
+          });
+        }
+      }
+
+      if (isVerticalScaling) {
+        const center = selectedObject.getCenterPoint();
+        const cx = rect.left + center.x;
+        const cy = rect.top + center.y;
+        
+        const currentDistY = Math.abs(e.clientY - cy);
+        const startDistY = Math.abs(startPointer.y - cy);
+        
+        if (startDistY > 0) {
+          const rawFactor = currentDistY / Math.max(startDistY, 1);
+          const factorY = 1 + (rawFactor - 1) * SCALE_SENSITIVITY; // 10% sensitivity
+          
+          selectedObject.set({
+            scaleY: startScale.y * factorY
           });
           fabricCanvas.requestRenderAll();
           
@@ -280,9 +309,10 @@ export const DesignCanvas = ({
       setIsRotating(false);
       setIsScaling(false);
       setIsStretching(false);
+      setIsVerticalScaling(false);
     };
     
-    if (isRotating || isScaling || isStretching) {
+    if (isRotating || isScaling || isStretching || isVerticalScaling) {
       window.addEventListener('pointermove', handlePointerMove);
       window.addEventListener('pointerup', handlePointerUp);
       
@@ -291,7 +321,7 @@ export const DesignCanvas = ({
         window.removeEventListener('pointerup', handlePointerUp);
       };
     }
-  }, [isRotating, isScaling, isStretching, selectedObject, fabricCanvas, startPointer, startScale, startAngle]);
+  }, [isRotating, isScaling, isStretching, isVerticalScaling, selectedObject, fabricCanvas, startPointer, startScale, startAngle, SCALE_SENSITIVITY]);
 
   // Expose canvas methods globally
   useEffect(() => {
@@ -821,10 +851,24 @@ export const DesignCanvas = ({
                             toast.success("Text duplicated");
                           });
                         }}
-                        onLayerChange={() => {
-                          (selectedObject as any).bringToFront();
-                          fabricCanvas?.requestRenderAll();
-                          toast.success("Brought to front");
+                        onVerticalScaleStart={(e) => {
+                          const rect = canvasRef.current?.getBoundingClientRect();
+                          if (!rect || !selectedObject) return;
+                          
+                          const center = selectedObject.getCenterPoint();
+                          const cy = rect.top + center.y;
+                          
+                          setStartPointer({
+                            x: e.clientX,
+                            y: e.clientY
+                          });
+                          setStartScale({
+                            x: selectedObject.scaleX || 1,
+                            y: selectedObject.scaleY || 1
+                          });
+                          setIsVerticalScaling(true);
+                          e.preventDefault();
+                          e.stopPropagation();
                         }}
                       />
                     )}
