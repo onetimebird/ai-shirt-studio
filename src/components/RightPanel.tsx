@@ -214,10 +214,12 @@ export const RightPanel = ({
     <div className="w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       <Tabs defaultValue="properties" className="w-full p-4">
         {/* Only show tabs based on context */}
-        {activeTool === "text" ? (
-          // Text tool - only properties
+        {activeTool === "text" || activeTool === "editText" ? (
+          // Text tool - only properties for add/edit
           <TabsList className="grid grid-cols-1 gap-2">
-            <TabsTrigger value="properties">Add Text</TabsTrigger>
+            <TabsTrigger value="properties">
+              {activeTool === "text" ? "Add Text" : "Edit Text"}
+            </TabsTrigger>
           </TabsList>
         ) : activeTool === "upload" ? (
           // Upload tool - only properties  
@@ -235,8 +237,8 @@ export const RightPanel = ({
 
         <TabsContent value="properties" className="mt-4 space-y-4">
 
-          {/* Add Text Interface - Only when no text is selected */}
-          {activeTool === "text" && !selectedObject && (
+          {/* Add Text Interface - Only when in text mode and no object selected */}
+          {activeTool === "text" && (
             <>
               <Card>
                 <CardHeader className="pb-3">

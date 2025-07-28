@@ -174,6 +174,19 @@ export const DesignCanvas = ({
     });
 
     // Add selection events - Simple approach without custom controls
+    // Function to update overlay bounds for text objects
+    const updateOverlayBounds = (obj: any) => {
+      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
+        const bounds = obj.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      }
+    };
+
     canvas.on('selection:created', (e) => {
       const obj = e.selected[0];
       setSelectedObject(obj);
@@ -190,14 +203,7 @@ export const DesignCanvas = ({
           mtr: false
         });
         
-        // Calculate overlay bounds
-        const bounds = obj.getBoundingRect();
-        setOverlayBounds({
-          x: bounds.left,
-          y: bounds.top,
-          width: bounds.width,
-          height: bounds.height
-        });
+        updateOverlayBounds(obj);
       } else {
         setOverlayBounds(null);
       }
@@ -212,17 +218,17 @@ export const DesignCanvas = ({
       if (obj?.type === "textbox" || obj?.type === "text") {
         setTool("editText");
         onToolChange?.("editText");
-        const bounds = obj.getBoundingRect();
-        setOverlayBounds({
-          x: bounds.left,
-          y: bounds.top,
-          width: bounds.width,
-          height: bounds.height
-        });
+        updateOverlayBounds(obj);
       } else {
         setOverlayBounds(null);
       }
     });
+
+    // Keep overlay in sync with object transforms
+    canvas.on('object:modified', (e) => updateOverlayBounds(e.target));
+    canvas.on('object:moving', (e) => updateOverlayBounds(e.target));
+    canvas.on('object:scaling', (e) => updateOverlayBounds(e.target));
+    canvas.on('object:rotating', (e) => updateOverlayBounds(e.target));
 
     canvas.on('selection:cleared', () => {
       setSelectedObject(null);
@@ -292,6 +298,10 @@ export const DesignCanvas = ({
         case 'Backspace':
           if (!(activeObj as any).isEditing) {
             fabricCanvas.remove(activeObj);
+            fabricCanvas.discardActiveObject();
+            setSelectedObject(null);
+            setOverlayBounds(null);
+            fabricCanvas.requestRenderAll();
             toast.success("Text deleted");
           }
           break;
@@ -305,6 +315,13 @@ export const DesignCanvas = ({
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      canvas.off('selection:created');
+      canvas.off('selection:updated');
+      canvas.off('selection:cleared');
+      canvas.off('object:modified');
+      canvas.off('object:moving');
+      canvas.off('object:scaling');
+      canvas.off('object:rotating');
       canvas.dispose();
     };
   }, [currentSide, onSelectedObjectChange]);
