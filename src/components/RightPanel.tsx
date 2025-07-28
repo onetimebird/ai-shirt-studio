@@ -6,12 +6,11 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { openAIService, type GenerateImageParams } from "@/services/openai";
-import { 
-  Type, 
-  Palette, 
+import { openAIService } from "@/services/openai";
+import {
+  Type,
+  Palette,
   Image as ImageIcon,
   Bold,
   Italic,
@@ -35,47 +34,61 @@ interface RightPanelProps {
   selectedObject: any;
   onTextPropertiesChange: (properties: any) => void;
   onImageUpload: (file: File) => void;
+  onProductColorChange: (color: string) => void;
 }
 
 const fonts = [
-  "Arial", "Helvetica", "Times New Roman", "Georgia", "Impact", 
+  "Arial", "Helvetica", "Times New Roman", "Georgia", "Impact",
   "Comic Sans MS", "Trebuchet MS", "Verdana", "Courier New", "Palatino",
   "Open Sans", "Roboto", "Lato", "Montserrat", "Oswald"
 ];
 
-export const RightPanel = ({ 
-  activeTool, 
+const colors = [
+  "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", "#ffff00",
+  "#ff00ff", "#00ffff", "#ffa500", "#800080", "#008000", "#ff69b4"
+];
+
+export const RightPanel = ({
+  activeTool,
   selectedObject,
   onTextPropertiesChange,
-  onImageUpload 
+  onImageUpload,
+  onProductColorChange,
 }: RightPanelProps) => {
-  const [fontSize, setFontSize] = useState([24]);
-  const [fontFamily, setFontFamily] = useState("Arial");
-  const [textColor, setTextColor] = useState("#000000");
+  // Text states
   const [textContent, setTextContent] = useState("Sample Text");
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontSize, setFontSize] = useState<number>(24);
+  const [textColor, setTextColor] = useState("#000000");
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [textAlign, setTextAlign] = useState("left");
-  
-  // AI Generation states
+
+  // Transform states
+  const [scalePercent, setScalePercent] = useState<number>(100);
+  const [rotation, setRotation] = useState<number>(0);
+
+  // AI states
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiKey, setApiKey] = useState(openAIService.getApiKey() || "");
   const [showApiKey, setShowApiKey] = useState(false);
-  const [lastGeneratedImages, setLastGeneratedImages] = useState<string[]>([]);
+  const [recentImages, setRecentImages] = useState<string[]>([]);
 
-  // Update selected object properties when changed
+  // Sync with selectedObject
   useEffect(() => {
     if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
       setTextContent(selectedObject.text || "");
-      setFontSize([selectedObject.fontSize || 24]);
       setFontFamily(selectedObject.fontFamily || "Arial");
+      setFontSize(selectedObject.fontSize || 24);
       setTextColor(selectedObject.fill || "#000000");
       setIsBold(selectedObject.fontWeight === "bold");
       setIsItalic(selectedObject.fontStyle === "italic");
       setIsUnderline(selectedObject.underline || false);
       setTextAlign(selectedObject.textAlign || "left");
+      setScalePercent(Math.round((selectedObject.scaleX || 1) * 100));
+      setRotation(selectedObject.rotation || 0);
     }
   }, [selectedObject]);
 
@@ -86,58 +99,49 @@ export const RightPanel = ({
   };
 
   const handleAddText = () => {
-    if ((window as any).designCanvas) {
-      (window as any).designCanvas.addText(textContent);
+    if ((window as any).designCanvas?.addText) {
+      (window as any).designCanvas.addText(textContent, {
+        fontFamily,
+        fontSize,
+        fill: textColor,
+        fontWeight: isBold ? 'bold' : 'normal',
+        fontStyle: isItalic ? 'italic' : 'normal',
+        underline: isUnderline,
+        textAlign,
+        scaleX: scalePercent / 100,
+        scaleY: scalePercent / 100,
+        rotation,
+      });
     }
   };
 
-  const handleDeleteSelected = () => {
-    if ((window as any).designCanvas) {
-      (window as any).designCanvas.deleteSelected();
-    }
-  };
-
-  const handleDuplicateSelected = () => {
-    if ((window as any).designCanvas) {
-      (window as any).designCanvas.duplicateSelected();
-    }
-  };
-
-  const handleRotateSelected = () => {
-    if ((window as any).designCanvas) {
-      (window as any).designCanvas.rotateSelected();
-    }
-  };
-
-  const handleCenterSelected = () => {
-    if ((window as any).designCanvas) {
-      (window as any).designCanvas.centerSelected();
-    }
-  };
+  const handleDelete = () => (window as any).designCanvas?.deleteSelected();
+  const handleDuplicate = () => (window as any).designCanvas?.duplicateSelected();
+  const handleRotate = () => (window as any).designCanvas?.rotateSelected();
+  const handleCenter = () => (window as any).designCanvas?.centerSelected();
+  const handleDeselect = () => (window as any).designCanvas?.clearSelection();
 
   const handleSetApiKey = () => {
-    if (!apiKey.trim()) {
-      toast.error("Please enter a valid API key");
-      return;
+    if (!apiKey.trim()) { 
+      toast.error("Please enter a valid API key"); 
+      return; 
     }
-    
     openAIService.setApiKey(apiKey.trim());
     toast.success("OpenAI API key saved!");
   };
 
   const handleGenerateAI = async () => {
-    if (!apiKey) {
+    if (!aiPrompt.trim()) {
+      toast.error("Please enter a prompt");
+      return;
+    }
+
+    if (!openAIService.getApiKey()) {
       toast.error("Please set your OpenAI API key first");
       return;
     }
 
-    if (!aiPrompt.trim()) {
-      toast.error("Please enter a prompt for the AI image");
-      return;
-    }
-
     setIsGenerating(true);
-    
     try {
       const result = await openAIService.generateImage({
         prompt: aiPrompt,
@@ -145,554 +149,557 @@ export const RightPanel = ({
         quality: "standard",
         style: "vivid"
       });
-
-      // Add the generated image to canvas
-      if ((window as any).designCanvas) {
-        // Create a temporary file-like object to use existing upload logic
-        const response = await fetch(result.url);
-        const blob = await response.blob();
-        const file = new File([blob], "ai-generated.png", { type: "image/png" });
-        onImageUpload(file);
-        
-        // Track generated images
-        setLastGeneratedImages(prev => [result.url, ...prev.slice(0, 4)]);
-        toast.success("AI image added to design!");
+      
+      // Add generated image to canvas
+      if ((window as any).designCanvas?.addImageFromUrl) {
+        (window as any).designCanvas.addImageFromUrl(result.url);
       }
+
+      // Add to recent images
+      setRecentImages(prev => [result.url, ...prev.slice(0, 4)]);
+      toast.success("AI image generated!");
+      setAiPrompt("");
     } catch (error) {
-      console.error("AI Generation Error:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to generate image");
+      console.error("AI generation error:", error);
+      toast.error("Failed to generate image. Check your API key.");
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleUseGeneratedImage = async (imageUrl: string) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const file = new File([blob], "ai-generated.png", { type: "image/png" });
-      onImageUpload(file);
-      toast.success("Image added to design!");
-    } catch (error) {
-      toast.error("Failed to add image to design");
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please upload PNG, JPEG, or SVG files only");
+      return;
     }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    onImageUpload(file);
+    toast.success("Image uploaded successfully!");
   };
 
   return (
     <div className="w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
-      <div className="p-4">
-        <Tabs defaultValue="properties" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="properties">Properties</TabsTrigger>
-            <TabsTrigger value="color">Colors</TabsTrigger>
-            <TabsTrigger value="ai">AI Generator</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="properties" className="w-full p-4">
+        <TabsList className="grid grid-cols-3 gap-2">
+          <TabsTrigger value="properties">Properties</TabsTrigger>
+          <TabsTrigger value="color">Colors</TabsTrigger>
+          <TabsTrigger value="ai">AI</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="properties" className="space-y-4 mt-4">
-            {/* Add Text */}
-            {activeTool === "text" && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Type className="w-4 h-4" />
-                    Add Text
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label className="text-xs">Text Content</Label>
-                    <Input
-                      value={textContent}
-                      onChange={(e) => setTextContent(e.target.value)}
-                      placeholder="Enter your text..."
-                      className="mt-1"
-                    />
-                  </div>
-                  <Button onClick={handleAddText} className="w-full">
-                    Add Text to Design
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+        <TabsContent value="properties" className="mt-4 space-y-4">
 
-            {/* Text Properties - Only show when text is selected */}
-            {(selectedObject?.type === "textbox" || selectedObject?.type === "text") && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Type className="w-4 h-4" />
-                    Text Properties
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Text Content */}
-                  <div>
-                    <Label className="text-xs">Text Content</Label>
-                    <Input
-                      value={textContent}
-                      onChange={(e) => {
-                        setTextContent(e.target.value);
-                        updateTextProperty("text", e.target.value);
-                      }}
-                      className="mt-1"
-                    />
-                  </div>
-
-                  {/* Font Family */}
-                  <div>
-                    <Label className="text-xs">Font Family</Label>
-                    <Select 
-                      value={fontFamily} 
-                      onValueChange={(value) => {
-                        setFontFamily(value);
-                        updateTextProperty("fontFamily", value);
-                      }}
-                    >
-                      <SelectTrigger className="h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {fonts.map((font) => (
-                          <SelectItem key={font} value={font}>
-                            {font}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Font Size */}
-                  <div>
-                    <Label className="text-xs">Size: {fontSize[0]}px</Label>
-                    <Slider
-                      value={fontSize}
-                      onValueChange={(value) => {
-                        setFontSize(value);
-                        updateTextProperty("fontSize", value[0]);
-                      }}
-                      max={120}
-                      min={8}
-                      step={1}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  {/* Text Color */}
-                  <div>
-                    <Label className="text-xs">Color</Label>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Input
-                        type="color"
-                        value={textColor}
-                        onChange={(e) => {
-                          setTextColor(e.target.value);
-                          updateTextProperty("fill", e.target.value);
-                        }}
-                        className="w-12 h-8 p-0 border-0"
-                      />
-                      <Input
-                        value={textColor}
-                        onChange={(e) => {
-                          setTextColor(e.target.value);
-                          updateTextProperty("fill", e.target.value);
-                        }}
-                        className="flex-1 h-8"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Text Formatting */}
-                  <div>
-                    <Label className="text-xs">Formatting</Label>
-                    <div className="flex gap-1 mt-2">
-                      <Button 
-                        variant={isBold ? "default" : "outline"} 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          const newBold = !isBold;
-                          setIsBold(newBold);
-                          updateTextProperty("fontWeight", newBold ? "bold" : "normal");
-                        }}
-                      >
-                        <Bold className="w-3 h-3" />
-                      </Button>
-                      <Button 
-                        variant={isItalic ? "default" : "outline"} 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          const newItalic = !isItalic;
-                          setIsItalic(newItalic);
-                          updateTextProperty("fontStyle", newItalic ? "italic" : "normal");
-                        }}
-                      >
-                        <Italic className="w-3 h-3" />
-                      </Button>
-                      <Button 
-                        variant={isUnderline ? "default" : "outline"} 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          const newUnderline = !isUnderline;
-                          setIsUnderline(newUnderline);
-                          updateTextProperty("underline", newUnderline);
-                        }}
-                      >
-                        <Underline className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Text Alignment */}
-                  <div>
-                    <Label className="text-xs">Alignment</Label>
-                    <div className="flex gap-1 mt-2">
-                      <Button 
-                        variant={textAlign === "left" ? "default" : "outline"} 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          setTextAlign("left");
-                          updateTextProperty("textAlign", "left");
-                        }}
-                      >
-                        <AlignLeft className="w-3 h-3" />
-                      </Button>
-                      <Button 
-                        variant={textAlign === "center" ? "default" : "outline"} 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          setTextAlign("center");
-                          updateTextProperty("textAlign", "center");
-                        }}
-                      >
-                        <AlignCenter className="w-3 h-3" />
-                      </Button>
-                      <Button 
-                        variant={textAlign === "right" ? "default" : "outline"} 
-                        size="sm" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => {
-                          setTextAlign("right");
-                          updateTextProperty("textAlign", "right");
-                        }}
-                      >
-                        <AlignRight className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Element Actions */}
-                  <div className="pt-2 border-t border-border">
-                    <Label className="text-xs">Actions</Label>
-                    <div className="flex gap-2 mt-2">
-                      <Button variant="outline" size="sm" onClick={handleDuplicateSelected}>
-                        <Copy className="w-3 h-3 mr-1" />
-                        Copy
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleRotateSelected}>
-                        <RotateCw className="w-3 h-3 mr-1" />
-                        Rotate
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleCenterSelected}>
-                        <Move className="w-3 h-3 mr-1" />
-                        Center
-                      </Button>
-                      <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
-                        <Trash2 className="w-3 h-3 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Image Properties - Only show when image is selected */}
-            {selectedObject?.type === "image" && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4" />
-                    Image Properties
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Element Actions */}
-                  <div>
-                    <Label className="text-xs">Actions</Label>
-                    <div className="flex gap-2 mt-2">
-                      <Button variant="outline" size="sm" onClick={handleDuplicateSelected}>
-                        <Copy className="w-3 h-3 mr-1" />
-                        Copy
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleRotateSelected}>
-                        <RotateCw className="w-3 h-3 mr-1" />
-                        Rotate
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleCenterSelected}>
-                        <Move className="w-3 h-3 mr-1" />
-                        Center
-                      </Button>
-                      <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
-                        <Trash2 className="w-3 h-3 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Color Swatches */}
+          {/* Add Text Tool */}
+          {activeTool === "text" && (
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Palette className="w-4 h-4" />
-                  Color Palette
+                  <Type className="w-4 h-4" /> Add Text
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-8 gap-2">
-                  {Array.from({ length: 32 }, (_, i) => (
-                    <button
-                      key={i}
-                      className="w-6 h-6 rounded border border-border hover:scale-110 transition-transform"
-                      style={{ 
-                        backgroundColor: `hsl(${i * 11.25}, ${i % 2 === 0 ? 70 : 50}%, ${50 + (i % 3) * 20}%)`
+              <CardContent className="space-y-4">
+                {/* Text Content */}
+                <div>
+                  <Label className="text-xs">Text</Label>
+                  <Input
+                    value={textContent}
+                    onChange={e => setTextContent(e.target.value)}
+                    placeholder="Enter text…"
+                    className="mt-1"
+                  />
+                </div>
+                {/* Font Family */}
+                <div>
+                  <Label className="text-xs">Font</Label>
+                  <Select
+                    value={fontFamily}
+                    onValueChange={val => setFontFamily(val)}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fonts.map(f => (
+                        <SelectItem key={f} value={f}>{f}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {/* Size */}
+                <div>
+                  <Label className="text-xs">Size: {fontSize}px</Label>
+                  <Slider
+                    value={[fontSize]}
+                    onValueChange={([size]) => setFontSize(size)}
+                    min={8} max={120}
+                  />
+                </div>
+                {/* Color */}
+                <div>
+                  <Label className="text-xs">Color</Label>
+                  <Input
+                    type="color"
+                    value={textColor}
+                    onChange={e => setTextColor(e.target.value)}
+                    className="w-12 h-8 p-0 border-0"
+                  />
+                </div>
+                {/* Style */}
+                <div>
+                  <Label className="text-xs mb-1">Style</Label>
+                  <div className="flex gap-1">
+                    <Button variant={isBold ? 'default' : 'outline'} size="sm" onClick={() => setIsBold(!isBold)}><Bold className="w-3 h-3"/></Button>
+                    <Button variant={isItalic ? 'default' : 'outline'} size="sm" onClick={() => setIsItalic(!isItalic)}><Italic className="w-3 h-3"/></Button>
+                    <Button variant={isUnderline ? 'default' : 'outline'} size="sm" onClick={() => setIsUnderline(!isUnderline)}><Underline className="w-3 h-3"/></Button>
+                  </div>
+                </div>
+                {/* Align */}
+                <div>
+                  <Label className="text-xs mb-1">Align</Label>
+                  <div className="flex gap-1">
+                    <Button variant={textAlign==='left'?'default':'outline'} size="sm" onClick={()=>setTextAlign('left')}><AlignLeft className="w-3 h-3"/></Button>
+                    <Button variant={textAlign==='center'?'default':'outline'} size="sm" onClick={()=>setTextAlign('center')}><AlignCenter className="w-3 h-3"/></Button>
+                    <Button variant={textAlign==='right'?'default':'outline'} size="sm" onClick={()=>setTextAlign('right')}><AlignRight className="w-3 h-3"/></Button>
+                  </div>
+                </div>
+                {/* Scale */}
+                <div>
+                  <Label className="text-xs">Scale: {scalePercent}%</Label>
+                  <Slider
+                    value={[scalePercent]}
+                    onValueChange={([v]) => setScalePercent(v)}
+                    onValueCommit={([v]) => {
+                      updateTextProperty('scaleX', v/100);
+                      updateTextProperty('scaleY', v/100);
+                    }}
+                    min={50} max={500} step={10}
+                  />
+                </div>
+                {/* Rotation */}
+                <div>
+                  <Label className="text-xs">Rotation: {rotation}°</Label>
+                  <Slider
+                    value={[rotation]}
+                    onValueChange={([deg]) => setRotation(deg)}
+                    onValueCommit={([deg]) => updateTextProperty('rotation', deg)}
+                    min={0} max={360} step={1}
+                  />
+                </div>
+                <Button className="w-full mt-2" onClick={handleAddText}>Add Text</Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Text Properties for Selected Object */}
+          {(selectedObject?.type === 'textbox' || selectedObject?.type === 'text') && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Type className="w-4 h-4" /> Text Properties
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Text Content */}
+                <div>
+                  <Label className="text-xs">Text</Label>
+                  <Input
+                    value={textContent}
+                    onChange={e => {
+                      setTextContent(e.target.value);
+                      updateTextProperty('text', e.target.value);
+                    }}
+                    placeholder="Enter text…"
+                    className="mt-1"
+                  />
+                </div>
+                
+                {/* Font Family */}
+                <div>
+                  <Label className="text-xs">Font</Label>
+                  <Select
+                    value={fontFamily}
+                    onValueChange={val => {
+                      setFontFamily(val);
+                      updateTextProperty('fontFamily', val);
+                    }}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fonts.map(f => (
+                        <SelectItem key={f} value={f}>{f}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Font Size */}
+                <div>
+                  <Label className="text-xs">Size: {fontSize}px</Label>
+                  <Slider
+                    value={[fontSize]}
+                    onValueChange={([size]) => setFontSize(size)}
+                    onValueCommit={([size]) => updateTextProperty('fontSize', size)}
+                    min={8} max={120}
+                  />
+                </div>
+
+                {/* Color */}
+                <div>
+                  <Label className="text-xs">Color</Label>
+                  <Input
+                    type="color"
+                    value={textColor}
+                    onChange={e => {
+                      setTextColor(e.target.value);
+                      updateTextProperty('fill', e.target.value);
+                    }}
+                    className="w-12 h-8 p-0 border-0"
+                  />
+                </div>
+
+                {/* Style */}
+                <div>
+                  <Label className="text-xs mb-1">Style</Label>
+                  <div className="flex gap-1">
+                    <Button 
+                      variant={isBold ? 'default' : 'outline'} 
+                      size="sm" 
+                      onClick={() => {
+                        setIsBold(!isBold);
+                        updateTextProperty('fontWeight', !isBold ? 'bold' : 'normal');
                       }}
-                    />
-                  ))}
+                    >
+                      <Bold className="w-3 h-3"/>
+                    </Button>
+                    <Button 
+                      variant={isItalic ? 'default' : 'outline'} 
+                      size="sm" 
+                      onClick={() => {
+                        setIsItalic(!isItalic);
+                        updateTextProperty('fontStyle', !isItalic ? 'italic' : 'normal');
+                      }}
+                    >
+                      <Italic className="w-3 h-3"/>
+                    </Button>
+                    <Button 
+                      variant={isUnderline ? 'default' : 'outline'} 
+                      size="sm" 
+                      onClick={() => {
+                        setIsUnderline(!isUnderline);
+                        updateTextProperty('underline', !isUnderline);
+                      }}
+                    >
+                      <Underline className="w-3 h-3"/>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Align */}
+                <div>
+                  <Label className="text-xs mb-1">Align</Label>
+                  <div className="flex gap-1">
+                    <Button 
+                      variant={textAlign==='left'?'default':'outline'} 
+                      size="sm" 
+                      onClick={() => {
+                        setTextAlign('left');
+                        updateTextProperty('textAlign', 'left');
+                      }}
+                    >
+                      <AlignLeft className="w-3 h-3"/>
+                    </Button>
+                    <Button 
+                      variant={textAlign==='center'?'default':'outline'} 
+                      size="sm" 
+                      onClick={() => {
+                        setTextAlign('center');
+                        updateTextProperty('textAlign', 'center');
+                      }}
+                    >
+                      <AlignCenter className="w-3 h-3"/>
+                    </Button>
+                    <Button 
+                      variant={textAlign==='right'?'default':'outline'} 
+                      size="sm" 
+                      onClick={() => {
+                        setTextAlign('right');
+                        updateTextProperty('textAlign', 'right');
+                      }}
+                    >
+                      <AlignRight className="w-3 h-3"/>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Scale */}
+                <div>
+                  <Label className="text-xs">Scale: {scalePercent}%</Label>
+                  <Slider
+                    value={[scalePercent]}
+                    onValueChange={([v]) => setScalePercent(v)}
+                    onValueCommit={([v]) => {
+                      updateTextProperty('scaleX', v/100);
+                      updateTextProperty('scaleY', v/100);
+                    }}
+                    min={50} max={500} step={10}
+                  />
+                </div>
+
+                {/* Rotation */}
+                <div>
+                  <Label className="text-xs">Rotation: {rotation}°</Label>
+                  <Slider
+                    value={[rotation]}
+                    onValueChange={([deg]) => setRotation(deg)}
+                    onValueCommit={([deg]) => updateTextProperty('rotation', deg)}
+                    min={0} max={360} step={1}
+                  />
+                </div>
+
+                {/* Actions */}
+                <div>
+                  <Label className="text-xs">Actions</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <Button variant="outline" size="sm" onClick={handleDuplicate}>
+                      <Copy className="w-3 h-3 mr-1"/>Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleRotate}>
+                      <RotateCw className="w-3 h-3 mr-1"/>Rotate
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleCenter}>
+                      <Move className="w-3 h-3 mr-1"/>Center
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={handleDelete}>
+                      <Trash2 className="w-3 h-3 mr-1"/>Delete
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleDeselect}>
+                      Deselect
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          )}
 
-            {/* AI Image Generator */}
-            {activeTool === "ai" && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Wand2 className="w-4 h-4" />
-                    AI Image Generator
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* API Key Setup */}
-                  {!openAIService.getApiKey() && (
-                    <div className="p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Key className="w-4 h-4 text-yellow-600" />
-                        <span className="text-sm font-medium text-yellow-800">API Key Required</span>
-                      </div>
-                      <p className="text-xs text-yellow-700 mb-3">
-                        To generate AI images, you need an OpenAI API key. Get yours at{" "}
-                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">
-                          platform.openai.com
-                        </a>
-                      </p>
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                          <Input
-                            type={showApiKey ? "text" : "password"}
-                            placeholder="sk-..."
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                            className="text-xs pr-8"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-2"
-                            onClick={() => setShowApiKey(!showApiKey)}
-                          >
-                            {showApiKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                          </Button>
-                        </div>
-                        <Button onClick={handleSetApiKey} size="sm">
-                          Save
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Prompt Input */}
-                  <div>
-                    <Label className="text-xs">Describe what you want to create</Label>
-                    <textarea
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      placeholder="e.g., a retro robot on a skateboard, vibrant colors, cartoon style"
-                      className="w-full mt-1 p-2 border border-border rounded text-sm resize-none"
-                      rows={3}
-                      disabled={isGenerating}
-                    />
-                  </div>
-
-                  {/* Generate Button */}
-                  <Button 
-                    onClick={handleGenerateAI} 
-                    disabled={!apiKey || !aiPrompt.trim() || isGenerating}
-                    className="w-full"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Wand2 className="w-4 h-4 mr-2" />
-                        Generate AI Image
-                      </>
-                    )}
-                  </Button>
-
-                  {/* Recent Generations */}
-                  {lastGeneratedImages.length > 0 && (
-                    <div>
-                      <Label className="text-xs">Recent Generations</Label>
-                      <div className="grid grid-cols-2 gap-2 mt-2">
-                        {lastGeneratedImages.map((imageUrl, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleUseGeneratedImage(imageUrl)}
-                            className="relative aspect-square rounded border border-border hover:border-primary transition-colors overflow-hidden group"
-                          >
-                            <img
-                              src={imageUrl}
-                              alt={`Generated ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <span className="text-white text-xs">Use Image</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <p className="text-xs text-muted-foreground">
-                    Powered by DALL-E 3. Images are generated in 1024x1024 resolution.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Image Upload */}
-            {activeTool === "upload" && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4" />
-                    Upload Image
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,application/pdf"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        // Check file size (max 20MB)
-                        if (file.size > 20 * 1024 * 1024) {
-                          toast.error("File size must be less than 20MB");
-                          return;
-                        }
-                        
-                        // Check image resolution
-                        const img = new Image();
-                        img.onload = () => {
-                          const dpi = 150; // Target DPI
-                          const maxPrintSize = 10; // 10 inches
-                          const minPixels = dpi * maxPrintSize;
-                          
-                          if (img.width < minPixels || img.height < minPixels) {
-                            toast.error(`Warning: Low resolution image. For best print quality, use images at least ${minPixels}x${minPixels} pixels.`, {
-                              duration: 5000
-                            });
-                          }
-                        };
-                        img.src = URL.createObjectURL(file);
-                        
-                        onImageUpload(file);
-                      }
-                    }}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label htmlFor="image-upload">
-                    <Button asChild className="w-full h-20 border-2 border-dashed border-border hover:border-primary/50 transition-colors">
-                      <div className="flex flex-col items-center gap-2 cursor-pointer">
-                        <ImageIcon className="w-6 h-6 text-muted-foreground" />
-                        <span className="text-sm">Click to Upload</span>
-                        <span className="text-xs text-muted-foreground">or drag & drop</span>
-                      </div>
-                    </Button>
-                  </label>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Supports PNG, JPEG, SVG, PDF (max 20MB)<br/>
-                    For best print quality: 1500x1500px minimum
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="color" className="space-y-4 mt-4">
+          {/* Image Upload */}
+          {activeTool === "upload" && (
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <Palette className="w-4 h-4" />
-                  Quick Colors
+                  <ImageIcon className="w-4 h-4" /> Upload Image
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-6 gap-2">
-                  {["#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", 
-                    "#FF00FF", "#00FFFF", "#FFA500", "#800080", "#008000", "#FFC0CB",
-                    "#A52A2A", "#808080", "#000080", "#800000", "#008080", "#808000"].map((color) => (
+                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                  <ImageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Drag & drop or click to upload
+                  </p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label htmlFor="file-upload">
+                    <Button variant="outline" size="sm" asChild>
+                      <span>Choose File</span>
+                    </Button>
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    PNG, JPEG, SVG up to 10MB
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Image Properties for Selected Object */}
+          {selectedObject?.type === 'image' && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4" /> Image Properties
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-xs">Actions</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <Button variant="outline" size="sm" onClick={handleDuplicate}>
+                      <Copy className="w-3 h-3 mr-1"/>Copy
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleRotate}>
+                      <RotateCw className="w-3 h-3 mr-1"/>Rotate
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleCenter}>
+                      <Move className="w-3 h-3 mr-1"/>Center
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={handleDelete}>
+                      <Trash2 className="w-3 h-3 mr-1"/>Delete
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleDeselect}>
+                      Deselect
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="color" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Palette className="w-4 h-4" /> T-Shirt Colors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-4 gap-2">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    className="w-12 h-12 rounded border-2 border-border hover:scale-110 transition-transform"
+                    style={{ backgroundColor: color }}
+                    onClick={() => onProductColorChange(color)}
+                    title={color}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {(selectedObject?.type === 'textbox' || selectedObject?.type === 'text') && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Type className="w-4 h-4" /> Text Colors
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-4 gap-2">
+                  {colors.map((color) => (
                     <button
                       key={color}
                       className="w-8 h-8 rounded border-2 border-border hover:scale-110 transition-transform"
                       style={{ backgroundColor: color }}
                       onClick={() => {
-                        if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
-                          setTextColor(color);
-                          updateTextProperty("fill", color);
-                        }
+                        setTextColor(color);
+                        updateTextProperty("fill", color);
                       }}
+                      title={color}
                     />
                   ))}
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          )}
+        </TabsContent>
 
-          <TabsContent value="ai" className="space-y-4 mt-4">
-            {/* AI Generator content is shown above when activeTool === "ai" */}
-            {activeTool !== "ai" && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Wand2 className="w-4 h-4" />
-                    AI Image Generator
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Select "AI Image Generator" from the left toolbar to create custom artwork with AI.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="ai" className="space-y-4 mt-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Key className="w-4 h-4" /> API Configuration
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="relative">
+                <Input
+                  type={showApiKey ? "text" : "password"}
+                  placeholder="Enter OpenAI API key..."
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="pr-10"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                >
+                  {showApiKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                </Button>
+              </div>
+              <Button onClick={handleSetApiKey} className="w-full" size="sm">
+                Save API Key
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Wand2 className="w-4 h-4" /> AI Image Generator
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div>
+                <Label className="text-xs">Describe your image</Label>
+                <Input
+                  placeholder="e.g., retro robot on skateboard"
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && !isGenerating && handleGenerateAI()}
+                  className="mt-1"
+                />
+              </div>
+              <Button
+                onClick={handleGenerateAI}
+                disabled={isGenerating || !aiPrompt.trim()}
+                className="w-full"
+                size="sm"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-3 h-3 mr-2" />
+                    Generate Image
+                  </>
+                )}
+              </Button>
+
+              {recentImages.length > 0 && (
+                <div>
+                  <Label className="text-xs">Recent Generated Images</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {recentImages.map((url, index) => (
+                      <img
+                        key={index}
+                        src={url}
+                        alt={`Generated ${index + 1}`}
+                        className="w-full h-20 object-cover rounded border cursor-pointer hover:opacity-80"
+                        onClick={() => {
+                          if ((window as any).designCanvas?.addImageFromUrl) {
+                            (window as any).designCanvas.addImageFromUrl(url);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

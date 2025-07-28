@@ -45,6 +45,10 @@ export const TShirtDesigner = () => {
     console.log("Text properties changed:", properties);
   };
 
+  const handleProductColorChange = (color: string) => {
+    setSelectedColor(color);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Top Controls Bar */}
@@ -81,6 +85,7 @@ export const TShirtDesigner = () => {
           selectedObject={selectedObject}
           onTextPropertiesChange={handleTextPropertiesChange}
           onImageUpload={handleImageUpload}
+          onProductColorChange={handleProductColorChange}
         />
       </div>
     </div>
