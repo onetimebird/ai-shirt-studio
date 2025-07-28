@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Canvas as FabricCanvas, Text as FabricText, Textbox as FabricTextbox, FabricImage, Control, controlsUtils } from "fabric";
+import { Canvas as FabricCanvas, Text as FabricText, Textbox as FabricTextbox, FabricImage } from "fabric";
+import * as fabric from "fabric";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
@@ -334,7 +335,7 @@ export const DesignCanvas = ({
       
       // Helper to create a control with preloaded SVG icon
       const makeControl = (iconImg: HTMLImageElement, actionHandler: any, position: { x: number; y: number }) => {
-        return new Control({
+        return new fabric.Control({
           x: position.x,
           y: position.y,
           offsetX: 0,
@@ -360,9 +361,7 @@ export const DesignCanvas = ({
             // Draw the loaded SVG icon
             if (iconImg && iconImg.complete) {
               const iconSize = size * 0.6;
-              ctx.filter = 'brightness(0) saturate(100%)'; // Make icon black
               ctx.drawImage(iconImg, -iconSize/2, -iconSize/2, iconSize, iconSize);
-              ctx.filter = 'none';
             }
             
             ctx.restore();
@@ -411,13 +410,13 @@ export const DesignCanvas = ({
         tl: makeControl(deleteImg, deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
         mt: makeControl(layerImg, layerHandler, { x: 0, y: -0.5 }),           // top-center: layer
         tr: makeControl(cloneImg, cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
-        mr: makeControl(stretchImg, controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
-        br: makeControl(scaleImg, controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
-        bl: makeControl(rotateImg, controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
-        mtr: makeControl(rotateImg, controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
+        mr: makeControl(stretchImg, fabric.controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
+        br: makeControl(scaleImg, fabric.controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
+        bl: makeControl(rotateImg, fabric.controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
+        mtr: makeControl(rotateImg, fabric.controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
         // Keep some default controls
-        ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
-        mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+        ml: new fabric.Control({ x: -0.5, y: 0, actionHandler: fabric.controlsUtils.scalingXOrSkewingY }),
+        mb: new fabric.Control({ x: 0, y: 0.5, actionHandler: fabric.controlsUtils.scalingYOrSkewingX }),
       };
 
       // Force re-render of any existing textboxes
