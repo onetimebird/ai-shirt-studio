@@ -488,35 +488,7 @@ export const DesignCanvas = ({
               transformOrigin: 'center'
             }}
           >
-            {/* T-shirt Background - Only apply color to the shirt */}
-            <div className="absolute inset-8 flex items-center justify-center rounded-lg">
-              {/* T-shirt mockup with color overlay */}
-              <div 
-                className="relative w-full h-full flex items-center justify-center"
-                style={{
-                  width: "500px",
-                  height: "600px",
-                }}
-              >
-                {/* Colored background for t-shirt */}
-                <div 
-                  className="absolute inset-0 transition-colors duration-300"
-                  style={{
-                    backgroundColor: currentColor?.value || "#ffffff",
-                  }}
-                />
-                {/* T-shirt template image */}
-                <img
-                  src={tshirtImage}
-                  alt={`T-shirt ${currentSide}`}
-                  className="relative w-full h-full object-contain z-10"
-                  style={{
-                    filter: currentColor?.name === "White" ? "none" : `drop-shadow(0 0 0 ${currentColor?.value})`,
-                    mixBlendMode: "overlay",
-                  }}
-                />
-              </div>
-            </div>
+            {/* T-shirt Background - REMOVED to prevent click interference */}
 
             {/* Design Area */}
             <div className="relative flex items-center justify-center">
@@ -557,17 +529,7 @@ export const DesignCanvas = ({
               </div>
             </div>
 
-            {/* Tool Cursor Indicator */}
-            {activeTool !== "products" && (
-              <div className="absolute top-4 left-4">
-                <Badge variant="outline" className="flex items-center gap-2">
-                  <MousePointer className="w-3 h-3" />
-                  {activeTool === "text" && "Click to add text"}
-                  {activeTool === "upload" && "Upload an image"}
-                  {activeTool === "clipart" && "Select clipart"}
-                </Badge>
-              </div>
-            )}
+            {/* Tool Cursor Indicator - REMOVED */}
           </div>
         </div>
       </div>
