@@ -306,8 +306,8 @@ export const DesignCanvas = ({
 
   // Setup custom Fabric.js controls for text objects
   const setupCustomControls = (canvas: FabricCanvas) => {
-    // Helper to create SVG icon from Lucide icon
-    const createIconSVG = (iconName: string, size: number = 20) => {
+    // Helper to create SVG icon as image element
+    const createIconImage = (iconName: string, size: number = 20) => {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttribute('width', size.toString());
       svg.setAttribute('height', size.toString());
@@ -315,6 +315,8 @@ export const DesignCanvas = ({
       svg.setAttribute('fill', 'none');
       svg.setAttribute('stroke', '#fff');
       svg.setAttribute('stroke-width', '2');
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
       
       switch(iconName) {
         case 'trash':
@@ -335,11 +337,21 @@ export const DesignCanvas = ({
         default:
           svg.innerHTML = '<circle cx="12" cy="12" r="10"/>';
       }
-      return svg;
+      
+      // Convert SVG to data URL
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const svgDataUrl = `data:image/svg+xml;base64,${btoa(svgData)}`;
+      
+      // Create and return image element
+      const img = new Image();
+      img.src = svgDataUrl;
+      return img;
     };
 
     // Helper to create a control with custom icon
     const makeControl = (iconName: string, actionHandler: any, position: { x: number; y: number }) => {
+      const iconImg = createIconImage(iconName, 20);
+      
       return new Control({
         x: position.x,
         y: position.y,
@@ -350,12 +362,11 @@ export const DesignCanvas = ({
         render: function(ctx, left, top, styleOverride, fabricObject) {
           const size = Math.max(24, fabricObject.getScaledHeight() * 0.1);
           
-          // Draw background circle
           ctx.save();
           ctx.translate(left, top);
           ctx.rotate((fabricObject.angle * Math.PI) / 180);
           
-          // Background circle
+          // Draw background circle
           ctx.beginPath();
           ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
           ctx.fillStyle = '#4F46E5';
@@ -364,54 +375,10 @@ export const DesignCanvas = ({
           ctx.lineWidth = 2;
           ctx.stroke();
           
-          // Icon (simplified shapes since we can't easily render SVG to canvas)
-          ctx.strokeStyle = '#fff';
-          ctx.fillStyle = '#fff';
-          ctx.lineWidth = 2;
-          const iconSize = size * 0.4;
-          
-          switch(iconName) {
-            case 'trash':
-              // Trash can
-              ctx.beginPath();
-              ctx.rect(-iconSize/3, -iconSize/2, iconSize*2/3, iconSize);
-              ctx.stroke();
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/4, -iconSize/2);
-              ctx.lineTo(iconSize/4, -iconSize/2);
-              ctx.stroke();
-              break;
-            case 'copy':
-              // Copy icon
-              ctx.beginPath();
-              ctx.rect(-iconSize/3, -iconSize/3, iconSize*2/3, iconSize*2/3);
-              ctx.stroke();
-              ctx.beginPath();
-              ctx.rect(-iconSize/6, -iconSize/6, iconSize*2/3, iconSize*2/3);
-              ctx.stroke();
-              break;
-            case 'rotate':
-              // Rotate arrow
-              ctx.beginPath();
-              ctx.arc(0, 0, iconSize/3, 0, Math.PI * 1.5);
-              ctx.stroke();
-              ctx.beginPath();
-              ctx.moveTo(iconSize/4, -iconSize/3);
-              ctx.lineTo(iconSize/3, -iconSize/4);
-              ctx.lineTo(iconSize/3, -iconSize/2);
-              ctx.fill();
-              break;
-            case 'scale':
-              // Scale arrows
-              ctx.beginPath();
-              ctx.moveTo(-iconSize/3, -iconSize/3);
-              ctx.lineTo(iconSize/3, iconSize/3);
-              ctx.stroke();
-              ctx.beginPath();
-              ctx.moveTo(iconSize/3, -iconSize/3);
-              ctx.lineTo(-iconSize/3, iconSize/3);
-              ctx.stroke();
-              break;
+          // Draw the icon image
+          const iconSize = size * 0.6;
+          if (iconImg.complete) {
+            ctx.drawImage(iconImg, -iconSize/2, -iconSize/2, iconSize, iconSize);
           }
           
           ctx.restore();
