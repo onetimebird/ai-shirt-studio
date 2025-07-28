@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
@@ -128,12 +129,13 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               Use our AI image generator to create stunning logos and designs. Short or long prompts, just try it.
             </p>
             
-            <Input
+            <Textarea
               placeholder="Describe what you want to create"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full"
+              className="w-full min-h-[80px] resize-none"
+              rows={3}
             />
             
             <div className="flex justify-between items-center text-sm py-2">
