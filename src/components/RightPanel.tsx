@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { openAIService } from "@/services/openai";
 import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
+import { AIArtPanel } from "@/components/AIArtPanel";
 import {
   Type,
   Palette,
@@ -716,94 +717,11 @@ export const RightPanel = ({
         </TabsContent>
 
         <TabsContent value="ai" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Key className="w-4 h-4" /> API Configuration
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="relative">
-                <Input
-                  type={showApiKey ? "text" : "password"}
-                  placeholder="Enter OpenAI API key..."
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  className="pr-10"
-                />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                >
-                  {showApiKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                </Button>
-              </div>
-              <Button onClick={handleSetApiKey} className="w-full" size="sm">
-                Save API Key
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <Wand2 className="w-4 h-4" /> AI Image Generator
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div>
-                <Label className="text-xs">Describe your image</Label>
-                <Input
-                  placeholder="e.g., retro robot on skateboard"
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && !isGenerating && handleGenerateAI()}
-                  className="mt-1"
-                />
-              </div>
-              <Button
-                onClick={handleGenerateAI}
-                disabled={isGenerating || !aiPrompt.trim()}
-                className="w-full"
-                size="sm"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Wand2 className="w-3 h-3 mr-2" />
-                    Generate Image
-                  </>
-                )}
-              </Button>
-
-              {recentImages.length > 0 && (
-                <div>
-                  <Label className="text-xs">Recent Generated Images</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {recentImages.map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Generated ${index + 1}`}
-                        className="w-full h-20 object-cover rounded border cursor-pointer hover:opacity-80"
-                        onClick={() => {
-                          if ((window as any).designCanvas?.addImageFromUrl) {
-                            (window as any).designCanvas.addImageFromUrl(url);
-                          }
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <AIArtPanel onImageGenerated={(url) => {
+            if ((window as any).designCanvas?.addImageFromUrl) {
+              (window as any).designCanvas.addImageFromUrl(url);
+            }
+          }} />
         </TabsContent>
       </Tabs>
     </div>
