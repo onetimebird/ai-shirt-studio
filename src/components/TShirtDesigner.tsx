@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import SmokeTest from "@/components/SmokeTest"; // Uncomment to test
+import SmokeTest from "@/components/SmokeTest"; // Testing first
 import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
@@ -52,8 +52,7 @@ export const TShirtDesigner = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background">
-      {/* Smoke Test - Uncomment to test SVG loading */}
-      {/* <SmokeTest /> */}
+      <SmokeTest />
       
       {/* Top Controls Bar */}
       <TopControls
