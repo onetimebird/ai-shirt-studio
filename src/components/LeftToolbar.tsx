@@ -18,12 +18,10 @@ interface LeftToolbarProps {
 }
 
 const tools = [
-  { id: "products", label: "Products", icon: Shirt },
-  { id: "upload", label: "Upload Art", icon: Upload },
+  { id: "products", label: "Choose Product", icon: Shirt },
+  { id: "upload", label: "Upload Image", icon: Upload },
   { id: "text", label: "Add Text", icon: Type },
-  { id: "clipart", label: "Clipart Library", icon: ImageIcon },
-  { id: "names", label: "Names & Numbers", icon: Hash },
-  { id: "wizard", label: "Design Wizard", icon: Wand2 },
+  { id: "color", label: "Change Color", icon: Palette },
 ];
 
 export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {

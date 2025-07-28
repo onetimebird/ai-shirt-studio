@@ -18,13 +18,14 @@ export const TShirtDesigner = () => {
     
     // Handle tool-specific actions
     if (tool === "text") {
-      (window as any).designCanvas?.addText();
-    } else if (tool === "wizard") {
-      toast.info("Design Wizard will help you create amazing designs!");
-    } else if (tool === "names") {
-      toast.info("Names & Numbers tool for team customization");
-    } else if (tool === "clipart") {
-      toast.info("Browse our clipart library for graphics");
+      // Text tool is now handled in the right panel
+      toast.info("Use the right panel to add and customize text");
+    } else if (tool === "upload") {
+      toast.info("Use the right panel to upload images");
+    } else if (tool === "color") {
+      toast.info("Use the right panel to pick colors for your text");
+    } else if (tool === "products") {
+      toast.info("Change products using the top controls");
     }
   };
 
