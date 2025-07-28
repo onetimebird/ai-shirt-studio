@@ -13,6 +13,12 @@ import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
 import tshirtBackTemplate from "@/assets/tshirt-back-template.png";
+import deleteIcon from "@/assets/icons/delete.svg";
+import cloneIcon from "@/assets/icons/clone.svg";
+import rotateIcon from "@/assets/icons/rotate.svg";
+import scaleIcon from "@/assets/icons/scale.svg";
+import stretchIcon from "@/assets/icons/stretch.svg";
+import layerIcon from "@/assets/icons/layer.svg";
 
 
 interface DesignCanvasProps {
@@ -306,52 +312,35 @@ export const DesignCanvas = ({
 
   // Setup custom Fabric.js controls for text objects
   const setupCustomControls = (canvas: FabricCanvas) => {
-    // Helper to create SVG icon as image element
-    const createIconImage = (iconName: string, size: number = 20) => {
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('width', size.toString());
-      svg.setAttribute('height', size.toString());
-      svg.setAttribute('viewBox', '0 0 24 24');
-      svg.setAttribute('fill', 'none');
-      svg.setAttribute('stroke', '#fff');
-      svg.setAttribute('stroke-width', '2');
-      svg.setAttribute('stroke-linecap', 'round');
-      svg.setAttribute('stroke-linejoin', 'round');
-      
-      switch(iconName) {
-        case 'trash':
-          svg.innerHTML = '<path d="m3 6 3 12c0 .6.4 1 1 1h8c.6 0 1-.4 1-1l3-12"/><path d="M8 6V4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
-          break;
-        case 'copy':
-          svg.innerHTML = '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
-          break;
-        case 'rotate':
-          svg.innerHTML = '<path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>';
-          break;
-        case 'move':
-          svg.innerHTML = '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/>';
-          break;
-        case 'scale':
-          svg.innerHTML = '<path d="M21 3 9 15"/><path d="M12 3h9v9"/><path d="M3 21 15 9"/><path d="M3 12v9h9"/>';
-          break;
-        default:
-          svg.innerHTML = '<circle cx="12" cy="12" r="10"/>';
-      }
-      
-      // Convert SVG to data URL
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const svgDataUrl = `data:image/svg+xml;base64,${btoa(svgData)}`;
-      
-      // Create and return image element
-      const img = new Image();
-      img.src = svgDataUrl;
-      return img;
+    // Helper to load SVG icon as image
+    const loadIconImage = (iconPath: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = iconPath;
+      });
     };
 
-    // Helper to create a control with custom icon
+    // Cache for loaded icons
+    const iconCache: { [key: string]: HTMLImageElement } = {};
+
+    // Preload all icons
+    const preloadIcons = async () => {
+      try {
+        iconCache.delete = await loadIconImage(deleteIcon);
+        iconCache.clone = await loadIconImage(cloneIcon);
+        iconCache.rotate = await loadIconImage(rotateIcon);
+        iconCache.scale = await loadIconImage(scaleIcon);
+        iconCache.stretch = await loadIconImage(stretchIcon);
+        iconCache.layer = await loadIconImage(layerIcon);
+      } catch (error) {
+        console.warn('Failed to load some icons:', error);
+      }
+    };
+
+    // Helper to create a control with custom SVG icon
     const makeControl = (iconName: string, actionHandler: any, position: { x: number; y: number }) => {
-      const iconImg = createIconImage(iconName, 20);
-      
       return new Control({
         x: position.x,
         y: position.y,
@@ -360,7 +349,7 @@ export const DesignCanvas = ({
         cursorStyle: 'pointer',
         actionHandler,
         render: function(ctx, left, top, styleOverride, fabricObject) {
-          const size = Math.max(24, fabricObject.getScaledHeight() * 0.1);
+          const size = Math.max(28, fabricObject.getScaledHeight() * 0.12);
           
           ctx.save();
           ctx.translate(left, top);
@@ -375,10 +364,14 @@ export const DesignCanvas = ({
           ctx.lineWidth = 2;
           ctx.stroke();
           
-          // Draw the icon image
-          const iconSize = size * 0.6;
-          if (iconImg.complete) {
-            ctx.drawImage(iconImg, -iconSize/2, -iconSize/2, iconSize, iconSize);
+          // Draw the SVG icon
+          const icon = iconCache[iconName];
+          if (icon && icon.complete) {
+            const iconSize = size * 0.5;
+            // Apply white tint to the icon
+            ctx.filter = 'brightness(0) invert(1)';
+            ctx.drawImage(icon, -iconSize/2, -iconSize/2, iconSize, iconSize);
+            ctx.filter = 'none';
           }
           
           ctx.restore();
@@ -415,18 +408,28 @@ export const DesignCanvas = ({
       return true;
     };
 
-    // Apply custom controls to textbox prototype
-    FabricTextbox.prototype.controls = {
-      deleteControl: makeControl('trash', deleteHandler, { x: -0.5, y: -0.5 }),
-      cloneControl: makeControl('copy', cloneHandler, { x: 0.5, y: -0.5 }),
-      rotateControl: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }),
-      scaleControl: makeControl('scale', controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }),
-      // Keep some default controls but hide others
-      ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
-      mr: new Control({ x: 0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
-      mt: new Control({ x: 0, y: -0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
-      mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+    const layerHandler = (eventData: any, transform: any) => {
+      const obj = transform.target;
+      canvas.bringObjectToFront(obj);
+      canvas.requestRenderAll();
+      return true;
     };
+
+    // Apply custom controls to textbox prototype
+    preloadIcons().then(() => {
+      FabricTextbox.prototype.controls = {
+        tl: makeControl('delete', deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
+        mt: makeControl('layer', layerHandler, { x: 0, y: -0.5 }), // top-center: layer
+        tr: makeControl('clone', cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
+        mr: makeControl('stretch', controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
+        br: makeControl('scale', controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
+        bl: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
+        mtr: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
+        // Keep some default controls but hide others
+        ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
+        mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+      };
+    });
   };
 
   // Add pointer event handlers for interactions
