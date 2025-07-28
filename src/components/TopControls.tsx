@@ -33,6 +33,14 @@ export const TopControls = ({
       <div className="flex flex-wrap items-center justify-between gap-4">
         {/* Left Controls */}
         <div className="flex flex-wrap items-center gap-4">
+          {/* Logo */}
+          <div className="flex items-center">
+            <img 
+              src="/lovable-uploads/4de74484-b5cd-4120-9c51-c1379d82290c.png" 
+              alt="CoolShirt.Ai Logo" 
+              className="h-8 w-auto object-contain"
+            />
+          </div>
           {/* Product Selector */}
           <div className="flex items-center gap-2">
             <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
