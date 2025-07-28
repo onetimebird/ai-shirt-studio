@@ -18,14 +18,21 @@ export const TShirtDesigner = () => {
     
     // Handle tool-specific actions
     if (tool === "text") {
-      // Text tool is now handled in the right panel
       toast.info("Use the right panel to add and customize text");
     } else if (tool === "upload") {
-      toast.info("Use the right panel to upload images");
+      toast.info("Use the right panel to upload images (PNG, JPEG, SVG, PDF)");
+    } else if (tool === "ai") {
+      toast.info("Use the right panel to generate custom artwork with AI");
     } else if (tool === "color") {
       toast.info("Use the right panel to pick colors for your text");
     } else if (tool === "products") {
       toast.info("Change products using the top controls");
+    } else if (tool === "reset") {
+      if ((window as any).designCanvas?.canvas) {
+        (window as any).designCanvas.canvas.clear();
+        (window as any).designCanvas.canvas.renderAll();
+        toast.success("Design reset");
+      }
     }
   };
 

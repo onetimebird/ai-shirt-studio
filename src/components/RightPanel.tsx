@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { openAIService, type GenerateImageParams } from "@/services/openai";
 import { 
   Type, 
   Palette, 
@@ -21,7 +22,12 @@ import {
   RotateCw,
   Copy,
   Trash2,
-  Move
+  Move,
+  Wand2,
+  Key,
+  Loader2,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
 interface RightPanelProps {
@@ -51,6 +57,13 @@ export const RightPanel = ({
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [textAlign, setTextAlign] = useState("left");
+  
+  // AI Generation states
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [apiKey, setApiKey] = useState(openAIService.getApiKey() || "");
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [lastGeneratedImages, setLastGeneratedImages] = useState<string[]>([]);
 
   // Update selected object properties when changed
   useEffect(() => {
@@ -103,13 +116,77 @@ export const RightPanel = ({
     }
   };
 
+  const handleSetApiKey = () => {
+    if (!apiKey.trim()) {
+      toast.error("Please enter a valid API key");
+      return;
+    }
+    
+    openAIService.setApiKey(apiKey.trim());
+    toast.success("OpenAI API key saved!");
+  };
+
+  const handleGenerateAI = async () => {
+    if (!apiKey) {
+      toast.error("Please set your OpenAI API key first");
+      return;
+    }
+
+    if (!aiPrompt.trim()) {
+      toast.error("Please enter a prompt for the AI image");
+      return;
+    }
+
+    setIsGenerating(true);
+    
+    try {
+      const result = await openAIService.generateImage({
+        prompt: aiPrompt,
+        size: "1024x1024",
+        quality: "standard",
+        style: "vivid"
+      });
+
+      // Add the generated image to canvas
+      if ((window as any).designCanvas) {
+        // Create a temporary file-like object to use existing upload logic
+        const response = await fetch(result.url);
+        const blob = await response.blob();
+        const file = new File([blob], "ai-generated.png", { type: "image/png" });
+        onImageUpload(file);
+        
+        // Track generated images
+        setLastGeneratedImages(prev => [result.url, ...prev.slice(0, 4)]);
+        toast.success("AI image added to design!");
+      }
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to generate image");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleUseGeneratedImage = async (imageUrl: string) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "ai-generated.png", { type: "image/png" });
+      onImageUpload(file);
+      toast.success("Image added to design!");
+    } catch (error) {
+      toast.error("Failed to add image to design");
+    }
+  };
+
   return (
     <div className="w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       <div className="p-4">
         <Tabs defaultValue="properties" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="properties">Properties</TabsTrigger>
             <TabsTrigger value="color">Colors</TabsTrigger>
+            <TabsTrigger value="ai">AI Generator</TabsTrigger>
           </TabsList>
 
           <TabsContent value="properties" className="space-y-4 mt-4">
@@ -393,6 +470,120 @@ export const RightPanel = ({
               </CardContent>
             </Card>
 
+            {/* AI Image Generator */}
+            {activeTool === "ai" && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Wand2 className="w-4 h-4" />
+                    AI Image Generator
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* API Key Setup */}
+                  {!openAIService.getApiKey() && (
+                    <div className="p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Key className="w-4 h-4 text-yellow-600" />
+                        <span className="text-sm font-medium text-yellow-800">API Key Required</span>
+                      </div>
+                      <p className="text-xs text-yellow-700 mb-3">
+                        To generate AI images, you need an OpenAI API key. Get yours at{" "}
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">
+                          platform.openai.com
+                        </a>
+                      </p>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <Input
+                            type={showApiKey ? "text" : "password"}
+                            placeholder="sk-..."
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            className="text-xs pr-8"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-2"
+                            onClick={() => setShowApiKey(!showApiKey)}
+                          >
+                            {showApiKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                          </Button>
+                        </div>
+                        <Button onClick={handleSetApiKey} size="sm">
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Prompt Input */}
+                  <div>
+                    <Label className="text-xs">Describe what you want to create</Label>
+                    <textarea
+                      value={aiPrompt}
+                      onChange={(e) => setAiPrompt(e.target.value)}
+                      placeholder="e.g., a retro robot on a skateboard, vibrant colors, cartoon style"
+                      className="w-full mt-1 p-2 border border-border rounded text-sm resize-none"
+                      rows={3}
+                      disabled={isGenerating}
+                    />
+                  </div>
+
+                  {/* Generate Button */}
+                  <Button 
+                    onClick={handleGenerateAI} 
+                    disabled={!apiKey || !aiPrompt.trim() || isGenerating}
+                    className="w-full"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="w-4 h-4 mr-2" />
+                        Generate AI Image
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Recent Generations */}
+                  {lastGeneratedImages.length > 0 && (
+                    <div>
+                      <Label className="text-xs">Recent Generations</Label>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        {lastGeneratedImages.map((imageUrl, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleUseGeneratedImage(imageUrl)}
+                            className="relative aspect-square rounded border border-border hover:border-primary transition-colors overflow-hidden group"
+                          >
+                            <img
+                              src={imageUrl}
+                              alt={`Generated ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="text-white text-xs">Use Image</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    Powered by DALL-E 3. Images are generated in 1024x1024 resolution.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
             {/* Image Upload */}
             {activeTool === "upload" && (
               <Card>
@@ -414,6 +605,22 @@ export const RightPanel = ({
                           toast.error("File size must be less than 20MB");
                           return;
                         }
+                        
+                        // Check image resolution
+                        const img = new Image();
+                        img.onload = () => {
+                          const dpi = 150; // Target DPI
+                          const maxPrintSize = 10; // 10 inches
+                          const minPixels = dpi * maxPrintSize;
+                          
+                          if (img.width < minPixels || img.height < minPixels) {
+                            toast.error(`Warning: Low resolution image. For best print quality, use images at least ${minPixels}x${minPixels} pixels.`, {
+                              duration: 5000
+                            });
+                          }
+                        };
+                        img.src = URL.createObjectURL(file);
+                        
                         onImageUpload(file);
                       }
                     }}
@@ -430,13 +637,12 @@ export const RightPanel = ({
                     </Button>
                   </label>
                   <p className="text-xs text-muted-foreground text-center">
-                    Supports PNG, JPEG, SVG, PDF (max 20MB)
+                    Supports PNG, JPEG, SVG, PDF (max 20MB)<br/>
+                    For best print quality: 1500x1500px minimum
                   </p>
                 </CardContent>
               </Card>
             )}
-          </TabsContent>
-
           <TabsContent value="color" className="space-y-4 mt-4">
             <Card>
               <CardHeader className="pb-3">
@@ -465,6 +671,25 @@ export const RightPanel = ({
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="ai" className="space-y-4 mt-4">
+            {/* AI Generator content is shown above when activeTool === "ai" */}
+            {activeTool !== "ai" && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Wand2 className="w-4 h-4" />
+                    AI Image Generator
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Select "AI Image Generator" from the left toolbar to create custom artwork with AI.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>

@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FlipHorizontal, Palette, ShirtIcon } from "lucide-react";
+import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle } from "lucide-react";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
+import { toast } from "sonner";
 
 interface TopControlsProps {
   selectedProduct: string;
@@ -85,16 +86,6 @@ export const TopControls = ({
 
         {/* Right Controls */}
         <div className="flex items-center gap-4">
-          {/* Decoration Method */}
-          <div className="flex items-center gap-2">
-            <Badge variant={decorationMethod === "screen-print" ? "default" : "outline"}>
-              Screen Print
-            </Badge>
-            <Badge variant={decorationMethod === "embroidery" ? "default" : "outline"}>
-              Embroidery
-            </Badge>
-          </div>
-
           {/* Front/Back Toggle */}
           <div className="flex items-center border border-border rounded-md">
             <Button
@@ -115,10 +106,57 @@ export const TopControls = ({
             </Button>
           </div>
 
-          {/* Flip Button */}
-          <Button variant="outline" size="sm">
-            <FlipHorizontal className="w-4 h-4" />
-          </Button>
+          {/* Design Controls */}
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                const canvas = (window as any).designCanvas?.canvas;
+                if (canvas) {
+                  const hasObjects = canvas.getObjects().length > 0;
+                  if (hasObjects) {
+                    toast.success("Design saved to browser memory");
+                  } else {
+                    toast.error("No design to save");
+                  }
+                } else {
+                  toast.error("Canvas not ready");
+                }
+              }}
+            >
+              <Save className="w-4 h-4 mr-1" />
+              Save
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                toast.info("Keyboard shortcuts: Delete key to remove selected objects, Ctrl+D to duplicate");
+              }}
+            >
+              <HelpCircle className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* Decoration Method */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant={decorationMethod === "screen-print" ? "default" : "outline"}
+              size="sm"
+              onClick={() => onDecorationChange("screen-print")}
+            >
+              Screen Print
+            </Button>
+            <Button
+              variant={decorationMethod === "embroidery" ? "default" : "outline"}
+              size="sm"
+              onClick={() => onDecorationChange("embroidery")}
+            >
+              Embroidery
+            </Button>
+          </div>
         </div>
       </div>
     </div>

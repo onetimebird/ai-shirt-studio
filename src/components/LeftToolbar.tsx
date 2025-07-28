@@ -5,11 +5,10 @@ import {
   Shirt, 
   Upload, 
   Type, 
-  Image as ImageIcon, 
-  Hash, 
-  Wand2,
   Palette,
-  Layers
+  Wand2,
+  RotateCcw,
+  HelpCircle
 } from "lucide-react";
 
 interface LeftToolbarProps {
@@ -18,10 +17,12 @@ interface LeftToolbarProps {
 }
 
 const tools = [
-  { id: "products", label: "Choose Product", icon: Shirt },
   { id: "upload", label: "Upload Image", icon: Upload },
   { id: "text", label: "Add Text", icon: Type },
+  { id: "ai", label: "AI Image Generator", icon: Wand2 },
+  { id: "products", label: "Change Product", icon: Shirt },
   { id: "color", label: "Change Color", icon: Palette },
+  { id: "reset", label: "Reset Design", icon: RotateCcw },
 ];
 
 export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
@@ -63,17 +64,17 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
           </div>
         </div>
 
-        {/* Layers Panel */}
+        {/* Help Section */}
         <div className="border-t border-border p-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button variant="ghost" size="sm" className="w-full justify-start h-12 lg:h-10">
-                <Layers className="w-4 h-4 lg:mr-3" />
-                <span className="hidden lg:inline">Layers</span>
+                <HelpCircle className="w-4 h-4 lg:mr-3" />
+                <span className="hidden lg:inline">Help</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="right" className="lg:hidden">
-              Layers
+              Help & Tips
             </TooltipContent>
           </Tooltip>
         </div>
