@@ -1,0 +1,95 @@
+.overlay-container {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.selection-border {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px dashed #3b82f6;
+  pointer-events: none;
+}
+
+.overlay-btn,
+.overlay-handle {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #374151;
+  transition: all 0.15s ease;
+}
+
+.overlay-btn:hover,
+.overlay-handle:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.overlay-btn:active,
+.overlay-handle:active {
+  transform: scale(0.95);
+}
+
+/* Positioning */
+.top-left {
+  top: -14px;
+  left: -14px;
+}
+
+.top-center {
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.top-right {
+  top: -14px;
+  right: -14px;
+}
+
+.mid-right {
+  top: 50%;
+  right: -14px;
+  transform: translateY(-50%);
+}
+
+.bottom-right {
+  bottom: -14px;
+  right: -14px;
+}
+
+.bottom-left {
+  bottom: -14px;
+  left: -14px;
+}
+
+/* Cursor styles for different handles */
+.top-right {
+  cursor: grab;
+}
+
+.top-right:active {
+  cursor: grabbing;
+}
+
+.mid-right {
+  cursor: ew-resize;
+}
+
+.bottom-right {
+  cursor: se-resize;
+}

@@ -13,6 +13,7 @@ import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
 import tshirtBackTemplate from "@/assets/tshirt-back-template.png";
+import { TextOverlayControls } from "./TextOverlayControls";
 
 interface DesignCanvasProps {
   selectedColor: string;
@@ -30,6 +31,7 @@ export const DesignCanvas = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [selectedObject, setSelectedObject] = useState<any>(null);
+  const [overlayBounds, setOverlayBounds] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [zoom, setZoom] = useState(1);
   const [canvasZoom, setCanvasZoom] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -51,467 +53,80 @@ export const DesignCanvas = ({
       selection: true,
     });
 
-    // Custom control icons matching the reference design
-    const deleteIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M10%2012h12m-1%200v8a1%201%200%2001-1%201h-8a1%201%200%2001-1-1v-8m2%200V9a1%201%200%20011-1h4a1%201%200%20011%201v3m-6%202v6m4-6v6'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const layerIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M12%2010v12M12%2010l4-4M12%2010l-4%204M20%2022V10M20%2022l4-4M20%2022l-4-4'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const rotateIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M8%2012a8%208%200%20018-8c3%200%205.5%201.5%207%204M24%2020a8%208%200%2001-8%208c-3%200-5.5-1.5-7-4'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3cpath%20d='M15%206l2-2%202%202M17%2026l-2%202-2-2'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const stretchIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M8%2016h16M8%2016l3-3M8%2016l3%203M24%2016l-3-3M24%2016l-3%203'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const scaleIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M8%2024l16-16M8%2024v-4M8%2024h4M24%208v4M24%208h-4'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const cloneIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M9%209h8v8M15%2015h8v8M9%209v8h8'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-
-    // Define custom controls with precise positioning and functionality
-    const customControls = {
-      // Delete Handle - Top-Left
-      'deleteControl': {
-        x: -0.5,
-        y: -0.5,
-        offsetY: -20,
-        offsetX: -20,
-        cursorStyle: 'pointer',
-        mouseUpHandler: function(eventData: any, transformData: any) {
-          const target = transformData.target;
-          canvas.remove(target);
-          canvas.requestRenderAll();
-          toast.success("Text deleted");
-        },
-        render: function(ctx: any, left: any, top: any) {
-          const size = 32;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 32
-      },
-
-      // Layer Up/Down - Top-Center  
-      'layerControl': {
-        x: 0,
-        y: -0.5,
-        offsetY: -20,
-        offsetX: 0,
-        cursorStyle: 'pointer',
-        mouseUpHandler: function(eventData: any, transformData: any) {
-          const target = transformData.target;
-          const objects = canvas.getObjects();
-          const currentIndex = objects.indexOf(target);
-          
-          if (eventData.e.shiftKey && currentIndex > 0) {
-            target.sendBackwards();
-            toast.success("Moved backward");
-          } else if (currentIndex < objects.length - 1) {
-            target.bringForward();
-            toast.success("Moved forward");
-          }
-          canvas.requestRenderAll();
-        },
-        render: function(ctx: any, left: any, top: any) {
-          const size = 32;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 32
-      },
-
-      // Rotate Control - Top-Right
-      'rotateControl': {
-        x: 0.5,
-        y: -0.5,
-        offsetY: -20,
-        offsetX: 20,
-        cursorStyle: 'grab',
-        actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
-          const target = transformData.target;
-          const center = target.getCenterPoint();
-          const angle = Math.atan2(y - center.y, x - center.x) * 180 / Math.PI + 90;
-          target.rotate(angle);
-          return true;
-        },
-        render: function(ctx: any, left: any, top: any) {
-          const size = 32;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 32
-      },
-
-      // Horizontal Stretch - Mid-Right
-      'stretchControl': {
-        x: 0.5,
-        y: 0,
-        offsetY: 0,
-        offsetX: 20,
-        cursorStyle: 'col-resize',
-        actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
-          const target = transformData.target;
-          const pointer = canvas.getPointer(eventData.e);
-          const currentWidth = target.width * target.scaleX;
-          const newScaleX = Math.max(0.1, pointer.x / (target.left + target.width/2));
-          target.set('scaleX', newScaleX);
-          return true;
-        },
-        render: function(ctx: any, left: any, top: any) {
-          const size = 32;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 32
-      },
-
-      // Uniform Scale - Bottom-Right (will override default)
-      'scaleControl': {
-        x: 0.5,
-        y: 0.5,
-        offsetY: 20,
-        offsetX: 20,
-        cursorStyle: 'se-resize',
-        actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
-          const target = transformData.target;
-          const pointer = canvas.getPointer(eventData.e);
-          const center = target.getCenterPoint();
-          const distance = Math.sqrt(Math.pow(pointer.x - center.x, 2) + Math.pow(pointer.y - center.y, 2));
-          const originalDistance = Math.sqrt(Math.pow(target.width/2, 2) + Math.pow(target.height/2, 2));
-          const scale = Math.max(0.1, distance / originalDistance);
-          target.set({scaleX: scale, scaleY: scale});
-          return true;
-        },
-        render: function(ctx: any, left: any, top: any) {
-          const size = 32;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 32
-      },
-
-      // Duplicate/Clone - Bottom-Left
-      'cloneControl': {
-        x: -0.5,
-        y: 0.5,
-        offsetY: 20,
-        offsetX: -20,
-        cursorStyle: 'pointer',
-        mouseUpHandler: function(eventData: any, transformData: any) {
-          const target = transformData.target;
-          target.clone((cloned: any) => {
-            cloned.set({
-              left: cloned.left + 10,
-              top: cloned.top + 10,
-            });
-            canvas.add(cloned);
-            canvas.setActiveObject(cloned);
-            canvas.requestRenderAll();
-            toast.success("Text duplicated");
-          });
-        },
-        render: function(ctx: any, left: any, top: any) {
-          const size = 32;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 32
-      }
-    };
-
-    // Load control icons
-    const iconMap: { [key: string]: string } = {
-      'deleteControl': deleteIcon,
-      'layerControl': layerIcon, 
-      'rotateControl': rotateIcon,
-      'stretchControl': stretchIcon,
-      'scaleControl': scaleIcon,
-      'cloneControl': cloneIcon
-    };
-
-    // Load control icons with proper error handling
-    const loadControlIcons = () => {
-      return Promise.all(Object.keys(customControls).map(key => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            (customControls as any)[key].img = img;
-            resolve(true);
-          };
-          img.onerror = () => {
-            console.warn(`Failed to load icon for ${key}`);
-            resolve(false);
-          };
-          img.src = iconMap[key];
-        });
-      }));
-    };
-
-    // Load icons first, then set up event handlers
-    loadControlIcons().then(() => {
-      console.log("Custom control icons loaded successfully");
-    });
-
-    // Add selection events with enhanced controls
+    // Add selection events - Simple approach without custom controls
     canvas.on('selection:created', (e) => {
       const obj = e.selected[0];
-      console.log("Selection created:", obj.type, obj);
-      
-      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-        // Keep default selection behavior but customize controls
-        obj.set({
-          borderColor: '#3b82f6',
-          borderDashArray: [5, 5],
-          cornerColor: 'transparent',
-          cornerStrokeColor: 'transparent',
-          transparentCorners: true
-        });
-        
-        // Add 6 custom controls exactly like the reference
-        obj.controls.deleteControl = new Control({
-          x: -0.5,
-          y: -0.5,
-          offsetX: -10,
-          offsetY: -10,
-          cursorStyle: 'pointer',
-          mouseUpHandler: function() {
-            canvas.remove(obj);
-            canvas.requestRenderAll();
-            toast.success("Text deleted");
-          },
-          render: function(ctx: any, left: any, top: any) {
-            const size = 32;
-            ctx.save();
-            ctx.translate(left, top);
-            // White circle with gray border
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.stroke();
-            // Trash icon
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.rect(-6, -4, 12, 8);
-            ctx.moveTo(-8, -6);
-            ctx.lineTo(8, -6);
-            ctx.moveTo(-4, -8);
-            ctx.lineTo(4, -8);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-
-        obj.controls.layerControl = new Control({
-          x: 0,
-          y: -0.5,
-          offsetX: 0,
-          offsetY: -10,
-          cursorStyle: 'pointer',
-          mouseUpHandler: function() {
-            (obj as any).bringToFront();
-            canvas.requestRenderAll();
-          },
-          render: function(ctx: any, left: any, top: any) {
-            const size = 32;
-            ctx.save();
-            ctx.translate(left, top);
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.stroke();
-            // Up/down arrows
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(0, -8);
-            ctx.lineTo(-4, -4);
-            ctx.lineTo(4, -4);
-            ctx.closePath();
-            ctx.moveTo(0, 8);
-            ctx.lineTo(-4, 4);
-            ctx.lineTo(4, 4);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-
-        obj.controls.rotateControl = new Control({
-          x: 0.5,
-          y: -0.5,
-          offsetX: 10,
-          offsetY: -10,
-          cursorStyle: 'crosshair',
-          actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
-            const target = transformData.target;
-            const center = target.getCenterPoint();
-            const angle = Math.atan2(y - center.y, x - center.x) * 180 / Math.PI + 90;
-            target.rotate(angle);
-            return true;
-          },
-          render: function(ctx: any, left: any, top: any) {
-            const size = 32;
-            ctx.save();
-            ctx.translate(left, top);
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.stroke();
-            // Rotate arrows
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(0, 0, 6, 0, Math.PI * 1.5);
-            ctx.moveTo(6, -2);
-            ctx.lineTo(4, -6);
-            ctx.lineTo(8, -6);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-
-        obj.controls.stretchControl = new Control({
-          x: 0.5,
-          y: 0,
-          offsetX: 10,
-          offsetY: 0,
-          cursorStyle: 'ew-resize',
-          actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
-            // Keep default horizontal scaling behavior
-            return false;
-          },
-          render: function(ctx: any, left: any, top: any) {
-            const size = 32;
-            ctx.save();
-            ctx.translate(left, top);
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.stroke();
-            // Left-right arrows
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(-8, 0);
-            ctx.lineTo(8, 0);
-            ctx.moveTo(-6, -3);
-            ctx.lineTo(-8, 0);
-            ctx.lineTo(-6, 3);
-            ctx.moveTo(6, -3);
-            ctx.lineTo(8, 0);
-            ctx.lineTo(6, 3);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-
-        obj.controls.scaleControl = new Control({
-          x: 0.5,
-          y: 0.5,
-          offsetX: 10,
-          offsetY: 10,
-          cursorStyle: 'se-resize',
-          actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
-            // Keep default scaling behavior
-            return false;
-          },
-          render: function(ctx: any, left: any, top: any) {
-            const size = 32;
-            ctx.save();
-            ctx.translate(left, top);
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.stroke();
-            // Diagonal arrows
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(-6, 6);
-            ctx.lineTo(6, -6);
-            ctx.moveTo(-8, 4);
-            ctx.lineTo(-6, 6);
-            ctx.lineTo(-4, 4);
-            ctx.moveTo(4, -8);
-            ctx.lineTo(6, -6);
-            ctx.lineTo(8, -8);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-
-        obj.controls.cloneControl = new Control({
-          x: -0.5,
-          y: 0.5,
-          offsetX: -10,
-          offsetY: 10,
-          cursorStyle: 'pointer',
-          mouseUpHandler: function() {
-            (obj as any).clone((cloned: any) => {
-              cloned.set({ left: cloned.left + 10, top: cloned.top + 10 });
-              canvas.add(cloned);
-              canvas.setActiveObject(cloned);
-              canvas.requestRenderAll();
-              toast.success("Text duplicated");
-            });
-          },
-          render: function(ctx: any, left: any, top: any) {
-            const size = 32;
-            ctx.save();
-            ctx.translate(left, top);
-            ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#d1d5db';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.stroke();
-            // Clone/layers icon
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.rect(-6, -6, 8, 8);
-            ctx.rect(-2, -2, 8, 8);
-            ctx.stroke();
-            ctx.restore();
-          }
-        });
-
-        console.log("All 6 custom controls added");
-        canvas.requestRenderAll();
-      }
       setSelectedObject(obj);
       onSelectedObjectChange?.(obj);
+      
+      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
+        // Hide default Fabric.js controls to use React overlay instead
+        obj.setControlsVisibility({
+          mt: false, mb: false, ml: false, mr: false,
+          tl: false, tr: false, bl: false, br: false,
+          mtr: false
+        });
+        
+        // Calculate overlay bounds
+        const bounds = obj.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      } else {
+        setOverlayBounds(null);
+      }
     });
 
     canvas.on('selection:updated', (e) => {
       const obj = e.selected[0];
       setSelectedObject(obj);
       onSelectedObjectChange?.(obj);
+      
+      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
+        const bounds = obj.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      } else {
+        setOverlayBounds(null);
+      }
     });
 
     canvas.on('selection:cleared', () => {
       setSelectedObject(null);
       onSelectedObjectChange?.(null);
+      setOverlayBounds(null);
+    });
+
+    // Update overlay position when objects move
+    canvas.on('object:moving', (e) => {
+      if (e.target && (e.target.type === 'textbox' || e.target.type === 'text')) {
+        const bounds = e.target.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      }
+    });
+
+    canvas.on('object:scaling', (e) => {
+      if (e.target && (e.target.type === 'textbox' || e.target.type === 'text')) {
+        const bounds = e.target.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      }
     });
 
     // Add keyboard event listener to document for better handling
@@ -1016,6 +631,45 @@ export const DesignCanvas = ({
                         height: "350px",
                       }}
                     />
+                    
+                    {/* React Overlay Controls */}
+                    {overlayBounds && selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
+                      <TextOverlayControls
+                        bounds={overlayBounds}
+                        onDelete={() => {
+                          fabricCanvas?.remove(selectedObject);
+                          fabricCanvas?.requestRenderAll();
+                          toast.success("Text deleted");
+                        }}
+                        onRotateStart={(e) => {
+                          console.log("Rotate start", e);
+                          // TODO: Implement rotation interaction
+                        }}
+                        onStretchStart={(e) => {
+                          console.log("Stretch start", e);
+                          // TODO: Implement stretch interaction
+                        }}
+                        onScaleStart={(e) => {
+                          console.log("Scale start", e);
+                          // TODO: Implement scale interaction
+                        }}
+                        onDuplicate={() => {
+                          (selectedObject as any).clone((cloned: any) => {
+                            cloned.set({ left: cloned.left + 10, top: cloned.top + 10 });
+                            fabricCanvas?.add(cloned);
+                            fabricCanvas?.setActiveObject(cloned);
+                            fabricCanvas?.requestRenderAll();
+                            toast.success("Text duplicated");
+                          });
+                        }}
+                        onLayerChange={() => {
+                          (selectedObject as any).bringToFront();
+                          fabricCanvas?.requestRenderAll();
+                          toast.success("Brought to front");
+                        }}
+                      />
+                    )}
+                    
                     {/* Design area label */}
                     {!selectedObject && (
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
