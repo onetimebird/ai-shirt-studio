@@ -97,13 +97,26 @@ export const DesignCanvas = ({
                 currentColor?.name === "Coral" || currentColor?.name === "Sand" || 
                 currentColor?.name === "Mustard" || currentColor?.name === "Gold" 
                 ? '#000000' : '#FFFFFF'),
+          // Text editing and interaction properties
           editable: true,
+          selectable: true,
+          moveable: true,
           hasControls: true,
           hasBorders: true,
-          cornerSize: 10,
+          lockMovementX: false,
+          lockMovementY: false,
+          lockRotation: false,
+          lockScalingX: false,
+          lockScalingY: false,
+          // Visual styling for controls
+          cornerSize: 12,
           transparentCorners: false,
           cornerColor: '#4F46E5',
+          cornerStyle: 'rect',
           borderColor: '#4F46E5',
+          borderOpacityWhenMoving: 0.5,
+          borderScaleFactor: 2,
+          // Text-specific properties
           textAlign: options.textAlign || 'left',
           fontWeight: options.fontWeight || 'normal',
           fontStyle: options.fontStyle || 'normal',
@@ -112,11 +125,14 @@ export const DesignCanvas = ({
           scaleY: options.scaleY || 1,
           rotation: options.rotation || 0,
         });
+        
         fabricCanvas.add(textObj);
         fabricCanvas.setActiveObject(textObj);
         fabricCanvas.renderAll();
         setSelectedObject(textObj);
         onSelectedObjectChange?.(textObj);
+        
+        console.log("Text added with properties:", textObj);
         toast.success("Text added to design");
       },
       

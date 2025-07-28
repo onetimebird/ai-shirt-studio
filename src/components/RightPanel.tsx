@@ -190,11 +190,25 @@ export const RightPanel = ({
   return (
     <div className="w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       <Tabs defaultValue="properties" className="w-full p-4">
-        <TabsList className="grid grid-cols-3 gap-2">
-          <TabsTrigger value="properties">Properties</TabsTrigger>
-          <TabsTrigger value="color">Colors</TabsTrigger>
-          <TabsTrigger value="ai">AI</TabsTrigger>
-        </TabsList>
+        {/* Only show tabs based on context */}
+        {activeTool === "text" ? (
+          // Text tool - only properties
+          <TabsList className="grid grid-cols-1 gap-2">
+            <TabsTrigger value="properties">Add Text</TabsTrigger>
+          </TabsList>
+        ) : activeTool === "upload" ? (
+          // Upload tool - only properties  
+          <TabsList className="grid grid-cols-1 gap-2">
+            <TabsTrigger value="properties">Upload Image</TabsTrigger>
+          </TabsList>
+        ) : (
+          // Default - all tabs
+          <TabsList className="grid grid-cols-3 gap-2">
+            <TabsTrigger value="properties">Properties</TabsTrigger>
+            <TabsTrigger value="color">Colors</TabsTrigger>
+            <TabsTrigger value="ai">AI</TabsTrigger>
+          </TabsList>
+        )}
 
         <TabsContent value="properties" className="mt-4 space-y-4">
 
