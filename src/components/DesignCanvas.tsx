@@ -21,6 +21,100 @@ import scaleIcon from "@/assets/icons/scale.svg";
 import stretchIcon from "@/assets/icons/stretch.svg";
 import layerIcon from "@/assets/icons/layer.svg";
 
+// Preload and register controls exactly once at module load:
+(async () => {
+  try {
+    const [deleteImg, cloneImg, rotateImg, scaleImg, stretchImg, layerImg] = await Promise.all([
+      fabric.util.loadImage(deleteIcon),
+      fabric.util.loadImage(cloneIcon),
+      fabric.util.loadImage(rotateIcon),
+      fabric.util.loadImage(scaleIcon),
+      fabric.util.loadImage(stretchIcon),
+      fabric.util.loadImage(layerIcon),
+    ]);
+
+    // Helper to create a fabric.Control with icon
+    function makeControl(iconImg: HTMLImageElement, handler: any, pos: { x: number; y: number }) {
+      return new fabric.Control({
+        x: pos.x, 
+        y: pos.y,
+        cursorStyle: 'pointer',
+        actionHandler: handler,
+        render(ctx, left, top, styleOverride, obj) {
+          const size = Math.max(28, obj.getScaledHeight() * 0.12);
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.rotate((obj.angle * Math.PI) / 180);
+          
+          // Draw background circle
+          ctx.beginPath();
+          ctx.arc(0, 0, size/2, 0, 2*Math.PI);
+          ctx.fillStyle = '#fff';
+          ctx.fill();
+          ctx.strokeStyle = '#ddd';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          
+          // Draw icon
+          const iconSize = size * 0.6;
+          ctx.drawImage(iconImg, -iconSize/2, -iconSize/2, iconSize, iconSize);
+          ctx.restore();
+        }
+      });
+    }
+
+    // Get handlers from fabric.controlsUtils
+    const { rotationWithSnapping, scalingEqually, scalingXOrSkewingY } = fabric.controlsUtils;
+
+    // Custom handlers
+    const deleteHandler = (e: any, t: any) => {
+      const canvas = t.target.canvas;
+      canvas.remove(t.target);
+      canvas.discardActiveObject();
+      canvas.requestRenderAll();
+      return true;
+    };
+
+    const layerHandler = (e: any, t: any) => {
+      const canvas = t.target.canvas;
+      canvas.bringObjectToFront(t.target);
+      canvas.requestRenderAll();
+      return true;
+    };
+
+    const cloneHandler = (e: any, t: any) => {
+      const obj = t.target;
+      obj.clone((cloned: any) => {
+        cloned.set({
+          left: obj.left + 20,
+          top: obj.top + 20,
+        });
+        obj.canvas.add(cloned);
+        obj.canvas.setActiveObject(cloned);
+        obj.canvas.requestRenderAll();
+      });
+      return true;
+    };
+
+    // Attach to Textbox prototype so every future textbox uses them
+    fabric.Textbox.prototype.controls = {
+      tl: makeControl(deleteImg, deleteHandler, { x: -0.5, y: -0.5 }),
+      mt: makeControl(layerImg, layerHandler, { x: 0, y: -0.5 }),
+      tr: makeControl(cloneImg, cloneHandler, { x: 0.5, y: -0.5 }),
+      mr: makeControl(stretchImg, scalingXOrSkewingY, { x: 0.5, y: 0 }),
+      br: makeControl(scaleImg, scalingEqually, { x: 0.5, y: 0.5 }),
+      bl: makeControl(rotateImg, rotationWithSnapping, { x: -0.5, y: 0.5 }),
+      mtr: makeControl(rotateImg, rotationWithSnapping, { x: 0, y: -0.75 }),
+    };
+
+    // Disable caching so icons always redraw
+    fabric.Textbox.prototype.objectCaching = false;
+    
+  } catch (error) {
+    console.error('Failed to load control icons:', error);
+  }
+})();
+
 
 interface DesignCanvasProps {
   selectedColor: string;
@@ -242,9 +336,6 @@ export const DesignCanvas = ({
     canvas.on('object:added', updateTextObjects);
     canvas.on('object:removed', updateTextObjects);
 
-    // Setup custom controls for text objects
-    setupCustomControls(canvas);
-
     
     // Add keyboard event listener to document for better handling
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -311,128 +402,6 @@ export const DesignCanvas = ({
     };
   }, [currentSide, onSelectedObjectChange]);
 
-  // Setup custom Fabric.js controls for text objects
-  const setupCustomControls = (canvas: FabricCanvas) => {
-    // Preload all SVG icons as Image elements
-    const loadIcon = (src: string): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = src;
-      });
-    };
-
-    // Load all icons and wait for them to complete
-    Promise.all([
-      loadIcon(deleteIcon),
-      loadIcon(cloneIcon), 
-      loadIcon(rotateIcon),
-      loadIcon(scaleIcon),
-      loadIcon(stretchIcon),
-      loadIcon(layerIcon)
-    ]).then(([deleteImg, cloneImg, rotateImg, scaleImg, stretchImg, layerImg]) => {
-      
-      // Helper to create a control with preloaded SVG icon
-      const makeControl = (iconImg: HTMLImageElement, actionHandler: any, position: { x: number; y: number }) => {
-        return new fabric.Control({
-          x: position.x,
-          y: position.y,
-          offsetX: 0,
-          offsetY: 0,
-          cursorStyle: 'pointer',
-          actionHandler,
-          render: function(ctx, left, top, styleOverride, fabricObject) {
-            const size = Math.max(28, fabricObject.getScaledHeight() * 0.12);
-            
-            ctx.save();
-            ctx.translate(left, top);
-            ctx.rotate((fabricObject.angle * Math.PI) / 180);
-            
-            // Draw background circle
-            ctx.beginPath();
-            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
-            ctx.strokeStyle = '#ddd';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            
-            // Draw the loaded SVG icon
-            if (iconImg && iconImg.complete) {
-              const iconSize = size * 0.6;
-              ctx.drawImage(iconImg, -iconSize/2, -iconSize/2, iconSize, iconSize);
-            }
-            
-            ctx.restore();
-          }
-        });
-      };
-
-      // Control handlers
-      const deleteHandler = (eventData: any, transform: any) => {
-        const obj = transform.target;
-        canvas.remove(obj);
-        canvas.discardActiveObject();
-        setSelectedObject(null);
-        setOverlayBounds(null);
-        setTool("text");
-        onToolChange?.("text");
-        canvas.requestRenderAll();
-        toast.success("Text deleted");
-        return true;
-      };
-
-      const cloneHandler = (eventData: any, transform: any) => {
-        const obj = transform.target;
-        obj.clone((cloned: any) => {
-          cloned.set({
-            left: obj.left + 20,
-            top: obj.top + 20,
-          });
-          canvas.add(cloned);
-          canvas.setActiveObject(cloned);
-          canvas.requestRenderAll();
-          toast.success("Text duplicated");
-        });
-        return true;
-      };
-
-      const layerHandler = (eventData: any, transform: any) => {
-        const obj = transform.target;
-        canvas.bringObjectToFront(obj);
-        canvas.requestRenderAll();
-        return true;
-      };
-
-      // Apply custom controls to textbox prototype with loaded images
-      FabricTextbox.prototype.controls = {
-        tl: makeControl(deleteImg, deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
-        mt: makeControl(layerImg, layerHandler, { x: 0, y: -0.5 }),           // top-center: layer
-        tr: makeControl(cloneImg, cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
-        mr: makeControl(stretchImg, fabric.controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
-        br: makeControl(scaleImg, fabric.controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
-        bl: makeControl(rotateImg, fabric.controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
-        mtr: makeControl(rotateImg, fabric.controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
-        // Keep some default controls
-        ml: new fabric.Control({ x: -0.5, y: 0, actionHandler: fabric.controlsUtils.scalingXOrSkewingY }),
-        mb: new fabric.Control({ x: 0, y: 0.5, actionHandler: fabric.controlsUtils.scalingYOrSkewingX }),
-      };
-
-      // Force re-render of any existing textboxes
-      canvas.getObjects().forEach(obj => {
-        if (obj.type === 'textbox') {
-          obj.set('objectCaching', false);
-        }
-      });
-      canvas.requestRenderAll();
-      
-    }).catch(error => {
-      console.error('Failed to load icon images:', error);
-      // Fallback to text labels if icons fail to load
-      console.log('Using fallback text controls');
-    });
-  };
 
   // Add pointer event handlers for interactions
   useEffect(() => {
