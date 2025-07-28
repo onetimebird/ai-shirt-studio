@@ -51,13 +51,13 @@ export const DesignCanvas = ({
       selection: true,
     });
 
-    // Custom control icons (SVG data URLs)
-    const deleteIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%23dc2626'%20stroke-width='1'/%3e%3cpath%20d='M6%204h8m-8%200V3a1%201%200%20011-1h6a1%201%200%20011%201v1m-8%200H4m12%200h-2m-8%202v8a1%201%200%20001%201h6a1%201%200%20001-1V6'%20stroke='%23dc2626'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const layerIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%236366f1'%20stroke-width='1'/%3e%3cpath%20d='M6%208l4-3%204%203m-4-3v10'%20stroke='%236366f1'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const rotateIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%232563eb'%20stroke-width='1'/%3e%3cpath%20d='M4%208a6%206%200%20016-6c2.5%200%204.5%201.5%205.5%203.5M16%2012a6%206%200%2001-6%206c-2.5%200-4.5-1.5-5.5-3.5'%20stroke='%232563eb'%20stroke-width='1.5'%20fill='none'/%3e%3cpath%20d='M9%204l1-2%201%202M11%2016l-1%202-1-2'%20stroke='%232563eb'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const stretchIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%23059669'%20stroke-width='1'/%3e%3cpath%20d='M4%2010h12M4%2010l2-2M4%2010l2%202M16%2010l-2-2M16%2010l-2%202'%20stroke='%23059669'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const scaleIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%23d97706'%20stroke-width='1'/%3e%3cpath%20d='M6%2014l8-8M6%2014h3M6%2014v-3M14%206h-3M14%206v3'%20stroke='%23d97706'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
-    const cloneIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%2316a34a'%20stroke-width='1'/%3e%3cpath%20d='M7%205a2%202%200%20012-2h6a2%202%200%20012%202v6a2%202%200%2001-2%202M7%205H5a2%202%200%2000-2%202v6a2%202%200%20002%202h6a2%202%200%20002-2v-2'%20stroke='%2316a34a'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    // Custom control icons matching the reference design
+    const deleteIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M10%2012h12m-1%200v8a1%201%200%2001-1%201h-8a1%201%200%2001-1-1v-8m2%200V9a1%201%200%20011-1h4a1%201%200%20011%201v3m-6%202v6m4-6v6'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const layerIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M12%2010v12M12%2010l4-4M12%2010l-4%204M20%2022V10M20%2022l4-4M20%2022l-4-4'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const rotateIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M8%2012a8%208%200%20018-8c3%200%205.5%201.5%207%204M24%2020a8%208%200%2001-8%208c-3%200-5.5-1.5-7-4'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3cpath%20d='M15%206l2-2%202%202M17%2026l-2%202-2-2'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const stretchIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M8%2016h16M8%2016l3-3M8%2016l3%203M24%2016l-3-3M24%2016l-3%203'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const scaleIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M8%2024l16-16M8%2024v-4M8%2024h4M24%208v4M24%208h-4'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const cloneIcon = "data:image/svg+xml,%3csvg%20width='32'%20height='32'%20xmlns='http://www.w3.org/2000/svg'%3e%3ccircle%20cx='16'%20cy='16'%20r='15'%20fill='white'%20stroke='%23e5e7eb'%20stroke-width='1'/%3e%3cpath%20d='M9%209h8v8M15%2015h8v8M9%209v8h8'%20stroke='%23374151'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
 
     // Define custom controls with precise positioning and functionality
     const customControls = {
@@ -65,8 +65,8 @@ export const DesignCanvas = ({
       'deleteControl': {
         x: -0.5,
         y: -0.5,
-        offsetY: -16,
-        offsetX: -16,
+        offsetY: -20,
+        offsetX: -20,
         cursorStyle: 'pointer',
         mouseUpHandler: function(eventData: any, transformData: any) {
           const target = transformData.target;
@@ -75,20 +75,20 @@ export const DesignCanvas = ({
           toast.success("Text deleted");
         },
         render: function(ctx: any, left: any, top: any) {
-          const size = 20;
+          const size = 32;
           ctx.save();
           ctx.translate(left, top);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 20
+        cornerSize: 32
       },
 
       // Layer Up/Down - Top-Center  
       'layerControl': {
         x: 0,
         y: -0.5,
-        offsetY: -16,
+        offsetY: -20,
         offsetX: 0,
         cursorStyle: 'pointer',
         mouseUpHandler: function(eventData: any, transformData: any) {
@@ -97,32 +97,30 @@ export const DesignCanvas = ({
           const currentIndex = objects.indexOf(target);
           
           if (eventData.e.shiftKey && currentIndex > 0) {
-            // Shift+click = send backward
             target.sendBackwards();
             toast.success("Moved backward");
           } else if (currentIndex < objects.length - 1) {
-            // Regular click = bring forward
             target.bringForward();
             toast.success("Moved forward");
           }
           canvas.requestRenderAll();
         },
         render: function(ctx: any, left: any, top: any) {
-          const size = 20;
+          const size = 32;
           ctx.save();
           ctx.translate(left, top);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 20
+        cornerSize: 32
       },
 
       // Rotate Control - Top-Right
       'rotateControl': {
         x: 0.5,
         y: -0.5,
-        offsetY: -16,
-        offsetX: 16,
+        offsetY: -20,
+        offsetX: 20,
         cursorStyle: 'grab',
         actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
           const target = transformData.target;
@@ -132,13 +130,13 @@ export const DesignCanvas = ({
           return true;
         },
         render: function(ctx: any, left: any, top: any) {
-          const size = 20;
+          const size = 32;
           ctx.save();
           ctx.translate(left, top);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 20
+        cornerSize: 32
       },
 
       // Horizontal Stretch - Mid-Right
@@ -146,7 +144,7 @@ export const DesignCanvas = ({
         x: 0.5,
         y: 0,
         offsetY: 0,
-        offsetX: 16,
+        offsetX: 20,
         cursorStyle: 'col-resize',
         actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
           const target = transformData.target;
@@ -157,21 +155,21 @@ export const DesignCanvas = ({
           return true;
         },
         render: function(ctx: any, left: any, top: any) {
-          const size = 20;
+          const size = 32;
           ctx.save();
           ctx.translate(left, top);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 20
+        cornerSize: 32
       },
 
       // Uniform Scale - Bottom-Right (will override default)
       'scaleControl': {
         x: 0.5,
         y: 0.5,
-        offsetY: 16,
-        offsetX: 16,
+        offsetY: 20,
+        offsetX: 20,
         cursorStyle: 'se-resize',
         actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
           const target = transformData.target;
@@ -184,21 +182,21 @@ export const DesignCanvas = ({
           return true;
         },
         render: function(ctx: any, left: any, top: any) {
-          const size = 20;
+          const size = 32;
           ctx.save();
           ctx.translate(left, top);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 20
+        cornerSize: 32
       },
 
       // Duplicate/Clone - Bottom-Left
       'cloneControl': {
         x: -0.5,
         y: 0.5,
-        offsetY: 16,
-        offsetX: -16,
+        offsetY: 20,
+        offsetX: -20,
         cursorStyle: 'pointer',
         mouseUpHandler: function(eventData: any, transformData: any) {
           const target = transformData.target;
@@ -214,13 +212,13 @@ export const DesignCanvas = ({
           });
         },
         render: function(ctx: any, left: any, top: any) {
-          const size = 20;
+          const size = 32;
           ctx.save();
           ctx.translate(left, top);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 20
+        cornerSize: 32
       }
     };
 
