@@ -8,8 +8,8 @@ import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
   const [activeTool, setActiveTool] = useState("products");
-  const [selectedProduct, setSelectedProduct] = useState("bella-3001c");
-  const [selectedColor, setSelectedColor] = useState("White");
+  const [selectedProduct, setSelectedProduct] = useState("gildan-2000");
+  const [selectedColor, setSelectedColor] = useState("cherry-red");
   const [decorationMethod, setDecorationMethod] = useState("screen-print");
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);

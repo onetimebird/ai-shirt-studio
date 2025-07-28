@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle } from "lucide-react";
-import { BELLA_3001C_COLORS } from "@/data/bellaColors";
+import { GILDAN_2000_COLORS, getAvailableColors } from "@/data/gildan2000Colors";
 import { toast } from "sonner";
 
 interface TopControlsProps {
@@ -26,7 +26,7 @@ export const TopControls = ({
   onDecorationChange,
   onSideChange,
 }: TopControlsProps) => {
-  const currentColor = BELLA_3001C_COLORS.find(c => c.name === selectedColor);
+  const currentColor = GILDAN_2000_COLORS.find(c => c.name === selectedColor);
 
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
@@ -49,7 +49,7 @@ export const TopControls = ({
                 <SelectValue placeholder="Change Product" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="gildan-2000">Gildan 2000</SelectItem>
+                <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
                 <SelectItem value="gildan-64000">Gildan 64000</SelectItem>
                 <SelectItem value="bella-3001c">Bella 3001C</SelectItem>
                 <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
@@ -74,7 +74,7 @@ export const TopControls = ({
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-popover border border-border shadow-lg z-50">
-                {BELLA_3001C_COLORS.map((color) => (
+                {getAvailableColors().map((color) => (
                   <SelectItem key={color.name} value={color.name}>
                     {color.label}
                   </SelectItem>
