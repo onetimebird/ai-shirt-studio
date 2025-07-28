@@ -32,6 +32,12 @@ export const DesignCanvas = ({
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [selectedObject, setSelectedObject] = useState<any>(null);
   const [overlayBounds, setOverlayBounds] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const [isRotating, setIsRotating] = useState(false);
+  const [isScaling, setIsScaling] = useState(false);
+  const [isStretching, setIsStretching] = useState(false);
+  const [startAngle, setStartAngle] = useState(0);
+  const [startScale, setStartScale] = useState({ x: 1, y: 1 });
+  const [startPointer, setStartPointer] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [canvasZoom, setCanvasZoom] = useState(1);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -179,6 +185,101 @@ export const DesignCanvas = ({
       canvas.dispose();
     };
   }, [currentSide, onSelectedObjectChange]);
+
+  // Add pointer event handlers for interactions
+  useEffect(() => {
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!selectedObject || !fabricCanvas) return;
+      
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      
+      const pointer = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+      
+      if (isRotating) {
+        const center = selectedObject.getCenterPoint();
+        const angle = Math.atan2(pointer.y - center.y, pointer.x - center.x) * 180 / Math.PI;
+        selectedObject.rotate(angle);
+        fabricCanvas.requestRenderAll();
+        
+        // Update overlay bounds
+        const bounds = selectedObject.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      }
+      
+      if (isScaling) {
+        const center = selectedObject.getCenterPoint();
+        const currentDistance = Math.sqrt(
+          Math.pow(pointer.x - center.x, 2) + Math.pow(pointer.y - center.y, 2)
+        );
+        const startDistance = Math.sqrt(
+          Math.pow(startPointer.x - center.x, 2) + Math.pow(startPointer.y - center.y, 2)
+        );
+        
+        if (startDistance > 0) {
+          const scaleFactor = Math.max(0.1, currentDistance / startDistance);
+          selectedObject.set({
+            scaleX: startScale.x * scaleFactor,
+            scaleY: startScale.y * scaleFactor
+          });
+          fabricCanvas.requestRenderAll();
+          
+          // Update overlay bounds
+          const bounds = selectedObject.getBoundingRect();
+          setOverlayBounds({
+            x: bounds.left,
+            y: bounds.top,
+            width: bounds.width,
+            height: bounds.height
+          });
+        }
+      }
+      
+      if (isStretching) {
+        const center = selectedObject.getCenterPoint();
+        const deltaX = pointer.x - startPointer.x;
+        const scaleFactorX = Math.max(0.1, 1 + deltaX / 100);
+        
+        selectedObject.set({
+          scaleX: startScale.x * scaleFactorX
+        });
+        fabricCanvas.requestRenderAll();
+        
+        // Update overlay bounds
+        const bounds = selectedObject.getBoundingRect();
+        setOverlayBounds({
+          x: bounds.left,
+          y: bounds.top,
+          width: bounds.width,
+          height: bounds.height
+        });
+      }
+    };
+    
+    const handlePointerUp = () => {
+      setIsRotating(false);
+      setIsScaling(false);
+      setIsStretching(false);
+    };
+    
+    if (isRotating || isScaling || isStretching) {
+      document.addEventListener('pointermove', handlePointerMove);
+      document.addEventListener('pointerup', handlePointerUp);
+      
+      return () => {
+        document.removeEventListener('pointermove', handlePointerMove);
+        document.removeEventListener('pointerup', handlePointerUp);
+      };
+    }
+  }, [isRotating, isScaling, isStretching, selectedObject, fabricCanvas, startPointer, startScale]);
 
   // Expose canvas methods globally
   useEffect(() => {
@@ -642,16 +743,46 @@ export const DesignCanvas = ({
                           toast.success("Text deleted");
                         }}
                         onRotateStart={(e) => {
-                          console.log("Rotate start", e);
-                          // TODO: Implement rotation interaction
+                          const rect = canvasRef.current?.getBoundingClientRect();
+                          if (!rect) return;
+                          
+                          setStartPointer({
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                          });
+                          setStartAngle(selectedObject.angle || 0);
+                          setIsRotating(true);
+                          e.preventDefault();
                         }}
                         onStretchStart={(e) => {
-                          console.log("Stretch start", e);
-                          // TODO: Implement stretch interaction
+                          const rect = canvasRef.current?.getBoundingClientRect();
+                          if (!rect) return;
+                          
+                          setStartPointer({
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                          });
+                          setStartScale({
+                            x: selectedObject.scaleX || 1,
+                            y: selectedObject.scaleY || 1
+                          });
+                          setIsStretching(true);
+                          e.preventDefault();
                         }}
                         onScaleStart={(e) => {
-                          console.log("Scale start", e);
-                          // TODO: Implement scale interaction
+                          const rect = canvasRef.current?.getBoundingClientRect();
+                          if (!rect) return;
+                          
+                          setStartPointer({
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                          });
+                          setStartScale({
+                            x: selectedObject.scaleX || 1,
+                            y: selectedObject.scaleY || 1
+                          });
+                          setIsScaling(true);
+                          e.preventDefault();
                         }}
                         onDuplicate={() => {
                           (selectedObject as any).clone((cloned: any) => {
