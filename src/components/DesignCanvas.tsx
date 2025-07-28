@@ -57,8 +57,8 @@ export const DesignCanvas = ({
     if (!canvasRef.current) return;
 
     const canvas = new FabricCanvas(canvasRef.current, {
-      width: 500,
-      height: 600,
+      width: 800,
+      height: 800,
       backgroundColor: "transparent",
       selection: true,
     });
@@ -753,25 +753,24 @@ export const DesignCanvas = ({
               <div 
                 className="relative"
                 style={{
-                  width: "500px",
-                  height: "600px",
+                  width: "800px",
+                  height: "800px",
                 }}
               >
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div 
-                    className="relative border-2 border-dashed border-primary/30 rounded bg-transparent hover:border-primary/50 transition-colors"
+                    className="relative bg-white rounded"
                     style={{
-                      width: "300px",
-                      height: "350px",
-                      marginTop: "80px",
+                      width: "800px",
+                      height: "800px",
                     }}
                   >
                     <canvas
                       ref={canvasRef}
                       className="absolute inset-0 rounded"
                       style={{
-                        width: "300px",
-                        height: "350px",
+                        width: "800px",
+                        height: "800px",
                       }}
                     />
                     
