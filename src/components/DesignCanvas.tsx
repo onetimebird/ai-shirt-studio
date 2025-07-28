@@ -169,6 +169,13 @@ export const DesignCanvas = ({
   const tshirtImage = currentSide === "front" ? tshirtFrontTemplate : tshirtBackTemplate;
 
   useEffect(() => {
+    // 1. Verify SVG URLs resolve to images
+    console.log("deleteIcon URL is", deleteIcon);
+    const testImg = new Image();
+    testImg.onload  = () => console.log("✅ deleteIcon loaded OK", testImg.width, testImg.height);
+    testImg.onerror = () => console.error("❌ deleteIcon failed to load");
+    testImg.src     = deleteIcon;
+
     if (!canvasRef.current || !canvasWrapperRef.current) return;
 
     // Get wrapper dimensions for responsive canvas
