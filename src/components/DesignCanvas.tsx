@@ -204,6 +204,16 @@ export const DesignCanvas = ({
         if (!selectedObject) return;
         selectedObject.rotate(selectedObject.angle + 15);
         fabricCanvas.renderAll();
+        setSelectedObject(selectedObject);
+        onSelectedObjectChange?.(selectedObject);
+      },
+
+      setRotation: (degrees: number) => {
+        if (!selectedObject) return;
+        selectedObject.rotate(degrees);
+        fabricCanvas.renderAll();
+        setSelectedObject(selectedObject);
+        onSelectedObjectChange?.(selectedObject);
       },
 
       centerSelected: () => {
@@ -381,7 +391,8 @@ export const DesignCanvas = ({
                   variant="outline" 
                   size="sm" 
                   onClick={() => (window as any).designCanvas?.rotateSelected()}
-                  title="Rotate element"
+                  title="Rotate"
+                  className="hover:bg-primary/10"
                 >
                   <RotateCw className="w-4 h-4" />
                 </Button>

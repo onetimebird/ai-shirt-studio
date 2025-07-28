@@ -564,7 +564,10 @@ export const RightPanel = ({
                       <Slider
                         value={[rotation]}
                         onValueChange={([deg]) => setRotation(deg)}
-                        onValueCommit={([deg]) => updateTextProperty('rotation', deg)}
+                        onValueCommit={([deg]) => {
+                          updateTextProperty('rotation', deg);
+                          (window as any).designCanvas?.setRotation(deg);
+                        }}
                         min={0} max={360} step={1}
                       />
                     </div>
