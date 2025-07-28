@@ -8,12 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Canvas as FabricCanvas, Text as FabricText, Textbox as FabricTextbox, FabricImage } from "fabric";
+import { Canvas as FabricCanvas, Text as FabricText, Textbox as FabricTextbox, FabricImage, Control, controlsUtils } from "fabric";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
 import tshirtBackTemplate from "@/assets/tshirt-back-template.png";
-import { TextOverlayControls } from "./TextOverlayControls";
+
 
 interface DesignCanvasProps {
   selectedColor: string;
@@ -175,20 +175,6 @@ export const DesignCanvas = ({
     });
 
     // Add selection events - Simple approach without custom controls
-    // Function to update overlay bounds for text objects
-    const updateOverlayBounds = (obj: any) => {
-      if (obj && (obj.type === 'textbox' || obj.type === 'text' || obj.type === 'i-text')) {
-        const bounds = obj.getBoundingRect(true); // true accounts for rotation & scale
-        setOverlayBounds({
-          x: bounds.left,
-          y: bounds.top,
-          width: bounds.width,
-          height: bounds.height
-        });
-        setSelectedObject(obj);
-      }
-    };
-
     // Function to update text objects list
     const updateTextObjects = () => {
       const objects = canvas.getObjects();
@@ -199,7 +185,12 @@ export const DesignCanvas = ({
     // Listen to all transform events for sticky overlay handles
     const events = ['selection:created', 'selection:updated', 'object:moving', 'object:scaling', 'object:rotating'];
     events.forEach(evt => {
-      canvas.on(evt as any, ({ target }: any) => updateOverlayBounds(target));
+      canvas.on(evt as any, ({ target }: any) => {
+        // Only update bounds for non-text objects since text uses custom controls
+        if (target && target.type !== 'textbox' && target.type !== 'text') {
+          // Handle other object types if needed
+        }
+      });
     });
 
     canvas.on('selection:created', (e) => {
@@ -211,14 +202,7 @@ export const DesignCanvas = ({
       if (obj?.type === "textbox" || obj?.type === "text" || obj?.type === "i-text") {
         setTool("editText");
         onToolChange?.("editText");
-        // Hide default Fabric.js controls to use React overlay instead
-        obj.setControlsVisibility({
-          mt: false, mb: false, ml: false, mr: false,
-          tl: false, tr: false, bl: false, br: false,
-          mtr: false
-        });
-        
-        updateOverlayBounds(obj);
+        // Don't hide controls anymore - use custom ones
       } else {
         setOverlayBounds(null);
       }
@@ -233,7 +217,6 @@ export const DesignCanvas = ({
       if (obj?.type === "textbox" || obj?.type === "text" || obj?.type === "i-text") {
         setTool("editText");
         onToolChange?.("editText");
-        updateOverlayBounds(obj);
       } else {
         setOverlayBounds(null);
       }
@@ -252,7 +235,10 @@ export const DesignCanvas = ({
     canvas.on('object:added', updateTextObjects);
     canvas.on('object:removed', updateTextObjects);
 
+    // Setup custom controls for text objects
+    setupCustomControls(canvas);
 
+    
     // Add keyboard event listener to document for better handling
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeObj = fabricCanvas?.getActiveObject();
@@ -286,21 +272,22 @@ export const DesignCanvas = ({
         case 'Delete':
         case 'Backspace':
           if (!(activeObj as any).isEditing) {
-            fabricCanvas.remove(activeObj);
-            fabricCanvas.discardActiveObject();
+            canvas.remove(activeObj);
+            canvas.discardActiveObject();
             setSelectedObject(null);
             setOverlayBounds(null);
-            fabricCanvas.requestRenderAll();
+            canvas.requestRenderAll();
             setTool("text");
             onToolChange?.("text");
             toast.success("Text deleted");
           }
           break;
       }
-      fabricCanvas?.requestRenderAll();
+      canvas?.requestRenderAll();
     };
 
     document.addEventListener('keydown', handleKeyDown);
+
 
     setFabricCanvas(canvas);
 
@@ -316,6 +303,164 @@ export const DesignCanvas = ({
       canvas.dispose();
     };
   }, [currentSide, onSelectedObjectChange]);
+
+  // Setup custom Fabric.js controls for text objects
+  const setupCustomControls = (canvas: FabricCanvas) => {
+    // Helper to create SVG icon from Lucide icon
+    const createIconSVG = (iconName: string, size: number = 20) => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', size.toString());
+      svg.setAttribute('height', size.toString());
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', '#fff');
+      svg.setAttribute('stroke-width', '2');
+      
+      switch(iconName) {
+        case 'trash':
+          svg.innerHTML = '<path d="m3 6 3 12c0 .6.4 1 1 1h8c.6 0 1-.4 1-1l3-12"/><path d="M8 6V4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>';
+          break;
+        case 'copy':
+          svg.innerHTML = '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>';
+          break;
+        case 'rotate':
+          svg.innerHTML = '<path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>';
+          break;
+        case 'move':
+          svg.innerHTML = '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/>';
+          break;
+        case 'scale':
+          svg.innerHTML = '<path d="M21 3 9 15"/><path d="M12 3h9v9"/><path d="M3 21 15 9"/><path d="M3 12v9h9"/>';
+          break;
+        default:
+          svg.innerHTML = '<circle cx="12" cy="12" r="10"/>';
+      }
+      return svg;
+    };
+
+    // Helper to create a control with custom icon
+    const makeControl = (iconName: string, actionHandler: any, position: { x: number; y: number }) => {
+      return new Control({
+        x: position.x,
+        y: position.y,
+        offsetX: 0,
+        offsetY: 0,
+        cursorStyle: 'pointer',
+        actionHandler,
+        render: function(ctx, left, top, styleOverride, fabricObject) {
+          const size = Math.max(24, fabricObject.getScaledHeight() * 0.1);
+          
+          // Draw background circle
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.rotate((fabricObject.angle * Math.PI) / 180);
+          
+          // Background circle
+          ctx.beginPath();
+          ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+          ctx.fillStyle = '#4F46E5';
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          // Icon (simplified shapes since we can't easily render SVG to canvas)
+          ctx.strokeStyle = '#fff';
+          ctx.fillStyle = '#fff';
+          ctx.lineWidth = 2;
+          const iconSize = size * 0.4;
+          
+          switch(iconName) {
+            case 'trash':
+              // Trash can
+              ctx.beginPath();
+              ctx.rect(-iconSize/3, -iconSize/2, iconSize*2/3, iconSize);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/4, -iconSize/2);
+              ctx.lineTo(iconSize/4, -iconSize/2);
+              ctx.stroke();
+              break;
+            case 'copy':
+              // Copy icon
+              ctx.beginPath();
+              ctx.rect(-iconSize/3, -iconSize/3, iconSize*2/3, iconSize*2/3);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.rect(-iconSize/6, -iconSize/6, iconSize*2/3, iconSize*2/3);
+              ctx.stroke();
+              break;
+            case 'rotate':
+              // Rotate arrow
+              ctx.beginPath();
+              ctx.arc(0, 0, iconSize/3, 0, Math.PI * 1.5);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(iconSize/4, -iconSize/3);
+              ctx.lineTo(iconSize/3, -iconSize/4);
+              ctx.lineTo(iconSize/3, -iconSize/2);
+              ctx.fill();
+              break;
+            case 'scale':
+              // Scale arrows
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/3, -iconSize/3);
+              ctx.lineTo(iconSize/3, iconSize/3);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(iconSize/3, -iconSize/3);
+              ctx.lineTo(-iconSize/3, iconSize/3);
+              ctx.stroke();
+              break;
+          }
+          
+          ctx.restore();
+        }
+      });
+    };
+
+    // Control handlers
+    const deleteHandler = (eventData: any, transform: any) => {
+      const obj = transform.target;
+      canvas.remove(obj);
+      canvas.discardActiveObject();
+      setSelectedObject(null);
+      setOverlayBounds(null);
+      setTool("text");
+      onToolChange?.("text");
+      canvas.requestRenderAll();
+      toast.success("Text deleted");
+      return true;
+    };
+
+    const cloneHandler = (eventData: any, transform: any) => {
+      const obj = transform.target;
+      obj.clone((cloned: any) => {
+        cloned.set({
+          left: obj.left + 20,
+          top: obj.top + 20,
+        });
+        canvas.add(cloned);
+        canvas.setActiveObject(cloned);
+        canvas.requestRenderAll();
+        toast.success("Text duplicated");
+      });
+      return true;
+    };
+
+    // Apply custom controls to textbox prototype
+    FabricTextbox.prototype.controls = {
+      deleteControl: makeControl('trash', deleteHandler, { x: -0.5, y: -0.5 }),
+      cloneControl: makeControl('copy', cloneHandler, { x: 0.5, y: -0.5 }),
+      rotateControl: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }),
+      scaleControl: makeControl('scale', controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }),
+      // Keep some default controls but hide others
+      ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
+      mr: new Control({ x: 0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
+      mt: new Control({ x: 0, y: -0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+      mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+    };
+  };
 
   // Add pointer event handlers for interactions
   useEffect(() => {
@@ -905,47 +1050,6 @@ export const DesignCanvas = ({
                   }}
                 />
                 
-                {/* React Overlay Controls */}
-                {overlayBounds && selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
-                  <TextOverlayControls
-                    bounds={overlayBounds}
-                    onDelete={() => {
-                      fabricCanvas?.remove(selectedObject);
-                      fabricCanvas?.requestRenderAll();
-                      toast.success("Text deleted");
-                    }}
-                        onRotateStart={(e) => {
-                          const rect = canvasWrapperRef.current?.getBoundingClientRect();
-                          if (!rect || !selectedObject) return;
-                          
-                          const center = selectedObject.getCenterPoint();
-                          const cx = rect.left + center.x;
-                          const cy = rect.top + center.y;
-                          const startAngleRad = Math.atan2(e.clientY - cy, e.clientX - cx);
-                          
-                          setStartAngle(selectedObject.angle || 0);
-                          setStartPointer({
-                            x: e.clientX,
-                            y: e.clientY
-                          });
-                          setIsRotating(true);
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onStretchStart={onStretchStart}
-                        onScaleStart={onScaleStart}
-                        onDuplicate={() => {
-                          (selectedObject as any).clone((cloned: any) => {
-                            cloned.set({ left: cloned.left + 10, top: cloned.top + 10 });
-                            fabricCanvas?.add(cloned);
-                            fabricCanvas?.setActiveObject(cloned);
-                            fabricCanvas?.requestRenderAll();
-                            toast.success("Text duplicated");
-                          });
-                        }}
-                        onVerticalScaleStart={onVerticalScaleStart}
-                      />
-                    )}
                     
                     {/* Design area label */}
                     {!selectedObject && (
