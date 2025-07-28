@@ -82,21 +82,21 @@ export const DesignCanvas = ({
 
     // Expose canvas globally for tool access
     (window as any).designCanvas = {
-      addText: (text: string = "Sample Text") => {
+      addText: (text: string = "Sample Text", options: any = {}) => {
         const textObj = new FabricText(text, {
           left: 150,
           top: 150,
-          fontFamily: 'Arial',
-          fontSize: 24,
-          fill: currentColor?.name === "White" || currentColor?.name === "Vintage White" || 
-               currentColor?.name === "Yellow" || currentColor?.name === "Lime" || 
-               currentColor?.name === "Pink" || currentColor?.name === "Light Blue" || 
-               currentColor?.name === "Mint" || currentColor?.name === "Lavender" || 
-               currentColor?.name === "Silver" || currentColor?.name === "Peach" || 
-               currentColor?.name === "Heather Grey" || currentColor?.name === "Dusty Blue" || 
-               currentColor?.name === "Coral" || currentColor?.name === "Sand" || 
-               currentColor?.name === "Mustard" || currentColor?.name === "Gold" 
-               ? '#000000' : '#FFFFFF',
+          fontFamily: options.fontFamily || 'Arial',
+          fontSize: options.fontSize || 24,
+          fill: options.fill || (currentColor?.name === "White" || currentColor?.name === "Vintage White" || 
+                currentColor?.name === "Yellow" || currentColor?.name === "Lime" || 
+                currentColor?.name === "Pink" || currentColor?.name === "Light Blue" || 
+                currentColor?.name === "Mint" || currentColor?.name === "Lavender" || 
+                currentColor?.name === "Silver" || currentColor?.name === "Peach" || 
+                currentColor?.name === "Heather Grey" || currentColor?.name === "Dusty Blue" || 
+                currentColor?.name === "Coral" || currentColor?.name === "Sand" || 
+                currentColor?.name === "Mustard" || currentColor?.name === "Gold" 
+                ? '#000000' : '#FFFFFF'),
           editable: true,
           hasControls: true,
           hasBorders: true,
@@ -104,10 +104,13 @@ export const DesignCanvas = ({
           transparentCorners: false,
           cornerColor: '#4F46E5',
           borderColor: '#4F46E5',
-          textAlign: 'left',
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          underline: false,
+          textAlign: options.textAlign || 'left',
+          fontWeight: options.fontWeight || 'normal',
+          fontStyle: options.fontStyle || 'normal',
+          underline: options.underline || false,
+          scaleX: options.scaleX || 1,
+          scaleY: options.scaleY || 1,
+          rotation: options.rotation || 0,
         });
         fabricCanvas.add(textObj);
         fabricCanvas.setActiveObject(textObj);
@@ -194,11 +197,50 @@ export const DesignCanvas = ({
       },
 
       updateSelectedTextProperty: (property: string, value: any) => {
-        if (!selectedObject || (selectedObject.type !== "textbox" && selectedObject.type !== "text")) return;
+        if (!selectedObject || (selectedObject.type !== "textbox" && selectedObject.type !== "text")) {
+          console.log("No text selected or wrong type:", selectedObject?.type);
+          return;
+        }
+        console.log("Updating text property:", property, "to", value);
         selectedObject.set(property, value);
         selectedObject.setCoords();
         fabricCanvas.renderAll();
         fabricCanvas.requestRenderAll();
+      },
+
+      clearSelection: () => {
+        fabricCanvas.discardActiveObject();
+        fabricCanvas.renderAll();
+        setSelectedObject(null);
+        onSelectedObjectChange?.(null);
+      },
+
+      addImageFromUrl: (url: string) => {
+        FabricImage.fromURL(url).then((img) => {
+          const maxWidth = 200;
+          const maxHeight = 200;
+          const scale = Math.min(maxWidth / img.width!, maxHeight / img.height!);
+          
+          img.set({
+            left: 150,
+            top: 150,
+            scaleX: scale,
+            scaleY: scale,
+            hasControls: true,
+            hasBorders: true,
+            cornerSize: 10,
+            transparentCorners: false,
+            cornerColor: '#4F46E5',
+            borderColor: '#4F46E5',
+          });
+
+          fabricCanvas.add(img);
+          fabricCanvas.setActiveObject(img);
+          fabricCanvas.renderAll();
+          setSelectedObject(img);
+          onSelectedObjectChange?.(img);
+          toast.success("AI image added to design");
+        });
       }
     };
 
