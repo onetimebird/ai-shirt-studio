@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import * as fabric from "fabric";
+import { Canvas, IText, Control, controlsUtils, util, Textbox, FabricImage } from "fabric";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
 import { ZoomIn, ZoomOut, RotateCw, Copy, Trash2, Move, MousePointer, ShoppingCart, RefreshCw } from "lucide-react";
 import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
@@ -19,6 +19,53 @@ import rotateIcon from "@/assets/icons/rotate.svg";
 import scaleIcon from "@/assets/icons/scale.svg";
 import stretchIcon from "@/assets/icons/stretch.svg";
 import layerIcon from "@/assets/icons/layer.svg";
+
+// Patch IText prototype at module level before any instances are created
+(async () => {
+  const [del, clo, rot, sca, str, lay] = await Promise.all([
+    util.loadImage(deleteIcon),
+    util.loadImage(cloneIcon),
+    util.loadImage(rotateIcon),
+    util.loadImage(scaleIcon),
+    util.loadImage(stretchIcon),
+    util.loadImage(layerIcon),
+  ]);
+
+  const mk = (img: HTMLImageElement, handler: any, pos: { x: number; y: number }) =>
+    new Control({
+      x: pos.x, y: pos.y,
+      actionHandler: handler,
+      cursorStyle: "pointer",
+      render(ctx, left, top, styleOverride, obj) {
+        const size = Math.max(28, obj.getScaledHeight() * 0.12);
+        ctx.save();
+        ctx.translate(left, top);
+        ctx.rotate((obj.angle * Math.PI)/180);
+        ctx.beginPath();
+        ctx.arc(0,0,size/2,0,2*Math.PI);
+        ctx.fillStyle = "#fff"; ctx.fill();
+        ctx.strokeStyle = "#ddd"; ctx.stroke();
+        ctx.drawImage(img, -size*0.3, -size*0.3, size*0.6, size*0.6);
+        ctx.restore();
+      }
+    });
+
+  const delH = (_e: any, t: any) => { t.target.canvas.remove(t.target); return true; };
+  const layH = (_e: any, t: any) => { t.target.canvas.bringObjectToFront(t.target); return true; };
+  const cloH = (_e: any, t: any) => { t.target.clone((c: any) => { t.target.canvas.add(c).setActiveObject(c); }); return true; };
+
+  IText.prototype.controls = {
+    tl: mk(del, delH, {x:-0.5,y:-0.5}),
+    mt: mk(lay, layH, {x:0,   y:-0.5}),
+    tr: mk(clo, cloH, {x: 0.5,y:-0.5}),
+    mr: mk(str, controlsUtils.scalingXOrSkewingY, {x:0.5,y:0}),
+    br: mk(sca, controlsUtils.scalingEqually,     {x:0.5,y:0.5}),
+    bl: mk(rot, controlsUtils.rotationWithSnapping,{x:-0.5,y:0.5}),
+    mtr:mk(rot, controlsUtils.rotationWithSnapping,{x:0,   y:-0.75}),
+  };
+
+  IText.prototype.objectCaching = false;
+})();
 
 
 
@@ -39,7 +86,7 @@ export const DesignCanvas = ({
 }: DesignCanvasProps) => {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
+  const [fabricCanvas, setFabricCanvas] = useState<Canvas | null>(null);
   const [selectedObject, setSelectedObject] = useState<any>(null);
   const [overlayBounds, setOverlayBounds] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
   const [isRotating, setIsRotating] = useState(false);
@@ -181,7 +228,7 @@ export const DesignCanvas = ({
     // Get wrapper dimensions for responsive canvas
     const { width, height } = canvasWrapperRef.current.getBoundingClientRect();
 
-    const canvas = new fabric.Canvas(canvasRef.current, {
+    const canvas = new Canvas(canvasRef.current, {
       width,
       height,
       backgroundColor: "transparent",
@@ -300,88 +347,6 @@ export const DesignCanvas = ({
     document.addEventListener('keydown', handleKeyDown);
 
     
-    // Now that fabric.Canvas is created, patch its Textbox prototype:
-    (async () => {
-      try {
-        const [del, clo, rot, sca, str, lay] = await Promise.all([
-          fabric.util.loadImage(deleteIcon),
-          fabric.util.loadImage(cloneIcon),
-          fabric.util.loadImage(rotateIcon),
-          fabric.util.loadImage(scaleIcon),
-          fabric.util.loadImage(stretchIcon),
-          fabric.util.loadImage(layerIcon),
-        ]);
-
-        const { controlsUtils } = fabric;
-
-        // Helper to build a control
-        const mk = (img: HTMLImageElement, handler: any, pos: { x: number; y: number }) =>
-          new fabric.Control({
-            x: pos.x, 
-            y: pos.y,
-            actionHandler: handler,
-            cursorStyle: "pointer",
-            render(ctx, left, top, styleOverride, obj) {
-              const size = Math.max(28, obj.getScaledHeight() * 0.12);
-              ctx.save();
-              ctx.translate(left, top);
-              ctx.rotate((obj.angle * Math.PI)/180);
-              ctx.beginPath();
-              ctx.arc(0,0,size/2,0,2*Math.PI);
-              ctx.fillStyle = "#fff"; 
-              ctx.fill();
-              ctx.strokeStyle = "#ddd"; 
-              ctx.stroke();
-              ctx.drawImage(img, -size*0.3, -size*0.3, size*0.6, size*0.6);
-              ctx.restore();
-            }
-          });
-
-        // Handlers
-        const delH = (_e: any, t: any) => { 
-          t.target.canvas.remove(t.target); 
-          setSelectedObject(null);
-          setOverlayBounds(null);
-          setTool("text");
-          onToolChange?.("text");
-          toast.success("Text deleted");
-          return true; 
-        };
-        const layH = (_e: any, t: any) => { 
-          t.target.canvas.bringObjectToFront(t.target); 
-          return true; 
-        };
-        const cloH = (_e: any, t: any) => { 
-          t.target.clone((c: any) => { 
-            c.set({
-              left: t.target.left + 20,
-              top: t.target.top + 20,
-            });
-            t.target.canvas.add(c).setActiveObject(c); 
-            toast.success("Text duplicated");
-          }); 
-          return true; 
-        };
-
-        // Patch the same Textbox class your canvas uses:
-        fabric.Textbox.prototype.controls = {
-          tl: mk(del, delH, {x:-0.5,y:-0.5}),
-          mt: mk(lay, layH, {x:0,   y:-0.5}),
-          tr: mk(clo, cloH, {x: 0.5,y:-0.5}),
-          mr: mk(str, controlsUtils.scalingXOrSkewingY, {x:0.5,y:0}),
-          br: mk(sca, controlsUtils.scalingEqually,     {x:0.5,y:0.5}),
-          bl: mk(rot, controlsUtils.rotationWithSnapping,{x:-0.5,y:0.5}),
-          mtr:mk(rot, controlsUtils.rotationWithSnapping,{x:0,   y:-0.75}),
-        };
-
-        // No caching so they redraw every time:
-        fabric.Textbox.prototype.objectCaching = false;
-        canvas.requestRenderAll();
-        
-      } catch (error) {
-        console.error('Failed to load control icons:', error);
-      }
-    })();
 
     setFabricCanvas(canvas);
 
@@ -539,7 +504,7 @@ export const DesignCanvas = ({
     // Expose canvas globally for tool access
     (window as any).designCanvas = {
       addText: (text: string = "New multi-line text\nType here...", options: any = {}) => {
-        const textObj = new fabric.Textbox(text, {
+        const textObj = new IText(text, {
           left: 200,
           top: 200,
           width: 300,
@@ -608,7 +573,7 @@ export const DesignCanvas = ({
 
         const reader = new FileReader();
         reader.onload = (e) => {
-          fabric.FabricImage.fromURL(e.target?.result as string).then((img) => {
+          FabricImage.fromURL(e.target?.result as string).then((img) => {
             const maxWidth = 200;
             const maxHeight = 200;
             const scale = Math.min(maxWidth / img.width!, maxHeight / img.height!);
@@ -704,7 +669,7 @@ export const DesignCanvas = ({
       },
 
       addImageFromUrl: (url: string) => {
-        fabric.FabricImage.fromURL(url).then((img) => {
+        FabricImage.fromURL(url).then((img) => {
           const maxWidth = 200;
           const maxHeight = 200;
           const scale = Math.min(maxWidth / img.width!, maxHeight / img.height!);
