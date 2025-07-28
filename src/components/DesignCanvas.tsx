@@ -312,34 +312,7 @@ export const DesignCanvas = ({
 
   // Setup custom Fabric.js controls for text objects
   const setupCustomControls = (canvas: FabricCanvas) => {
-    // Helper to load SVG icon as image
-    const loadIconImage = (iconPath: string): Promise<HTMLImageElement> => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = iconPath;
-      });
-    };
-
-    // Cache for loaded icons
-    const iconCache: { [key: string]: HTMLImageElement } = {};
-
-    // Preload all icons
-    const preloadIcons = async () => {
-      try {
-        iconCache.delete = await loadIconImage(deleteIcon);
-        iconCache.clone = await loadIconImage(cloneIcon);
-        iconCache.rotate = await loadIconImage(rotateIcon);
-        iconCache.scale = await loadIconImage(scaleIcon);
-        iconCache.stretch = await loadIconImage(stretchIcon);
-        iconCache.layer = await loadIconImage(layerIcon);
-      } catch (error) {
-        console.warn('Failed to load some icons:', error);
-      }
-    };
-
-    // Helper to create a control with custom SVG icon
+    // Helper to create a control with custom icon
     const makeControl = (iconName: string, actionHandler: any, position: { x: number; y: number }) => {
       return new Control({
         x: position.x,
@@ -358,20 +331,126 @@ export const DesignCanvas = ({
           // Draw background circle
           ctx.beginPath();
           ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-          ctx.fillStyle = '#4F46E5';
+          ctx.fillStyle = '#fff';
           ctx.fill();
-          ctx.strokeStyle = '#fff';
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#ddd';
+          ctx.lineWidth = 1;
           ctx.stroke();
           
-          // Draw the SVG icon
-          const icon = iconCache[iconName];
-          if (icon && icon.complete) {
-            const iconSize = size * 0.5;
-            // Apply white tint to the icon
-            ctx.filter = 'brightness(0) invert(1)';
-            ctx.drawImage(icon, -iconSize/2, -iconSize/2, iconSize, iconSize);
-            ctx.filter = 'none';
+          // Draw icon
+          ctx.strokeStyle = '#333';
+          ctx.fillStyle = '#333';
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          
+          const iconSize = size * 0.4;
+          
+          switch(iconName) {
+            case 'delete':
+              // Trash can
+              ctx.beginPath();
+              ctx.rect(-iconSize/3, -iconSize/2.5, iconSize*2/3, iconSize*0.8);
+              ctx.stroke();
+              // Lid
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/2.5, -iconSize/2.5);
+              ctx.lineTo(iconSize/2.5, -iconSize/2.5);
+              ctx.stroke();
+              // Handle
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/6, -iconSize/2.5);
+              ctx.lineTo(-iconSize/6, -iconSize/1.8);
+              ctx.moveTo(iconSize/6, -iconSize/2.5);
+              ctx.lineTo(iconSize/6, -iconSize/1.8);
+              ctx.stroke();
+              // Vertical lines
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/6, -iconSize/4);
+              ctx.lineTo(-iconSize/6, iconSize/8);
+              ctx.moveTo(0, -iconSize/4);
+              ctx.lineTo(0, iconSize/8);
+              ctx.moveTo(iconSize/6, -iconSize/4);
+              ctx.lineTo(iconSize/6, iconSize/8);
+              ctx.stroke();
+              break;
+              
+            case 'clone':
+              // Copy squares
+              ctx.beginPath();
+              ctx.rect(-iconSize/4, -iconSize/4, iconSize/2, iconSize/2);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.rect(-iconSize/6, -iconSize/6, iconSize/2, iconSize/2);
+              ctx.stroke();
+              break;
+              
+            case 'rotate':
+              // Curved arrow
+              ctx.beginPath();
+              ctx.arc(0, 0, iconSize/3, -Math.PI/2, Math.PI/2, false);
+              ctx.stroke();
+              // Arrow head
+              ctx.beginPath();
+              ctx.moveTo(iconSize/4, iconSize/4);
+              ctx.lineTo(iconSize/3, iconSize/6);
+              ctx.lineTo(iconSize/2.5, iconSize/3);
+              ctx.stroke();
+              break;
+              
+            case 'scale':
+              // Diagonal arrows
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/3, -iconSize/3);
+              ctx.lineTo(iconSize/3, iconSize/3);
+              ctx.moveTo(iconSize/3, -iconSize/3);
+              ctx.lineTo(-iconSize/3, iconSize/3);
+              ctx.stroke();
+              // Arrow heads
+              ctx.beginPath();
+              ctx.moveTo(iconSize/4, iconSize/4);
+              ctx.lineTo(iconSize/3, iconSize/5);
+              ctx.lineTo(iconSize/5, iconSize/3);
+              ctx.moveTo(-iconSize/4, -iconSize/4);
+              ctx.lineTo(-iconSize/3, -iconSize/5);
+              ctx.lineTo(-iconSize/5, -iconSize/3);
+              ctx.fill();
+              break;
+              
+            case 'stretch':
+              // Horizontal arrows
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/2.5, 0);
+              ctx.lineTo(iconSize/2.5, 0);
+              ctx.stroke();
+              // Arrow heads
+              ctx.beginPath();
+              ctx.moveTo(-iconSize/3, -iconSize/8);
+              ctx.lineTo(-iconSize/2.5, 0);
+              ctx.lineTo(-iconSize/3, iconSize/8);
+              ctx.moveTo(iconSize/3, -iconSize/8);
+              ctx.lineTo(iconSize/2.5, 0);
+              ctx.lineTo(iconSize/3, iconSize/8);
+              ctx.stroke();
+              break;
+              
+            case 'layer':
+              // Layered squares
+              ctx.beginPath();
+              ctx.rect(-iconSize/3, -iconSize/4, iconSize/2, iconSize/3);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.rect(-iconSize/6, -iconSize/6, iconSize/2, iconSize/3);
+              ctx.stroke();
+              // Arrow up
+              ctx.beginPath();
+              ctx.moveTo(0, -iconSize/2);
+              ctx.lineTo(0, -iconSize/6);
+              ctx.moveTo(-iconSize/8, -iconSize/3);
+              ctx.lineTo(0, -iconSize/2);
+              ctx.lineTo(iconSize/8, -iconSize/3);
+              ctx.stroke();
+              break;
           }
           
           ctx.restore();
@@ -416,20 +495,18 @@ export const DesignCanvas = ({
     };
 
     // Apply custom controls to textbox prototype
-    preloadIcons().then(() => {
-      FabricTextbox.prototype.controls = {
-        tl: makeControl('delete', deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
-        mt: makeControl('layer', layerHandler, { x: 0, y: -0.5 }), // top-center: layer
-        tr: makeControl('clone', cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
-        mr: makeControl('stretch', controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
-        br: makeControl('scale', controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
-        bl: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
-        mtr: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
-        // Keep some default controls but hide others
-        ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
-        mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
-      };
-    });
+    FabricTextbox.prototype.controls = {
+      tl: makeControl('delete', deleteHandler, { x: -0.5, y: -0.5 }),      // top-left: delete
+      mt: makeControl('layer', layerHandler, { x: 0, y: -0.5 }), // top-center: layer
+      tr: makeControl('clone', cloneHandler, { x: 0.5, y: -0.5 }),         // top-right: clone
+      mr: makeControl('stretch', controlsUtils.scalingXOrSkewingY, { x: 0.5, y: 0 }), // mid-right: stretch
+      br: makeControl('scale', controlsUtils.scalingEqually, { x: 0.5, y: 0.5 }), // bottom-right: scale
+      bl: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: -0.5, y: 0.5 }), // bottom-left: rotate
+      mtr: makeControl('rotate', controlsUtils.rotationWithSnapping, { x: 0, y: -0.7 }), // main rotation handle
+      // Keep some default controls but hide others
+      ml: new Control({ x: -0.5, y: 0, actionHandler: controlsUtils.scalingXOrSkewingY }),
+      mb: new Control({ x: 0, y: 0.5, actionHandler: controlsUtils.scalingYOrSkewingX }),
+    };
   };
 
   // Add pointer event handlers for interactions
