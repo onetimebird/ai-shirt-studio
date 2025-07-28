@@ -17,20 +17,6 @@ interface Design {
   timestamp: Date;
 }
 
-interface DesignElement {
-  id: string;
-  type: "text" | "image";
-  content: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  rotation: number;
-  fontSize?: number;
-  fontFamily?: string;
-  color?: string;
-}
-
 export const TShirtDesigner = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -39,14 +25,8 @@ export const TShirtDesigner = () => {
   const [currentDesign, setCurrentDesign] = useState<Design | null>(null);
   const [designHistory, setDesignHistory] = useState<Design[]>([]);
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
-  const [frontElements, setFrontElements] = useState<DesignElement[]>([]);
-  const [backElements, setBackElements] = useState<DesignElement[]>([]);
   
-
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
-
-  const currentElements = currentSide === "front" ? frontElements : backElements;
-  const setCurrentElements = currentSide === "front" ? setFrontElements : setBackElements;
 
   const generateDesign = async () => {
     if (!prompt.trim()) {
@@ -78,11 +58,6 @@ export const TShirtDesigner = () => {
   };
 
   const handleOrder = () => {
-    if (!currentDesign) {
-      toast.error("Please generate a design first");
-      return;
-    }
-    
     toast.success("Order functionality coming soon!");
   };
 
@@ -231,8 +206,6 @@ export const TShirtDesigner = () => {
 
             <DesignCanvas
               side={currentSide}
-              elements={currentElements}
-              onElementsChange={setCurrentElements}
               selectedColor={selectedColor}
             />
           </div>
@@ -261,12 +234,8 @@ export const TShirtDesigner = () => {
                     <span>{selectedSize}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Front Elements:</span>
-                    <span>{frontElements.length}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Back Elements:</span>
-                    <span>{backElements.length}</span>
+                    <span>Design Area:</span>
+                    <span>{currentSide === "front" ? "Front" : "Back"}</span>
                   </div>
                 </div>
 
@@ -281,7 +250,6 @@ export const TShirtDesigner = () => {
                     variant="hero"
                     size="lg"
                     className="w-full mt-4"
-                    disabled={frontElements.length === 0 && backElements.length === 0 && !currentDesign}
                   >
                     Order Now
                   </Button>
