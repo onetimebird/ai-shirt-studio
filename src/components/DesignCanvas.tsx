@@ -19,50 +19,52 @@ import stretchSvg from "@/assets/icons/stretch.svg";
 import scaleSvg from "@/assets/icons/scale.svg";
 import rotateSvg from "@/assets/icons/rotate.svg";
 
-// Preload icons (module scope, before any React code)
-const [deleteImg, layerImg, cloneImg, stretchImg, scaleImg, rotateImg] = await Promise.all([
-  fabricUtil.loadImage(deleteSvg),
-  fabricUtil.loadImage(layerSvg),
-  fabricUtil.loadImage(cloneSvg),
-  fabricUtil.loadImage(stretchSvg),
-  fabricUtil.loadImage(scaleSvg),
-  fabricUtil.loadImage(rotateSvg),
-]);
+// Preload icons and patch prototype (module scope, before any React code)
+(async () => {
+  const [deleteImg, layerImg, cloneImg, stretchImg, scaleImg, rotateImg] = await Promise.all([
+    fabricUtil.loadImage(deleteSvg),
+    fabricUtil.loadImage(layerSvg),
+    fabricUtil.loadImage(cloneSvg),
+    fabricUtil.loadImage(stretchSvg),
+    fabricUtil.loadImage(scaleSvg),
+    fabricUtil.loadImage(rotateSvg),
+  ]);
 
-// Create a helper to build a control with an icon
-function makeControl(icon: HTMLImageElement, handler: any, pos: { x:number,y:number }) {
-  return new Control({
-    x: pos.x, y: pos.y,
-    cursorStyle: "pointer",
-    actionHandler: handler,
-    render(ctx, left, top, _, obj) {
-      const size = Math.max(28, obj.getScaledHeight()*0.12);
-      ctx.save();
-      ctx.translate(left, top);
-      ctx.rotate(obj.angle * Math.PI/180);
-      // draw background
-      ctx.beginPath();
-      ctx.arc(0,0,size/2,0,2*Math.PI);
-      ctx.fillStyle = "#fff"; ctx.fill();
-      ctx.strokeStyle = "#ddd"; ctx.stroke();
-      // draw icon
-      ctx.drawImage(icon, -size*0.3, -size*0.3, size*0.6, size*0.6);
-      ctx.restore();
-    }
-  });
-}
+  // Create a helper to build a control with an icon
+  function makeControl(icon: HTMLImageElement, handler: any, pos: { x:number,y:number }) {
+    return new Control({
+      x: pos.x, y: pos.y,
+      cursorStyle: "pointer",
+      actionHandler: handler,
+      render(ctx, left, top, _, obj) {
+        const size = Math.max(28, obj.getScaledHeight()*0.12);
+        ctx.save();
+        ctx.translate(left, top);
+        ctx.rotate(obj.angle * Math.PI/180);
+        // draw background
+        ctx.beginPath();
+        ctx.arc(0,0,size/2,0,2*Math.PI);
+        ctx.fillStyle = "#fff"; ctx.fill();
+        ctx.strokeStyle = "#ddd"; ctx.stroke();
+        // draw icon
+        ctx.drawImage(icon, -size*0.3, -size*0.3, size*0.6, size*0.6);
+        ctx.restore();
+      }
+    });
+  }
 
-// Patch the Textbox prototype (still module–scope)
-Textbox.prototype.controls = {
-  tl: makeControl(deleteImg,   (_e,t) => { t.target.canvas.remove(t.target); return true; }, { x:-0.5,y:-0.5 }),
-  mt: makeControl(layerImg,    (_e,t) => { t.target.canvas.bringObjectToFront(t.target); return true; }, { x:  0 ,y:-0.5 }),
-  tr: makeControl(cloneImg,    (_e,t) => { t.target.clone(c=>{ t.target.canvas.add(c).setActiveObject(c)}); return true; }, { x: 0.5,y:-0.5 }),
-  mr: makeControl(stretchImg,  controlsUtils.scalingXOrSkewingY,   { x: 0.5,y:  0  }),
-  br: makeControl(scaleImg,    controlsUtils.scalingEqually,      { x: 0.5,y: 0.5 }),
-  bl: makeControl(rotateImg,   controlsUtils.rotationWithSnapping, { x:-0.5,y: 0.5 }),
-  mtr:makeControl(rotateImg,   controlsUtils.rotationWithSnapping, { x:  0 ,y:-0.75}),
-};
-Textbox.prototype.objectCaching = false;
+  // Patch the Textbox prototype (still module–scope)
+  Textbox.prototype.controls = {
+    tl: makeControl(deleteImg,   (_e,t) => { t.target.canvas.remove(t.target); return true; }, { x:-0.5,y:-0.5 }),
+    mt: makeControl(layerImg,    (_e,t) => { t.target.canvas.bringObjectToFront(t.target); return true; }, { x:  0 ,y:-0.5 }),
+    tr: makeControl(cloneImg,    (_e,t) => { t.target.clone(c=>{ t.target.canvas.add(c).setActiveObject(c)}); return true; }, { x: 0.5,y:-0.5 }),
+    mr: makeControl(stretchImg,  controlsUtils.scalingXOrSkewingY,   { x: 0.5,y:  0  }),
+    br: makeControl(scaleImg,    controlsUtils.scalingEqually,      { x: 0.5,y: 0.5 }),
+    bl: makeControl(rotateImg,   controlsUtils.rotationWithSnapping, { x:-0.5,y: 0.5 }),
+    mtr:makeControl(rotateImg,   controlsUtils.rotationWithSnapping, { x:  0 ,y:-0.75}),
+  };
+  Textbox.prototype.objectCaching = false;
+})();
 
 interface DesignCanvasProps {
   selectedColor: string;
