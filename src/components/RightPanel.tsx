@@ -80,9 +80,8 @@ export const RightPanel = ({
   }, [selectedObject]);
 
   const updateTextProperty = (property: string, value: any) => {
-    if (selectedObject && (window as any).designCanvas) {
-      selectedObject.set(property, value);
-      (window as any).designCanvas.canvas?.renderAll();
+    if ((window as any).designCanvas?.updateSelectedTextProperty) {
+      (window as any).designCanvas.updateSelectedTextProperty(property, value);
     }
   };
 

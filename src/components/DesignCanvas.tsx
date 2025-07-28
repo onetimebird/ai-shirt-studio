@@ -88,7 +88,15 @@ export const DesignCanvas = ({
           top: 150,
           fontFamily: 'Arial',
           fontSize: 24,
-          fill: currentColor?.name === "White" ? '#000000' : '#FFFFFF',
+          fill: currentColor?.name === "White" || currentColor?.name === "Vintage White" || 
+               currentColor?.name === "Yellow" || currentColor?.name === "Lime" || 
+               currentColor?.name === "Pink" || currentColor?.name === "Light Blue" || 
+               currentColor?.name === "Mint" || currentColor?.name === "Lavender" || 
+               currentColor?.name === "Silver" || currentColor?.name === "Peach" || 
+               currentColor?.name === "Heather Grey" || currentColor?.name === "Dusty Blue" || 
+               currentColor?.name === "Coral" || currentColor?.name === "Sand" || 
+               currentColor?.name === "Mustard" || currentColor?.name === "Gold" 
+               ? '#000000' : '#FFFFFF',
           editable: true,
           hasControls: true,
           hasBorders: true,
@@ -96,6 +104,10 @@ export const DesignCanvas = ({
           transparentCorners: false,
           cornerColor: '#4F46E5',
           borderColor: '#4F46E5',
+          textAlign: 'left',
+          fontWeight: 'normal',
+          fontStyle: 'normal',
+          underline: false,
         });
         fabricCanvas.add(textObj);
         fabricCanvas.setActiveObject(textObj);
@@ -179,6 +191,14 @@ export const DesignCanvas = ({
         if (!selectedObject) return;
         selectedObject.center();
         fabricCanvas.renderAll();
+      },
+
+      updateSelectedTextProperty: (property: string, value: any) => {
+        if (!selectedObject || selectedObject.type !== "textbox") return;
+        selectedObject.set(property, value);
+        selectedObject.setCoords();
+        fabricCanvas.renderAll();
+        fabricCanvas.requestRenderAll();
       }
     };
 
@@ -410,29 +430,31 @@ export const DesignCanvas = ({
               transformOrigin: 'center'
             }}
           >
-            {/* T-shirt Background */}
-            <div 
-              className="absolute inset-8 flex items-center justify-center rounded-lg transition-colors duration-300"
-              style={{
-                backgroundColor: currentColor?.value || "#ffffff",
-                width: "500px",
-                height: "600px",
-              }}
-            >
-              {/* T-shirt Template with proper color filtering */}
+            {/* T-shirt Background - Only apply color to the shirt */}
+            <div className="absolute inset-8 flex items-center justify-center rounded-lg">
+              {/* T-shirt mockup with color overlay */}
               <div 
-                className="w-full h-full flex items-center justify-center"
+                className="relative w-full h-full flex items-center justify-center"
                 style={{
-                  backgroundColor: currentColor?.value || "#ffffff",
+                  width: "500px",
+                  height: "600px",
                 }}
               >
+                {/* Colored background for t-shirt */}
+                <div 
+                  className="absolute inset-0 transition-colors duration-300"
+                  style={{
+                    backgroundColor: currentColor?.value || "#ffffff",
+                  }}
+                />
+                {/* T-shirt template image */}
                 <img
                   src={tshirtImage}
                   alt={`T-shirt ${currentSide}`}
-                  className="w-full h-full object-contain transition-all duration-300"
+                  className="relative w-full h-full object-contain z-10"
                   style={{
-                    mixBlendMode: currentColor?.name === "White" ? "normal" : "multiply",
-                    opacity: currentColor?.name === "White" ? 1 : 0.8,
+                    filter: currentColor?.name === "White" ? "none" : `drop-shadow(0 0 0 ${currentColor?.value})`,
+                    mixBlendMode: "overlay",
                   }}
                 />
               </div>
