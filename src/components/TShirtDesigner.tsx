@@ -1,14 +1,16 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Wand2, Palette, Shirt } from "lucide-react";
+import { Loader2, Wand2, Palette, Shirt, Menu, X } from "lucide-react";
 import { toast } from "sonner";
 import { DesignCanvas } from "./DesignCanvas";
+import { DesignToolbar } from "./DesignToolbar";
+import { ProductSelector } from "./ProductSelector";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
-
 
 interface Design {
   id: string;
@@ -25,8 +27,19 @@ export const TShirtDesigner = () => {
   const [currentDesign, setCurrentDesign] = useState<Design | null>(null);
   const [designHistory, setDesignHistory] = useState<Design[]>([]);
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
+  const [activeTab, setActiveTab] = useState<"text" | "image" | "colors">("text");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  const sizes = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
+  // Text properties
+  const [newText, setNewText] = useState("Your Text");
+  const [fontSize, setFontSize] = useState([24]);
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [textColor, setTextColor] = useState("#000000");
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [textAlign, setTextAlign] = useState("center");
+  const [selectedObject, setSelectedObject] = useState<any>(null);
 
   const generateDesign = async () => {
     if (!prompt.trim()) {
@@ -36,7 +49,6 @@ export const TShirtDesigner = () => {
 
     setIsGenerating(true);
     try {
-      // Simulate AI design generation - in a real app, this would call an AI service
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       const newDesign: Design = {
@@ -62,203 +74,169 @@ export const TShirtDesigner = () => {
   };
 
   return (
-    <section id="designer" className="py-12 px-6">
-      <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-            AI T-Shirt Designer
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Design custom t-shirts with AI, text, and images
-          </p>
+    <div className="min-h-screen bg-background">
+      {/* Mobile Header */}
+      <header className="lg:hidden bg-card border-b border-border p-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">AI T-Shirt Designer</h1>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </Button>
         </div>
+      </header>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Design Tools */}
-          <div className="space-y-6">
+      <div className="flex h-[calc(100vh-4rem)] lg:h-screen">
+        {/* Sidebar - Mobile Drawer / Desktop Fixed */}
+        <aside className={`
+          fixed inset-y-0 left-0 z-50 w-80 bg-card border-r border-border transform transition-transform duration-300 ease-in-out
+          lg:relative lg:translate-x-0 lg:z-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
+          <div className="h-full overflow-y-auto">
+            {/* Desktop Header */}
+            <div className="hidden lg:block p-6 border-b border-border">
+              <h1 className="text-2xl font-bold">AI T-Shirt Designer</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Design custom t-shirts with AI, text, and images
+              </p>
+            </div>
+
             {/* AI Design Generator */}
-            <Card className="bg-gradient-card shadow-creative">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Wand2 className="w-5 h-5 text-primary" />
-                  AI Design Generator
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Input
-                    placeholder="e.g., A cool dragon breathing fire with mountains"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && generateDesign()}
-                  />
-                </div>
-                
+            <div className="p-4 border-b border-border">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <Wand2 className="w-4 h-4" />
+                AI Design Generator
+              </h3>
+              <div className="space-y-3">
+                <Input
+                  placeholder="e.g., A cool dragon breathing fire"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && generateDesign()}
+                />
                 <Button
                   onClick={generateDesign}
                   disabled={isGenerating || !prompt.trim()}
-                  variant="creative"
                   className="w-full"
                 >
                   {isGenerating ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
                       Generating...
                     </>
                   ) : (
                     <>
-                      <Wand2 className="w-4 h-4" />
+                      <Wand2 className="w-4 h-4 mr-2" />
                       Generate
                     </>
                   )}
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* T-Shirt Customization */}
-            <Card className="bg-gradient-card shadow-soft">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Palette className="w-5 h-5 text-primary" />
-                  T-Shirt Options
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-3">Bella Canvas 3001c Colors</h4>
-                  <div className="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto">
-                    {BELLA_3001C_COLORS.map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => setSelectedColor(color.name)}
-                        className={`w-8 h-8 rounded-full border-2 transition-all ${
-                          selectedColor === color.name 
-                            ? "border-primary scale-110" 
-                            : "border-border hover:border-primary/50"
-                        }`}
-                        style={{ backgroundColor: color.value }}
-                        title={color.label}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold mb-3">Size</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {sizes.map((size) => (
-                      <Button
-                        key={size}
-                        variant={selectedSize === size ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedSize(size)}
-                      >
-                        {size}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Product Selector */}
+            <div className="p-4 border-b border-border">
+              <ProductSelector
+                selectedColor={selectedColor}
+                setSelectedColor={setSelectedColor}
+                selectedSize={selectedSize}
+                setSelectedSize={setSelectedSize}
+                currentSide={currentSide}
+                setCurrentSide={setCurrentSide}
+              />
+            </div>
 
             {/* Design History */}
             {designHistory.length > 0 && (
-              <Card className="bg-gradient-card shadow-soft">
-                <CardHeader>
-                  <CardTitle>Recent AI Designs</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2">
-                    {designHistory.slice(0, 4).map((design) => (
-                      <button
-                        key={design.id}
-                        onClick={() => setCurrentDesign(design)}
-                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:scale-105 ${
-                          currentDesign?.id === design.id 
-                            ? "border-primary shadow-glow" 
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        <img
-                          src={design.imageUrl}
-                          alt={design.prompt}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="p-4">
+                <h3 className="font-semibold mb-3">Recent Designs</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {designHistory.slice(0, 4).map((design) => (
+                    <button
+                      key={design.id}
+                      onClick={() => setCurrentDesign(design)}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 transition-all hover:scale-105 ${
+                        currentDesign?.id === design.id 
+                          ? "border-primary shadow-lg" 
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <img
+                        src={design.imageUrl}
+                        alt={design.prompt}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
+        </aside>
+
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main Content */}
+        <main className="flex-1 flex flex-col min-w-0">
+          {/* Design Toolbar */}
+          <DesignToolbar
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            onAddText={() => {}}
+            onImageUpload={() => {}}
+            selectedObject={selectedObject}
+            onUpdateTextProperties={() => {}}
+            onDeleteSelected={() => {}}
+            onDuplicateSelected={() => {}}
+            onRotateSelected={() => {}}
+            newText={newText}
+            setNewText={setNewText}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+            fontFamily={fontFamily}
+            setFontFamily={setFontFamily}
+            textColor={textColor}
+            setTextColor={setTextColor}
+            isBold={isBold}
+            setIsBold={setIsBold}
+            isItalic={isItalic}
+            setIsItalic={setIsItalic}
+            isUnderline={isUnderline}
+            setIsUnderline={setIsUnderline}
+            textAlign={textAlign}
+            setTextAlign={setTextAlign}
+          />
 
           {/* Design Canvas */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Tabs value={currentSide} onValueChange={(value) => setCurrentSide(value as "front" | "back")}>
-                <TabsList>
-                  <TabsTrigger value="front">Front</TabsTrigger>
-                  <TabsTrigger value="back">Back</TabsTrigger>
-                </TabsList>
-              </Tabs>
-              
-            </div>
-
+          <div className="flex-1 flex items-center justify-center p-4 bg-muted/20">
             <DesignCanvas
               side={currentSide}
               selectedColor={selectedColor}
+              onSelectedObjectChange={setSelectedObject}
+              toolbarProps={{
+                newText,
+                fontSize,
+                fontFamily,
+                textColor,
+                isBold,
+                isItalic,
+                isUnderline,
+                textAlign,
+              }}
             />
           </div>
-
-          {/* Order Summary */}
-          <div className="sticky top-6">
-            <Card className="bg-gradient-card shadow-creative">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shirt className="w-5 h-5 text-primary" />
-                  Order Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Model:</span>
-                    <span>Bella Canvas 3001c</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Color:</span>
-                    <span>{BELLA_3001C_COLORS.find(c => c.name === selectedColor)?.label}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Size:</span>
-                    <span>{selectedSize}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Design Area:</span>
-                    <span>{currentSide === "front" ? "Front" : "Back"}</span>
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Total:</span>
-                    <span className="text-primary">$24.99</span>
-                  </div>
-                  
-                  <Button
-                    onClick={handleOrder}
-                    variant="hero"
-                    size="lg"
-                    className="w-full mt-4"
-                  >
-                    Order Now
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        </main>
       </div>
-    </section>
+    </div>
   );
 };
