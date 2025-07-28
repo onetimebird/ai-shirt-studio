@@ -554,18 +554,28 @@ export const DesignCanvas = ({
 
       duplicateSelected: () => {
         if (!selectedObject) return;
-        selectedObject.clone((cloned: any) => {
-          cloned.set({
-            left: selectedObject.left + 20,
-            top: selectedObject.top + 20,
+        
+        try {
+          // Fabric.js v6 clone method now returns a Promise
+          selectedObject.clone().then((cloned: any) => {
+            cloned.set({
+              left: selectedObject.left + 20,
+              top: selectedObject.top + 20,
+            });
+            fabricCanvas.add(cloned);
+            fabricCanvas.setActiveObject(cloned);
+            fabricCanvas.renderAll();
+            setSelectedObject(cloned);
+            onSelectedObjectChange?.(cloned);
+            toast.success("Element duplicated");
+          }).catch((error: any) => {
+            console.error("Clone error:", error);
+            toast.error("Failed to duplicate element");
           });
-          fabricCanvas.add(cloned);
-          fabricCanvas.setActiveObject(cloned);
-          fabricCanvas.renderAll();
-          setSelectedObject(cloned);
-          onSelectedObjectChange?.(cloned);
-        });
-        toast.success("Element duplicated");
+        } catch (error) {
+          console.error("Duplicate error:", error);
+          toast.error("Failed to duplicate element");
+        }
       },
 
       rotateSelected: () => {
