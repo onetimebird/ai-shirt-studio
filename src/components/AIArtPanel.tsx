@@ -3,18 +3,41 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Expand, Info } from 'lucide-react';
 import { toast } from 'sonner';
 
 const exampleImages = [
-  'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=300&h=300&fit=crop',
-  'https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=300&h=300&fit=crop',
+  {
+    url: '/lovable-uploads/1e61cc5e-ffd2-4396-91c9-be996d67de2d.png',
+    title: 'Glow like the Galaxy',
+    type: 'galaxy'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop',
+    title: 'Matrix Style',
+    type: 'tech'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=400&fit=crop',
+    title: 'Starry Night',
+    type: 'space'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop',
+    title: 'Ocean Wave',
+    type: 'nature'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=400&h=400&fit=crop',
+    title: 'Forest Light',
+    type: 'nature'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=400&fit=crop',
+    title: 'Yellow Lights',
+    type: 'abstract'
+  },
 ];
 
 interface AIArtPanelProps {
@@ -24,6 +47,7 @@ interface AIArtPanelProps {
 export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [hoveredImage, setHoveredImage] = useState<number | null>(null);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -139,19 +163,47 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
             <div className="flex-1 flex flex-col">
               <h4 className="text-sm font-semibold mb-3">Example AI Image Creations</h4>
               <div className="grid grid-cols-2 gap-2 flex-1 overflow-y-auto">
-                {exampleImages.map((src, index) => (
+                {exampleImages.map((image, index) => (
                   <div 
                     key={index} 
                     className="relative group cursor-pointer"
-                    onClick={() => handleExampleImageClick(src)}
+                    onMouseEnter={() => setHoveredImage(index)}
+                    onMouseLeave={() => setHoveredImage(null)}
+                    onClick={() => handleExampleImageClick(image.url)}
                   >
                     <img 
-                      src={src} 
-                      alt={`Example ${index + 1}`}
-                      className="w-full h-24 object-cover rounded-md"
+                      src={image.url} 
+                      alt={image.title}
+                      className="w-full h-24 object-cover rounded-md transition-transform duration-300 hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center rounded-md transition-all duration-200">
-                      <Expand className="opacity-0 group-hover:opacity-100 text-white w-5 h-5" />
+                    
+                    {/* Zoom overlay with icon */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-end justify-end p-2 rounded-md transition-all duration-200">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button 
+                            className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the image click
+                            }}
+                          >
+                            <Expand className="w-4 h-4" />
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl p-0 bg-transparent border-0">
+                          <div className="relative">
+                            <img 
+                              src={image.url} 
+                              alt={image.title}
+                              className="w-full h-auto rounded-lg shadow-2xl animate-scale-in"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg">
+                              <h3 className="text-white font-semibold text-lg">{image.title}</h3>
+                              <p className="text-white/80 text-sm capitalize">{image.type}</p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 ))}
