@@ -225,6 +225,11 @@ export const RightPanel = ({
           <TabsList className="grid grid-cols-1 gap-2">
             <TabsTrigger value="properties">Upload Image</TabsTrigger>
           </TabsList>
+        ) : activeTool === "ai" ? (
+          // AI tool - only AI tab
+          <TabsList className="grid grid-cols-1 gap-2">
+            <TabsTrigger value="ai">AI Image Generator</TabsTrigger>
+          </TabsList>
         ) : (
           // Default - all tabs
           <TabsList className="grid grid-cols-3 gap-2">

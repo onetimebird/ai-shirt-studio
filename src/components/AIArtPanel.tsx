@@ -84,9 +84,19 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         </p>
 
         <Tabs defaultValue="generative" className="mb-6 flex-1 flex flex-col">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="generative">Generative AI</TabsTrigger>
-            <TabsTrigger value="clipart">Clipart</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted p-1 rounded-lg">
+            <TabsTrigger 
+              value="generative" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold"
+            >
+              Generative AI
+            </TabsTrigger>
+            <TabsTrigger 
+              value="clipart"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold"
+            >
+              Clipart
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="generative" className="flex flex-col flex-1 space-y-4">
@@ -102,11 +112,11 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               className="w-full"
             />
             
-            <div className="flex justify-between items-center text-sm">
-              <button className="text-primary hover:underline">
+            <div className="flex justify-between items-center text-sm py-2">
+              <button className="text-primary hover:underline font-medium">
                 Previous Prompts
               </button>
-              <button className="text-primary hover:underline flex items-center gap-1">
+              <button className="text-primary hover:underline flex items-center gap-1 font-medium">
                 AI prompt guide <Info className="w-4 h-4" />
               </button>
             </div>
