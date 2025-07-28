@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Type, Image as ImageIcon, Move, RotateCw, Trash2 } from "lucide-react";
+import { Type, Image as ImageIcon, Move, RotateCw, Trash2, ZoomIn, ZoomOut } from "lucide-react";
 import { toast } from "sonner";
+import { BELLA_3001C_COLORS } from "@/data/bellaColors";
+import tshirtFrontTemplate from "@/assets/tshirt-front-template.png";
+import tshirtBackTemplate from "@/assets/tshirt-back-template.png";
 
 interface DesignElement {
   id: string;
@@ -24,6 +27,7 @@ interface DesignCanvasProps {
   side: "front" | "back";
   elements: DesignElement[];
   onElementsChange: (elements: DesignElement[]) => void;
+  selectedColor?: string;
 }
 
 const FONTS = [
@@ -39,12 +43,15 @@ const FONTS = [
   { name: "Lato", value: "Lato, sans-serif" },
 ];
 
-export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasProps) => {
+export const DesignCanvas = ({ side, elements, onElementsChange, selectedColor = "White" }: DesignCanvasProps) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [newText, setNewText] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [elementStart, setElementStart] = useState({ x: 0, y: 0 });
 
   const addTextElement = () => {
     if (!newText.trim()) {
@@ -56,8 +63,8 @@ export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasP
       id: Date.now().toString(),
       type: "text",
       content: newText,
-      x: 50,
-      y: 50,
+      x: 100,
+      y: 100,
       width: 200,
       height: 40,
       rotation: 0,
@@ -68,6 +75,7 @@ export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasP
 
     onElementsChange([...elements, newElement]);
     setNewText("");
+    setSelectedElement(newElement.id);
     toast.success("Text added to design");
   };
 
@@ -87,14 +95,15 @@ export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasP
         id: Date.now().toString(),
         type: "image",
         content: imageUrl,
-        x: 50,
-        y: 50,
-        width: 150,
-        height: 150,
+        x: 100,
+        y: 100,
+        width: 120,
+        height: 120,
         rotation: 0,
       };
 
       onElementsChange([...elements, newElement]);
+      setSelectedElement(newElement.id);
       toast.success("Image added to design");
     };
     reader.readAsDataURL(file);
@@ -114,11 +123,48 @@ export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasP
     toast.success("Element deleted");
   };
 
-  const handleElementClick = (elementId: string) => {
+  const handleElementMouseDown = (e: React.MouseEvent, elementId: string) => {
+    e.preventDefault();
     setSelectedElement(elementId);
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    
+    const element = elements.find(el => el.id === elementId);
+    if (element) {
+      setElementStart({ x: element.x, y: element.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !selectedElement) return;
+
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+
+    updateElement(selectedElement, {
+      x: Math.max(0, Math.min(300, elementStart.x + deltaX)),
+      y: Math.max(0, Math.min(350, elementStart.y + deltaY))
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setIsResizing(false);
+  };
+
+  const scaleElement = (elementId: string, scaleFactor: number) => {
+    const element = elements.find(el => el.id === elementId);
+    if (!element) return;
+
+    const newWidth = Math.max(20, Math.min(250, element.width * scaleFactor));
+    const newHeight = Math.max(20, Math.min(250, element.height * scaleFactor));
+    
+    updateElement(elementId, { width: newWidth, height: newHeight });
   };
 
   const selectedEl = elements.find(el => el.id === selectedElement);
+  const currentColor = BELLA_3001C_COLORS.find(c => c.name === selectedColor);
+  const tshirtImage = side === "front" ? tshirtFrontTemplate : tshirtBackTemplate;
 
   return (
     <div className="space-y-4">
@@ -166,13 +212,31 @@ export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasP
             <div className="space-y-3 p-3 border rounded-lg bg-muted/50">
               <div className="flex items-center justify-between">
                 <span className="font-medium">Edit {selectedEl.type}</span>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => deleteElement(selectedEl.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => scaleElement(selectedEl.id, 0.8)}
+                    title="Scale down"
+                  >
+                    <ZoomOut className="w-3 h-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => scaleElement(selectedEl.id, 1.2)}
+                    title="Scale up"
+                  >
+                    <ZoomIn className="w-3 h-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => deleteElement(selectedEl.id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
 
               {selectedEl.type === "text" && (
@@ -230,60 +294,100 @@ export const DesignCanvas = ({ side, elements, onElementsChange }: DesignCanvasP
         </CardContent>
       </Card>
 
-      {/* Design Canvas */}
-      <div 
-        ref={canvasRef}
-        className="relative w-80 h-96 mx-auto bg-white/10 border-2 border-dashed border-border rounded-lg overflow-hidden"
-        style={{ aspectRatio: "4/5" }}
-      >
-        {elements.map((element) => (
-          <div
-            key={element.id}
-            className={`absolute cursor-pointer border-2 ${
-              selectedElement === element.id ? "border-primary" : "border-transparent"
-            } hover:border-primary/50 transition-colors`}
+      {/* Design Canvas with T-shirt */}
+      <div className="relative w-80 h-96 mx-auto">
+        {/* T-shirt background */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            backgroundColor: currentColor?.value || "#ffffff",
+          }}
+        >
+          <img
+            src={tshirtImage}
+            alt={`T-shirt ${side}`}
+            className="w-full h-full object-contain"
             style={{
-              left: element.x,
-              top: element.y,
-              width: element.width,
-              height: element.height,
-              transform: `rotate(${element.rotation}deg)`,
+              filter: `hue-rotate(${currentColor?.name === "White" ? "0deg" : "180deg"})`,
             }}
-            onClick={() => handleElementClick(element.id)}
-          >
-            {element.type === "text" ? (
-              <div
-                style={{
-                  fontFamily: element.fontFamily,
-                  fontSize: element.fontSize,
-                  color: element.color,
-                  lineHeight: "1.2",
-                  wordBreak: "break-word",
-                  userSelect: "none",
-                }}
-                className="w-full h-full flex items-center justify-center text-center p-1"
-              >
-                {element.content}
-              </div>
-            ) : (
-              <img
-                src={element.content}
-                alt="Design element"
-                className="w-full h-full object-contain"
-                draggable={false}
-              />
-            )}
-          </div>
-        ))}
-        
-        {elements.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
-              <Type className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>Add text or images to start designing</p>
+          />
+        </div>
+
+        {/* Design area overlay */}
+        <div 
+          ref={canvasRef}
+          className="absolute inset-0 cursor-crosshair"
+          style={{
+            // Design area is centered on the t-shirt
+            top: "20%",
+            left: "25%",
+            width: "50%",
+            height: "60%",
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {elements.map((element) => (
+            <div
+              key={element.id}
+              className={`absolute cursor-move border-2 transition-all ${
+                selectedElement === element.id ? "border-primary shadow-glow" : "border-transparent hover:border-primary/50"
+              }`}
+              style={{
+                left: element.x,
+                top: element.y,
+                width: element.width,
+                height: element.height,
+                transform: `rotate(${element.rotation}deg)`,
+                zIndex: selectedElement === element.id ? 10 : 1,
+              }}
+              onMouseDown={(e) => handleElementMouseDown(e, element.id)}
+            >
+              {element.type === "text" ? (
+                <div
+                  style={{
+                    fontFamily: element.fontFamily,
+                    fontSize: element.fontSize,
+                    color: element.color,
+                    lineHeight: "1.2",
+                    wordBreak: "break-word",
+                    userSelect: "none",
+                  }}
+                  className="w-full h-full flex items-center justify-center text-center p-1"
+                >
+                  {element.content}
+                </div>
+              ) : (
+                <img
+                  src={element.content}
+                  alt="Design element"
+                  className="w-full h-full object-contain pointer-events-none"
+                  draggable={false}
+                />
+              )}
+              
+              {/* Resize handles */}
+              {selectedElement === element.id && (
+                <>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-primary border border-background cursor-se-resize" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary border border-background cursor-ne-resize" />
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-primary border border-background cursor-sw-resize" />
+                  <div className="absolute -top-1 -left-1 w-3 h-3 bg-primary border border-background cursor-nw-resize" />
+                </>
+              )}
             </div>
-          </div>
-        )}
+          ))}
+          
+          {elements.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground pointer-events-none">
+              <div className="text-center">
+                <Type className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Add text or images</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

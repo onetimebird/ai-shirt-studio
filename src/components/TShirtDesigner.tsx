@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Wand2, Palette, Shirt, RotateCcw, Eye } from "lucide-react";
+import { Loader2, Wand2, Palette, Shirt } from "lucide-react";
 import { toast } from "sonner";
 import { DesignCanvas } from "./DesignCanvas";
 import { BELLA_3001C_COLORS } from "@/data/bellaColors";
-import tshirtMockup from "@/assets/tshirt-mockup.png";
+
 
 interface Design {
   id: string;
@@ -41,9 +41,9 @@ export const TShirtDesigner = () => {
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [frontElements, setFrontElements] = useState<DesignElement[]>([]);
   const [backElements, setBackElements] = useState<DesignElement[]>([]);
-  const [viewMode, setViewMode] = useState<"design" | "preview">("design");
+  
 
-  const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
+  const sizes = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL", "5XL"];
 
   const currentElements = currentSide === "front" ? frontElements : backElements;
   const setCurrentElements = currentSide === "front" ? setFrontElements : setBackElements;
@@ -227,43 +227,14 @@ export const TShirtDesigner = () => {
                 </TabsList>
               </Tabs>
               
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setViewMode(viewMode === "design" ? "preview" : "design")}
-              >
-                <Eye className="w-4 h-4 mr-1" />
-                {viewMode === "design" ? "Preview" : "Design"}
-              </Button>
             </div>
 
-            {viewMode === "design" ? (
-              <DesignCanvas
-                side={currentSide}
-                elements={currentElements}
-                onElementsChange={setCurrentElements}
-              />
-            ) : (
-              <div className="w-80 h-96 mx-auto relative bg-white/5 border rounded-lg overflow-hidden">
-                <div
-                  className="absolute inset-0"
-                  style={{ 
-                    backgroundColor: BELLA_3001C_COLORS.find(c => c.name === selectedColor)?.value || "#ffffff",
-                    backgroundImage: `url(${tshirtMockup})`,
-                    backgroundSize: "contain",
-                    backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center"
-                  }}
-                />
-                {/* Design preview overlay would go here */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <Shirt className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Preview Mode</p>
-                  </div>
-                </div>
-              </div>
-            )}
+            <DesignCanvas
+              side={currentSide}
+              elements={currentElements}
+              onElementsChange={setCurrentElements}
+              selectedColor={selectedColor}
+            />
           </div>
 
           {/* Order Summary */}
