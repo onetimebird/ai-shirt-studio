@@ -76,13 +76,7 @@ export const TShirtDesigner = () => {
         />
 
         {/* Central Canvas */}
-        <DesignCanvas
-          selectedColor={selectedColor}
-          currentSide={currentSide}
-          activeTool={activeTool}
-          onSelectedObjectChange={setSelectedObject}
-          onToolChange={setActiveTool}
-        />
+          <DesignCanvas />
 
         {/* Right Panel */}
         <RightPanel
