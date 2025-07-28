@@ -261,19 +261,21 @@ export const DesignCanvas = ({
       console.log("Selection created:", obj.type, obj);
       
       if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
-        // FIRST: Completely hide all default controls by setting visible to false
-        Object.keys(obj.controls).forEach(key => {
-          obj.controls[key].visible = false;
+        // Keep default selection behavior but customize controls
+        obj.set({
+          borderColor: '#3b82f6',
+          borderDashArray: [5, 5],
+          cornerColor: 'transparent',
+          cornerStrokeColor: 'transparent',
+          transparentCorners: true
         });
         
-        console.log("Hiding default controls, adding custom ones...");
-        
-        // Create simple custom controls with basic styling
+        // Add 6 custom controls exactly like the reference
         obj.controls.deleteControl = new Control({
           x: -0.5,
           y: -0.5,
-          offsetX: -20,
-          offsetY: -20,
+          offsetX: -10,
+          offsetY: -10,
           cursorStyle: 'pointer',
           mouseUpHandler: function() {
             canvas.remove(obj);
@@ -281,28 +283,220 @@ export const DesignCanvas = ({
             toast.success("Text deleted");
           },
           render: function(ctx: any, left: any, top: any) {
-            // Draw a simple red circle with X
+            const size = 32;
             ctx.save();
             ctx.translate(left, top);
+            // White circle with gray border
             ctx.fillStyle = 'white';
-            ctx.strokeStyle = '#dc2626';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.arc(0, 0, 16, 0, 2 * Math.PI);
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
             ctx.fill();
             ctx.stroke();
-            // Draw X
+            // Trash icon
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.moveTo(-6, -6);
-            ctx.lineTo(6, 6);
-            ctx.moveTo(6, -6);
-            ctx.lineTo(-6, 6);
+            ctx.rect(-6, -4, 12, 8);
+            ctx.moveTo(-8, -6);
+            ctx.lineTo(8, -6);
+            ctx.moveTo(-4, -8);
+            ctx.lineTo(4, -8);
             ctx.stroke();
             ctx.restore();
           }
         });
-        
-        console.log("Custom controls added:", Object.keys(obj.controls));
+
+        obj.controls.layerControl = new Control({
+          x: 0,
+          y: -0.5,
+          offsetX: 0,
+          offsetY: -10,
+          cursorStyle: 'pointer',
+          mouseUpHandler: function() {
+            (obj as any).bringToFront();
+            canvas.requestRenderAll();
+          },
+          render: function(ctx: any, left: any, top: any) {
+            const size = 32;
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            // Up/down arrows
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, -8);
+            ctx.lineTo(-4, -4);
+            ctx.lineTo(4, -4);
+            ctx.closePath();
+            ctx.moveTo(0, 8);
+            ctx.lineTo(-4, 4);
+            ctx.lineTo(4, 4);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        obj.controls.rotateControl = new Control({
+          x: 0.5,
+          y: -0.5,
+          offsetX: 10,
+          offsetY: -10,
+          cursorStyle: 'crosshair',
+          actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
+            const target = transformData.target;
+            const center = target.getCenterPoint();
+            const angle = Math.atan2(y - center.y, x - center.x) * 180 / Math.PI + 90;
+            target.rotate(angle);
+            return true;
+          },
+          render: function(ctx: any, left: any, top: any) {
+            const size = 32;
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            // Rotate arrows
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(0, 0, 6, 0, Math.PI * 1.5);
+            ctx.moveTo(6, -2);
+            ctx.lineTo(4, -6);
+            ctx.lineTo(8, -6);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        obj.controls.stretchControl = new Control({
+          x: 0.5,
+          y: 0,
+          offsetX: 10,
+          offsetY: 0,
+          cursorStyle: 'ew-resize',
+          actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
+            // Keep default horizontal scaling behavior
+            return false;
+          },
+          render: function(ctx: any, left: any, top: any) {
+            const size = 32;
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            // Left-right arrows
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(-8, 0);
+            ctx.lineTo(8, 0);
+            ctx.moveTo(-6, -3);
+            ctx.lineTo(-8, 0);
+            ctx.lineTo(-6, 3);
+            ctx.moveTo(6, -3);
+            ctx.lineTo(8, 0);
+            ctx.lineTo(6, 3);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        obj.controls.scaleControl = new Control({
+          x: 0.5,
+          y: 0.5,
+          offsetX: 10,
+          offsetY: 10,
+          cursorStyle: 'se-resize',
+          actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
+            // Keep default scaling behavior
+            return false;
+          },
+          render: function(ctx: any, left: any, top: any) {
+            const size = 32;
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            // Diagonal arrows
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(-6, 6);
+            ctx.lineTo(6, -6);
+            ctx.moveTo(-8, 4);
+            ctx.lineTo(-6, 6);
+            ctx.lineTo(-4, 4);
+            ctx.moveTo(4, -8);
+            ctx.lineTo(6, -6);
+            ctx.lineTo(8, -8);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        obj.controls.cloneControl = new Control({
+          x: -0.5,
+          y: 0.5,
+          offsetX: -10,
+          offsetY: 10,
+          cursorStyle: 'pointer',
+          mouseUpHandler: function() {
+            (obj as any).clone((cloned: any) => {
+              cloned.set({ left: cloned.left + 10, top: cloned.top + 10 });
+              canvas.add(cloned);
+              canvas.setActiveObject(cloned);
+              canvas.requestRenderAll();
+              toast.success("Text duplicated");
+            });
+          },
+          render: function(ctx: any, left: any, top: any) {
+            const size = 32;
+            ctx.save();
+            ctx.translate(left, top);
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#d1d5db';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            // Clone/layers icon
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.rect(-6, -6, 8, 8);
+            ctx.rect(-2, -2, 8, 8);
+            ctx.stroke();
+            ctx.restore();
+          }
+        });
+
+        console.log("All 6 custom controls added");
         canvas.requestRenderAll();
       }
       setSelectedObject(obj);
