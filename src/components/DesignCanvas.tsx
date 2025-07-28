@@ -46,19 +46,107 @@ export const DesignCanvas = ({
   // Scale sensitivity for smooth, controlled scaling
   const DIAG_DIV = 150; // Adjust for scaling speed - smaller = faster scaling
 
-  // Diagonal projection function for smooth scaling
-  const getProjectedDrag = (
-    cx: number, cy: number,
+  // Utility: project pointer movement along diagonal
+  function getProjectedDrag(
     startX: number, startY: number,
     currX: number, currY: number
-  ) => {
-    // vector from start to current
+  ) {
+    // project the delta onto the [1,1] diagonal
     const dx = currX - startX;
     const dy = currY - startY;
-    // unit diagonal vector (normalized [1,1])
-    const invSqrt2 = 1 / Math.sqrt(2);
-    // dot product projects drag onto diagonal
-    return (dx * invSqrt2 + dy * invSqrt2);
+    const invSqrt2 = 1/Math.sqrt(2);
+    return dx * invSqrt2 + dy * invSqrt2;
+  }
+
+  // Exponential sensitivity divisor
+  const EXP_DIV = 200; // larger = slower, smaller = snappier
+
+  // Uniform scale handler
+  const onScaleStart = (e: React.PointerEvent) => {
+    e.stopPropagation(); e.preventDefault();
+    if (!fabricCanvas) return;
+    const obj = fabricCanvas.getActiveObject();
+    if (!obj) return;
+
+    const { left, top, width, height, scaleX: initSX, scaleY: initSY } = obj;
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const cx = rect.left + left + width/2;
+    const cy = rect.top + top + height/2;
+    const startX = e.clientX, startY = e.clientY;
+
+    const onMove = (m: PointerEvent) => {
+      const drag = getProjectedDrag(startX, startY, m.clientX, m.clientY);
+      // exponential factor: exp(drag/EXP_DIV)
+      const factor = Math.exp(drag/EXP_DIV);
+      obj.set({
+        scaleX: initSX! * factor,
+        scaleY: initSY! * factor
+      });
+      fabricCanvas.requestRenderAll();
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
+
+  // Horizontal stretch handler
+  const onStretchStart = (e: React.PointerEvent) => {
+    e.stopPropagation(); e.preventDefault();
+    if (!fabricCanvas) return;
+    const obj = fabricCanvas.getActiveObject();
+    if (!obj) return;
+
+    const { left, top, width, height, scaleX: initSX } = obj;
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const cx = rect.left + left + width/2;
+    const cy = rect.top + top + height/2;
+    const startX = e.clientX, startY = e.clientY;
+
+    const onMove = (m: PointerEvent) => {
+      const drag = getProjectedDrag(startX, startY, m.clientX, m.clientY);
+      const factorX = Math.exp(drag/EXP_DIV);
+      obj.set({ scaleX: initSX! * factorX });
+      fabricCanvas.requestRenderAll();
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+  };
+
+  // Vertical stretch handler (arrow up/down)
+  const onVerticalScaleStart = (e: React.PointerEvent) => {
+    e.stopPropagation(); e.preventDefault();
+    if (!fabricCanvas) return;
+    const obj = fabricCanvas.getActiveObject();
+    if (!obj) return;
+
+    const { left, top, width, height, scaleY: initSY } = obj;
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const cx = rect.left + left + width/2;
+    const cy = rect.top + top + height/2;
+    const startX = e.clientX, startY = e.clientY;
+
+    const onMove = (m: PointerEvent) => {
+      const drag = getProjectedDrag(startX, startY, m.clientX, m.clientY);
+      const factorY = Math.exp(drag/EXP_DIV);
+      obj.set({ scaleY: initSY! * factorY });
+      fabricCanvas.requestRenderAll();
+    };
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
   };
   const [showCheckout, setShowCheckout] = useState(false);
   const [quantities, setQuantities] = useState<{ [size: string]: number }>({
@@ -817,84 +905,8 @@ export const DesignCanvas = ({
                           e.preventDefault();
                           e.stopPropagation();
                         }}
-                        onStretchStart={(e) => {
-                          if (!selectedObject || !canvasWrapperRef.current) return;
-                          
-                          const rect = canvasWrapperRef.current.getBoundingClientRect();
-                          const cx = rect.left + selectedObject.left + selectedObject.width/2;
-                          const cy = rect.top + selectedObject.top + selectedObject.height/2;
-                          const startX = e.clientX;
-                          const startY = e.clientY;
-                          const initSX = selectedObject.scaleX || 1;
-
-                          const onMove = (m: PointerEvent) => {
-                            const drag = getProjectedDrag(cx, cy, startX, startY, m.clientX, m.clientY);
-                            const delta = drag / DIAG_DIV;
-                            const factorX = Math.max(0.1, 1 + delta);
-                            selectedObject.set({ scaleX: initSX * factorX });
-                            fabricCanvas?.requestRenderAll();
-                            
-                            // Update overlay bounds
-                            const bounds = selectedObject.getBoundingRect();
-                            setOverlayBounds({
-                              x: bounds.left,
-                              y: bounds.top,
-                              width: bounds.width,
-                              height: bounds.height
-                            });
-                          };
-
-                          const onUp = () => {
-                            window.removeEventListener('pointermove', onMove);
-                            window.removeEventListener('pointerup', onUp);
-                          };
-                          
-                          window.addEventListener('pointermove', onMove);
-                          window.addEventListener('pointerup', onUp);
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onScaleStart={(e) => {
-                          if (!selectedObject || !canvasWrapperRef.current) return;
-                          
-                          const rect = canvasWrapperRef.current.getBoundingClientRect();
-                          const cx = rect.left + selectedObject.left + selectedObject.width/2;
-                          const cy = rect.top + selectedObject.top + selectedObject.height/2;
-                          const startX = e.clientX;
-                          const startY = e.clientY;
-                          const initSX = selectedObject.scaleX || 1;
-                          const initSY = selectedObject.scaleY || 1;
-
-                          const onMove = (m: PointerEvent) => {
-                            const drag = getProjectedDrag(cx, cy, startX, startY, m.clientX, m.clientY);
-                            const delta = drag / DIAG_DIV;
-                            const factor = Math.max(0.1, 1 + delta);
-                            selectedObject.set({
-                              scaleX: initSX * factor,
-                              scaleY: initSY * factor
-                            });
-                            fabricCanvas?.requestRenderAll();
-                            
-                            // Update overlay bounds
-                            const bounds = selectedObject.getBoundingRect();
-                            setOverlayBounds({
-                              x: bounds.left,
-                              y: bounds.top,
-                              width: bounds.width,
-                              height: bounds.height
-                            });
-                          };
-
-                          const onUp = () => {
-                            window.removeEventListener('pointermove', onMove);
-                            window.removeEventListener('pointerup', onUp);
-                          };
-                          
-                          window.addEventListener('pointermove', onMove);
-                          window.addEventListener('pointerup', onUp);
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
+                        onStretchStart={onStretchStart}
+                        onScaleStart={onScaleStart}
                         onDuplicate={() => {
                           (selectedObject as any).clone((cloned: any) => {
                             cloned.set({ left: cloned.left + 10, top: cloned.top + 10 });
@@ -904,43 +916,7 @@ export const DesignCanvas = ({
                             toast.success("Text duplicated");
                           });
                         }}
-                        onVerticalScaleStart={(e) => {
-                          if (!selectedObject || !canvasWrapperRef.current) return;
-                          
-                          const rect = canvasWrapperRef.current.getBoundingClientRect();
-                          const cx = rect.left + selectedObject.left + selectedObject.width/2;
-                          const cy = rect.top + selectedObject.top + selectedObject.height/2;
-                          const startX = e.clientX;
-                          const startY = e.clientY;
-                          const initSY = selectedObject.scaleY || 1;
-
-                          const onMove = (m: PointerEvent) => {
-                            const drag = getProjectedDrag(cx, cy, startX, startY, m.clientX, m.clientY);
-                            const delta = drag / DIAG_DIV;
-                            const factorY = Math.max(0.1, 1 + delta);
-                            selectedObject.set({ scaleY: initSY * factorY });
-                            fabricCanvas?.requestRenderAll();
-                            
-                            // Update overlay bounds
-                            const bounds = selectedObject.getBoundingRect();
-                            setOverlayBounds({
-                              x: bounds.left,
-                              y: bounds.top,
-                              width: bounds.width,
-                              height: bounds.height
-                            });
-                          };
-
-                          const onUp = () => {
-                            window.removeEventListener('pointermove', onMove);
-                            window.removeEventListener('pointerup', onUp);
-                          };
-                          
-                          window.addEventListener('pointermove', onMove);
-                          window.addEventListener('pointerup', onUp);
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
+                        onVerticalScaleStart={onVerticalScaleStart}
                       />
                     )}
                     
@@ -953,11 +929,12 @@ export const DesignCanvas = ({
                       </div>
                     )}
                   </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     );
-};
+  };
+
+export default DesignCanvas;
