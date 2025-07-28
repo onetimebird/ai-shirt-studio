@@ -7,8 +7,10 @@ import stretchSvg from "@/assets/icons/stretch.svg";
 import scaleSvg   from "@/assets/icons/scale.svg";
 import rotateSvg  from "@/assets/icons/rotate.svg";
 
-;(async function installTextboxControls() {
+// Use fabricUtil.loadImage directly since it returns a Promise in v6
+;(async function installFabricTextControls() {
   try {
+    // load all six SVG icons in parallel
     const [
       deleteImg,
       layerImg,
@@ -25,7 +27,7 @@ import rotateSvg  from "@/assets/icons/rotate.svg";
       fabricUtil.loadImage(rotateSvg),
     ]);
 
-    // Factory to create a Control with your SVG
+    // factory for a custom Control using your SVG
     const makeControl = (
       icon: HTMLImageElement,
       handler: any,
@@ -40,54 +42,59 @@ import rotateSvg  from "@/assets/icons/rotate.svg";
         ctx.save();
         ctx.translate(left, top);
         ctx.rotate(((obj as any).angle * Math.PI) / 180);
-        // background circle
+
+        // draw white background circle
         ctx.beginPath();
         ctx.arc(0, 0, size / 2, 0, 2 * Math.PI);
-        ctx.fillStyle = "#fff";
-        ctx.fill();
+        ctx.fillStyle   = "#fff";
         ctx.strokeStyle = "#ddd";
-        ctx.lineWidth = 1;
+        ctx.lineWidth   = 1;
+        ctx.fill();
         ctx.stroke();
-        // icon
+
+        // draw the SVG icon inside
         ctx.drawImage(icon, -size * 0.3, -size * 0.3, size * 0.6, size * 0.6);
         ctx.restore();
-      },
+      }
     });
 
-    // Handlers for each icon
-    const deleteHandler = (_e: any, t: any) => {
-      t.target.canvas.remove(t.target);
+    // handlers for each control
+    const deleteHandler = (_e: any, transform: any) => {
+      transform.target.canvas.remove(transform.target);
       return true;
     };
-    const layerHandler = (_e: any, t: any) => {
-      t.target.canvas.bringObjectToFront(t.target);
+    const layerHandler = (_e: any, transform: any) => {
+      transform.target.canvas.bringObjectToFront(transform.target);
       return true;
     };
-    const cloneHandler = (_e: any, t: any) => {
-      t.target.clone((cloned: any) => {
-        cloned.set({ left: t.target.left + 20, top: t.target.top + 20 });
-        t.target.canvas.add(cloned);
-        t.target.canvas.setActiveObject(cloned);
+    const cloneHandler = (_e: any, transform: any) => {
+      transform.target.clone((cloned: any) => {
+        cloned.set({
+          left: transform.target.left + 20,
+          top:  transform.target.top  + 20
+        });
+        transform.target.canvas.add(cloned);
+        transform.target.canvas.setActiveObject(cloned);
       });
       return true;
     };
 
-    // Patch every future Textbox to use your custom controls
+    // patch Textbox prototype
     Textbox.prototype.controls = {
-      tl: makeControl(deleteImg,  deleteHandler,                           { x: -0.5, y: -0.5 }),
-      mt: makeControl(layerImg,   layerHandler,                            { x:  0.0, y: -0.5 }),
-      tr: makeControl(cloneImg,   cloneHandler,                            { x:  0.5, y: -0.5 }),
-      mr: makeControl(stretchImg, controlsUtils.scalingXOrSkewingY,        { x:  0.5, y:  0.0 }),
-      br: makeControl(scaleImg,   controlsUtils.scalingEqually,            { x:  0.5, y:  0.5 }),
-      bl: makeControl(rotateImg,  controlsUtils.rotationWithSnapping,      { x: -0.5, y:  0.5 }),
-      mtr:makeControl(rotateImg,  controlsUtils.rotationWithSnapping,      { x:  0.0, y: -0.75 }),
+      tl: makeControl(deleteImg,  deleteHandler,                    { x: -0.5, y: -0.5 }),
+      mt: makeControl(layerImg,   layerHandler,                     { x:  0.0, y: -0.5 }),
+      tr: makeControl(cloneImg,   cloneHandler,                     { x:  0.5, y: -0.5 }),
+      mr: makeControl(stretchImg, controlsUtils.scalingXOrSkewingY, { x:  0.5, y:  0.0 }),
+      br: makeControl(scaleImg,   controlsUtils.scalingEqually,     { x:  0.5, y:  0.5 }),
+      bl: makeControl(rotateImg,  controlsUtils.rotationWithSnapping, { x: -0.5, y:  0.5 }),
+      mtr:makeControl(rotateImg,  controlsUtils.rotationWithSnapping, { x:  0.0, y: -0.75 }),
     };
 
-    // Disable caching so your icons always redraw
+    // disable caching so icons always redraw
     Textbox.prototype.objectCaching = false;
 
     console.log("✅ Fabric textbox controls installed");
   } catch (err) {
-    console.error("❌ Failed to install Fabric textbox controls:", err);
+    console.error("❌ Error installing Fabric textbox controls:", err);
   }
 })();
