@@ -238,7 +238,7 @@ export const DesignCanvas = ({
     canvas.on('object:removed', updateTextObjects);
 
     
-    // Add keyboard event listener to canvas wrapper for better focus handling
+    // Add keyboard event listener to window for reliable key handling
     const handleKeyDown = (e: KeyboardEvent) => {
       console.log('got key:', e.key); // Debug log
       const activeObj = fabricCanvas?.getActiveObject();
@@ -288,18 +288,13 @@ export const DesignCanvas = ({
       canvas?.requestRenderAll();
     };
 
-    // Listen on canvas wrapper instead of document
-    const wrapper = canvasWrapperRef.current;
-    if (wrapper) {
-      wrapper.addEventListener('keydown', handleKeyDown);
-    }
+    // Listen on window for reliable key events
+    window.addEventListener('keydown', handleKeyDown);
 
     setFabricCanvas(canvas);
 
     return () => {
-      if (wrapper) {
-        wrapper.removeEventListener('keydown', handleKeyDown);
-      }
+      window.removeEventListener('keydown', handleKeyDown);
       canvas.off('selection:created');
       canvas.off('selection:updated');
       canvas.off('selection:cleared');
