@@ -100,16 +100,14 @@ export function ProductSelector({
   onProductChange,
   onColorChange 
 }: ProductSelectorProps) {
-  const [selectedProductId, setSelectedProductId] = useState(selectedProduct);
-  const [selectedProductColor, setSelectedProductColor] = useState(selectedColor);
+  // Use the props directly instead of internal state
+  const selectedProductData = products.find(p => p.id === selectedProduct);
 
   const handleProductSelect = (productId: string) => {
-    setSelectedProductId(productId);
     const product = products.find(p => p.id === productId);
     if (product) {
       // Set first available color when switching products
       const firstColor = product.colors[0];
-      setSelectedProductColor(firstColor);
       onProductChange?.(productId);
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
@@ -117,12 +115,9 @@ export function ProductSelector({
   };
 
   const handleColorSelect = (color: string) => {
-    setSelectedProductColor(color);
     onColorChange?.(color);
     toast.success(`Color changed to ${color}`);
   };
-
-  const selectedProductData = products.find(p => p.id === selectedProductId);
 
   return (
     <div className="space-y-6">
@@ -158,7 +153,7 @@ export function ProductSelector({
                 </div>
               </div>
               <div className="flex-1">
-                <p className="font-medium text-sm">{selectedProductColor}</p>
+                <p className="font-medium text-sm">{selectedColor}</p>
                 <p className="text-xs text-muted-foreground">{selectedProductData.price}</p>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {selectedProductData.colors.map((color) => (
@@ -166,7 +161,7 @@ export function ProductSelector({
                       key={color}
                       onClick={() => handleColorSelect(color)}
                       className={`w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
-                        color === selectedProductColor 
+                        color === selectedColor 
                           ? 'border-primary ring-2 ring-primary/30' 
                           : 'border-border hover:border-primary/50'
                       }`}
@@ -189,7 +184,7 @@ export function ProductSelector({
             <Card 
               key={product.id} 
               className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                product.id === selectedProductId 
+                product.id === selectedProduct 
                   ? 'border-primary bg-primary/5' 
                   : 'hover:border-primary/50'
               }`}
@@ -213,7 +208,7 @@ export function ProductSelector({
                       <span className="text-xs text-muted-foreground">{product.colors.length} colors</span>
                     </div>
                   </div>
-                  {product.id === selectedProductId && (
+                  {product.id === selectedProduct && (
                     <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                       <Check className="w-3 h-3 text-primary-foreground" />
                     </div>

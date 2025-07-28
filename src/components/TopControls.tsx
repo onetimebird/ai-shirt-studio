@@ -65,16 +65,10 @@ export const TopControls = ({
                   <SelectValue />
                 </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border border-border shadow-lg z-50">
                 {BELLA_3001C_COLORS.map((color) => (
                   <SelectItem key={color.name} value={color.name}>
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className="w-4 h-4 rounded border border-border"
-                        style={{ backgroundColor: color.value }}
-                      />
-                      {color.label}
-                    </div>
+                    {color.label}
                   </SelectItem>
                 ))}
               </SelectContent>
