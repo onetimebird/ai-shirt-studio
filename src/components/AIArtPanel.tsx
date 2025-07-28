@@ -166,7 +166,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                 {exampleImages.map((image, index) => (
                   <div 
                     key={index} 
-                    className="relative group cursor-pointer"
+                    className="relative group cursor-pointer overflow-hidden rounded-md"
                     onMouseEnter={() => setHoveredImage(index)}
                     onMouseLeave={() => setHoveredImage(null)}
                     onClick={() => handleExampleImageClick(image.url)}
@@ -174,7 +174,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                     <img 
                       src={image.url} 
                       alt={image.title}
-                      className="w-full h-24 object-cover rounded-md transition-transform duration-300 hover:scale-105"
+                      className="w-full h-24 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
                     />
                     
                     {/* Zoom overlay with icon */}
