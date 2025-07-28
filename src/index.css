@@ -37,15 +37,21 @@ All colors MUST be HSL.
     --input: 220 30% 94%;
     --ring: 262 100% 65%;
 
-    /* Creative gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(45 100% 60%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 100% 98%));
+    /* Vibrant gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(220 100% 70%), hsl(45 100% 60%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 100% 98%), hsl(262 50% 98%));
+    --gradient-shimmer: linear-gradient(45deg, transparent 30%, hsl(0 0% 100% / 0.5) 50%, transparent 70%);
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%), hsl(180 100% 60%));
+    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 85% 70%), hsl(310 100% 70%));
     
-    /* Creative shadows */
-    --shadow-creative: 0 10px 40px -10px hsl(var(--primary) / 0.3);
-    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
-    --shadow-soft: 0 4px 20px -4px hsl(230 25% 10% / 0.1);
+    /* Enhanced shadows */
+    --shadow-creative: 0 20px 60px -10px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.6);
+    --shadow-soft: 0 8px 30px -8px hsl(230 25% 10% / 0.15);
+    --shadow-elevated: 0 25px 80px -15px hsl(var(--primary) / 0.3);
+    --shadow-glass: 0 8px 32px 0 hsl(230 25% 10% / 0.1);
 
     --radius: 0.5rem;
 
@@ -97,14 +103,20 @@ All colors MUST be HSL.
     --ring: 262 100% 65%;
     
     /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(45 100% 60%));
-    --gradient-card: linear-gradient(145deg, hsl(222.2 84% 6%), hsl(217.2 32.6% 17.5%));
+    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(220 100% 70%), hsl(45 100% 60%));
+    --gradient-card: linear-gradient(145deg, hsl(222.2 84% 6%), hsl(217.2 32.6% 17.5%), hsl(262 50% 8%));
+    --gradient-shimmer: linear-gradient(45deg, transparent 30%, hsl(0 0% 100% / 0.1) 50%, transparent 70%);
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
+    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 100% 70%), hsl(45 100% 60%), hsl(180 100% 60%));
+    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(285 85% 70%), hsl(310 100% 70%));
     
-    /* Dark mode shadows */
-    --shadow-creative: 0 10px 40px -10px hsl(var(--primary) / 0.3);
-    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
-    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.3);
+    /* Enhanced dark shadows */
+    --shadow-creative: 0 20px 60px -10px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.6);
+    --shadow-soft: 0 8px 30px -8px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 25px 80px -15px hsl(var(--primary) / 0.3);
+    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.3);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -127,5 +139,120 @@ All colors MUST be HSL.
   
   html {
     @apply dark;
+  }
+}
+
+@layer components {
+  /* Shimmer animation */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-shimmer);
+    animation: shimmer 2s infinite;
+    z-index: 1;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
+  /* Glass morphism effect */
+  .glass-effect {
+    backdrop-filter: blur(20px);
+    background: var(--gradient-glass);
+    border: 1px solid hsl(0 0% 100% / 0.1);
+  }
+  
+  /* Icon hover effects */
+  .icon-hover {
+    @apply transition-all duration-300 ease-out;
+    position: relative;
+  }
+  
+  .icon-hover::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: -1;
+  }
+  
+  .icon-hover:hover::before {
+    opacity: 0.15;
+    transform: scale(1.1);
+  }
+  
+  .icon-hover:hover {
+    transform: translateY(-2px) scale(1.05);
+    filter: drop-shadow(0 8px 16px hsl(var(--primary) / 0.3));
+  }
+  
+  /* Button glow effect */
+  .glow-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .glow-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsl(0 0% 100% / 0.3) 0%, transparent 70%);
+    transition: all 0.5s ease;
+    transform: translate(-50%, -50%);
+  }
+  
+  .glow-effect:hover::after {
+    width: 300%;
+    height: 300%;
+  }
+  
+  /* Floating animation */
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+  
+  @keyframes floating {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  
+  /* Pulse glow animation */
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+    }
   }
 }

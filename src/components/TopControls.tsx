@@ -29,13 +29,13 @@ export const TopControls = ({
   const currentColor = BELLA_3001C_COLORS.find(c => c.name === selectedColor);
 
   return (
-    <div className="bg-card border-b border-border px-4 py-3 shadow-soft">
+    <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
       <div className="flex flex-wrap items-center justify-between gap-4">
         {/* Left Controls */}
         <div className="flex flex-wrap items-center gap-4">
           {/* Product Selector */}
           <div className="flex items-center gap-2">
-            <ShirtIcon className="w-4 h-4 text-muted-foreground" />
+            <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
             <Select value={selectedProduct} onValueChange={onProductChange}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Change Product" />
@@ -54,7 +54,7 @@ export const TopControls = ({
 
           {/* Color Picker */}
           <div className="flex items-center gap-2">
-            <Palette className="w-4 h-4 text-muted-foreground" />
+            <Palette className="w-4 h-4 text-muted-foreground icon-hover" />
             <Select value={selectedColor} onValueChange={onColorChange}>
               <SelectTrigger className="w-32">
                 <div className="flex items-center gap-2">
@@ -76,8 +76,8 @@ export const TopControls = ({
           </div>
 
           {/* Add Product Button */}
-          <Button variant="outline" size="sm">
-            <Plus className="w-4 h-4 mr-2" />
+          <Button variant="glass" size="sm" className="shimmer">
+            <Plus className="w-4 h-4 mr-2 icon-hover" />
             Add Product
           </Button>
         </div>
@@ -107,7 +107,7 @@ export const TopControls = ({
           {/* Design Controls */}
           <div className="flex items-center gap-2">
             <Button 
-              variant="outline" 
+              variant="creative" 
               size="sm"
               onClick={() => {
                 const canvas = (window as any).designCanvas?.canvas;
@@ -123,18 +123,18 @@ export const TopControls = ({
                 }
               }}
             >
-              <Save className="w-4 h-4 mr-1" />
+              <Save className="w-4 h-4 mr-1 icon-hover" />
               Save
             </Button>
             
             <Button 
-              variant="outline" 
+              variant="glass" 
               size="sm"
               onClick={() => {
                 toast.info("Keyboard shortcuts: Delete key to remove selected objects, Ctrl+D to duplicate");
               }}
             >
-              <HelpCircle className="w-4 h-4" />
+              <HelpCircle className="w-4 h-4 icon-hover" />
             </Button>
           </div>
 

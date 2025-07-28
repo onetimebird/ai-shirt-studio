@@ -5,21 +5,23 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 relative overflow-hidden",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-creative hover:shadow-glow",
+        default: "bg-gradient-primary text-primary-foreground hover:shadow-elevated transform hover:scale-105 shimmer glow-effect",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-glow transform hover:scale-105",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-gradient-glass backdrop-blur-sm hover:bg-gradient-card hover:text-accent-foreground hover:shadow-glass transform hover:scale-105",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        hero: "bg-gradient-hero text-primary-foreground hover:shadow-glow transform hover:scale-105 font-semibold",
-        creative: "bg-gradient-primary text-primary-foreground hover:shadow-creative transform hover:-translate-y-1",
+          "bg-gradient-card text-secondary-foreground hover:shadow-soft transform hover:scale-105 shimmer",
+        ghost: "hover:bg-gradient-glass hover:text-accent-foreground transform hover:scale-105 icon-hover",
+        link: "text-primary underline-offset-4 hover:underline transform hover:scale-105",
+        hero: "bg-gradient-aurora text-primary-foreground hover:shadow-elevated transform hover:scale-110 font-semibold shimmer glow-effect pulse-glow",
+        creative: "bg-gradient-premium text-primary-foreground hover:shadow-creative transform hover:-translate-y-2 hover:scale-105 shimmer glow-effect",
+        glass: "glass-effect text-foreground hover:shadow-glass transform hover:scale-105 backdrop-blur-xl",
+        premium: "bg-gradient-aurora text-primary-foreground hover:shadow-elevated transform hover:scale-110 shimmer glow-effect floating",
       },
       size: {
         default: "h-10 px-4 py-2",

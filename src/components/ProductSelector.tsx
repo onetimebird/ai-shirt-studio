@@ -132,11 +132,11 @@ export function ProductSelector({
 
       {/* Current Selection */}
       {selectedProductData && (
-        <Card className="border-2 border-primary/20 bg-primary/5">
+        <Card className="border-2 border-primary bg-gradient-premium/10 shimmer pulse-glow">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">{selectedProductData.name}</CardTitle>
-              <Badge variant="outline">Selected</Badge>
+              <Badge variant="outline" className="shimmer">Selected</Badge>
             </div>
             <p className="text-sm text-muted-foreground">{selectedProductData.description}</p>
           </CardHeader>
@@ -146,9 +146,9 @@ export function ProductSelector({
                 <img 
                   src={selectedProductData.image} 
                   alt={selectedProductData.name}
-                  className="w-20 h-20 object-cover rounded-lg border-2 border-primary"
+                  className="w-20 h-20 object-cover rounded-lg border-2 border-primary shadow-glow"
                 />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow floating">
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
               </div>
@@ -160,10 +160,10 @@ export function ProductSelector({
                     <button
                       key={color}
                       onClick={() => handleColorSelect(color)}
-                      className={`w-6 h-6 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+                      className={`w-6 h-6 rounded-full border-2 transition-all duration-300 hover:scale-125 transform icon-hover ${
                         color === selectedColor 
-                          ? 'border-primary ring-2 ring-primary/30' 
-                          : 'border-border hover:border-primary/50'
+                          ? 'border-primary ring-4 ring-primary/40 shadow-glow' 
+                          : 'border-border hover:border-primary/50 hover:shadow-soft'
                       }`}
                       style={{ backgroundColor: colorMap[color] || '#ccc' }}
                       title={color}
@@ -183,20 +183,20 @@ export function ProductSelector({
           {products.map((product) => (
             <Card 
               key={product.id} 
-              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+              className={`cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                 product.id === selectedProduct 
-                  ? 'border-primary bg-primary/5' 
-                  : 'hover:border-primary/50'
+                  ? 'border-primary bg-gradient-premium/10 shadow-elevated shimmer pulse-glow' 
+                  : 'hover:border-primary/50 hover:shadow-glass bg-gradient-card'
               }`}
               onClick={() => handleProductSelect(product.id)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={product.image} 
-                    alt={product.name}
-                    className="w-12 h-12 object-cover rounded border"
-                  />
+                   <img 
+                     src={product.image} 
+                     alt={product.name}
+                     className="w-12 h-12 object-cover rounded border shadow-soft hover:shadow-glow transition-all duration-300"
+                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium text-sm">{product.name}</h4>
@@ -209,7 +209,7 @@ export function ProductSelector({
                     </div>
                   </div>
                   {product.id === selectedProduct && (
-                    <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow floating">
                       <Check className="w-3 h-3 text-primary-foreground" />
                     </div>
                   )}
@@ -221,9 +221,9 @@ export function ProductSelector({
       </div>
 
       {/* Add Products Section */}
-      <Card className="border-dashed border-2 border-muted-foreground/30">
+      <Card className="border-dashed border-2 border-muted-foreground/30 hover:border-primary/50 transition-all duration-300 hover:shadow-glass cursor-pointer">
         <CardContent className="p-6 text-center">
-          <Plus className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <Plus className="w-8 h-8 text-muted-foreground mx-auto mb-2 icon-hover floating" />
           <h4 className="font-medium text-muted-foreground">Add Products</h4>
           <p className="text-xs text-muted-foreground mt-1">More products coming soon!</p>
         </CardContent>
@@ -233,13 +233,13 @@ export function ProductSelector({
       <div className="space-y-3">
         <h3 className="font-semibold text-lg">Customization Method</h3>
         <div className="grid grid-cols-2 gap-3">
-          <Card className="border-2 border-primary bg-primary/5 cursor-pointer">
+          <Card className="border-2 border-primary bg-gradient-premium/10 cursor-pointer hover:shadow-elevated transform hover:scale-105 transition-all duration-300 shimmer">
             <CardContent className="p-4 text-center">
               <h4 className="font-medium">Printing</h4>
               <p className="text-xs text-muted-foreground mt-1">No Minimum</p>
             </CardContent>
           </Card>
-          <Card className="border border-muted cursor-pointer hover:border-primary/50 transition-colors">
+          <Card className="border border-muted cursor-pointer hover:border-primary/50 transition-all duration-300 hover:shadow-glass transform hover:scale-105 bg-gradient-card">
             <CardContent className="p-4 text-center">
               <h4 className="font-medium text-muted-foreground">Embroidery</h4>
               <p className="text-xs text-muted-foreground mt-1">Coming Soon</p>

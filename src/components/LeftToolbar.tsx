@@ -27,7 +27,7 @@ const tools = [
 export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
   return (
     <TooltipProvider>
-      <div className="w-16 lg:w-64 bg-card border-r border-border flex flex-col shadow-soft">
+      <div className="w-16 lg:w-64 bg-gradient-card border-r border-border flex flex-col shadow-glass backdrop-blur-sm">
         {/* Logo/Brand */}
         <div className="p-4 border-b border-border">
           <div className="hidden lg:block">
@@ -35,7 +35,7 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
             <p className="text-xs text-muted-foreground">Create your custom design</p>
           </div>
           <div className="lg:hidden flex justify-center">
-            <Palette className="w-6 h-6 text-primary" />
+            <Palette className="w-6 h-6 text-primary icon-hover floating" />
           </div>
         </div>
 
@@ -46,12 +46,12 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
               <Tooltip key={tool.id}>
                 <TooltipTrigger asChild>
                   <Button
-                    variant={activeTool === tool.id ? "default" : "ghost"}
+                    variant={activeTool === tool.id ? "premium" : "glass"}
                     size="sm"
                     onClick={() => onToolChange(tool.id)}
                     className="w-full justify-start h-12 lg:h-10"
                   >
-                    <tool.icon className="w-4 h-4 lg:mr-3" />
+                    <tool.icon className="w-4 h-4 lg:mr-3 icon-hover" />
                     <span className="hidden lg:inline">{tool.label}</span>
                   </Button>
                 </TooltipTrigger>
@@ -67,8 +67,8 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
         <div className="border-t border-border p-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="sm" className="w-full justify-start h-12 lg:h-10">
-                <HelpCircle className="w-4 h-4 lg:mr-3" />
+              <Button variant="glass" size="sm" className="w-full justify-start h-12 lg:h-10">
+                <HelpCircle className="w-4 h-4 lg:mr-3 icon-hover" />
                 <span className="hidden lg:inline">Help</span>
               </Button>
             </TooltipTrigger>
