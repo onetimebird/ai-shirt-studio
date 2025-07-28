@@ -20,13 +20,15 @@ interface DesignCanvasProps {
   currentSide: "front" | "back";
   activeTool: string;
   onSelectedObjectChange?: (obj: any) => void;
+  onToolChange?: (tool: string) => void;
 }
 
 export const DesignCanvas = ({ 
   selectedColor, 
   currentSide, 
-  activeTool,
-  onSelectedObjectChange 
+  activeTool, 
+  onSelectedObjectChange,
+  onToolChange
 }: DesignCanvasProps) => {
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,6 +44,7 @@ export const DesignCanvas = ({
   const [startPointer, setStartPointer] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [canvasZoom, setCanvasZoom] = useState(1);
+  const [tool, setTool] = useState(activeTool);
 
   // Scale sensitivity for smooth, controlled scaling
   const DIAG_DIV = 150; // Adjust for scaling speed - smaller = faster scaling
@@ -176,7 +179,10 @@ export const DesignCanvas = ({
       setSelectedObject(obj);
       onSelectedObjectChange?.(obj);
       
-      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
+      // Switch to edit mode for text objects
+      if (obj?.type === "textbox" || obj?.type === "text") {
+        setTool("editText");
+        onToolChange?.("editText");
         // Hide default Fabric.js controls to use React overlay instead
         obj.setControlsVisibility({
           mt: false, mb: false, ml: false, mr: false,
@@ -202,7 +208,10 @@ export const DesignCanvas = ({
       setSelectedObject(obj);
       onSelectedObjectChange?.(obj);
       
-      if (obj && (obj.type === 'textbox' || obj.type === 'text')) {
+      // Switch to edit mode for text objects
+      if (obj?.type === "textbox" || obj?.type === "text") {
+        setTool("editText");
+        onToolChange?.("editText");
         const bounds = obj.getBoundingRect();
         setOverlayBounds({
           x: bounds.left,
@@ -219,6 +228,9 @@ export const DesignCanvas = ({
       setSelectedObject(null);
       onSelectedObjectChange?.(null);
       setOverlayBounds(null);
+      // Return to add text mode
+      setTool("text");
+      onToolChange?.("text");
     });
 
     // Update overlay position when objects move
@@ -485,6 +497,10 @@ export const DesignCanvas = ({
         fabricCanvas.renderAll();
         setSelectedObject(textObj);
         onSelectedObjectChange?.(textObj);
+        
+        // Immediately select and switch to edit mode
+        setTool("editText");
+        onToolChange?.("editText");
         
         console.log("Text added with properties:", textObj);
         toast.success("Text added to design");

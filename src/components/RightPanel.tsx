@@ -235,8 +235,8 @@ export const RightPanel = ({
 
         <TabsContent value="properties" className="mt-4 space-y-4">
 
-          {/* Unified Add Text Interface */}
-          {activeTool === "text" && (
+          {/* Add Text Interface - Only when no text is selected */}
+          {activeTool === "text" && !selectedObject && (
             <>
               <Card>
                 <CardHeader className="pb-3">
@@ -400,50 +400,52 @@ export const RightPanel = ({
                   </CardContent>
                 </Card>
               )}
+            </>
+          )}
 
-              {/* Selected Text Properties */}
-              {selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Type className="w-4 h-4" /> Edit Selected Text
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Text Content */}
-                    <div>
-                      <Label className="text-xs">Text</Label>
-                      <Input
-                        value={textContent}
-                        onChange={e => {
-                          setTextContent(e.target.value);
-                          updateTextProperty('text', e.target.value);
-                        }}
-                        placeholder="Enter text…"
-                        className="mt-1"
-                      />
-                    </div>
-                    
-                    {/* Font Family */}
-                    <div>
-                      <Label className="text-xs">Font</Label>
-                      <Select
-                        value={fontFamily}
-                        onValueChange={val => {
-                          setFontFamily(val);
-                          updateTextProperty('fontFamily', val);
-                        }}
-                      >
-                        <SelectTrigger className="h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {fonts.map(f => (
-                            <SelectItem key={f} value={f}>{f}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+          {/* Edit Selected Text - Only when text is selected */}
+          {activeTool === "editText" && selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Type className="w-4 h-4" /> Edit Selected Text
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Text Content */}
+                <div>
+                  <Label className="text-xs">Text</Label>
+                  <Input
+                    value={textContent}
+                    onChange={e => {
+                      setTextContent(e.target.value);
+                      updateTextProperty('text', e.target.value);
+                    }}
+                    placeholder="Enter text…"
+                    className="mt-1"
+                  />
+                </div>
+                
+                {/* Font Family */}
+                <div>
+                  <Label className="text-xs">Font</Label>
+                  <Select
+                    value={fontFamily}
+                    onValueChange={val => {
+                      setFontFamily(val);
+                      updateTextProperty('fontFamily', val);
+                    }}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fonts.map(f => (
+                        <SelectItem key={f} value={f}>{f}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                     {/* Font Size */}
                     <div>
@@ -589,12 +591,10 @@ export const RightPanel = ({
                           Deselect
                         </Button>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </>
-          )}
+                     </div>
+                   </CardContent>
+                 </Card>
+               )}
 
           {/* Image Upload Tool */}
           {activeTool === "upload" && (

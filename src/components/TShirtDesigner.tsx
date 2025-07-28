@@ -77,6 +77,7 @@ export const TShirtDesigner = () => {
           currentSide={currentSide}
           activeTool={activeTool}
           onSelectedObjectChange={setSelectedObject}
+          onToolChange={setActiveTool}
         />
 
         {/* Right Panel */}
