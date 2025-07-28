@@ -241,8 +241,8 @@ export const DesignCanvas = ({
     // Add keyboard event listener to window for reliable key handling
     const handleKeyDown = (e: KeyboardEvent) => {
       console.log('got key:', e.key); // Debug log
-      const activeObj = fabricCanvas?.getActiveObject();
-      if (!activeObj) return;
+      const activeObj = canvas.getActiveObject(); // Use local canvas instance
+      if (!activeObj || (activeObj as any).isEditing) return;
 
       const key = e.key;
       const step = e.shiftKey ? 10 : 1; // Shift = 10px, normal = 1px
@@ -251,18 +251,22 @@ export const DesignCanvas = ({
         case 'ArrowUp':
           e.preventDefault();
           activeObj.set('top', activeObj.top - step);
+          canvas.requestRenderAll();
           break;
         case 'ArrowDown': 
           e.preventDefault();
           activeObj.set('top', activeObj.top + step);
+          canvas.requestRenderAll();
           break;
         case 'ArrowLeft':
           e.preventDefault();
           activeObj.set('left', activeObj.left - step);
+          canvas.requestRenderAll();
           break;
         case 'ArrowRight':
           e.preventDefault();
           activeObj.set('left', activeObj.left + step);
+          canvas.requestRenderAll();
           break;
         case 'Enter':
           if (activeObj.type === 'textbox') {
@@ -271,21 +275,18 @@ export const DesignCanvas = ({
           break;
         case 'Delete':
         case 'Backspace':
-          if (!(activeObj as any).isEditing) {
-            e.preventDefault();
-            canvas.remove(activeObj);
-            canvas.discardActiveObject();
-            setSelectedObject(null);
-            setOverlayBounds(null);
-            canvas.requestRenderAll();
-            setTool("text");
-            onToolChange?.("text");
-            onSelectedObjectChange?.(null);
-            toast.success("Element deleted");
-          }
+          e.preventDefault();
+          canvas.remove(activeObj);
+          canvas.discardActiveObject();
+          setSelectedObject(null);
+          setOverlayBounds(null);
+          canvas.requestRenderAll();
+          setTool("text");
+          onToolChange?.("text");
+          onSelectedObjectChange?.(null);
+          toast.success("Element deleted");
           break;
       }
-      canvas?.requestRenderAll();
     };
 
     // Listen on window for reliable key events
