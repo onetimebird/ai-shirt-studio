@@ -41,9 +41,13 @@ export const TopControls = ({
                 <SelectValue placeholder="Change Product" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="bella-3001c">Bella Canvas 3001C - Unisex Tee</SelectItem>
-                <SelectItem value="bella-hoodie">Bella Canvas Hoodie</SelectItem>
-                <SelectItem value="bella-tank">Bella Canvas Tank Top</SelectItem>
+                <SelectItem value="gildan-2000">Gildan 2000</SelectItem>
+                <SelectItem value="gildan-64000">Gildan 64000</SelectItem>
+                <SelectItem value="bella-3001c">Bella 3001C</SelectItem>
+                <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
+                <SelectItem value="bella-canvas-hoodie">Bella Canvas Hoodie</SelectItem>
+                <SelectItem value="bella-3480">Bella 3480 Tank Top</SelectItem>
+                <SelectItem value="bella-6004">Bella 6004 Women's T-Shirt</SelectItem>
               </SelectContent>
             </Select>
           </div>

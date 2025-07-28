@@ -92,6 +92,9 @@ export const TShirtDesigner = () => {
           onImageUpload={handleImageUpload}
           onProductColorChange={handleProductColorChange}
           textObjects={(window as any).designCanvas?.textObjects || []}
+          selectedProduct={selectedProduct}
+          selectedColor={selectedColor}
+          onProductChange={setSelectedProduct}
         />
       </div>
     </div>

@@ -39,7 +39,10 @@ interface RightPanelProps {
   onTextPropertiesChange: (properties: any) => void;
   onImageUpload: (file: File) => void;
   onProductColorChange: (color: string) => void;
-  textObjects?: any[];
+  textObjects: any[];
+  selectedProduct?: string;
+  selectedColor?: string;
+  onProductChange?: (productId: string) => void;
 }
 
 const fonts = [
@@ -60,6 +63,9 @@ export const RightPanel = ({
   onImageUpload,
   onProductColorChange,
   textObjects = [],
+  selectedProduct = "bella-3001c",
+  selectedColor = "White",
+  onProductChange
 }: RightPanelProps) => {
   // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
@@ -219,8 +225,6 @@ export const RightPanel = ({
         return "properties";
       case "ai":
         return "ai";
-      case "color":
-        return "color";
       case "products":
         return "products";
       default:
@@ -755,13 +759,12 @@ export const RightPanel = ({
 
         <TabsContent value="products" className="space-y-4 mt-4">
           <ProductSelector 
-            selectedProduct="bella-3001c"
-            selectedColor="White"
+            selectedProduct={selectedProduct}
+            selectedColor={selectedColor}
             onProductChange={(productId) => {
-              console.log("Product changed:", productId);
+              onProductChange?.(productId);
             }}
             onColorChange={(color) => {
-              console.log("Color changed:", color);
               onProductColorChange(color);
             }}
           />

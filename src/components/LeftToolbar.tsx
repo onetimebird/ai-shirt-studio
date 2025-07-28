@@ -21,7 +21,6 @@ const tools = [
   { id: "text", label: "Add Text", icon: Type },
   { id: "ai", label: "AI Image Generator", icon: Wand2 },
   { id: "products", label: "Change Product", icon: Shirt },
-  { id: "color", label: "Change Color", icon: Palette },
   { id: "reset", label: "Reset Design", icon: RotateCcw },
 ];
 
