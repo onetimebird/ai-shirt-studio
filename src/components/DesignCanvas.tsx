@@ -51,65 +51,156 @@ export const DesignCanvas = ({
       selection: true,
     });
 
-    // Custom control functions
-    const deleteIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M3%206h18m-2%200v14a2%202%200%2001-2%202H7a2%202%200%2001-2-2V6m3%200V4a2%202%200%20012-2h4a2%202%200%20012%202v2m-6%205v6m4-6v6'%20stroke='%23dc2626'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
-    const rotateIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M1%204v6h6M23%2020v-6h-6'%20stroke='%232563eb'%20stroke-width='2'%20fill='none'/%3e%3cpath%20d='M20.49%209A9%209%200%200%200%205.64%205.64L1%2010m22%204l-4.64%204.36A9%209%200%200%201%203.51%2015'%20stroke='%232563eb'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
-    const cloneIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M16%204h2a2%202%200%20012%202v14a2%202%200%2001-2%202H6a2%202%200%2001-2-2V6a2%202%200%20012-2h2M12%201v6M9%204l3-3%203%203'%20stroke='%2316a34a'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
-    const layerIcon = "data:image/svg+xml,%3csvg%20width='24'%20height='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M12%202L2%207l10%205%2010-5-10-5z'%20stroke='%236366f1'%20stroke-width='2'%20fill='none'/%3e%3cpath%20d='M2%2017l10%205%2010-5M2%2012l10%205%2010-5'%20stroke='%236366f1'%20stroke-width='2'%20fill='none'/%3e%3c/svg%3e";
+    // Custom control icons (SVG data URLs)
+    const deleteIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%23dc2626'%20stroke-width='1'/%3e%3cpath%20d='M6%204h8m-8%200V3a1%201%200%20011-1h6a1%201%200%20011%201v1m-8%200H4m12%200h-2m-8%202v8a1%201%200%20001%201h6a1%201%200%20001-1V6'%20stroke='%23dc2626'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const layerIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%236366f1'%20stroke-width='1'/%3e%3cpath%20d='M6%208l4-3%204%203m-4-3v10'%20stroke='%236366f1'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const rotateIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%232563eb'%20stroke-width='1'/%3e%3cpath%20d='M4%208a6%206%200%20016-6c2.5%200%204.5%201.5%205.5%203.5M16%2012a6%206%200%2001-6%206c-2.5%200-4.5-1.5-5.5-3.5'%20stroke='%232563eb'%20stroke-width='1.5'%20fill='none'/%3e%3cpath%20d='M9%204l1-2%201%202M11%2016l-1%202-1-2'%20stroke='%232563eb'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const stretchIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%23059669'%20stroke-width='1'/%3e%3cpath%20d='M4%2010h12M4%2010l2-2M4%2010l2%202M16%2010l-2-2M16%2010l-2%202'%20stroke='%23059669'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const scaleIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%23d97706'%20stroke-width='1'/%3e%3cpath%20d='M6%2014l8-8M6%2014h3M6%2014v-3M14%206h-3M14%206v3'%20stroke='%23d97706'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
+    const cloneIcon = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20x='1'%20y='1'%20width='18'%20height='18'%20rx='3'%20fill='white'%20stroke='%2316a34a'%20stroke-width='1'/%3e%3cpath%20d='M7%205a2%202%200%20012-2h6a2%202%200%20012%202v6a2%202%200%2001-2%202M7%205H5a2%202%200%2000-2%202v6a2%202%200%20002%202h6a2%202%200%20002-2v-2'%20stroke='%2316a34a'%20stroke-width='1.5'%20fill='none'/%3e%3c/svg%3e";
 
-    // Define custom controls
+    // Define custom controls with precise positioning and functionality
     const customControls = {
+      // Delete Handle - Top-Left
       'deleteControl': {
         x: -0.5,
         y: -0.5,
-        offsetY: 0,
-        offsetX: 0,
+        offsetY: -16,
+        offsetX: -16,
         cursorStyle: 'pointer',
-        mouseUpHandler: function(eventData: any, transformData: any, x: any, y: any) {
+        mouseUpHandler: function(eventData: any, transformData: any) {
           const target = transformData.target;
           canvas.remove(target);
           canvas.requestRenderAll();
+          toast.success("Text deleted");
         },
-        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
-          const size = 24;
+        render: function(ctx: any, left: any, top: any) {
+          const size = 20;
           ctx.save();
           ctx.translate(left, top);
-          ctx.rotate(fabricObject.angle * Math.PI / 180);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 24
+        cornerSize: 20
       },
+
+      // Layer Up/Down - Top-Center  
+      'layerControl': {
+        x: 0,
+        y: -0.5,
+        offsetY: -16,
+        offsetX: 0,
+        cursorStyle: 'pointer',
+        mouseUpHandler: function(eventData: any, transformData: any) {
+          const target = transformData.target;
+          const objects = canvas.getObjects();
+          const currentIndex = objects.indexOf(target);
+          
+          if (eventData.e.shiftKey && currentIndex > 0) {
+            // Shift+click = send backward
+            target.sendBackwards();
+            toast.success("Moved backward");
+          } else if (currentIndex < objects.length - 1) {
+            // Regular click = bring forward
+            target.bringForward();
+            toast.success("Moved forward");
+          }
+          canvas.requestRenderAll();
+        },
+        render: function(ctx: any, left: any, top: any) {
+          const size = 20;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 20
+      },
+
+      // Rotate Control - Top-Right
       'rotateControl': {
         x: 0.5,
         y: -0.5,
-        offsetY: 0,
-        offsetX: 0,
+        offsetY: -16,
+        offsetX: 16,
         cursorStyle: 'grab',
         actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
           const target = transformData.target;
           const center = target.getCenterPoint();
-          const angle = Math.atan2(y - center.y, x - center.x) * 180 / Math.PI;
+          const angle = Math.atan2(y - center.y, x - center.x) * 180 / Math.PI + 90;
           target.rotate(angle);
           return true;
         },
-        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
-          const size = 24;
+        render: function(ctx: any, left: any, top: any) {
+          const size = 20;
           ctx.save();
           ctx.translate(left, top);
-          ctx.rotate(fabricObject.angle * Math.PI / 180);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 24
+        cornerSize: 20
       },
+
+      // Horizontal Stretch - Mid-Right
+      'stretchControl': {
+        x: 0.5,
+        y: 0,
+        offsetY: 0,
+        offsetX: 16,
+        cursorStyle: 'col-resize',
+        actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
+          const target = transformData.target;
+          const pointer = canvas.getPointer(eventData.e);
+          const currentWidth = target.width * target.scaleX;
+          const newScaleX = Math.max(0.1, pointer.x / (target.left + target.width/2));
+          target.set('scaleX', newScaleX);
+          return true;
+        },
+        render: function(ctx: any, left: any, top: any) {
+          const size = 20;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 20
+      },
+
+      // Uniform Scale - Bottom-Right (will override default)
+      'scaleControl': {
+        x: 0.5,
+        y: 0.5,
+        offsetY: 16,
+        offsetX: 16,
+        cursorStyle: 'se-resize',
+        actionHandler: function(eventData: any, transformData: any, x: any, y: any) {
+          const target = transformData.target;
+          const pointer = canvas.getPointer(eventData.e);
+          const center = target.getCenterPoint();
+          const distance = Math.sqrt(Math.pow(pointer.x - center.x, 2) + Math.pow(pointer.y - center.y, 2));
+          const originalDistance = Math.sqrt(Math.pow(target.width/2, 2) + Math.pow(target.height/2, 2));
+          const scale = Math.max(0.1, distance / originalDistance);
+          target.set({scaleX: scale, scaleY: scale});
+          return true;
+        },
+        render: function(ctx: any, left: any, top: any) {
+          const size = 20;
+          ctx.save();
+          ctx.translate(left, top);
+          ctx.drawImage(this.img, -size/2, -size/2, size, size);
+          ctx.restore();
+        },
+        cornerSize: 20
+      },
+
+      // Duplicate/Clone - Bottom-Left
       'cloneControl': {
         x: -0.5,
         y: 0.5,
-        offsetY: 0,
-        offsetX: 0,
+        offsetY: 16,
+        offsetX: -16,
         cursorStyle: 'pointer',
-        mouseUpHandler: function(eventData: any, transformData: any, x: any, y: any) {
+        mouseUpHandler: function(eventData: any, transformData: any) {
           const target = transformData.target;
           target.clone((cloned: any) => {
             cloned.set({
@@ -119,73 +210,57 @@ export const DesignCanvas = ({
             canvas.add(cloned);
             canvas.setActiveObject(cloned);
             canvas.requestRenderAll();
+            toast.success("Text duplicated");
           });
         },
-        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
-          const size = 24;
+        render: function(ctx: any, left: any, top: any) {
+          const size = 20;
           ctx.save();
           ctx.translate(left, top);
-          ctx.rotate(fabricObject.angle * Math.PI / 180);
           ctx.drawImage(this.img, -size/2, -size/2, size, size);
           ctx.restore();
         },
-        cornerSize: 24
-      },
-      'layerControl': {
-        x: 0,
-        y: -0.5,
-        offsetY: 0,
-        offsetX: 0,
-        cursorStyle: 'pointer',
-        mouseUpHandler: function(eventData: any, transformData: any, x: any, y: any) {
-          const target = transformData.target;
-          target.bringToFront();
-          canvas.requestRenderAll();
-        },
-        render: function(ctx: any, left: any, top: any, styleOverride: any, fabricObject: any) {
-          const size = 24;
-          ctx.save();
-          ctx.translate(left, top);
-          ctx.rotate(fabricObject.angle * Math.PI / 180);
-          ctx.drawImage(this.img, -size/2, -size/2, size, size);
-          ctx.restore();
-        },
-        cornerSize: 24
+        cornerSize: 20
       }
     };
 
     // Load control icons
+    const iconMap: { [key: string]: string } = {
+      'deleteControl': deleteIcon,
+      'layerControl': layerIcon, 
+      'rotateControl': rotateIcon,
+      'stretchControl': stretchIcon,
+      'scaleControl': scaleIcon,
+      'cloneControl': cloneIcon
+    };
+
     Object.keys(customControls).forEach(key => {
       const img = new Image();
-      const iconMap: any = {
-        'deleteControl': deleteIcon,
-        'rotateControl': rotateIcon,
-        'cloneControl': cloneIcon,
-        'layerControl': layerIcon
-      };
       img.src = iconMap[key];
       (customControls as any)[key].img = img;
     });
 
-    // Add selection events
+    // Add selection events with enhanced controls
     canvas.on('selection:created', (e) => {
       const obj = e.selected[0];
       if (obj && obj.type === 'textbox') {
+        // Hide default controls and enable custom ones
         obj.setControlsVisibility({
-          mt: false, // middle top
-          mb: false, // middle bottom
-          ml: false, // middle left
-          mr: true,  // middle right - keep for horizontal stretch
-          tl: false, // top left
-          tr: false, // top right
-          bl: false, // bottom left
-          br: true,  // bottom right - keep for scale
-          mtr: false // rotation handle
+          mt: false, mb: false, ml: false, mr: false,
+          tl: false, tr: false, bl: false, br: false,
+          mtr: false // hide default rotation handle
         });
         
-        // Add custom controls
+        // Add all custom controls
         Object.keys(customControls).forEach(key => {
           obj.controls[key] = new Control((customControls as any)[key]);
+        });
+
+        // Enable double-click for inline editing
+        obj.on('mousedblclick', () => {
+          if (obj.type === 'textbox') {
+            (obj as any).enterEditing?.();
+          }
         });
       }
       setSelectedObject(obj);
@@ -203,9 +278,53 @@ export const DesignCanvas = ({
       onSelectedObjectChange?.(null);
     });
 
+    // Add keyboard event listener to document for better handling
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeObj = fabricCanvas?.getActiveObject();
+      if (!activeObj) return;
+
+      const key = e.key;
+      const step = e.shiftKey ? 10 : 1; // Shift = 10px, normal = 1px
+
+      switch(key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          activeObj.set('top', activeObj.top - step);
+          break;
+        case 'ArrowDown': 
+          e.preventDefault();
+          activeObj.set('top', activeObj.top + step);
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          activeObj.set('left', activeObj.left - step);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          activeObj.set('left', activeObj.left + step);
+          break;
+        case 'Enter':
+          if (activeObj.type === 'textbox') {
+            (activeObj as any).enterEditing?.();
+          }
+          break;
+        case 'Delete':
+        case 'Backspace':
+          if (!(activeObj as any).isEditing) {
+            fabricCanvas.remove(activeObj);
+            toast.success("Text deleted");
+          }
+          break;
+      }
+      fabricCanvas?.requestRenderAll();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
     setFabricCanvas(canvas);
 
     return () => {
+      document.removeEventListener('keydown', handleKeyDown);
       canvas.dispose();
     };
   }, [currentSide, onSelectedObjectChange]);
