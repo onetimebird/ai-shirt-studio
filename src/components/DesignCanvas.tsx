@@ -199,7 +199,8 @@ export const DesignCanvas = ({
         const cx = rect.left + center.x;
         const cy = rect.top + center.y;
         const currentAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
-        const degrees = startAngle + (currentAngle - startAngle) * (180 / Math.PI);
+        const startAngleRad = Math.atan2(startPointer.y - cy, startPointer.x - cx);
+        const degrees = startAngle + (currentAngle - startAngleRad) * (180 / Math.PI);
         
         selectedObject.rotate(degrees);
         fabricCanvas.requestRenderAll();
@@ -215,15 +216,19 @@ export const DesignCanvas = ({
       }
       
       if (isScaling) {
+        const bounds = selectedObject.getBoundingRect();
         const center = selectedObject.getCenterPoint();
         const cx = rect.left + center.x;
         const cy = rect.top + center.y;
         
-        const currentDistance = Math.hypot(e.clientX - cx, e.clientY - cy);
-        const startDistance = Math.hypot(startPointer.x - cx, startPointer.y - cy);
+        const currentDist = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const startDist = Math.hypot(startPointer.x - cx, startPointer.y - cy);
         
-        if (startDistance > 0) {
-          const factor = Math.max(0.1, currentDistance / startDistance);
+        if (startDist > 0) {
+          // Apply sensitivity multiplier for controlled scaling
+          const rawFactor = currentDist / startDist;
+          const factor = 1 + (rawFactor - 1) * 0.3; // 0.3 sensitivity
+          
           selectedObject.set({
             scaleX: startScale.x * factor,
             scaleY: startScale.y * factor
@@ -231,12 +236,12 @@ export const DesignCanvas = ({
           fabricCanvas.requestRenderAll();
           
           // Update overlay bounds
-          const bounds = selectedObject.getBoundingRect();
+          const newBounds = selectedObject.getBoundingRect();
           setOverlayBounds({
-            x: bounds.left,
-            y: bounds.top,
-            width: bounds.width,
-            height: bounds.height
+            x: newBounds.left,
+            y: newBounds.top,
+            width: newBounds.width,
+            height: newBounds.height
           });
         }
       }
@@ -246,13 +251,16 @@ export const DesignCanvas = ({
         const cx = rect.left + center.x;
         const cy = rect.top + center.y;
         
-        const currentDistance = Math.hypot(e.clientX - cx, e.clientY - cy);
-        const startDistance = Math.hypot(startPointer.x - cx, startPointer.y - cy);
+        const currentDist = Math.hypot(e.clientX - cx, e.clientY - cy);
+        const startDist = Math.hypot(startPointer.x - cx, startPointer.y - cy);
         
-        if (startDistance > 0) {
-          const factor = Math.max(0.1, currentDistance / startDistance);
+        if (startDist > 0) {
+          // Apply sensitivity multiplier for controlled horizontal stretching
+          const rawFactor = currentDist / startDist;
+          const factorX = 1 + (rawFactor - 1) * 0.3; // same 0.3 sensitivity
+          
           selectedObject.set({
-            scaleX: startScale.x * factor
+            scaleX: startScale.x * factorX
           });
           fabricCanvas.requestRenderAll();
           
