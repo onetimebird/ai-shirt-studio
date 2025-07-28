@@ -238,8 +238,9 @@ export const DesignCanvas = ({
     canvas.on('object:removed', updateTextObjects);
 
     
-    // Add keyboard event listener to document for better handling
+    // Add keyboard event listener to canvas wrapper for better focus handling
     const handleKeyDown = (e: KeyboardEvent) => {
+      console.log('got key:', e.key); // Debug log
       const activeObj = fabricCanvas?.getActiveObject();
       if (!activeObj) return;
 
@@ -271,6 +272,7 @@ export const DesignCanvas = ({
         case 'Delete':
         case 'Backspace':
           if (!(activeObj as any).isEditing) {
+            e.preventDefault();
             canvas.remove(activeObj);
             canvas.discardActiveObject();
             setSelectedObject(null);
@@ -278,21 +280,26 @@ export const DesignCanvas = ({
             canvas.requestRenderAll();
             setTool("text");
             onToolChange?.("text");
-            toast.success("Text deleted");
+            onSelectedObjectChange?.(null);
+            toast.success("Element deleted");
           }
           break;
       }
       canvas?.requestRenderAll();
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-
-    
+    // Listen on canvas wrapper instead of document
+    const wrapper = canvasWrapperRef.current;
+    if (wrapper) {
+      wrapper.addEventListener('keydown', handleKeyDown);
+    }
 
     setFabricCanvas(canvas);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      if (wrapper) {
+        wrapper.removeEventListener('keydown', handleKeyDown);
+      }
       canvas.off('selection:created');
       canvas.off('selection:updated');
       canvas.off('selection:cleared');
@@ -885,7 +892,9 @@ export const DesignCanvas = ({
             <div className="relative flex items-center justify-center">
               <div 
                 ref={canvasWrapperRef}
-                className="canvas-wrapper"
+                tabIndex={0}
+                onClick={() => canvasWrapperRef.current?.focus()}
+                className="canvas-wrapper focus:outline-none focus:ring-2 focus:ring-primary/50"
                 style={{
                   position: "relative",
                   width: "100%",
