@@ -66,14 +66,14 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
           <div className="text-center">
             <h2 className="text-lg font-semibold mb-1">How Many Do You Need?</h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground mb-1">
               Enter quantities to calculate price.
             </p>
           </div>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-2 pt-1 overscroll-contain" style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}>
+        <div className="flex-1 overflow-y-auto p-2 pt-0 overscroll-contain" style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}>
           {/* Product Display */}
           <div className="flex items-center gap-2 p-1.5 bg-muted/30 rounded-lg mb-2">
             <img 
@@ -95,13 +95,13 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
               {adultSizes.map((size) => (
                 <div key={size} className="text-center">
                   <div className="text-[9px] font-medium mb-0.5">{size}</div>
-                  <div className="w-full h-7 border border-border rounded-md flex items-center justify-center bg-background">
+                  <div className="w-full h-9 border border-border rounded-md flex items-center justify-center bg-background">
                     <input
                       type="number"
                       min="0"
                       value={quantities[size] ? quantities[size].toString() : ''}
                       onChange={(e) => handleQuantityChange(size, e.target.value)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none text-[11px]"
+                      className="w-full h-full text-center bg-transparent border-none outline-none text-sm"
                       placeholder="0"
                     />
                   </div>
@@ -117,13 +117,13 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
               {youthSizes.map((size) => (
                 <div key={size} className="text-center">
                   <div className="text-[9px] font-medium mb-0.5">{size}</div>
-                  <div className="w-full h-7 border border-border rounded-md flex items-center justify-center bg-background">
+                  <div className="w-full h-9 border border-border rounded-md flex items-center justify-center bg-background">
                     <input
                       type="number"
                       min="0"
                       value={quantities[size] ? quantities[size].toString() : ''}
                       onChange={(e) => handleQuantityChange(size, e.target.value)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none text-[11px]"
+                      className="w-full h-full text-center bg-transparent border-none outline-none text-sm"
                       placeholder="0"
                     />
                   </div>
