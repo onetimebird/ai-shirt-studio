@@ -18,7 +18,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   // Remove productImage state since we're using setBackgroundImage now
 
-  // Initialize Fabric.js canvas
+  // Initialize Fabric.js canvas ONLY ONCE
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -35,40 +35,29 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       preserveObjectStacking: true,
     });
 
-    // Don't overwrite designCanvas here - it will be set by DesignCanvas component
-    // (window as any).designCanvas = { canvas };
-
     setFabricCanvas(canvas);
     onCanvasReady?.(canvas);
 
     return () => {
       canvas.dispose();
     };
-  }, []); // Remove onCanvasReady from deps to prevent reinitializing
+  }, []); // NO dependencies - only run once on mount
 
-  // Load product image as background when color or side changes
+  // Load product background image ONLY when color/side actually changes
   useEffect(() => {
-    console.log("ProductCanvas background useEffect triggered:", { fabricCanvas: !!fabricCanvas, selectedColor, currentSide });
-    
     if (!fabricCanvas) return;
 
     const colorData = getColorByName(selectedColor);
-    console.log("Color data found:", colorData);
-    
     if (!colorData || !colorData.available) {
-      console.log("Color not available or not found:", { colorData, available: colorData?.available });
       return;
     }
 
     const imageUrl = currentSide === "front" ? colorData.frontImage : colorData.backImage;
-    console.log("Loading background image from URL:", imageUrl);
 
-    // Load new product image as BACKGROUND (not as object)
+    // Load background image - this won't affect user objects
     FabricImage.fromURL(imageUrl, {
       crossOrigin: "anonymous",
     }).then((img) => {
-      console.log("Background image loaded successfully:", img);
-      
       // Calculate scale to fit canvas while maintaining aspect ratio
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
@@ -96,7 +85,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     }).catch((error) => {
       console.error("Failed to load background image:", error);
     });
-  }, [fabricCanvas, selectedColor, currentSide]);
+  }, [selectedColor, currentSide]); // ONLY when color/side actually changes, NOT fabricCanvas
 
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16 relative">
