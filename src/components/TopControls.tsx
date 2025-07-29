@@ -36,7 +36,7 @@ export const TopControls = ({
           {/* Logo */}
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/a0349764-8639-451a-9faa-ceef05c751d0.png" 
+              src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
               alt="CoolShirt.Ai Logo" 
               className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
             />
