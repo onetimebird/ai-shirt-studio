@@ -69,6 +69,26 @@ export const RightPanel = ({
 }: RightPanelProps) => {
   // IMMEDIATE DEBUG - check if component even loads
   console.log("🔴 [RightPanel] COMPONENT LOADING - activeTool:", activeTool);
+  
+  // AUTO-TEST: Try to add text automatically after 3 seconds (no click required)
+  setTimeout(() => {
+    console.log("🟡 AUTO-TEST: Attempting to add text automatically...");
+    const canvas = (window as any).designCanvas?.canvas;
+    if (canvas) {
+      console.log("🟡 AUTO-TEST: Canvas found, adding text...");
+      const textbox = new FabricTextbox("AUTO-ADDED TEXT", {
+        left: 150,
+        top: 150,
+        fill: 'blue',
+        fontSize: 25
+      });
+      canvas.add(textbox);
+      canvas.renderAll();
+      console.log("🟡 AUTO-TEST: Text added successfully!");
+    } else {
+      console.log("🔴 AUTO-TEST: Canvas not found!");
+    }
+  }, 3000);
   // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
   const [fontFamily, setFontFamily] = useState("Arial");
