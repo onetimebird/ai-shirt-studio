@@ -10,6 +10,7 @@ import {
   RotateCcw,
   HelpCircle
 } from "lucide-react";
+import { AIIcon } from "@/components/AIIcon";
 
 interface LeftToolbarProps {
   activeTool: string;
@@ -51,7 +52,11 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
                     onClick={() => onToolChange(tool.id)}
                     className="w-full justify-start h-12 lg:h-10"
                   >
-                    <tool.icon className="w-4 h-4 lg:mr-3 icon-hover" />
+                    {tool.id === "ai" ? (
+                      <AIIcon className="lg:mr-3" size={16} />
+                    ) : (
+                      <tool.icon className="w-4 h-4 lg:mr-3 icon-hover" />
+                    )}
                     <span className="hidden lg:inline">{tool.label}</span>
                   </Button>
                 </TooltipTrigger>

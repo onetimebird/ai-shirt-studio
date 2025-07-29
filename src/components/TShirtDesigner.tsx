@@ -7,6 +7,7 @@ import { RightPanel } from "@/components/RightPanel";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Settings, Type, Upload, Wand2, Package, Palette, X } from "lucide-react";
+import { AIIcon } from "@/components/AIIcon";
 import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
@@ -236,7 +237,7 @@ export const TShirtDesigner = () => {
                 className="flex flex-col items-center gap-1 h-auto py-2 px-3"
                 onClick={() => handleToolChange("ai")}
               >
-                <Wand2 className="h-4 w-4" />
+                <AIIcon size={16} />
                 <span className="text-xs">Add Art</span>
               </Button>
             </SheetTrigger>
