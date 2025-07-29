@@ -390,17 +390,9 @@ export const RightPanel = ({
                   </div>
                   
                   <Button
-                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                    onClick={(e) => {
-                      console.log("[RightPanel] 👉 Add Text button click event fired", e);
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleAddText();
-                    }}
-                    onPointerDown={handleAddText}
-                    onPointerUp={handleAddText}
-                    onMouseDown={handleAddText}
-                    onTouchEnd={handleAddText}
+                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 pointer-events-auto relative z-50"
+                    onClick={handleAddText}
+                    style={{ pointerEvents: 'auto' }}
                   >
                     ✨ Add Text
                   </Button>
@@ -698,17 +690,9 @@ export const RightPanel = ({
                   <Button 
                     variant="outline" 
                     size="lg"
-                    onClick={(e) => {
-                      console.log("[RightPanel] 👉 Button click event fired", e);
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleUploadClick();
-                    }}
-                    onPointerDown={handleUploadClick}
-                    onPointerUp={handleUploadClick}
-                    onMouseDown={handleUploadClick}
-                    onTouchEnd={handleUploadClick}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
+                    onClick={handleUploadClick}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 pointer-events-auto relative z-50"
+                    style={{ pointerEvents: 'auto' }}
                   >
                     📁 Choose File
                   </Button>
