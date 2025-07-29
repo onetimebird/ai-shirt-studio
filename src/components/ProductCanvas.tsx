@@ -44,7 +44,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     return () => {
       canvas.dispose();
     };
-  }, [onCanvasReady]);
+  }, []); // Remove onCanvasReady from deps to prevent reinitializing
 
   // Load product image when color or side changes
   useEffect(() => {
