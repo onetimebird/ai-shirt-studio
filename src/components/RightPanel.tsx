@@ -145,11 +145,25 @@ export const RightPanel = ({
       objectCaching: false, // better for dynamic editing
     });
 
+    console.log("[Debug] Textbox created with position:", {
+      left: textbox.left,
+      top: textbox.top,
+      fontSize: textbox.fontSize,
+      fill: textbox.fill
+    });
+
     console.log("[Debug] Adding textbox to canvas");
     fabricCanvas.add(textbox);
+    fabricCanvas.bringObjectToFront(textbox); // Ensure text is on top
     fabricCanvas.setActiveObject(textbox);
     fabricCanvas.renderAll();
-    console.log("[Debug] Canvas objects after addText:", fabricCanvas.getObjects());
+    console.log("[Debug] Canvas objects after addText:", fabricCanvas.getObjects().map((obj: any) => ({
+      type: obj.type,
+      left: obj.left,
+      top: obj.top,
+      visible: obj.visible,
+      opacity: obj.opacity
+    })));
     
     // Reset text content for next text
     setTextContent("New multi-line text\nType here...");
