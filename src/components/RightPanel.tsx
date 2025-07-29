@@ -667,7 +667,8 @@ export const RightPanel = ({
                   <ImageIcon className="w-4 h-4" /> Upload Image
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                {/* Local File Upload */}
                 <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
                   <ImageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground mb-4">
@@ -687,6 +688,78 @@ export const RightPanel = ({
                   </label>
                   <p className="text-xs text-muted-foreground mt-2">
                     PNG, JPEG, SVG up to 10MB
+                  </p>
+                </div>
+
+                {/* Google Drive Upload */}
+                <div className="border border-border rounded-lg p-4 text-center">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <svg className="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6.26 10.5l2.25-3.9L16.66 6l-2.25 3.9L6.26 10.5z"/>
+                      <path d="M19.19 11.5l-2.26-3.91L9.74 7.59l2.26 3.91l7.19-.01z"/>
+                      <path d="M11.26 17.5H4.74L1.5 12l3.24 5.5h6.52z"/>
+                      <path d="M15.26 17.5H8.74l3.26-5.65L15.26 17.5z"/>
+                    </svg>
+                    <span className="text-sm font-medium">Google Drive</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      // Initialize Google Drive picker
+                      if (typeof window !== 'undefined' && (window as any).google?.picker) {
+                        const picker = new (window as any).google.picker.PickerBuilder()
+                          .addView((window as any).google.picker.ViewId.DOCS_IMAGES)
+                          .setOAuthToken('ya29.demo') // This would need real OAuth token
+                          .setCallback((data: any) => {
+                            if (data.action === (window as any).google.picker.Action.PICKED) {
+                              const file = data.docs[0];
+                              const imageUrl = `https://drive.google.com/uc?id=${file.id}`;
+                              if ((window as any).designCanvas?.addImageFromUrl) {
+                                (window as any).designCanvas.addImageFromUrl(imageUrl);
+                                toast.success("Image uploaded from Google Drive!");
+                              }
+                            }
+                          })
+                          .build();
+                        picker.setVisible(true);
+                      } else {
+                        // Fallback: show a simple URL input for Google Drive links
+                        const url = prompt("Paste a Google Drive image share link:");
+                        if (url) {
+                          // Extract file ID from various Google Drive URL formats
+                          let fileId = '';
+                          const patterns = [
+                            /\/file\/d\/([a-zA-Z0-9-_]+)/,
+                            /id=([a-zA-Z0-9-_]+)/,
+                            /\/d\/([a-zA-Z0-9-_]+)/
+                          ];
+                          
+                          for (const pattern of patterns) {
+                            const match = url.match(pattern);
+                            if (match) {
+                              fileId = match[1];
+                              break;
+                            }
+                          }
+                          
+                          if (fileId) {
+                            const directUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                            if ((window as any).designCanvas?.addImageFromUrl) {
+                              (window as any).designCanvas.addImageFromUrl(directUrl);
+                              toast.success("Image uploaded from Google Drive!");
+                            }
+                          } else {
+                            toast.error("Invalid Google Drive link. Please use a shareable link.");
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    Upload from Drive
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Upload images from your Google Drive
                   </p>
                 </div>
               </CardContent>
