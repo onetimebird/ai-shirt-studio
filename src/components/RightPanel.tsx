@@ -67,32 +67,6 @@ export const RightPanel = ({
   selectedColor = "White",
   onProductChange
 }: RightPanelProps) => {
-  console.log("🔴🔴🔴 RIGHTPANEL START - activeTool:", activeTool);
-  console.log("🔴🔴🔴 FabricTextbox exists:", !!FabricTextbox);
-  
-  // IMMEDIATE TEST - Add text right now without setTimeout
-  console.log("🟠 IMMEDIATE TEST: Checking canvas access...");
-  const canvas = (window as any).designCanvas?.canvas;
-  if (canvas) {
-    console.log("🟠 IMMEDIATE TEST: Canvas found! Adding text immediately...");
-    try {
-      const textbox = new FabricTextbox("IMMEDIATE TEXT ADDED", {
-        left: 100,
-        top: 100,
-        fill: 'purple',
-        fontSize: 20
-      });
-      canvas.add(textbox);
-      canvas.renderAll();
-      console.log("🟠 IMMEDIATE TEST: SUCCESS! Text added.");
-    } catch (error) {
-      console.error("🔴 IMMEDIATE TEST: Error adding text:", error);
-    }
-  } else {
-    console.log("🔴 IMMEDIATE TEST: Canvas not found!");
-  }
-  
-  // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [fontSize, setFontSize] = useState<number>(24);
@@ -141,27 +115,13 @@ export const RightPanel = ({
   };
 
   // --- CLEAN "Add Text" handler ---
-  // --- Direct Fabric Add‐Text handler (improved) ---
   const handleAddText = () => {
-    console.log("[RightPanel] handleAddText() - DIRECT FABRIC APPROACH");
-    console.log("[RightPanel] window.designCanvas=", (window as any).designCanvas);
-    
     const canvas = (window as any).designCanvas?.canvas;
     if (!canvas) {
-      console.log("[RightPanel] ❌ Canvas not ready");
       toast.error("Canvas not ready");
       return;
     }
     
-    console.log("[RightPanel] ✅ Canvas found, creating textbox with:", { 
-      text: textContent, 
-      fontFamily, 
-      fontSize, 
-      fill: textColor, 
-      textAlign
-    });
-    
-    // Use direct Fabric import instead of FabricTextbox
     const textbox = new FabricTextbox(textContent, {
       left: canvas.getWidth() / 2,
       top: canvas.getHeight() / 2,
@@ -170,25 +130,15 @@ export const RightPanel = ({
       fontFamily,
       fontSize,
       fill: textColor,
-      textAlign: textAlign as any,
-      // Force text to be above everything
-      selectable: true,
-      evented: true
+      textAlign: textAlign as any
     });
     
     canvas.add(textbox);
+    canvas.setActiveObject(textbox);
+    canvas.renderAll();
     
-    // CRITICAL: Force text to top after any possible image reloads
-    setTimeout(() => {
-      canvas.bringObjectToFront(textbox);
-      canvas.setActiveObject(textbox);
-      canvas.renderAll();
-      console.log("[RightPanel] ✅ Text forced to front after delay");
-    }, 100);
-    
-    console.log("[RightPanel] ✅ Text added successfully, objects count:", canvas.getObjects().length);
     setTextContent("New multi-line text\nType here...");
-    toast.success("Text added to canvas");
+    toast.success("Text added to design");
   };
 
   const handleDelete = () => (window as any).designCanvas?.deleteSelected();
@@ -327,47 +277,6 @@ export const RightPanel = ({
 
   return (
     <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
-      {/* VISUAL DEBUG - This should be impossible to miss */}
-      <div className="bg-red-500 text-white p-4 text-center font-bold text-lg">
-        🔴 NEW RIGHTPANEL LOADED - Tool: {activeTool} - Time: {new Date().getTime()}
-      </div>
-      
-      {/* WORKING BUTTON - Canvas should be ready by now */}
-      <div className="p-4 bg-green-300">
-        <div 
-          className="bg-blue-600 text-white p-3 text-center cursor-pointer font-bold"
-          onMouseDown={() => {
-            console.log("🔵 WORKING BUTTON CLICKED!");
-            const canvas = (window as any).designCanvas?.canvas;
-            console.log("🔵 Canvas available:", !!canvas);
-            
-            if (canvas) {
-              console.log("🔵 Adding text with working button...");
-              const textbox = new FabricTextbox("VISIBLE TEXT!", {
-                left: canvas.getWidth() / 2,
-                top: canvas.getHeight() / 2,
-                originX: 'center',
-                originY: 'center',
-                fill: '#FF0000',  // Bright red
-                fontSize: 40,     // Large size
-                fontWeight: 'bold',
-                backgroundColor: '#FFFF00', // Yellow background
-                stroke: '#000000', // Black outline
-                strokeWidth: 2
-              });
-              canvas.add(textbox);
-              canvas.bringObjectToFront(textbox);  // Correct API!
-              canvas.setActiveObject(textbox);
-              canvas.renderAll();
-              console.log("🔵 SUCCESS! Text added by working button.");
-            } else {
-              console.log("🔴 Canvas still not available!");
-            }
-          }}
-        >
-          🔵 WORKING ADD TEXT BUTTON
-        </div>
-      </div>
       <Tabs value={getActiveTab()} className="w-full p-4">
         {/* Only show tabs based on context */}
         {activeTool === "text" || activeTool === "editText" ? (
