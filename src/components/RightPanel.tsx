@@ -112,6 +112,8 @@ export const RightPanel = ({
 
   // --- CLEAN "Add Text" handler ---
   const handleAddText = () => {
+    console.log("[RightPanel] 👉 handleAddText triggered");
+
     const canvas = (window as any).designCanvas?.canvas;
     if (!canvas) {
       toast.error("Canvas not ready");
@@ -186,6 +188,9 @@ export const RightPanel = ({
 
   // --- Clean file‐upload handler ---
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("[RightPanel] 👉 handleFileUpload triggered", event);
+    console.trace();
+
     const file = event.target.files?.[0];
     if (!file) return;
     const allowed = ["image/png","image/jpeg","image/jpg","image/svg+xml"];
@@ -384,7 +389,9 @@ export const RightPanel = ({
                   <Button
                     className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                     onClick={handleAddText}
+                    onPointerDown={handleAddText}
                     onPointerUp={handleAddText}
+                    onMouseDown={handleAddText}
                     onTouchEnd={handleAddText}
                   >
                     ✨ Add Text
@@ -684,7 +691,9 @@ export const RightPanel = ({
                     variant="outline" 
                     size="lg"
                     onClick={handleUploadClick}
+                    onPointerDown={handleUploadClick}
                     onPointerUp={handleUploadClick}
+                    onMouseDown={handleUploadClick}
                     onTouchEnd={handleUploadClick}
                     className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
                   >
