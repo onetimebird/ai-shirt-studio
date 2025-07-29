@@ -46,6 +46,7 @@ export const TShirtDesigner = () => {
   };
 
   const handleImageUpload = (file: File) => {
+    console.log("TShirtDesigner handleImageUpload called with file:", file.name);
     (window as any).designCanvas?.addImage(file);
   };
 

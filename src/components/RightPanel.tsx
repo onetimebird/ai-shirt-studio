@@ -111,11 +111,21 @@ export const RightPanel = ({
   };
 
   const handleAddText = () => {
+    console.log("handleAddText called");
     const fabricCanvas = (window as any).designCanvas?.canvas;
+    console.log("Canvas available:", !!fabricCanvas);
+    
     if (!fabricCanvas) {
+      console.log("Canvas not ready, showing error");
       toast.error("Canvas not ready");
       return;
     }
+
+    console.log("Creating textbox with:", {
+      textContent,
+      canvasWidth: fabricCanvas.width,
+      canvasHeight: fabricCanvas.height
+    });
 
     const textbox = new FabricTextbox(textContent, {
       left: fabricCanvas.width! / 2,
@@ -134,6 +144,7 @@ export const RightPanel = ({
       objectCaching: false, // better for dynamic editing
     });
 
+    console.log("Adding textbox to canvas");
     fabricCanvas.add(textbox);
     fabricCanvas.setActiveObject(textbox);
     fabricCanvas.requestRenderAll();
@@ -141,6 +152,7 @@ export const RightPanel = ({
     // Reset text content for next text
     setTextContent("New multi-line text\nType here...");
     
+    console.log("Text added successfully");
     toast.success("Text added to design");
   };
 
@@ -197,21 +209,30 @@ export const RightPanel = ({
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handleFileUpload called");
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+
+    console.log("File selected:", file.name, file.type, file.size);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
     if (!allowedTypes.includes(file.type)) {
+      console.log("Invalid file type:", file.type);
       toast.error("Please upload PNG, JPEG, or SVG files only");
       return;
     }
 
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
+      console.log("File too large:", file.size);
       toast.error("File size must be less than 10MB");
       return;
     }
 
+    console.log("Calling onImageUpload with file");
     onImageUpload(file);
     toast.success("Image uploaded successfully!");
   };
