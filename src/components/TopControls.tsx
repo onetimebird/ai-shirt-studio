@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
 import { GILDAN_2000_COLORS, getAvailableColors } from "@/data/gildan2000Colors";
+import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 
 interface TopControlsProps {
@@ -87,11 +88,19 @@ export const TopControls = ({
             </div>
           </div>
 
-          {/* Add Product Button - Desktop only */}
-          <Button variant="glass" size="sm" className="shimmer-hover hidden lg:flex">
-            <Plus className="w-4 h-4 mr-2 icon-hover" />
-            Add Product
-          </Button>
+          {/* Theme Toggle and Add Product - Desktop */}
+          <div className="hidden lg:flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="glass" size="sm" className="shimmer-hover">
+              <Plus className="w-4 h-4 mr-2 icon-hover" />
+              Add Product
+            </Button>
+          </div>
+
+          {/* Mobile Theme Toggle */}
+          <div className="lg:hidden">
+            <MobileThemeToggle />
+          </div>
         </div>
 
         {/* Second Row - Controls evenly spaced */}

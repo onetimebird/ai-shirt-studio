@@ -140,7 +140,7 @@ All colors MUST be HSL.
   }
   
   html {
-    @apply dark;
+    /* Theme is now managed by ThemeProvider */
   }
 }
 
