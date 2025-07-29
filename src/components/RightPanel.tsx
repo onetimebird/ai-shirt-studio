@@ -330,11 +330,6 @@ export const RightPanel = ({
           {activeTool === "text" && (
             <>
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Type className="w-4 h-4" /> Add Text
-                  </CardTitle>
-                </CardHeader>
                 <CardContent className="space-y-3 p-4">
                   {/* Text Content */}
                   <div>
