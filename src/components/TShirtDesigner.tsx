@@ -115,8 +115,8 @@ export const TShirtDesigner = () => {
           />
         </div>
 
-        {/* Next Step Button - Positioned between canvas and right panel */}
-        <div className="hidden lg:flex items-start justify-center w-20 pt-6">
+        {/* Next Step Button - Absolutely positioned between canvas and right panel */}
+        <div className="absolute top-4 right-80 z-20 hidden lg:block">
           <Button 
             variant="default" 
             size="sm"
