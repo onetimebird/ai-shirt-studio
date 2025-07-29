@@ -30,9 +30,9 @@ export const TopControls = ({
 
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 lg:gap-4">
         {/* Left Controls */}
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 lg:gap-4">
           {/* Logo */}
           <div className="flex items-center">
             <img 
@@ -45,7 +45,7 @@ export const TopControls = ({
           <div className="flex items-center gap-2">
             <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
             <Select value={selectedProduct} onValueChange={onProductChange}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-36 lg:w-48">
                 <SelectValue placeholder="Change Product" />
               </SelectTrigger>
               <SelectContent>
@@ -83,15 +83,15 @@ export const TopControls = ({
             </Select>
           </div>
 
-          {/* Add Product Button */}
-          <Button variant="glass" size="sm" className="shimmer-hover">
+          {/* Add Product Button - Hidden on mobile */}
+          <Button variant="glass" size="sm" className="shimmer-hover hidden lg:flex">
             <Plus className="w-4 h-4 mr-2 icon-hover" />
             Add Product
           </Button>
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 lg:gap-4">
           {/* Front/Back Toggle */}
           <div className="flex items-center border border-border rounded-md">
             <Button
