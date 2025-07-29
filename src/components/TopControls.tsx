@@ -4,7 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
 import { GILDAN_2000_COLORS, getAvailableColors } from "@/data/gildan2000Colors";
 import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
+import { QuantityModal } from "@/components/QuantityModal";
 import { toast } from "sonner";
+import { useState } from "react";
 
 interface TopControlsProps {
   selectedProduct: string;
@@ -28,6 +30,7 @@ export const TopControls = ({
   onSideChange,
 }: TopControlsProps) => {
   const currentColor = GILDAN_2000_COLORS.find(c => c.name === selectedColor);
+  const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
 
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
@@ -183,15 +186,21 @@ export const TopControls = ({
             variant="default" 
             size="sm"
             className="bg-blue-500 hover:bg-blue-600 text-white flex-2 lg:flex-none lg:px-6"
-            onClick={() => {
-              toast.success("Proceeding to next step");
-            }}
+            onClick={() => setIsQuantityModalOpen(true)}
           >
             <DollarSign className="w-4 h-4 mr-1" />
             Next
           </Button>
         </div>
       </div>
+
+      {/* Quantity Modal */}
+      <QuantityModal 
+        isOpen={isQuantityModalOpen}
+        onClose={() => setIsQuantityModalOpen(false)}
+        selectedProduct={selectedProduct}
+        selectedColor={selectedColor}
+      />
     </div>
   );
 };
