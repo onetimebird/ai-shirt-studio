@@ -335,172 +335,20 @@ export const RightPanel = ({
                     <Type className="w-4 h-4" /> Add Text
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 p-4">
                   {/* Text Content */}
                   <div>
-                    <Label className="text-xs">Text</Label>
                     <Textarea
                       value={textContent}
                       onChange={e => setTextContent(e.target.value)}
-                      placeholder="Enter multi-line text..."
-                      rows={4}
-                      className="mt-1"
+                      placeholder="Enter your text here..."
+                      rows={3}
+                      className="text-sm resize-none"
                     />
                   </div>
                   
-                  {/* Font Family */}
-                  <div>
-                    <Label className="text-xs">Font</Label>
-                    <Select
-                      value={fontFamily}
-                      onValueChange={val => {
-                        setFontFamily(val);
-                        updateTextProperty('fontFamily', val);
-                      }}
-                    >
-                      <SelectTrigger className="h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {fonts.map(f => (
-                          <SelectItem key={f} value={f}>{f}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  {/* Size */}
-                  <div>
-                    <Label className="text-xs">Size: {fontSize}px</Label>
-                    <Slider
-                      value={[fontSize]}
-                      onValueChange={([size]) => {
-                        setFontSize(size);
-                        updateTextProperty('fontSize', size);
-                      }}
-                      min={8} max={120}
-                    />
-                  </div>
-                  
-                  {/* Color */}
-                  <div>
-                    <Label className="text-xs">Color</Label>
-                    <Input
-                      type="color"
-                      value={textColor}
-                      onChange={e => {
-                        setTextColor(e.target.value);
-                        updateTextProperty('fill', e.target.value);
-                      }}
-                      className="w-12 h-8 p-0 border-0"
-                    />
-                  </div>
-                  
-                  {/* Style */}
-                  <div>
-                    <Label className="text-xs mb-1">Style</Label>
-                    <div className="flex gap-1">
-                      <Button 
-                        variant={isBold ? 'premium' : 'outline'} 
-                        size="sm" 
-                        onClick={() => {
-                          const newBold = !isBold;
-                          setIsBold(newBold);
-                          updateTextProperty('fontWeight', newBold ? 'bold' : 'normal');
-                        }}
-                        className="hover:shadow-md transition-all duration-200"
-                      >
-                        <Bold className="w-3 h-3"/>
-                      </Button>
-                      <Button 
-                        variant={isItalic ? 'premium' : 'outline'} 
-                        size="sm" 
-                        onClick={() => {
-                          const newItalic = !isItalic;
-                          setIsItalic(newItalic);
-                          updateTextProperty('fontStyle', newItalic ? 'italic' : 'normal');
-                        }}
-                        className="hover:shadow-md transition-all duration-200"
-                      >
-                        <Italic className="w-3 h-3"/>
-                      </Button>
-                      <Button 
-                        variant={isUnderline ? 'premium' : 'outline'} 
-                        size="sm" 
-                        onClick={() => {
-                          const newUnderline = !isUnderline;
-                          setIsUnderline(newUnderline);
-                          updateTextProperty('underline', newUnderline);
-                        }}
-                        className="hover:shadow-md transition-all duration-200"
-                      >
-                        <Underline className="w-3 h-3"/>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {/* Align */}
-                  <div>
-                    <Label className="text-xs mb-1">Align</Label>
-                    <div className="flex gap-1">
-                      <Button 
-                        variant={textAlign==='left'?'premium':'outline'} 
-                        size="sm" 
-                        onClick={() => {
-                          setTextAlign('left');
-                          updateTextProperty('textAlign', 'left');
-                        }}
-                        className="hover:shadow-md transition-all duration-200"
-                      >
-                        <AlignLeft className="w-3 h-3"/>
-                      </Button>
-                      <Button 
-                        variant={textAlign==='center'?'premium':'outline'} 
-                        size="sm" 
-                        onClick={() => {
-                          setTextAlign('center');
-                          updateTextProperty('textAlign', 'center');
-                        }}
-                        className="hover:shadow-md transition-all duration-200"
-                      >
-                        <AlignCenter className="w-3 h-3"/>
-                      </Button>
-                      <Button 
-                        variant={textAlign==='right'?'premium':'outline'} 
-                        size="sm" 
-                        onClick={() => {
-                          setTextAlign('right');
-                          updateTextProperty('textAlign', 'right');
-                        }}
-                        className="hover:shadow-md transition-all duration-200"
-                      >
-                        <AlignRight className="w-3 h-3"/>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" 
-                    onClick={handleAddText}
-                    onTouchEnd={handleAddText}
-                  >
-                    ✨ Add Text
-                  </Button>
-
-                  {/* Text Control Actions */}
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.duplicateSelected) {
-                          (window as any).designCanvas.duplicateSelected();
-                        }
-                      }}
-                      className="text-xs"
-                    >
-                      Duplicate
-                    </Button>
+                  {/* Action Buttons Row */}
+                  <div className="grid grid-cols-4 gap-1">
                     <Button
                       variant="outline"
                       size="sm"
@@ -509,17 +357,214 @@ export const RightPanel = ({
                           (window as any).designCanvas.centerSelected();
                         }
                       }}
-                      className="text-xs"
+                      className="h-8 text-xs"
                     >
                       Center
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if ((window as any).designCanvas?.duplicateSelected) {
+                          (window as any).designCanvas.duplicateSelected();
+                        }
+                      }}
+                      className="h-8 text-xs"
+                    >
+                      Duplicate
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if ((window as any).designCanvas?.rotateSelected) {
+                          (window as any).designCanvas.rotateSelected();
+                        }
+                      }}
+                      className="h-8 text-xs"
+                    >
+                      Rotate
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if ((window as any).designCanvas?.deleteSelected) {
+                          (window as any).designCanvas.deleteSelected();
+                        }
+                      }}
+                      className="h-8 text-xs text-destructive"
+                    >
+                      Delete
+                    </Button>
                   </div>
 
-                  {/* Advanced Text Controls */}
-                  <div className="space-y-4 mt-4">
-                    {/* Outline/Stroke */}
-                    <div>
-                      <Label className="text-xs">Outline Width: {strokeWidth}px</Label>
+                  {/* Font Row */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Font</Label>
+                    <Select
+                      value={fontFamily}
+                      onValueChange={val => {
+                        setFontFamily(val);
+                        updateTextProperty('fontFamily', val);
+                      }}
+                    >
+                      <SelectTrigger className="w-32 h-7 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fonts.map(f => (
+                          <SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Color Row */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Color</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Black</span>
+                      <Input
+                        type="color"
+                        value={textColor}
+                        onChange={e => {
+                          setTextColor(e.target.value);
+                          updateTextProperty('fill', e.target.value);
+                        }}
+                        className="w-8 h-7 p-0 border-0 rounded cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Outline Row */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Outline</Label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">
+                        {strokeWidth > 0 ? `${strokeWidth}px` : 'None'}
+                      </span>
+                      {strokeWidth > 0 && (
+                        <Input
+                          type="color"
+                          value={strokeColor}
+                          onChange={e => {
+                            setStrokeColor(e.target.value);
+                            updateTextProperty('stroke', e.target.value);
+                          }}
+                          className="w-8 h-7 p-0 border-0 rounded cursor-pointer"
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Style Buttons Row */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Style</Label>
+                    <div className="flex gap-1">
+                      <Button 
+                        variant={isBold ? 'default' : 'outline'} 
+                        size="sm" 
+                        onClick={() => {
+                          const newBold = !isBold;
+                          setIsBold(newBold);
+                          updateTextProperty('fontWeight', newBold ? 'bold' : 'normal');
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <Bold className="w-3 h-3"/>
+                      </Button>
+                      <Button 
+                        variant={isItalic ? 'default' : 'outline'} 
+                        size="sm" 
+                        onClick={() => {
+                          const newItalic = !isItalic;
+                          setIsItalic(newItalic);
+                          updateTextProperty('fontStyle', newItalic ? 'italic' : 'normal');
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <Italic className="w-3 h-3"/>
+                      </Button>
+                      <Button 
+                        variant={isUnderline ? 'default' : 'outline'} 
+                        size="sm" 
+                        onClick={() => {
+                          const newUnderline = !isUnderline;
+                          setIsUnderline(newUnderline);
+                          updateTextProperty('underline', newUnderline);
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <Underline className="w-3 h-3"/>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Alignment Row */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Align</Label>
+                    <div className="flex gap-1">
+                      <Button 
+                        variant={textAlign==='left'?'default':'outline'} 
+                        size="sm" 
+                        onClick={() => {
+                          setTextAlign('left');
+                          updateTextProperty('textAlign', 'left');
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <AlignLeft className="w-3 h-3"/>
+                      </Button>
+                      <Button 
+                        variant={textAlign==='center'?'default':'outline'} 
+                        size="sm" 
+                        onClick={() => {
+                          setTextAlign('center');
+                          updateTextProperty('textAlign', 'center');
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <AlignCenter className="w-3 h-3"/>
+                      </Button>
+                      <Button 
+                        variant={textAlign==='right'?'default':'outline'} 
+                        size="sm" 
+                        onClick={() => {
+                          setTextAlign('right');
+                          updateTextProperty('textAlign', 'right');
+                        }}
+                        className="h-7 w-7 p-0"
+                      >
+                        <AlignRight className="w-3 h-3"/>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Size Slider */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Size</Label>
+                    <div className="flex items-center gap-2 flex-1 ml-4">
+                      <Slider
+                        value={[fontSize]}
+                        onValueChange={([size]) => {
+                          setFontSize(size);
+                          updateTextProperty('fontSize', size);
+                        }}
+                        min={8}
+                        max={120}
+                        className="flex-1"
+                      />
+                      <div className="w-12 h-7 border rounded text-xs flex items-center justify-center bg-muted">
+                        {fontSize}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Outline Width Slider */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Outline</Label>
+                    <div className="flex items-center gap-2 flex-1 ml-4">
                       <Slider
                         value={[strokeWidth]}
                         onValueChange={([width]) => {
@@ -533,43 +578,18 @@ export const RightPanel = ({
                         }}
                         min={0}
                         max={10}
-                        step={1}
+                        className="flex-1"
                       />
-                    </div>
-
-                    {strokeWidth > 0 && (
-                      <div>
-                        <Label className="text-xs">Outline Color</Label>
-                        <Input
-                          type="color"
-                          value={strokeColor}
-                          onChange={e => {
-                            setStrokeColor(e.target.value);
-                            updateTextProperty('stroke', e.target.value);
-                          }}
-                          className="w-12 h-8 p-0 border-0"
-                        />
+                      <div className="w-12 h-7 border rounded text-xs flex items-center justify-center bg-muted">
+                        {strokeWidth}
                       </div>
-                    )}
-
-                    {/* Letter Spacing */}
-                    <div>
-                      <Label className="text-xs">Letter Spacing: {letterSpacing}px</Label>
-                      <Slider
-                        value={[letterSpacing]}
-                        onValueChange={([spacing]) => {
-                          setLetterSpacing(spacing);
-                          updateTextProperty('charSpacing', spacing);
-                        }}
-                        min={-50}
-                        max={100}
-                        step={1}
-                      />
                     </div>
+                  </div>
 
-                    {/* Rotation */}
-                    <div>
-                      <Label className="text-xs">Rotation: {textRotation}°</Label>
+                  {/* Rotation Slider */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Rotate</Label>
+                    <div className="flex items-center gap-2 flex-1 ml-4">
                       <Slider
                         value={[textRotation]}
                         onValueChange={([angle]) => {
@@ -578,10 +598,41 @@ export const RightPanel = ({
                         }}
                         min={0}
                         max={360}
-                        step={1}
+                        className="flex-1"
                       />
+                      <div className="w-12 h-7 border rounded text-xs flex items-center justify-center bg-muted">
+                        {textRotation}
+                      </div>
                     </div>
                   </div>
+
+                  {/* Letter Spacing Slider */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Spacing</Label>
+                    <div className="flex items-center gap-2 flex-1 ml-4">
+                      <Slider
+                        value={[letterSpacing]}
+                        onValueChange={([spacing]) => {
+                          setLetterSpacing(spacing);
+                          updateTextProperty('charSpacing', spacing);
+                        }}
+                        min={-50}
+                        max={100}
+                        className="flex-1"
+                      />
+                      <div className="w-12 h-7 border rounded text-xs flex items-center justify-center bg-muted">
+                        {letterSpacing}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Add Text Button - Prominent placement */}
+                  <Button 
+                    className="w-full mt-4 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200" 
+                    onClick={handleAddText}
+                  >
+                    + Add Text
+                  </Button>
                 </CardContent>
               </Card>
 
