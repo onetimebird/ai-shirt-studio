@@ -128,18 +128,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             display: 'block'
           }}
         />
-        {/* Next Step Button - Positioned at right edge of canvas, vertically centered */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-4 z-10 hidden lg:block">
-          <Button 
-            variant="default" 
-            size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 text-sm font-medium shadow-lg rounded-lg"
-            onClick={() => setIsQuantityModalOpen(true)}
-          >
-            <DollarSign className="w-4 h-4 mr-1" />
-            Next Step
-          </Button>
-        </div>
       </div>
       
       {/* Quantity Modal */}

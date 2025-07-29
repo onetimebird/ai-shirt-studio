@@ -4,9 +4,10 @@ import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
+import { QuantityModal } from "@/components/QuantityModal";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Settings, Type, Upload, Wand2, Package, Palette, X } from "lucide-react";
+import { Settings, Type, Upload, Wand2, Package, Palette, X, DollarSign } from "lucide-react";
 import { AIIcon } from "@/components/AIIcon";
 import { AIWandIcon } from "@/components/AIWandIcon";
 import { toast } from "sonner";
@@ -18,6 +19,7 @@ export const TShirtDesigner = () => {
   const [decorationMethod, setDecorationMethod] = useState("screen-print");
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);
+  const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -111,6 +113,19 @@ export const TShirtDesigner = () => {
             onSelectedObjectChange={setSelectedObject}
             onToolChange={setActiveTool}
           />
+        </div>
+
+        {/* Next Step Button - Positioned between canvas and right panel */}
+        <div className="hidden lg:flex items-start justify-center w-20 pt-6">
+          <Button 
+            variant="default" 
+            size="sm"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 text-sm font-medium shadow-lg rounded-lg"
+            onClick={() => setIsQuantityModalOpen(true)}
+          >
+            <DollarSign className="w-4 h-4 mr-1" />
+            Next Step
+          </Button>
         </div>
 
         {/* Right Panel - Only visible on desktop */}
@@ -317,6 +332,14 @@ export const TShirtDesigner = () => {
           </Sheet>
         </div>
       </div>
+
+      {/* Quantity Modal */}
+      <QuantityModal 
+        isOpen={isQuantityModalOpen}
+        onClose={() => setIsQuantityModalOpen(false)}
+        selectedProduct={selectedProduct}
+        selectedColor={selectedColor}
+      />
     </div>
   );
 };
