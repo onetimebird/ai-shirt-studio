@@ -17,8 +17,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
-  // NEW: track whether we've already loaded the background
-  const [bgLoaded, setBgLoaded] = useState(false);
 
   // Initialize Fabric.js canvas ONLY ONCE
   useEffect(() => {
@@ -35,6 +33,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       backgroundColor: "transparent",
       selection: true,
       preserveObjectStacking: true,
+      interactive: true,
+      allowTouchScrolling: false,
     });
 
     setFabricCanvas(canvas);
@@ -45,12 +45,13 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     };
   }, []); // NO dependencies - only run once on mount
 
-  // Load product background image ONLY ONCE (or when side actually changes)
+  // Load product background image when canvas is ready AND when color/side changes
   useEffect(() => {
-    if (!fabricCanvas || bgLoaded) return; // skip if already loaded
+    if (!fabricCanvas) return;
 
     const colorData = getColorByName(selectedColor);
     if (!colorData || !colorData.available) {
+      console.log("Color not available:", selectedColor);
       return;
     }
 
@@ -84,12 +85,11 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       fabricCanvas.backgroundImage = img;
       fabricCanvas.renderAll();
       
-      console.log("ProductCanvas: background set successfully");
-      setBgLoaded(true); // never reload again
+      console.log("ProductCanvas: background set successfully for", selectedColor, currentSide);
     }).catch((error) => {
       console.error("❌ Background load error:", error);
     });
-  }, [fabricCanvas]); // only depends on the initial canvas
+  }, [fabricCanvas, selectedColor, currentSide]); // Load when canvas ready OR when color/side changes
 
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16 relative">
@@ -109,10 +109,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
           id="design-canvas"
           className="max-w-full"
           style={{ 
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: 'relative',
             zIndex: 50,
             pointerEvents: 'auto',
             border: '1px solid hsl(var(--border))',
@@ -120,7 +117,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             backgroundColor: 'hsl(var(--card))',
             maxWidth: '100%',
-            height: 'auto'
+            height: 'auto',
+            cursor: 'default'
           }}
         />
       </div>
