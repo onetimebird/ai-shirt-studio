@@ -82,7 +82,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
               className="w-8 h-8 object-contain"
             />
             <div>
-              <h3 className="text-[11px] font-medium">RT2000 RushOrderTees Classic</h3>
+              <h3 className="text-[11px] font-medium">Gildan 2000</h3>
               <p className="text-[9px] text-muted-foreground capitalize">{selectedColor}</p>
               <Badge variant="secondary" className="mt-0.5 text-[9px] px-1 py-0">{getTotalQuantity()} Items</Badge>
             </div>
