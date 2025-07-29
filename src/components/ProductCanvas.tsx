@@ -104,7 +104,18 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   }, [fabricCanvas, selectedColor, currentSide]);
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16">
+    <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16 relative">
+      <div className="absolute top-4 right-4 z-10">
+        <Button 
+          variant="default" 
+          size="default"
+          className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex px-6 py-2.5 text-base font-semibold"
+          onClick={() => setIsQuantityModalOpen(true)}
+        >
+          <DollarSign className="w-5 h-5 mr-2" />
+          Next Step
+        </Button>
+      </div>
       <div className="relative w-full max-w-full flex justify-center">
         <canvas 
           ref={canvasRef}
@@ -115,17 +126,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             display: 'block'
           }}
         />
-        <div className="absolute top-6 right-6 z-10">
-          <Button 
-            variant="default" 
-            size="default"
-            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex px-6 py-2.5 text-base font-semibold"
-            onClick={() => setIsQuantityModalOpen(true)}
-          >
-            <DollarSign className="w-5 h-5 mr-2" />
-            Next Step
-          </Button>
-        </div>
       </div>
       
       {/* Quantity Modal */}
