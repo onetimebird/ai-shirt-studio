@@ -355,13 +355,28 @@ export const RightPanel = ({
                   <div>
                     <Label className="text-xs mb-1">Style</Label>
                     <div className="flex gap-1">
-                      <Button variant={isBold ? 'default' : 'outline'} size="sm" onClick={() => setIsBold(!isBold)}>
+                      <Button 
+                        variant={isBold ? 'premium' : 'outline'} 
+                        size="sm" 
+                        onClick={() => setIsBold(!isBold)}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <Bold className="w-3 h-3"/>
                       </Button>
-                      <Button variant={isItalic ? 'default' : 'outline'} size="sm" onClick={() => setIsItalic(!isItalic)}>
+                      <Button 
+                        variant={isItalic ? 'premium' : 'outline'} 
+                        size="sm" 
+                        onClick={() => setIsItalic(!isItalic)}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <Italic className="w-3 h-3"/>
                       </Button>
-                      <Button variant={isUnderline ? 'default' : 'outline'} size="sm" onClick={() => setIsUnderline(!isUnderline)}>
+                      <Button 
+                        variant={isUnderline ? 'premium' : 'outline'} 
+                        size="sm" 
+                        onClick={() => setIsUnderline(!isUnderline)}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <Underline className="w-3 h-3"/>
                       </Button>
                     </div>
@@ -371,24 +386,39 @@ export const RightPanel = ({
                   <div>
                     <Label className="text-xs mb-1">Align</Label>
                     <div className="flex gap-1">
-                      <Button variant={textAlign==='left'?'default':'outline'} size="sm" onClick={()=>setTextAlign('left')}>
+                      <Button 
+                        variant={textAlign==='left'?'premium':'outline'} 
+                        size="sm" 
+                        onClick={()=>setTextAlign('left')}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <AlignLeft className="w-3 h-3"/>
                       </Button>
-                      <Button variant={textAlign==='center'?'default':'outline'} size="sm" onClick={()=>setTextAlign('center')}>
+                      <Button 
+                        variant={textAlign==='center'?'premium':'outline'} 
+                        size="sm" 
+                        onClick={()=>setTextAlign('center')}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <AlignCenter className="w-3 h-3"/>
                       </Button>
-                      <Button variant={textAlign==='right'?'default':'outline'} size="sm" onClick={()=>setTextAlign('right')}>
+                      <Button 
+                        variant={textAlign==='right'?'premium':'outline'} 
+                        size="sm" 
+                        onClick={()=>setTextAlign('right')}
+                        className="hover:shadow-md transition-all duration-200"
+                      >
                         <AlignRight className="w-3 h-3"/>
                       </Button>
                     </div>
                   </div>
                   
                   <Button 
-                    className="w-full mt-2" 
+                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" 
                     onClick={handleAddText}
                     onTouchEnd={handleAddText}
                   >
-                    Add Text
+                    ✨ Add Text
                   </Button>
                 </CardContent>
               </Card>
@@ -682,8 +712,13 @@ export const RightPanel = ({
                     id="file-upload"
                   />
                   <label htmlFor="file-upload">
-                    <Button variant="outline" size="sm" asChild>
-                      <span>Choose File</span>
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      asChild
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
+                    >
+                      <span>📁 Choose File</span>
                     </Button>
                   </label>
                   <p className="text-xs text-muted-foreground mt-2">
@@ -704,7 +739,8 @@ export const RightPanel = ({
                   </div>
                   <Button 
                     variant="outline" 
-                    size="sm"
+                    size="lg"
+                    className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
                     onClick={() => {
                       // Initialize Google Drive picker
                       if (typeof window !== 'undefined' && (window as any).google?.picker) {
@@ -756,7 +792,7 @@ export const RightPanel = ({
                       }
                     }}
                   >
-                    Upload from Drive
+                    📂 Upload from Drive
                   </Button>
                   <p className="text-xs text-muted-foreground mt-2">
                     Upload images from your Google Drive
