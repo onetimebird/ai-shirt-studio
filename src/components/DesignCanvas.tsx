@@ -25,6 +25,7 @@ export const DesignCanvas = ({
       selectedProduct={selectedProduct}
       onCanvasReady={(canvas) => {
         console.log("Canvas ready, setting up global designCanvas object");
+        console.log("Canvas details:", { width: canvas.width, height: canvas.height });
         // Make canvas available globally for design tools
         (window as any).designCanvas = { 
           canvas,

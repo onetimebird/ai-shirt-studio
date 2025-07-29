@@ -111,20 +111,21 @@ export const RightPanel = ({
   };
 
   const handleAddText = () => {
-    console.log("handleAddText called");
+    console.log("[Debug] handleAddText called, window.designCanvas:", (window as any).designCanvas);
     const fabricCanvas = (window as any).designCanvas?.canvas;
-    console.log("Canvas available:", !!fabricCanvas);
+    console.log("[Debug] Canvas available:", !!fabricCanvas);
     
     if (!fabricCanvas) {
-      console.log("Canvas not ready, showing error");
+      console.log("[Debug] Canvas not ready, showing error");
       toast.error("Canvas not ready");
       return;
     }
 
-    console.log("Creating textbox with:", {
-      textContent,
-      canvasWidth: fabricCanvas.width,
-      canvasHeight: fabricCanvas.height
+    console.log("[Debug] Creating text:", textContent);
+    console.log("[Debug] Canvas details:", {
+      width: fabricCanvas.width,
+      height: fabricCanvas.height,
+      objectCount: fabricCanvas.getObjects().length
     });
 
     const textbox = new FabricTextbox(textContent, {
@@ -144,15 +145,16 @@ export const RightPanel = ({
       objectCaching: false, // better for dynamic editing
     });
 
-    console.log("Adding textbox to canvas");
+    console.log("[Debug] Adding textbox to canvas");
     fabricCanvas.add(textbox);
     fabricCanvas.setActiveObject(textbox);
     fabricCanvas.renderAll();
+    console.log("[Debug] Canvas objects after addText:", fabricCanvas.getObjects());
     
     // Reset text content for next text
     setTextContent("New multi-line text\nType here...");
     
-    console.log("Text added successfully");
+    console.log("[Debug] Text added successfully");
     toast.success("Text added to design");
   };
 
@@ -209,14 +211,15 @@ export const RightPanel = ({
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handleFileUpload called");
+    console.log("[Debug] handleFileUpload triggered, event:", event);
     const file = event.target.files?.[0];
+    console.log("[Debug] Valid file picked:", file?.name);
     if (!file) {
-      console.log("No file selected");
+      console.log("[Debug] No file selected");
       return;
     }
 
-    console.log("File selected:", file.name, file.type, file.size);
+    console.log("[Debug] File selected:", file.name, file.type, file.size);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
     if (!allowedTypes.includes(file.type)) {
@@ -232,8 +235,12 @@ export const RightPanel = ({
       return;
     }
 
-    console.log("Calling onImageUpload with file");
+    console.log("[Debug] Forwarding file to onImageUpload");
     onImageUpload(file);
+    // give it a moment to land on the canvas
+    setTimeout(() => {
+      console.log("[Debug] Canvas objects after upload:", (window as any).designCanvas?.canvas.getObjects());
+    }, 500);
     toast.success("Image uploaded successfully!");
   };
 
