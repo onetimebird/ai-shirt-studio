@@ -67,8 +67,8 @@ export const RightPanel = ({
   selectedColor = "White",
   onProductChange
 }: RightPanelProps) => {
-  // IMMEDIATE DEBUG - check if component even loads
-  console.log("🔴 [RightPanel] COMPONENT LOADING - activeTool:", activeTool);
+  console.log("🔴🔴🔴 RIGHTPANEL START - activeTool:", activeTool);
+  console.log("🔴🔴🔴 FabricTextbox exists:", !!FabricTextbox);
   
   // AUTO-TEST: Try to add text automatically after 3 seconds (no click required)
   setTimeout(() => {
@@ -89,6 +89,7 @@ export const RightPanel = ({
       console.log("🔴 AUTO-TEST: Canvas not found!");
     }
   }, 3000);
+  
   // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
   const [fontFamily, setFontFamily] = useState("Arial");
