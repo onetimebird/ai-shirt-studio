@@ -292,56 +292,41 @@ export const RightPanel = ({
   return (
     <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       <div className="w-full p-4">
-        {/* Section Headers - Sleek and exciting design */}
+        {/* Section Headers - Clean design without button appearance */}
         {activeTool === "text" || activeTool === "editText" ? (
           // Text tool header
           <div className="mb-6">
-            <div className="relative bg-gradient-primary rounded-lg p-4 shadow-glow overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-shimmer opacity-20"></div>
-              <h2 className="relative text-lg font-bold text-white tracking-wide">
-                {activeTool === "text" ? "Add Text" : "Edit Text"}
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              {activeTool === "text" ? "Add Text" : "Edit Text"}
+            </h2>
           </div>
         ) : activeTool === "upload" ? (
           // Upload tool header
           <div className="mb-6">
-            <div className="relative bg-gradient-primary rounded-lg p-4 shadow-glow overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-shimmer opacity-20"></div>
-              <h2 className="relative text-lg font-bold text-white tracking-wide">
-                Upload Image
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              Upload Image
+            </h2>
           </div>
         ) : activeTool === "ai" ? (
           // AI tool header
           <div className="mb-6">
-            <div className="relative bg-gradient-primary rounded-lg p-4 shadow-glow overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-shimmer opacity-20"></div>
-              <h2 className="relative text-lg font-bold text-white tracking-wide">
-                AI Image Generator
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              AI Image Generator
+            </h2>
           </div>
         ) : activeTool === "products" ? (
           // Products tool header
           <div className="mb-6">
-            <div className="relative bg-gradient-primary rounded-lg p-4 shadow-glow overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-shimmer opacity-20"></div>
-              <h2 className="relative text-lg font-bold text-white tracking-wide">
-                Change Product
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              Change Product
+            </h2>
           </div>
         ) : (
           // Default - show simple header
           <div className="mb-6">
-            <div className="relative bg-gradient-primary rounded-lg p-4 shadow-glow overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-shimmer opacity-20"></div>
-              <h2 className="relative text-lg font-bold text-white tracking-wide">
-                Properties
-              </h2>
-            </div>
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              Properties
+            </h2>
           </div>
         )}
 
