@@ -113,23 +113,47 @@ export const RightPanel = ({
   // --- CLEAN "Add Text" handler ---
   const handleAddText = () => {
     console.log("[RightPanel] 👉 handleAddText triggered");
+    console.log("[RightPanel] 👉 Current textContent:", textContent);
+    console.log("[RightPanel] 👉 Canvas width/height:", (window as any).designCanvas?.canvas?.getWidth(), (window as any).designCanvas?.canvas?.getHeight());
 
     const canvas = (window as any).designCanvas?.canvas;
     if (!canvas) {
+      console.log("[RightPanel] ❌ Canvas not ready");
       toast.error("Canvas not ready");
       return;
     }
+    
+    console.log("[RightPanel] 👉 Creating textbox with:", { 
+      text: textContent, 
+      fontFamily, 
+      fontSize, 
+      fill: textColor, 
+      textAlign,
+      left: canvas.getWidth() / 2,
+      top: canvas.getHeight() / 2
+    });
+    
     const textbox = new FabricTextbox(textContent, {
       left: canvas.getWidth() / 2,
       top: canvas.getHeight() / 2,
+      originX: 'center',
+      originY: 'center',
       fontFamily,
       fontSize,
       fill: textColor,
       textAlign: textAlign as any
     });
+    
+    console.log("[RightPanel] 👉 Textbox created:", textbox);
+    console.log("[RightPanel] 👉 Canvas objects before add:", canvas.getObjects().length);
+    
     canvas.add(textbox);
     canvas.setActiveObject(textbox);
     canvas.renderAll();
+    
+    console.log("[RightPanel] 👉 Canvas objects after add:", canvas.getObjects().length);
+    console.log("[RightPanel] 👉 Active object:", canvas.getActiveObject());
+    
     setTextContent("New multi-line text\nType here...");
     toast.success("Text added to design");
   };
