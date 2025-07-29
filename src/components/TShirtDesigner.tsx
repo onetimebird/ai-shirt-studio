@@ -20,18 +20,23 @@ export const TShirtDesigner = () => {
   const handleToolChange = (tool: string) => {
     setActiveTool(tool);
     
-    // Handle tool-specific actions
-    if (tool === "text") {
-      toast.info("Use the right panel to add and customize text");
-    } else if (tool === "upload") {
-      toast.info("Use the right panel to upload images (PNG, JPEG, SVG, PDF)");
-    } else if (tool === "ai") {
-      toast.info("Use the right panel to generate custom artwork with AI");
-    } else if (tool === "color") {
-      toast.info("Use the right panel to pick colors for your text");
-    } else if (tool === "products") {
-      toast.info("Change products using the top controls");
-    } else if (tool === "reset") {
+    // Only show toast messages on desktop (when right panel is visible)
+    if (window.innerWidth >= 1024) {
+      // Handle tool-specific actions
+      if (tool === "text") {
+        toast.info("Use the right panel to add and customize text");
+      } else if (tool === "upload") {
+        toast.info("Use the right panel to upload images (PNG, JPEG, SVG, PDF)");
+      } else if (tool === "ai") {
+        toast.info("Use the right panel to generate custom artwork with AI");
+      } else if (tool === "color") {
+        toast.info("Use the right panel to pick colors for your text");
+      } else if (tool === "products") {
+        toast.info("Change products using the top controls");
+      }
+    }
+    
+    if (tool === "reset") {
       if ((window as any).designCanvas?.canvas) {
         (window as any).designCanvas.canvas.clear();
         (window as any).designCanvas.canvas.renderAll();
