@@ -31,117 +31,99 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xs mx-auto p-0 bg-background border border-border/50 shadow-2xl max-h-[98vh] overflow-hidden touch-pan-y">
+      <DialogContent className="max-w-full w-full mx-0 p-0 bg-background border border-border/50 shadow-2xl max-h-[98vh] overflow-hidden">
         {/* Header with progress stepper */}
-        <div className="p-3 pb-2 border-b border-border/20">
-          <div className="flex items-center justify-between mb-2">
-            <Button variant="ghost" size="sm" onClick={onClose} className="p-2">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={onClose} className="p-2">
+        <div className="p-2 pb-1 border-b border-border/20">
+          <div className="flex items-center justify-end mb-1">
+            <Button variant="ghost" size="sm" onClick={onClose} className="p-1">
               <X className="w-4 h-4" />
             </Button>
           </div>
           
           {/* Progress Steps */}
-          <div className="flex items-center justify-center gap-1 mb-2 scale-90">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="text-[10px] font-medium text-primary">1</span>
+          <div className="flex items-center justify-center gap-1 mb-1 scale-75">
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <span className="text-[9px] font-medium text-primary">1</span>
               </div>
-              <span className="text-[10px] text-muted-foreground">DESIGN</span>
+              <span className="text-[9px] text-muted-foreground">DESIGN</span>
             </div>
-            <div className="w-8 h-0.5 bg-primary"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-primary border border-primary flex items-center justify-center">
-                <span className="text-[10px] font-medium text-primary-foreground">2</span>
+            <div className="w-6 h-0.5 bg-primary"></div>
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-4 rounded-full bg-primary border border-primary flex items-center justify-center">
+                <span className="text-[9px] font-medium text-primary-foreground">2</span>
               </div>
-              <span className="text-[10px] font-medium text-primary">QUANTITY</span>
+              <span className="text-[9px] font-medium text-primary">QUANTITY</span>
             </div>
-            <div className="w-8 h-0.5 bg-border"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center">
-                <span className="text-[10px] text-muted-foreground">3</span>
+            <div className="w-6 h-0.5 bg-border"></div>
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-4 rounded-full bg-muted border border-border flex items-center justify-center">
+                <span className="text-[9px] text-muted-foreground">3</span>
               </div>
-              <span className="text-[10px] text-muted-foreground">REVIEW</span>
+              <span className="text-[9px] text-muted-foreground">REVIEW</span>
             </div>
           </div>
 
           <div className="text-center">
-            <h2 className="text-sm font-semibold mb-0.5">How Many Do You Need?</h2>
-            <p className="text-[10px] text-muted-foreground leading-tight">
+            <h2 className="text-xs font-semibold mb-0">How Many Do You Need?</h2>
+            <p className="text-[9px] text-muted-foreground leading-tight">
               Enter quantities to calculate price.
             </p>
           </div>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-3 pt-2" style={{ touchAction: 'pan-y' }}>
+        <div className="flex-1 overflow-y-auto p-2 pt-1 overscroll-contain" style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}>
           {/* Product Display */}
-          <div className="flex items-center gap-2 p-2 bg-muted/30 rounded-lg mb-3">
+          <div className="flex items-center gap-2 p-1.5 bg-muted/30 rounded-lg mb-2">
             <img 
               src="/lovable-uploads/adad2959-903a-4b3a-864e-6bc78cf5bfa1.png" 
               alt="T-shirt" 
-              className="w-10 h-10 object-contain"
+              className="w-8 h-8 object-contain"
             />
             <div>
-              <h3 className="text-xs font-medium">RT2000 RushOrderTees Classic</h3>
-              <p className="text-[10px] text-muted-foreground capitalize">{selectedColor}</p>
-              <Badge variant="secondary" className="mt-0.5 text-[10px] px-1 py-0">{getTotalQuantity()} Items</Badge>
+              <h3 className="text-[11px] font-medium">RT2000 RushOrderTees Classic</h3>
+              <p className="text-[9px] text-muted-foreground capitalize">{selectedColor}</p>
+              <Badge variant="secondary" className="mt-0.5 text-[9px] px-1 py-0">{getTotalQuantity()} Items</Badge>
             </div>
           </div>
 
           {/* Adult Sizes */}
-          <div className="mb-3">
-            <h3 className="text-xs font-medium mb-1">Adult Sizes</h3>
-            <div className="grid grid-cols-4 gap-1.5 mb-2">
-              {adultSizes.slice(0, 7).map((size) => (
+          <div className="mb-2">
+            <h3 className="text-[10px] font-medium mb-0.5">Adult Sizes</h3>
+            <div className="grid grid-cols-4 gap-1">
+              {adultSizes.map((size) => (
                 <div key={size} className="text-center">
-                  <div className="text-[10px] font-medium mb-0.5">{size}</div>
-                  <div className="w-full h-8 border border-border rounded-md flex items-center justify-center bg-background">
+                  <div className="text-[9px] font-medium mb-0.5">{size}</div>
+                  <div className="w-full h-7 border border-border rounded-md flex items-center justify-center bg-background">
                     <input
                       type="number"
                       min="0"
                       value={quantities[size] ? quantities[size].toString() : ''}
                       onChange={(e) => handleQuantityChange(size, e.target.value)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none text-xs"
+                      className="w-full h-full text-center bg-transparent border-none outline-none text-[11px]"
                       placeholder="0"
                     />
                   </div>
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-4 gap-1.5">
-              <div className="text-center">
-                <div className="text-[10px] font-medium mb-0.5">5XL</div>
-                <div className="w-full h-8 border border-border rounded-md flex items-center justify-center bg-background">
-                  <input
-                    type="number"
-                    min="0"
-                    value={quantities['5XL'] ? quantities['5XL'].toString() : ''}
-                    onChange={(e) => handleQuantityChange('5XL', e.target.value)}
-                    className="w-full h-full text-center bg-transparent border-none outline-none text-xs"
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Youth Sizes */}
-          <div className="mb-3">
-            <h3 className="text-xs font-medium mb-1">Youth Sizes</h3>
-            <div className="grid grid-cols-4 gap-1.5">
+          <div className="mb-2">
+            <h3 className="text-[10px] font-medium mb-0.5">Youth Sizes</h3>
+            <div className="grid grid-cols-4 gap-1">
               {youthSizes.map((size) => (
                 <div key={size} className="text-center">
-                  <div className="text-[10px] font-medium mb-0.5">{size}</div>
-                  <div className="w-full h-8 border border-border rounded-md flex items-center justify-center bg-background">
+                  <div className="text-[9px] font-medium mb-0.5">{size}</div>
+                  <div className="w-full h-7 border border-border rounded-md flex items-center justify-center bg-background">
                     <input
                       type="number"
                       min="0"
                       value={quantities[size] ? quantities[size].toString() : ''}
                       onChange={(e) => handleQuantityChange(size, e.target.value)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none text-xs"
+                      className="w-full h-full text-center bg-transparent border-none outline-none text-[11px]"
                       placeholder="0"
                     />
                   </div>
