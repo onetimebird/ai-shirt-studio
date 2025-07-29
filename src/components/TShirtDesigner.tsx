@@ -20,6 +20,16 @@ export const TShirtDesigner = () => {
   const [selectedObject, setSelectedObject] = useState<any>(null);
 
   const handleToolChange = (tool: string) => {
+    // Handle reset tool separately - don't change activeTool
+    if (tool === "reset") {
+      if ((window as any).designCanvas?.canvas) {
+        (window as any).designCanvas.canvas.clear();
+        (window as any).designCanvas.canvas.renderAll();
+        toast.success("Design reset");
+      }
+      return; // Don't change activeTool for reset
+    }
+    
     setActiveTool(tool);
     
     // Only show toast messages on desktop (when right panel is visible)
@@ -35,14 +45,6 @@ export const TShirtDesigner = () => {
         toast.info("Use the right panel to pick colors for your text");
       } else if (tool === "products") {
         toast.info("Change products using the top controls");
-      }
-    }
-    
-    if (tool === "reset") {
-      if ((window as any).designCanvas?.canvas) {
-        (window as any).designCanvas.canvas.clear();
-        (window as any).designCanvas.canvas.renderAll();
-        toast.success("Design reset");
       }
     }
   };

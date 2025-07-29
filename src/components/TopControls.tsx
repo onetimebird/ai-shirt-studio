@@ -129,48 +129,39 @@ export const TopControls = ({
           </Button>
         </div>
 
-        {/* Decoration Method */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant={decorationMethod === "screen-print" ? "default" : "outline"}
-            size="sm"
-            onClick={() => onDecorationChange("screen-print")}
+        {/* Decoration Method and Next Button */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Button
+              variant={decorationMethod === "screen-print" ? "default" : "outline"}
+              size="sm"
+              onClick={() => onDecorationChange("screen-print")}
+            >
+              Digital Print
+            </Button>
+            <Button
+              variant={decorationMethod === "embroidery" ? "default" : "outline"}
+              size="sm"
+              onClick={() => onDecorationChange("embroidery")}
+            >
+              Embroidery
+            </Button>
+          </div>
+
+          {/* Next Step Button - Larger and prominent */}
+          <Button 
+            variant="default" 
+            size="default"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2"
+            onClick={() => setIsQuantityModalOpen(true)}
           >
-            Digital Print
-          </Button>
-          <Button
-            variant={decorationMethod === "embroidery" ? "default" : "outline"}
-            size="sm"
-            onClick={() => onDecorationChange("embroidery")}
-          >
-            Embroidery
+            <DollarSign className="w-4 h-4 mr-2" />
+            Next Step
           </Button>
         </div>
 
-        {/* Help Button */}
-        <Button 
-          variant="glass" 
-          size="sm"
-          onClick={() => {
-            toast.info("Keyboard shortcuts: Delete key to remove selected objects, Ctrl+D to duplicate");
-          }}
-        >
-          <HelpCircle className="w-4 h-4 icon-hover" />
-        </Button>
-
         {/* Theme Toggle */}
         <ThemeToggle />
-
-        {/* Next Step Button */}
-        <Button 
-          variant="default" 
-          size="sm"
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6"
-          onClick={() => setIsQuantityModalOpen(true)}
-        >
-          <DollarSign className="w-4 h-4 mr-1" />
-          Next
-        </Button>
       </div>
 
       {/* Mobile - Two Row Layout */}
