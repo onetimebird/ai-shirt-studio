@@ -16,7 +16,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
-  // Remove productImage state since we're using setBackgroundImage now
+  // NEW: track whether we've already loaded the background
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   // Initialize Fabric.js canvas ONLY ONCE
   useEffect(() => {
@@ -43,9 +44,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     };
   }, []); // NO dependencies - only run once on mount
 
-  // Load product background image ONLY when color/side actually changes
+  // Load product background image ONLY ONCE (or when side actually changes)
   useEffect(() => {
-    if (!fabricCanvas) return;
+    if (!fabricCanvas || bgLoaded) return; // skip if already loaded
 
     const colorData = getColorByName(selectedColor);
     if (!colorData || !colorData.available) {
@@ -53,8 +54,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     }
 
     const imageUrl = currentSide === "front" ? colorData.frontImage : colorData.backImage;
+    console.log("ProductCanvas: loading background image from", imageUrl);
 
-    // Load background image - this won't affect user objects
+    // Load background image with CORS fix
     FabricImage.fromURL(imageUrl, {
       crossOrigin: "anonymous",
     }).then((img) => {
@@ -81,11 +83,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       fabricCanvas.backgroundImage = img;
       fabricCanvas.renderAll();
       
-      console.log("Background image set successfully - user content will stay on top");
+      console.log("ProductCanvas: background set successfully");
+      setBgLoaded(true); // never reload again
     }).catch((error) => {
-      console.error("Failed to load background image:", error);
+      console.error("❌ Background load error:", error);
     });
-  }, [selectedColor, currentSide]); // ONLY when color/side actually changes, NOT fabricCanvas
+  }, [fabricCanvas]); // only depends on the initial canvas
 
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16 relative">
