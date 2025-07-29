@@ -536,6 +536,13 @@ export const RightPanel = ({
                                 if ((window as any).designCanvas?.canvas) {
                                   (window as any).designCanvas.canvas.remove(textObj);
                                   (window as any).designCanvas.canvas.renderAll();
+                                  console.log('Text object deleted from list, updating text objects');
+                                  // Update text objects list
+                                  setTimeout(() => {
+                                    if ((window as any).designCanvas?.updateTextObjects) {
+                                      (window as any).designCanvas.updateTextObjects();
+                                    }
+                                  }, 100);
                                 }
                               }}
                             >

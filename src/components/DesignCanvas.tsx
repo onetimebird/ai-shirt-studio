@@ -91,10 +91,13 @@ export const DesignCanvas = ({
             if (activeObject) {
               canvas.remove(activeObject);
               canvas.renderAll();
-              // Update text objects list
-              if ((window as any).designCanvas?.updateTextObjects) {
-                (window as any).designCanvas.updateTextObjects();
-              }
+              console.log('Object deleted, updating text objects list');
+              // Update text objects list after a small delay to ensure canvas is updated
+              setTimeout(() => {
+                if ((window as any).designCanvas?.updateTextObjects) {
+                  (window as any).designCanvas.updateTextObjects();
+                }
+              }, 100);
             }
           },
           duplicateSelected: () => {
@@ -184,6 +187,13 @@ export const DesignCanvas = ({
               canvas.remove(activeObject);
               canvas.renderAll();
               onSelectedObjectChange(null);
+              console.log('Object deleted via keyboard, updating text objects list');
+              // Update text objects list after a small delay
+              setTimeout(() => {
+                if ((window as any).designCanvas?.updateTextObjects) {
+                  (window as any).designCanvas.updateTextObjects();
+                }
+              }, 100);
             }
           }
 
