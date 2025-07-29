@@ -64,9 +64,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
-      // Make t-shirt much larger on desktop, reasonable on mobile
+      // Make t-shirt fill almost the entire canvas area
       const isMobile = canvasWidth < 768;
-      const scaleFactor = isMobile ? 1.2 : 2.2; // Double+ size on desktop
+      const scaleFactor = isMobile ? 1.4 : 2.8; // Even larger now without border constraints
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
@@ -114,10 +114,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             position: 'relative',
             zIndex: 50,
             pointerEvents: 'auto',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            backgroundColor: 'transparent', // Remove solid background
+            backgroundColor: 'transparent',
             maxWidth: '100%',
             height: 'auto',
             cursor: 'default'
