@@ -6,7 +6,7 @@ import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
@@ -72,13 +72,11 @@ export const TShirtDesigner = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Toolbar - Hidden on mobile, visible on desktop */}
-        <div className="hidden md:block">
-          <LeftToolbar 
-            activeTool={activeTool} 
-            onToolChange={handleToolChange} 
-          />
-        </div>
+        {/* Left Toolbar - Always visible */}
+        <LeftToolbar 
+          activeTool={activeTool} 
+          onToolChange={handleToolChange} 
+        />
 
         {/* Central Canvas */}
         <div className="flex-1 relative">
@@ -90,29 +88,8 @@ export const TShirtDesigner = () => {
             onToolChange={setActiveTool}
           />
           
-          {/* Mobile Floating Action Buttons */}
-          <div className="md:hidden absolute bottom-4 left-4 flex flex-col gap-2">
-            {/* Mobile Tools Menu */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="default" size="icon" className="rounded-full shadow-lg">
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72 p-0">
-                <SheetHeader className="p-4 border-b">
-                  <SheetTitle>Design Tools</SheetTitle>
-                </SheetHeader>
-                <div className="p-2">
-                  <LeftToolbar 
-                    activeTool={activeTool} 
-                    onToolChange={handleToolChange}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
-
-            {/* Mobile Properties Panel */}
+          {/* Mobile Properties Button - Only on mobile */}
+          <div className="lg:hidden absolute bottom-4 right-4">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="default" size="icon" className="rounded-full shadow-lg">
