@@ -347,7 +347,7 @@ export const RightPanel = ({
                 strokeWidth: 2
               });
               canvas.add(textbox);
-              canvas.bringToFront(textbox);  // Bring to front!
+              canvas.bringObjectToFront(textbox);  // Correct API!
               canvas.setActiveObject(textbox);
               canvas.renderAll();
               console.log("🔵 SUCCESS! Text added by working button.");
