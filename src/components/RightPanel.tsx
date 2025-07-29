@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { openAIService } from "@/services/openai";
-import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
+import { Text as FabricText, Textbox as FabricTextbox, Image as FabricImage } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
 import { ProductSelector } from "@/components/ProductSelector";
 import {
@@ -88,6 +88,11 @@ export const RightPanel = ({
   const [showApiKey, setShowApiKey] = useState(false);
   const [recentImages, setRecentImages] = useState<string[]>([]);
 
+  // Debug: confirm global canvas object on mount
+  useEffect(() => {
+    console.log("[RightPanel] mounted, window.designCanvas=", (window as any).designCanvas);
+  }, []);
+
   // Sync with selectedObject 
   useEffect(() => {
     if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
@@ -111,11 +116,11 @@ export const RightPanel = ({
   };
 
   // --- CLEAN "Add Text" handler ---
+  // --- Direct Fabric Add‐Text handler (improved) ---
   const handleAddText = () => {
-    console.log("[RightPanel] 👉 handleAddText triggered");
-    console.log("[RightPanel] 👉 Current textContent:", textContent);
-    console.log("[RightPanel] 👉 Canvas width/height:", (window as any).designCanvas?.canvas?.getWidth(), (window as any).designCanvas?.canvas?.getHeight());
-
+    console.log("[RightPanel] handleAddText() - DIRECT FABRIC APPROACH");
+    console.log("[RightPanel] window.designCanvas=", (window as any).designCanvas);
+    
     const canvas = (window as any).designCanvas?.canvas;
     if (!canvas) {
       console.log("[RightPanel] ❌ Canvas not ready");
@@ -123,16 +128,15 @@ export const RightPanel = ({
       return;
     }
     
-    console.log("[RightPanel] 👉 Creating textbox with:", { 
+    console.log("[RightPanel] ✅ Canvas found, creating textbox with:", { 
       text: textContent, 
       fontFamily, 
       fontSize, 
       fill: textColor, 
-      textAlign,
-      left: canvas.getWidth() / 2,
-      top: canvas.getHeight() / 2
+      textAlign
     });
     
+    // Use direct Fabric import instead of FabricTextbox
     const textbox = new FabricTextbox(textContent, {
       left: canvas.getWidth() / 2,
       top: canvas.getHeight() / 2,
@@ -144,18 +148,13 @@ export const RightPanel = ({
       textAlign: textAlign as any
     });
     
-    console.log("[RightPanel] 👉 Textbox created:", textbox);
-    console.log("[RightPanel] 👉 Canvas objects before add:", canvas.getObjects().length);
-    
     canvas.add(textbox);
     canvas.setActiveObject(textbox);
     canvas.renderAll();
     
-    console.log("[RightPanel] 👉 Canvas objects after add:", canvas.getObjects().length);
-    console.log("[RightPanel] 👉 Active object:", canvas.getActiveObject());
-    
+    console.log("[RightPanel] ✅ Text added successfully, objects count:", canvas.getObjects().length);
     setTextContent("New multi-line text\nType here...");
-    toast.success("Text added to design");
+    toast.success("Text added to canvas");
   };
 
   const handleDelete = () => (window as any).designCanvas?.deleteSelected();
@@ -210,13 +209,14 @@ export const RightPanel = ({
     }
   };
 
-  // --- Clean file‐upload handler ---
+  // --- Direct Fabric File‐upload handler (improved) ---
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("[RightPanel] 👉 handleFileUpload triggered", event);
-    console.trace();
-
+    console.log("[RightPanel] handleFileUpload() - DIRECT FABRIC APPROACH");
+    console.log("[RightPanel] window.designCanvas=", (window as any).designCanvas);
+    
     const file = event.target.files?.[0];
     if (!file) return;
+    
     const allowed = ["image/png","image/jpeg","image/jpg","image/svg+xml"];
     if (!allowed.includes(file.type)) {
       toast.error("Only PNG/JPG/SVG under 10 MB");
@@ -226,8 +226,46 @@ export const RightPanel = ({
       toast.error("File must be < 10 MB");
       return;
     }
-    onImageUpload(file);
-    toast.success("Image uploaded");
+    
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) {
+      console.log("[RightPanel] ❌ Canvas not ready");
+      toast.error("Canvas not ready");
+      return;
+    }
+    
+    console.log("[RightPanel] ✅ Canvas found, reading file with FileReader");
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const src = e.target?.result as string;
+      console.log("[RightPanel] ✅ File read, creating Fabric image from URL");
+      
+      // Use FabricImage.fromURL with correct v6 syntax
+      FabricImage.fromURL(src).then((img) => {
+        console.log("[RightPanel] ✅ Fabric image created, adding to canvas");
+        
+        // Center and scale the image
+        img.set({
+          left: canvas.getWidth() / 2,
+          top: canvas.getHeight() / 2,
+          originX: 'center',
+          originY: 'center',
+        });
+        img.scaleToWidth(canvas.getWidth() * 0.5);
+        
+        canvas.add(img);
+        canvas.setActiveObject(img);
+        canvas.renderAll();
+        
+        console.log("[RightPanel] ✅ Image added successfully, objects count:", canvas.getObjects().length);
+        toast.success("Image added to canvas");
+      }).catch((error) => {
+        console.error("[RightPanel] ❌ Error creating image:", error);
+        toast.error("Failed to load image");
+      });
+    };
+    reader.readAsDataURL(file);
   };
 
   // use a ref to reliably trigger the hidden input on both mobile & desktop
@@ -413,33 +451,24 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                  {/* Direct trigger approach - bypass event issues */}
-                  <div className="w-full mt-4">
-                    <div
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-md h-10 flex items-center justify-center cursor-pointer select-none"
-                      onMouseDown={() => {
-                        console.log("[RightPanel] 👉 DIRECT Add Text triggered");
-                        handleAddText();
-                      }}
-                      onTouchEnd={() => {
-                        console.log("[RightPanel] 👉 DIRECT Add Text touchend");
-                        handleAddText();
-                      }}
-                    >
-                      ✨ Add Text
-                    </div>
-                    
-                    {/* Fallback button for debugging */}
-                    <button 
-                      className="w-full mt-2 text-xs text-gray-500 underline"
-                      onClick={() => {
-                        console.log("[RightPanel] 👉 FALLBACK button clicked");
-                        handleAddText();
-                      }}
-                    >
-                      Fallback: Add Text (Debug)
-                    </button>
-                  </div>
+                  {/* Triple-event button for maximum compatibility */}
+                  <Button
+                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    onClick={() => {
+                      console.log("[RightPanel] 👉 Add Text onClick");
+                      handleAddText();
+                    }}
+                    onPointerUp={() => {
+                      console.log("[RightPanel] 👉 Add Text onPointerUp");
+                      handleAddText();
+                    }}
+                    onTouchEnd={() => {
+                      console.log("[RightPanel] 👉 Add Text onTouchEnd");
+                      handleAddText();
+                    }}
+                  >
+                    ✨ Add Text
+                  </Button>
                 </CardContent>
               </Card>
 
