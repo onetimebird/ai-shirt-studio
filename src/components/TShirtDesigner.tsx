@@ -4,6 +4,9 @@ import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, Settings } from "lucide-react";
 import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
@@ -68,34 +71,90 @@ export const TShirtDesigner = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Toolbar */}
-        <LeftToolbar 
-          activeTool={activeTool} 
-          onToolChange={handleToolChange} 
-        />
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left Toolbar - Hidden on mobile, visible on desktop */}
+        <div className="hidden md:block">
+          <LeftToolbar 
+            activeTool={activeTool} 
+            onToolChange={handleToolChange} 
+          />
+        </div>
 
         {/* Central Canvas */}
-        <DesignCanvas
-          selectedColor={selectedColor}
-          currentSide={currentSide}
-          activeTool={activeTool}
-          onSelectedObjectChange={setSelectedObject}
-          onToolChange={setActiveTool}
-        />
+        <div className="flex-1 relative">
+          <DesignCanvas
+            selectedColor={selectedColor}
+            currentSide={currentSide}
+            activeTool={activeTool}
+            onSelectedObjectChange={setSelectedObject}
+            onToolChange={setActiveTool}
+          />
+          
+          {/* Mobile Floating Action Buttons */}
+          <div className="md:hidden absolute bottom-4 left-4 flex flex-col gap-2">
+            {/* Mobile Tools Menu */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="default" size="icon" className="rounded-full shadow-lg">
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 p-0">
+                <SheetHeader className="p-4 border-b">
+                  <SheetTitle>Design Tools</SheetTitle>
+                </SheetHeader>
+                <div className="p-2">
+                  <LeftToolbar 
+                    activeTool={activeTool} 
+                    onToolChange={handleToolChange}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
 
-        {/* Right Panel */}
-        <RightPanel
-          activeTool={activeTool}
-          selectedObject={selectedObject}
-          onTextPropertiesChange={handleTextPropertiesChange}
-          onImageUpload={handleImageUpload}
-          onProductColorChange={handleProductColorChange}
-          textObjects={(window as any).designCanvas?.textObjects || []}
-          selectedProduct={selectedProduct}
-          selectedColor={selectedColor}
-          onProductChange={setSelectedProduct}
-        />
+            {/* Mobile Properties Panel */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="default" size="icon" className="rounded-full shadow-lg">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80 p-0">
+                <SheetHeader className="p-4 border-b">
+                  <SheetTitle>Properties</SheetTitle>
+                </SheetHeader>
+                <div className="overflow-y-auto">
+                  <RightPanel
+                    activeTool={activeTool}
+                    selectedObject={selectedObject}
+                    onTextPropertiesChange={handleTextPropertiesChange}
+                    onImageUpload={handleImageUpload}
+                    onProductColorChange={handleProductColorChange}
+                    textObjects={(window as any).designCanvas?.textObjects || []}
+                    selectedProduct={selectedProduct}
+                    selectedColor={selectedColor}
+                    onProductChange={setSelectedProduct}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+
+        {/* Right Panel - Only visible on desktop */}
+        <div className="hidden lg:block">
+          <RightPanel
+            activeTool={activeTool}
+            selectedObject={selectedObject}
+            onTextPropertiesChange={handleTextPropertiesChange}
+            onImageUpload={handleImageUpload}
+            onProductColorChange={handleProductColorChange}
+            textObjects={(window as any).designCanvas?.textObjects || []}
+            selectedProduct={selectedProduct}
+            selectedColor={selectedColor}
+            onProductChange={setSelectedProduct}
+          />
+        </div>
       </div>
     </div>
   );

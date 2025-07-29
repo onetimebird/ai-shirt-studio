@@ -233,7 +233,7 @@ export const RightPanel = ({
   };
 
   return (
-    <div className="w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
+    <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       <Tabs value={getActiveTab()} className="w-full p-4">
         {/* Only show tabs based on context */}
         {activeTool === "text" || activeTool === "editText" ? (
