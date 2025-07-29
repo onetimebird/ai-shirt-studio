@@ -8,65 +8,44 @@ interface AIWandIconProps {
 export const AIWandIcon = ({ className, size = 16 }: AIWandIconProps) => {
   return (
     <div className={cn("relative flex items-center justify-center", className)} style={{ width: size, height: size }}>
-      {/* Square outline */}
-      <div 
-        className="border-2 border-foreground rounded-md flex items-center justify-center"
-        style={{ 
-          width: size * 0.8, 
-          height: size * 0.8 
-        }}
+      {/* Magic Wand */}
+      <svg 
+        viewBox="0 0 16 16" 
+        fill="none" 
+        stroke="currentColor" 
+        strokeWidth="1.5"
+        className="w-full h-full text-foreground"
       >
-        {/* AI Text */}
-        <div 
-          className="font-black text-foreground"
-          style={{ fontSize: size * 0.4, lineHeight: 1 }}
-        >
-          AI
-        </div>
+        {/* Wand stick */}
+        <line x1="2" y1="14" x2="10" y2="6" />
+        {/* Wand tip */}
+        <circle cx="10" cy="6" r="1.5" fill="currentColor" />
+      </svg>
+      
+      {/* AI Text overlay */}
+      <div 
+        className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[6px] font-bold px-1 py-0.5 rounded leading-none"
+        style={{ fontSize: size * 0.25 }}
+      >
+        AI
       </div>
       
-      {/* Top left sparkle */}
-      <div 
-        className="absolute text-foreground"
-        style={{ 
-          width: size * 0.12, 
-          height: size * 0.12,
-          top: 0,
-          left: 0
-        }}
-      >
-        <svg viewBox="0 0 12 12" fill="currentColor" className="w-full h-full">
-          <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5L6 0z" />
+      {/* Sparkles around wand */}
+      <div className="absolute top-0 left-2 w-1 h-1 text-primary opacity-80">
+        <svg viewBox="0 0 8 8" fill="currentColor" className="w-full h-full animate-pulse">
+          <path d="M4 0l1 3h3l-2.5 2L6.5 8 4 6 1.5 8 2.5 5 0 3h3L4 0z" />
         </svg>
       </div>
       
-      {/* Top right sparkle */}
-      <div 
-        className="absolute text-foreground"
-        style={{ 
-          width: size * 0.1, 
-          height: size * 0.1,
-          top: size * 0.05,
-          right: 0
-        }}
-      >
-        <svg viewBox="0 0 12 12" fill="currentColor" className="w-full h-full">
-          <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5L6 0z" />
+      <div className="absolute top-2 right-0 w-0.5 h-0.5 text-primary/60">
+        <svg viewBox="0 0 8 8" fill="currentColor" className="w-full h-full animate-pulse delay-150">
+          <path d="M4 0l1 3h3l-2.5 2L6.5 8 4 6 1.5 8 2.5 5 0 3h3L4 0z" />
         </svg>
       </div>
       
-      {/* Bottom right sparkle */}
-      <div 
-        className="absolute text-foreground"
-        style={{ 
-          width: size * 0.08, 
-          height: size * 0.08,
-          bottom: 0,
-          right: size * 0.05
-        }}
-      >
-        <svg viewBox="0 0 12 12" fill="currentColor" className="w-full h-full">
-          <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5L6 0z" />
+      <div className="absolute bottom-1 left-0 w-0.5 h-0.5 text-primary/50">
+        <svg viewBox="0 0 8 8" fill="currentColor" className="w-full h-full animate-pulse delay-300">
+          <path d="M4 0l1 3h3l-2.5 2L6.5 8 4 6 1.5 8 2.5 5 0 3h3L4 0z" />
         </svg>
       </div>
     </div>
