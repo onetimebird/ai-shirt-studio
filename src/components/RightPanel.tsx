@@ -299,6 +299,35 @@ export const RightPanel = ({
       <div className="bg-red-500 text-white p-4 text-center font-bold text-lg">
         🔴 NEW RIGHTPANEL LOADED - Tool: {activeTool}
       </div>
+      
+      {/* EMERGENCY TEST BUTTON - Direct action without any UI framework interference */}
+      <div className="p-4 bg-yellow-300">
+        <div 
+          className="bg-green-600 text-white p-3 text-center cursor-pointer font-bold"
+          onMouseDown={(e) => {
+            console.log("🟢 EMERGENCY BUTTON CLICKED!");
+            console.log("🟢 Canvas exists:", !!(window as any).designCanvas?.canvas);
+            
+            const canvas = (window as any).designCanvas?.canvas;
+            if (canvas) {
+              console.log("🟢 Adding text directly...");
+              const textbox = new FabricTextbox("EMERGENCY TEXT", {
+                left: 200,
+                top: 200,
+                fill: 'red',
+                fontSize: 30
+              });
+              canvas.add(textbox);
+              canvas.renderAll();
+              console.log("🟢 Text added successfully!");
+            } else {
+              console.log("🔴 Canvas not found!");
+            }
+          }}
+        >
+          🚨 EMERGENCY ADD TEXT (Click Me!)
+        </div>
+      </div>
       <Tabs value={getActiveTab()} className="w-full p-4">
         {/* Only show tabs based on context */}
         {activeTool === "text" || activeTool === "editText" ? (
