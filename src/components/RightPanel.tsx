@@ -77,6 +77,12 @@ export const RightPanel = ({
   const [isUnderline, setIsUnderline] = useState(false);
   const [textAlign, setTextAlign] = useState("left");
 
+  // New text features
+  const [strokeColor, setStrokeColor] = useState("#000000");
+  const [strokeWidth, setStrokeWidth] = useState(0);
+  const [letterSpacing, setLetterSpacing] = useState(0);
+  const [textRotation, setTextRotation] = useState(0);
+
   // Transform states
   const [scalePercent, setScalePercent] = useState<number>(100);
   const [rotation, setRotation] = useState<number>(0);
@@ -101,6 +107,10 @@ export const RightPanel = ({
       setTextAlign(selectedObject.textAlign || "left");
       setScalePercent(Math.round((selectedObject.scaleX || 1) * 100));
       setRotation(selectedObject.rotation || 0);
+      setTextRotation(selectedObject.angle || 0);
+      setStrokeColor(selectedObject.stroke || "#000000");
+      setStrokeWidth(selectedObject.strokeWidth || 0);
+      setLetterSpacing(selectedObject.charSpacing || 0);
     }
   }, [selectedObject]);
 
@@ -476,6 +486,102 @@ export const RightPanel = ({
                   >
                     ✨ Add Text
                   </Button>
+
+                  {/* Text Control Actions */}
+                  <div className="grid grid-cols-2 gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if ((window as any).designCanvas?.duplicateSelected) {
+                          (window as any).designCanvas.duplicateSelected();
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Duplicate
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if ((window as any).designCanvas?.centerSelected) {
+                          (window as any).designCanvas.centerSelected();
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Center
+                    </Button>
+                  </div>
+
+                  {/* Advanced Text Controls */}
+                  <div className="space-y-4 mt-4">
+                    {/* Outline/Stroke */}
+                    <div>
+                      <Label className="text-xs">Outline Width: {strokeWidth}px</Label>
+                      <Slider
+                        value={[strokeWidth]}
+                        onValueChange={([width]) => {
+                          setStrokeWidth(width);
+                          updateTextProperty('strokeWidth', width);
+                          if (width > 0) {
+                            updateTextProperty('stroke', strokeColor);
+                          } else {
+                            updateTextProperty('stroke', null);
+                          }
+                        }}
+                        min={0}
+                        max={10}
+                        step={1}
+                      />
+                    </div>
+
+                    {strokeWidth > 0 && (
+                      <div>
+                        <Label className="text-xs">Outline Color</Label>
+                        <Input
+                          type="color"
+                          value={strokeColor}
+                          onChange={e => {
+                            setStrokeColor(e.target.value);
+                            updateTextProperty('stroke', e.target.value);
+                          }}
+                          className="w-12 h-8 p-0 border-0"
+                        />
+                      </div>
+                    )}
+
+                    {/* Letter Spacing */}
+                    <div>
+                      <Label className="text-xs">Letter Spacing: {letterSpacing}px</Label>
+                      <Slider
+                        value={[letterSpacing]}
+                        onValueChange={([spacing]) => {
+                          setLetterSpacing(spacing);
+                          updateTextProperty('charSpacing', spacing);
+                        }}
+                        min={-50}
+                        max={100}
+                        step={1}
+                      />
+                    </div>
+
+                    {/* Rotation */}
+                    <div>
+                      <Label className="text-xs">Rotation: {textRotation}°</Label>
+                      <Slider
+                        value={[textRotation]}
+                        onValueChange={([angle]) => {
+                          setTextRotation(angle);
+                          updateTextProperty('angle', angle);
+                        }}
+                        min={0}
+                        max={360}
+                        step={1}
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
