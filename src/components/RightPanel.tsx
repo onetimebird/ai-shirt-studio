@@ -208,7 +208,10 @@ export const RightPanel = ({
 
   // use a ref to reliably trigger the hidden input on both mobile & desktop
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleUploadClick = () => fileInputRef.current?.click();
+  const handleUploadClick = () => {
+    console.log("[RightPanel] 👉 handleUploadClick triggered");
+    fileInputRef.current?.click();
+  };
 
   // Determine which tab should be active based on the current tool
   const getActiveTab = () => {
@@ -388,7 +391,12 @@ export const RightPanel = ({
                   
                   <Button
                     className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                    onClick={handleAddText}
+                    onClick={(e) => {
+                      console.log("[RightPanel] 👉 Add Text button click event fired", e);
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleAddText();
+                    }}
                     onPointerDown={handleAddText}
                     onPointerUp={handleAddText}
                     onMouseDown={handleAddText}
@@ -690,7 +698,12 @@ export const RightPanel = ({
                   <Button 
                     variant="outline" 
                     size="lg"
-                    onClick={handleUploadClick}
+                    onClick={(e) => {
+                      console.log("[RightPanel] 👉 Button click event fired", e);
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleUploadClick();
+                    }}
                     onPointerDown={handleUploadClick}
                     onPointerUp={handleUploadClick}
                     onMouseDown={handleUploadClick}
