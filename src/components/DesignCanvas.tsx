@@ -127,10 +127,15 @@ export const DesignCanvas = ({
             canvas.renderAll();
           },
           updateSelectedTextProperty: (property: string, value: any) => {
+            console.log(`Updating text property: ${property} = ${value}`);
             const activeObject = canvas.getActiveObject();
             if (activeObject && (activeObject.type === 'textbox' || activeObject.type === 'text')) {
+              console.log(`Found active text object, updating ${property}`);
               (activeObject as any).set(property, value);
               canvas.renderAll();
+              console.log(`Property ${property} updated successfully`);
+            } else {
+              console.log(`No active text object found. Active object:`, activeObject);
             }
           },
           textObjects: []

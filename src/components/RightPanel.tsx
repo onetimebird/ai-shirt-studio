@@ -338,7 +338,10 @@ export const RightPanel = ({
                     <Label className="text-xs">Font</Label>
                     <Select
                       value={fontFamily}
-                      onValueChange={val => setFontFamily(val)}
+                      onValueChange={val => {
+                        setFontFamily(val);
+                        updateTextProperty('fontFamily', val);
+                      }}
                     >
                       <SelectTrigger className="h-8">
                         <SelectValue />
@@ -356,7 +359,10 @@ export const RightPanel = ({
                     <Label className="text-xs">Size: {fontSize}px</Label>
                     <Slider
                       value={[fontSize]}
-                      onValueChange={([size]) => setFontSize(size)}
+                      onValueChange={([size]) => {
+                        setFontSize(size);
+                        updateTextProperty('fontSize', size);
+                      }}
                       min={8} max={120}
                     />
                   </div>
@@ -367,7 +373,10 @@ export const RightPanel = ({
                     <Input
                       type="color"
                       value={textColor}
-                      onChange={e => setTextColor(e.target.value)}
+                      onChange={e => {
+                        setTextColor(e.target.value);
+                        updateTextProperty('fill', e.target.value);
+                      }}
                       className="w-12 h-8 p-0 border-0"
                     />
                   </div>
@@ -379,7 +388,11 @@ export const RightPanel = ({
                       <Button 
                         variant={isBold ? 'premium' : 'outline'} 
                         size="sm" 
-                        onClick={() => setIsBold(!isBold)}
+                        onClick={() => {
+                          const newBold = !isBold;
+                          setIsBold(newBold);
+                          updateTextProperty('fontWeight', newBold ? 'bold' : 'normal');
+                        }}
                         className="hover:shadow-md transition-all duration-200"
                       >
                         <Bold className="w-3 h-3"/>
@@ -387,7 +400,11 @@ export const RightPanel = ({
                       <Button 
                         variant={isItalic ? 'premium' : 'outline'} 
                         size="sm" 
-                        onClick={() => setIsItalic(!isItalic)}
+                        onClick={() => {
+                          const newItalic = !isItalic;
+                          setIsItalic(newItalic);
+                          updateTextProperty('fontStyle', newItalic ? 'italic' : 'normal');
+                        }}
                         className="hover:shadow-md transition-all duration-200"
                       >
                         <Italic className="w-3 h-3"/>
@@ -395,7 +412,11 @@ export const RightPanel = ({
                       <Button 
                         variant={isUnderline ? 'premium' : 'outline'} 
                         size="sm" 
-                        onClick={() => setIsUnderline(!isUnderline)}
+                        onClick={() => {
+                          const newUnderline = !isUnderline;
+                          setIsUnderline(newUnderline);
+                          updateTextProperty('underline', newUnderline);
+                        }}
                         className="hover:shadow-md transition-all duration-200"
                       >
                         <Underline className="w-3 h-3"/>
@@ -410,7 +431,10 @@ export const RightPanel = ({
                       <Button 
                         variant={textAlign==='left'?'premium':'outline'} 
                         size="sm" 
-                        onClick={()=>setTextAlign('left')}
+                        onClick={() => {
+                          setTextAlign('left');
+                          updateTextProperty('textAlign', 'left');
+                        }}
                         className="hover:shadow-md transition-all duration-200"
                       >
                         <AlignLeft className="w-3 h-3"/>
@@ -418,7 +442,10 @@ export const RightPanel = ({
                       <Button 
                         variant={textAlign==='center'?'premium':'outline'} 
                         size="sm" 
-                        onClick={()=>setTextAlign('center')}
+                        onClick={() => {
+                          setTextAlign('center');
+                          updateTextProperty('textAlign', 'center');
+                        }}
                         className="hover:shadow-md transition-all duration-200"
                       >
                         <AlignCenter className="w-3 h-3"/>
@@ -426,7 +453,10 @@ export const RightPanel = ({
                       <Button 
                         variant={textAlign==='right'?'premium':'outline'} 
                         size="sm" 
-                        onClick={()=>setTextAlign('right')}
+                        onClick={() => {
+                          setTextAlign('right');
+                          updateTextProperty('textAlign', 'right');
+                        }}
                         className="hover:shadow-md transition-all duration-200"
                       >
                         <AlignRight className="w-3 h-3"/>
@@ -440,21 +470,6 @@ export const RightPanel = ({
                     onTouchEnd={handleAddText}
                   >
                     ✨ Add Text
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    className="w-full mt-2"
-                    onClick={() => {
-                      const dc = (window as any).designCanvas;
-                      if (!dc) return toast.error("Canvas not ready");
-                      console.log("🖼️ Objects on canvas:", dc.canvas.getObjects());
-                      const dataURL = dc.canvas.toDataURL({ format: "png" });
-                      const w = window.open("");
-                      w!.document.write(`<h3>Canvas snapshot</h3><img src="${dataURL}" style="max-width:100%"/>`);
-                    }}
-                  >
-                    🐞 Debug Canvas
                   </Button>
                 </CardContent>
               </Card>
