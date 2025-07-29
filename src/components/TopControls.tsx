@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle } from "lucide-react";
+import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
 import { GILDAN_2000_COLORS, getAvailableColors } from "@/data/gildan2000Colors";
 import { toast } from "sonner";
 
@@ -146,14 +146,14 @@ export const TopControls = ({
             </Button>
           </div>
 
-          {/* Decoration Method */}
-          <div className="flex items-center gap-2">
+          {/* Decoration Method - Hidden on mobile */}
+          <div className="hidden lg:flex items-center gap-2">
             <Button
               variant={decorationMethod === "screen-print" ? "default" : "outline"}
               size="sm"
               onClick={() => onDecorationChange("screen-print")}
             >
-              Screen Print
+              Digital Print
             </Button>
             <Button
               variant={decorationMethod === "embroidery" ? "default" : "outline"}
@@ -163,6 +163,19 @@ export const TopControls = ({
               Embroidery
             </Button>
           </div>
+
+          {/* Next Step Button */}
+          <Button 
+            variant="default" 
+            size="sm"
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+            onClick={() => {
+              toast.success("Proceeding to next step");
+            }}
+          >
+            <DollarSign className="w-4 h-4 mr-1" />
+            Next
+          </Button>
         </div>
       </div>
     </div>
