@@ -82,6 +82,7 @@ export const RightPanel = ({
   const [strokeWidth, setStrokeWidth] = useState(0);
   const [letterSpacing, setLetterSpacing] = useState(0);
   const [textRotation, setTextRotation] = useState(0);
+  const [textArc, setTextArc] = useState(0);
 
   // Transform states
   const [scalePercent, setScalePercent] = useState<number>(100);
@@ -111,6 +112,7 @@ export const RightPanel = ({
       setStrokeColor(selectedObject.stroke || "#000000");
       setStrokeWidth(selectedObject.strokeWidth || 0);
       setLetterSpacing(selectedObject.charSpacing || 0);
+      setTextArc(selectedObject.path ? 0.5 : 0); // Simple check for curved text
     }
   }, [selectedObject]);
 
@@ -192,6 +194,22 @@ export const RightPanel = ({
   const handleRotate = () => (window as any).designCanvas?.rotateSelected();
   const handleCenter = () => (window as any).designCanvas?.centerSelected();
   const handleDeselect = () => (window as any).designCanvas?.clearSelection();
+
+  const createTextPath = (arcValue: number) => {
+    // Create a simple arc path for text to follow
+    const radius = 100;
+    const startAngle = -arcValue / 2;
+    const endAngle = arcValue / 2;
+    
+    const startX = Math.cos(startAngle) * radius;
+    const startY = Math.sin(startAngle) * radius;
+    const endX = Math.cos(endAngle) * radius;
+    const endY = Math.sin(endAngle) * radius;
+    
+    const largeArcFlag = Math.abs(arcValue) > Math.PI ? 1 : 0;
+    
+    return `M ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
+  };
 
   const handleSetApiKey = () => {
     if (!apiKey.trim()) { 
@@ -330,12 +348,11 @@ export const RightPanel = ({
           {activeTool === "text" && (
             <>
               <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Type className="w-4 h-4" /> Add Text
-                  </CardTitle>
-                </CardHeader>
                 <CardContent className="space-y-3 p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Type className="w-4 h-4" />
+                    <span className="text-sm font-medium">Add Text</span>
+                  </div>
                   {/* Text Content */}
                   <div>
                     <Textarea
@@ -622,6 +639,27 @@ export const RightPanel = ({
                       />
                       <div className="w-12 h-7 border rounded text-xs flex items-center justify-center bg-muted">
                         {letterSpacing}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Arc Slider */}
+                  <div className="flex items-center justify-between py-1">
+                    <Label className="text-sm font-medium">Arc</Label>
+                    <div className="flex items-center gap-2 flex-1 ml-4">
+                      <Slider
+                        value={[textArc]}
+                        onValueChange={([arc]) => {
+                          setTextArc(arc);
+                          updateTextProperty('path', arc !== 0 ? createTextPath(arc) : null);
+                        }}
+                        min={-Math.PI}
+                        max={Math.PI}
+                        step={0.1}
+                        className="flex-1"
+                      />
+                      <div className="w-12 h-7 border rounded text-xs flex items-center justify-center bg-muted">
+                        {Math.round((textArc || 0) * 180 / Math.PI)}°
                       </div>
                     </div>
                   </div>
