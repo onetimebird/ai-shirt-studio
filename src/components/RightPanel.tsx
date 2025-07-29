@@ -170,12 +170,21 @@ export const RightPanel = ({
       fontFamily,
       fontSize,
       fill: textColor,
-      textAlign: textAlign as any
+      textAlign: textAlign as any,
+      // Force text to be above everything
+      selectable: true,
+      evented: true
     });
     
     canvas.add(textbox);
-    canvas.setActiveObject(textbox);
-    canvas.renderAll();
+    
+    // CRITICAL: Force text to top after any possible image reloads
+    setTimeout(() => {
+      canvas.bringObjectToFront(textbox);
+      canvas.setActiveObject(textbox);
+      canvas.renderAll();
+      console.log("[RightPanel] ✅ Text forced to front after delay");
+    }, 100);
     
     console.log("[RightPanel] ✅ Text added successfully, objects count:", canvas.getObjects().length);
     setTextContent("New multi-line text\nType here...");
