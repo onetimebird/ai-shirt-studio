@@ -318,7 +318,7 @@ export const RightPanel = ({
     <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       {/* VISUAL DEBUG - This should be impossible to miss */}
       <div className="bg-red-500 text-white p-4 text-center font-bold text-lg">
-        🔴 NEW RIGHTPANEL LOADED - Tool: {activeTool}
+        🔴 NEW RIGHTPANEL LOADED - Tool: {activeTool} - Time: {new Date().getTime()}
       </div>
       
       {/* EMERGENCY TEST BUTTON - Direct action without any UI framework interference */}
