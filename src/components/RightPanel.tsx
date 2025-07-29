@@ -334,13 +334,21 @@ export const RightPanel = ({
             
             if (canvas) {
               console.log("🔵 Adding text with working button...");
-              const textbox = new FabricTextbox("WORKING BUTTON TEXT", {
-                left: 250,
-                top: 200,
-                fill: 'green',
-                fontSize: 24
+              const textbox = new FabricTextbox("VISIBLE TEXT!", {
+                left: canvas.getWidth() / 2,
+                top: canvas.getHeight() / 2,
+                originX: 'center',
+                originY: 'center',
+                fill: '#FF0000',  // Bright red
+                fontSize: 40,     // Large size
+                fontWeight: 'bold',
+                backgroundColor: '#FFFF00', // Yellow background
+                stroke: '#000000', // Black outline
+                strokeWidth: 2
               });
               canvas.add(textbox);
+              canvas.bringToFront(textbox);  // Bring to front!
+              canvas.setActiveObject(textbox);
               canvas.renderAll();
               console.log("🔵 SUCCESS! Text added by working button.");
             } else {
