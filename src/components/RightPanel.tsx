@@ -168,6 +168,11 @@ export const RightPanel = ({
     // Reset text content for next text
     setTextContent("New multi-line text\nType here...");
     
+    // Update text objects list
+    if ((window as any).designCanvas?.updateTextObjects) {
+      (window as any).designCanvas.updateTextObjects();
+    }
+    
     console.log("[Debug] Text added successfully");
     toast.success("Text added to design");
   };

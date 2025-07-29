@@ -8,6 +8,7 @@ interface DesignCanvasProps {
   activeTool: string;
   onSelectedObjectChange: (object: any) => void;
   onToolChange: (tool: string) => void;
+  onTextObjectsUpdate?: (objects: any[]) => void;
 }
 
 export const DesignCanvas = ({
@@ -17,6 +18,7 @@ export const DesignCanvas = ({
   activeTool,
   onSelectedObjectChange,
   onToolChange,
+  onTextObjectsUpdate
 }: DesignCanvasProps) => {
   return (
     <ProductCanvas 
@@ -89,6 +91,10 @@ export const DesignCanvas = ({
             if (activeObject) {
               canvas.remove(activeObject);
               canvas.renderAll();
+              // Update text objects list
+              if ((window as any).designCanvas?.updateTextObjects) {
+                (window as any).designCanvas.updateTextObjects();
+              }
             }
           },
           duplicateSelected: () => {
@@ -102,6 +108,12 @@ export const DesignCanvas = ({
                 canvas.add(cloned);
                 canvas.setActiveObject(cloned);
                 canvas.renderAll();
+                // Update text objects list if it's a text object
+                if (cloned.type === 'textbox' || cloned.type === 'text') {
+                  if ((window as any).designCanvas?.updateTextObjects) {
+                    (window as any).designCanvas.updateTextObjects();
+                  }
+                }
               });
             }
           },
@@ -138,7 +150,17 @@ export const DesignCanvas = ({
               console.log(`No active text object found. Active object:`, activeObject);
             }
           },
-          textObjects: []
+          textObjects: [],
+          updateTextObjects: () => {
+            const allObjects = canvas.getObjects();
+            const textObjs = allObjects.filter(obj => obj.type === 'textbox' || obj.type === 'text');
+            (window as any).designCanvas.textObjects = textObjs;
+            console.log('Updated text objects:', textObjs.length);
+            // Notify parent component
+            if (onTextObjectsUpdate) {
+              onTextObjectsUpdate(textObjs);
+            }
+          }
         };
 
         // Handle object selection

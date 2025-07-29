@@ -18,6 +18,7 @@ export const TShirtDesigner = () => {
   const [decorationMethod, setDecorationMethod] = useState("screen-print");
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);
+  const [textObjects, setTextObjects] = useState<any[]>([]);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -63,6 +64,10 @@ export const TShirtDesigner = () => {
     setSelectedColor(color);
   };
 
+  const handleTextObjectsUpdate = (objects: any[]) => {
+    setTextObjects(objects);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Smoke Test - Uncomment to test SVG loading */}
@@ -99,6 +104,7 @@ export const TShirtDesigner = () => {
             activeTool={activeTool}
             onSelectedObjectChange={setSelectedObject}
             onToolChange={setActiveTool}
+            onTextObjectsUpdate={handleTextObjectsUpdate}
           />
         </div>
 
@@ -110,7 +116,7 @@ export const TShirtDesigner = () => {
             onTextPropertiesChange={handleTextPropertiesChange}
             onImageUpload={handleImageUpload}
             onProductColorChange={handleProductColorChange}
-            textObjects={(window as any).designCanvas?.textObjects || []}
+            textObjects={textObjects}
             selectedProduct={selectedProduct}
             selectedColor={selectedColor}
             onProductChange={setSelectedProduct}
