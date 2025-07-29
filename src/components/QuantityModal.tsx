@@ -31,42 +31,42 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-full w-full mx-0 p-0 bg-background border border-border/50 shadow-2xl max-h-[98vh] overflow-hidden">
+      <DialogContent className="max-w-full w-full mx-0 p-0 bg-background border border-border/50 shadow-2xl h-[95vh] overflow-hidden [&>button]:hidden">
         {/* Header with progress stepper */}
-        <div className="p-2 pb-1 border-b border-border/20">
-          <div className="flex items-center justify-end mb-1">
+        <div className="p-3 pb-2 border-b border-border/20">
+          <div className="flex items-center justify-end mb-2">
             <Button variant="ghost" size="sm" onClick={onClose} className="p-1">
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </Button>
           </div>
           
           {/* Progress Steps */}
-          <div className="flex items-center justify-center gap-1 mb-1 scale-75">
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="text-[9px] font-medium text-primary">1</span>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <span className="text-xs font-medium text-primary">1</span>
               </div>
-              <span className="text-[9px] text-muted-foreground">DESIGN</span>
+              <span className="text-sm text-muted-foreground">DESIGN</span>
             </div>
-            <div className="w-6 h-0.5 bg-primary"></div>
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-4 rounded-full bg-primary border border-primary flex items-center justify-center">
-                <span className="text-[9px] font-medium text-primary-foreground">2</span>
+            <div className="w-8 h-0.5 bg-primary"></div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-full bg-primary border border-primary flex items-center justify-center">
+                <span className="text-xs font-medium text-primary-foreground">2</span>
               </div>
-              <span className="text-[9px] font-medium text-primary">QUANTITY</span>
+              <span className="text-sm font-medium text-primary">QUANTITY</span>
             </div>
-            <div className="w-6 h-0.5 bg-border"></div>
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-4 rounded-full bg-muted border border-border flex items-center justify-center">
-                <span className="text-[9px] text-muted-foreground">3</span>
+            <div className="w-8 h-0.5 bg-border"></div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center">
+                <span className="text-xs text-muted-foreground">3</span>
               </div>
-              <span className="text-[9px] text-muted-foreground">REVIEW</span>
+              <span className="text-sm text-muted-foreground">REVIEW</span>
             </div>
           </div>
 
           <div className="text-center">
-            <h2 className="text-xs font-semibold mb-0">How Many Do You Need?</h2>
-            <p className="text-[9px] text-muted-foreground leading-tight">
+            <h2 className="text-lg font-semibold mb-1">How Many Do You Need?</h2>
+            <p className="text-sm text-muted-foreground">
               Enter quantities to calculate price.
             </p>
           </div>
