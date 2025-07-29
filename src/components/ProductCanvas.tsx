@@ -60,12 +60,16 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     FabricImage.fromURL(imageUrl, {
       crossOrigin: "anonymous",
     }).then((img) => {
-      // Calculate scale to fit canvas while maintaining aspect ratio
+      // Calculate scale to make t-shirt much larger, especially on desktop
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
-      const scaleX = (canvasWidth * 0.9) / (img.width || 1);
-      const scaleY = (canvasHeight * 0.9) / (img.height || 1);
+      // Make t-shirt much larger on desktop, reasonable on mobile
+      const isMobile = canvasWidth < 768;
+      const scaleFactor = isMobile ? 1.2 : 2.2; // Double+ size on desktop
+      
+      const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
+      const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
       const scale = Math.min(scaleX, scaleY);
 
       // Set as background image - this keeps it behind all user content
