@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { openAIService } from "@/services/openai";
-import { Text as FabricText, Textbox as FabricTextbox, Image as FabricImage } from "fabric";
+import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
 import { ProductSelector } from "@/components/ProductSelector";
 import {
@@ -67,6 +67,7 @@ export const RightPanel = ({
   selectedColor = "White",
   onProductChange
 }: RightPanelProps) => {
+  // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [fontSize, setFontSize] = useState<number>(24);
@@ -86,11 +87,6 @@ export const RightPanel = ({
   const [apiKey, setApiKey] = useState(openAIService.getApiKey() || "");
   const [showApiKey, setShowApiKey] = useState(false);
   const [recentImages, setRecentImages] = useState<string[]>([]);
-
-  // Debug: confirm global canvas object on mount
-  useEffect(() => {
-    console.log("[RightPanel] mounted, window.designCanvas=", (window as any).designCanvas);
-  }, []);
 
   // Sync with selectedObject 
   useEffect(() => {
@@ -114,30 +110,49 @@ export const RightPanel = ({
     }
   };
 
-  // --- CLEAN "Add Text" handler ---
   const handleAddText = () => {
-    const canvas = (window as any).designCanvas?.canvas;
-    if (!canvas) {
+    console.log("handleAddText called");
+    const fabricCanvas = (window as any).designCanvas?.canvas;
+    console.log("Canvas available:", !!fabricCanvas);
+    
+    if (!fabricCanvas) {
+      console.log("Canvas not ready, showing error");
       toast.error("Canvas not ready");
       return;
     }
-    
+
+    console.log("Creating textbox with:", {
+      textContent,
+      canvasWidth: fabricCanvas.width,
+      canvasHeight: fabricCanvas.height
+    });
+
     const textbox = new FabricTextbox(textContent, {
-      left: canvas.getWidth() / 2,
-      top: canvas.getHeight() / 2,
-      originX: 'center',
-      originY: 'center',
+      left: fabricCanvas.width! / 2,
+      top: fabricCanvas.height! / 2,
+      width: 300, // initial wrap width
       fontFamily,
       fontSize,
       fill: textColor,
-      textAlign: textAlign as any
+      fontWeight: isBold ? 'bold' : 'normal',
+      fontStyle: isItalic ? 'italic' : 'normal',
+      underline: isUnderline,
+      textAlign: textAlign as any,
+      originX: 'center',
+      originY: 'center',
+      editable: true,
+      objectCaching: false, // better for dynamic editing
     });
+
+    console.log("Adding textbox to canvas");
+    fabricCanvas.add(textbox);
+    fabricCanvas.setActiveObject(textbox);
+    fabricCanvas.renderAll();
     
-    canvas.add(textbox);
-    canvas.setActiveObject(textbox);
-    canvas.renderAll();
-    
+    // Reset text content for next text
     setTextContent("New multi-line text\nType here...");
+    
+    console.log("Text added successfully");
     toast.success("Text added to design");
   };
 
@@ -193,70 +208,33 @@ export const RightPanel = ({
     }
   };
 
-  // --- Direct Fabric File‐upload handler (improved) ---
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("[RightPanel] handleFileUpload() - DIRECT FABRIC APPROACH");
-    console.log("[RightPanel] window.designCanvas=", (window as any).designCanvas);
-    
+    console.log("handleFileUpload called");
     const file = event.target.files?.[0];
-    if (!file) return;
-    
-    const allowed = ["image/png","image/jpeg","image/jpg","image/svg+xml"];
-    if (!allowed.includes(file.type)) {
-      toast.error("Only PNG/JPG/SVG under 10 MB");
+    if (!file) {
+      console.log("No file selected");
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File must be < 10 MB");
-      return;
-    }
-    
-    const canvas = (window as any).designCanvas?.canvas;
-    if (!canvas) {
-      console.log("[RightPanel] ❌ Canvas not ready");
-      toast.error("Canvas not ready");
-      return;
-    }
-    
-    console.log("[RightPanel] ✅ Canvas found, reading file with FileReader");
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const src = e.target?.result as string;
-      console.log("[RightPanel] ✅ File read, creating Fabric image from URL");
-      
-      // Use FabricImage.fromURL with correct v6 syntax
-      FabricImage.fromURL(src).then((img) => {
-        console.log("[RightPanel] ✅ Fabric image created, adding to canvas");
-        
-        // Center and scale the image
-        img.set({
-          left: canvas.getWidth() / 2,
-          top: canvas.getHeight() / 2,
-          originX: 'center',
-          originY: 'center',
-        });
-        img.scaleToWidth(canvas.getWidth() * 0.5);
-        
-        canvas.add(img);
-        canvas.setActiveObject(img);
-        canvas.renderAll();
-        
-        console.log("[RightPanel] ✅ Image added successfully, objects count:", canvas.getObjects().length);
-        toast.success("Image added to canvas");
-      }).catch((error) => {
-        console.error("[RightPanel] ❌ Error creating image:", error);
-        toast.error("Failed to load image");
-      });
-    };
-    reader.readAsDataURL(file);
-  };
 
-  // use a ref to reliably trigger the hidden input on both mobile & desktop
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleUploadClick = () => {
-    console.log("[RightPanel] 👉 handleUploadClick triggered");
-    fileInputRef.current?.click();
+    console.log("File selected:", file.name, file.type, file.size);
+
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+    if (!allowedTypes.includes(file.type)) {
+      console.log("Invalid file type:", file.type);
+      toast.error("Please upload PNG, JPEG, or SVG files only");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      console.log("File too large:", file.size);
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    console.log("Calling onImageUpload with file");
+    onImageUpload(file);
+    toast.success("Image uploaded successfully!");
   };
 
   // Determine which tab should be active based on the current tool
@@ -435,12 +413,13 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                   <Button
-                     className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                     onClick={handleAddText}
-                   >
-                     ✨ Add Text
-                   </Button>
+                  <Button 
+                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" 
+                    onClick={handleAddText}
+                    onTouchEnd={handleAddText}
+                  >
+                    ✨ Add Text
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -726,22 +705,22 @@ export const RightPanel = ({
                     Drag & drop or click to upload
                   </p>
                   <input
-                    ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleFileUpload}
-                    hidden
+                    className="hidden"
+                    id="file-upload"
                   />
-                  <button
-                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 rounded-md h-10 px-4 cursor-pointer flex items-center justify-center gap-2"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleUploadClick();
-                    }}
-                  >
-                    📁 Choose File
-                  </button>
+                  <label htmlFor="file-upload">
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      asChild
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
+                    >
+                      <span>📁 Choose File</span>
+                    </Button>
+                  </label>
                   <p className="text-xs text-muted-foreground mt-2">
                     PNG, JPEG, SVG up to 10MB
                   </p>

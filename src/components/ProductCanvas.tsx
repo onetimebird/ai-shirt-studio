@@ -96,19 +96,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       fabricCanvas.add(img);
       fabricCanvas.sendObjectToBack(img);
       setProductImage(img);
-      
-      // CRITICAL FIX: After adding image, bring all text objects to front
-      setTimeout(() => {
-        const allObjects = fabricCanvas.getObjects();
-        allObjects.forEach(obj => {
-          if (obj.type === 'textbox' || obj.type === 'text') {
-            fabricCanvas.bringObjectToFront(obj);
-          }
-        });
-        fabricCanvas.renderAll();
-        console.log("✅ All text objects brought to front after image load");
-      }, 50);
-      
       fabricCanvas.renderAll();
       console.log("Image added to canvas successfully");
     }).catch((error) => {
@@ -128,6 +115,17 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             display: 'block'
           }}
         />
+        <div className="absolute top-2 right-2">
+          <Button 
+            variant="default" 
+            size="default"
+            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex px-6 py-2.5 text-base font-semibold"
+            onClick={() => setIsQuantityModalOpen(true)}
+          >
+            <DollarSign className="w-5 h-5 mr-2" />
+            Next Step
+          </Button>
+        </div>
       </div>
       
       {/* Quantity Modal */}

@@ -4,10 +4,9 @@ import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
-import { QuantityModal } from "@/components/QuantityModal";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Settings, Type, Upload, Wand2, Package, Palette, X, DollarSign } from "lucide-react";
+import { Settings, Type, Upload, Wand2, Package, Palette, X } from "lucide-react";
 import { AIIcon } from "@/components/AIIcon";
 import { AIWandIcon } from "@/components/AIWandIcon";
 import { toast } from "sonner";
@@ -19,7 +18,6 @@ export const TShirtDesigner = () => {
   const [decorationMethod, setDecorationMethod] = useState("screen-print");
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);
-  const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -52,19 +50,8 @@ export const TShirtDesigner = () => {
   };
 
   const handleImageUpload = (file: File) => {
-    console.log("=== TShirtDesigner handleImageUpload DEBUG START ===");
     console.log("TShirtDesigner handleImageUpload called with file:", file.name);
-    console.log("designCanvas object exists:", !!(window as any).designCanvas);
-    console.log("designCanvas.addImage exists:", !!(window as any).designCanvas?.addImage);
-    
-    if ((window as any).designCanvas?.addImage) {
-      console.log("Calling designCanvas.addImage");
-      (window as any).designCanvas.addImage(file);
-    } else {
-      console.error("designCanvas.addImage not available");
-      toast.error("Canvas not ready for image upload");
-    }
-    console.log("=== TShirtDesigner handleImageUpload DEBUG END ===");
+    (window as any).designCanvas?.addImage(file);
   };
 
   const handleTextPropertiesChange = (properties: any) => {
@@ -113,19 +100,6 @@ export const TShirtDesigner = () => {
             onSelectedObjectChange={setSelectedObject}
             onToolChange={setActiveTool}
           />
-        </div>
-
-        {/* Next Step Button - Absolutely positioned between canvas and right panel */}
-        <div className="absolute top-4 right-80 z-20 hidden lg:block">
-          <Button 
-            variant="default" 
-            size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 text-sm font-medium shadow-lg rounded-lg"
-            onClick={() => setIsQuantityModalOpen(true)}
-          >
-            <DollarSign className="w-4 h-4 mr-1" />
-            Next Step
-          </Button>
         </div>
 
         {/* Right Panel - Only visible on desktop */}
@@ -332,14 +306,6 @@ export const TShirtDesigner = () => {
           </Sheet>
         </div>
       </div>
-
-      {/* Quantity Modal */}
-      <QuantityModal 
-        isOpen={isQuantityModalOpen}
-        onClose={() => setIsQuantityModalOpen(false)}
-        selectedProduct={selectedProduct}
-        selectedColor={selectedColor}
-      />
     </div>
   );
 };
