@@ -128,11 +128,11 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             display: 'block'
           }}
         />
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-4 right-4 z-10">
           <Button 
             variant="default" 
             size="default"
-            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex px-6 py-2.5 text-base font-semibold"
+            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex px-6 py-2.5 text-base font-semibold shadow-lg"
             onClick={() => setIsQuantityModalOpen(true)}
           >
             <DollarSign className="w-5 h-5 mr-2" />

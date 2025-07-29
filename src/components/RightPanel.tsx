@@ -435,24 +435,12 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                  {/* Triple-event button for maximum compatibility */}
-                  <Button
-                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                    onClick={() => {
-                      console.log("[RightPanel] 👉 Add Text onClick");
-                      handleAddText();
-                    }}
-                    onPointerUp={() => {
-                      console.log("[RightPanel] 👉 Add Text onPointerUp");
-                      handleAddText();
-                    }}
-                    onTouchEnd={() => {
-                      console.log("[RightPanel] 👉 Add Text onTouchEnd");
-                      handleAddText();
-                    }}
-                  >
-                    ✨ Add Text
-                  </Button>
+                   <Button
+                     className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                     onClick={handleAddText}
+                   >
+                     ✨ Add Text
+                   </Button>
                 </CardContent>
               </Card>
 
@@ -745,21 +733,11 @@ export const RightPanel = ({
                     hidden
                   />
                   <button
-                    className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 rounded-md h-10 px-4 cursor-pointer relative z-[9999]"
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 rounded-md h-10 px-4 cursor-pointer flex items-center justify-center gap-2"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log("[RightPanel] 👉 Upload BUTTON clicked");
                       handleUploadClick();
-                    }}
-                    style={{ 
-                      position: 'relative',
-                      zIndex: 9999,
-                      pointerEvents: 'auto',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
                     }}
                   >
                     📁 Choose File
