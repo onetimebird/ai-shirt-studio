@@ -323,32 +323,32 @@ export const RightPanel = ({
         🔴 NEW RIGHTPANEL LOADED - Tool: {activeTool} - Time: {new Date().getTime()}
       </div>
       
-      {/* EMERGENCY TEST BUTTON - Direct action without any UI framework interference */}
-      <div className="p-4 bg-yellow-300">
+      {/* WORKING BUTTON - Canvas should be ready by now */}
+      <div className="p-4 bg-green-300">
         <div 
-          className="bg-green-600 text-white p-3 text-center cursor-pointer font-bold"
-          onMouseDown={(e) => {
-            console.log("🟢 EMERGENCY BUTTON CLICKED!");
-            console.log("🟢 Canvas exists:", !!(window as any).designCanvas?.canvas);
-            
+          className="bg-blue-600 text-white p-3 text-center cursor-pointer font-bold"
+          onMouseDown={() => {
+            console.log("🔵 WORKING BUTTON CLICKED!");
             const canvas = (window as any).designCanvas?.canvas;
+            console.log("🔵 Canvas available:", !!canvas);
+            
             if (canvas) {
-              console.log("🟢 Adding text directly...");
-              const textbox = new FabricTextbox("EMERGENCY TEXT", {
-                left: 200,
+              console.log("🔵 Adding text with working button...");
+              const textbox = new FabricTextbox("WORKING BUTTON TEXT", {
+                left: 250,
                 top: 200,
-                fill: 'red',
-                fontSize: 30
+                fill: 'green',
+                fontSize: 24
               });
               canvas.add(textbox);
               canvas.renderAll();
-              console.log("🟢 Text added successfully!");
+              console.log("🔵 SUCCESS! Text added by working button.");
             } else {
-              console.log("🔴 Canvas not found!");
+              console.log("🔴 Canvas still not available!");
             }
           }}
         >
-          🚨 EMERGENCY ADD TEXT (Click Me!)
+          🔵 WORKING ADD TEXT BUTTON
         </div>
       </div>
       <Tabs value={getActiveTab()} className="w-full p-4">
