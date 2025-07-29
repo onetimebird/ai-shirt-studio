@@ -291,40 +291,47 @@ export const RightPanel = ({
 
   return (
     <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
-      <Tabs value={getActiveTab()} className="w-full p-4">
-        {/* Only show tabs based on context */}
+      <div className="w-full p-4">
+        {/* Section Headers - Clean design without button appearance */}
         {activeTool === "text" || activeTool === "editText" ? (
-          // Text tool - only properties for add/edit
-          <TabsList className="grid grid-cols-1 gap-2">
-            <TabsTrigger value="properties">
+          // Text tool header
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
               {activeTool === "text" ? "Add Text" : "Edit Text"}
-            </TabsTrigger>
-          </TabsList>
+            </h2>
+          </div>
         ) : activeTool === "upload" ? (
-          // Upload tool - only properties  
-          <TabsList className="grid grid-cols-1 gap-2">
-            <TabsTrigger value="properties">Upload Image</TabsTrigger>
-          </TabsList>
+          // Upload tool header
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              Upload Image
+            </h2>
+          </div>
         ) : activeTool === "ai" ? (
-          // AI tool - only AI tab
-          <TabsList className="grid grid-cols-1 gap-2">
-            <TabsTrigger value="ai">AI Image Generator</TabsTrigger>
-          </TabsList>
+          // AI tool header
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              AI Image Generator
+            </h2>
+          </div>
         ) : activeTool === "products" ? (
-          // Products tool - only products tab
-          <TabsList className="grid grid-cols-1 gap-2">
-            <TabsTrigger value="products">Change Product</TabsTrigger>
-          </TabsList>
+          // Products tool header
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              Change Product
+            </h2>
+          </div>
         ) : (
-          // Default - all tabs
-          <TabsList className="grid grid-cols-3 gap-2">
-            <TabsTrigger value="properties">Properties</TabsTrigger>
-            <TabsTrigger value="color">Colors</TabsTrigger>
-            <TabsTrigger value="ai">AI</TabsTrigger>
-          </TabsList>
+          // Default - show simple header
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+              Properties
+            </h2>
+          </div>
         )}
 
-        <TabsContent value="properties" className="mt-4 space-y-4">
+        <Tabs value={getActiveTab()} className="w-full">
+          <TabsContent value="properties" className="space-y-4">
 
           {/* Add Text Interface - Only when in text mode and no object selected */}
           {activeTool === "text" && (
@@ -1120,7 +1127,8 @@ export const RightPanel = ({
             }}
           />
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 };
