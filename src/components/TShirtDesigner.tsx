@@ -6,7 +6,7 @@ import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Settings } from "lucide-react";
+import { Settings, Type, Upload, Wand2, Package, Palette } from "lucide-react";
 import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
@@ -72,11 +72,13 @@ export const TShirtDesigner = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Toolbar - Always visible */}
-        <LeftToolbar 
-          activeTool={activeTool} 
-          onToolChange={handleToolChange} 
-        />
+        {/* Left Toolbar - Always visible on desktop, hidden on mobile */}
+        <div className="hidden lg:block">
+          <LeftToolbar 
+            activeTool={activeTool} 
+            onToolChange={handleToolChange} 
+          />
+        </div>
 
         {/* Central Canvas */}
         <div className="flex-1 relative">
@@ -87,35 +89,6 @@ export const TShirtDesigner = () => {
             onSelectedObjectChange={setSelectedObject}
             onToolChange={setActiveTool}
           />
-          
-          {/* Mobile Properties Button - Only on mobile */}
-          <div className="lg:hidden absolute bottom-4 right-4">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="default" size="icon" className="rounded-full shadow-lg">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-80 p-0">
-                <SheetHeader className="p-4 border-b">
-                  <SheetTitle>Properties</SheetTitle>
-                </SheetHeader>
-                <div className="overflow-y-auto">
-                  <RightPanel
-                    activeTool={activeTool}
-                    selectedObject={selectedObject}
-                    onTextPropertiesChange={handleTextPropertiesChange}
-                    onImageUpload={handleImageUpload}
-                    onProductColorChange={handleProductColorChange}
-                    textObjects={(window as any).designCanvas?.textObjects || []}
-                    selectedProduct={selectedProduct}
-                    selectedColor={selectedColor}
-                    onProductChange={setSelectedProduct}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
         </div>
 
         {/* Right Panel - Only visible on desktop */}
@@ -131,6 +104,82 @@ export const TShirtDesigner = () => {
             selectedColor={selectedColor}
             onProductChange={setSelectedProduct}
           />
+        </div>
+      </div>
+
+      {/* Mobile Bottom Toolbar */}
+      <div className="lg:hidden bg-card border-t border-border">
+        <div className="flex items-center justify-around py-2 px-4">
+          <Button 
+            variant={activeTool === "products" ? "default" : "ghost"} 
+            size="sm" 
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            onClick={() => handleToolChange("products")}
+          >
+            <Package className="h-4 w-4" />
+            <span className="text-xs">Products</span>
+          </Button>
+          
+          <Button 
+            variant={activeTool === "text" ? "default" : "ghost"} 
+            size="sm" 
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            onClick={() => handleToolChange("text")}
+          >
+            <Type className="h-4 w-4" />
+            <span className="text-xs">Add Text</span>
+          </Button>
+          
+          <Button 
+            variant={activeTool === "upload" ? "default" : "ghost"} 
+            size="sm" 
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            onClick={() => handleToolChange("upload")}
+          >
+            <Upload className="h-4 w-4" />
+            <span className="text-xs">Upload Art</span>
+          </Button>
+          
+          <Button 
+            variant={activeTool === "ai" ? "default" : "ghost"} 
+            size="sm" 
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+            onClick={() => handleToolChange("ai")}
+          >
+            <Wand2 className="h-4 w-4" />
+            <span className="text-xs">Add Art</span>
+          </Button>
+          
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+              >
+                <Settings className="h-4 w-4" />
+                <span className="text-xs">Properties</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80 p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Properties</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto">
+                <RightPanel
+                  activeTool={activeTool}
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={handleTextPropertiesChange}
+                  onImageUpload={handleImageUpload}
+                  onProductColorChange={handleProductColorChange}
+                  textObjects={(window as any).designCanvas?.textObjects || []}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={setSelectedProduct}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </div>
