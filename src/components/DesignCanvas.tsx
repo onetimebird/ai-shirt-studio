@@ -33,11 +33,18 @@ export const DesignCanvas = ({
               FabricImage.fromURL(result, {
                 crossOrigin: "anonymous",
               }).then((img) => {
-                img.scale(0.5);
-                img.set({
-                  left: 100,
-                  top: 100,
-                });
+              // Scale and position for mobile/desktop
+              const canvasWidth = canvas.width || 600;
+              const canvasHeight = canvas.height || 700;
+              const isMobile = canvasWidth < 400;
+              
+              img.scale(isMobile ? 0.3 : 0.5);
+              img.set({
+                left: canvasWidth / 2,
+                top: canvasHeight / 2,
+                originX: 'center',
+                originY: 'center',
+              });
                 canvas.add(img);
                 canvas.renderAll();
                 console.log("Image added to canvas successfully");
@@ -52,10 +59,17 @@ export const DesignCanvas = ({
             FabricImage.fromURL(url, {
               crossOrigin: "anonymous",
             }).then((img) => {
-              img.scale(0.5);
+              // Scale and position for mobile/desktop
+              const canvasWidth = canvas.width || 600;
+              const canvasHeight = canvas.height || 700;
+              const isMobile = canvasWidth < 400;
+              
+              img.scale(isMobile ? 0.3 : 0.5);
               img.set({
-                left: 100,
-                top: 100,
+                left: canvasWidth / 2,
+                top: canvasHeight / 2,
+                originX: 'center',
+                originY: 'center',
               });
               canvas.add(img);
               canvas.renderAll();

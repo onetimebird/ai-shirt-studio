@@ -147,7 +147,7 @@ export const RightPanel = ({
     console.log("Adding textbox to canvas");
     fabricCanvas.add(textbox);
     fabricCanvas.setActiveObject(textbox);
-    fabricCanvas.requestRenderAll();
+    fabricCanvas.renderAll();
     
     // Reset text content for next text
     setTextContent("New multi-line text\nType here...");
@@ -383,7 +383,13 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                  <Button className="w-full mt-2" onClick={handleAddText}>Add Text</Button>
+                  <Button 
+                    className="w-full mt-2" 
+                    onClick={handleAddText}
+                    onTouchEnd={handleAddText}
+                  >
+                    Add Text
+                  </Button>
                 </CardContent>
               </Card>
 
