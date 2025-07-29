@@ -10,7 +10,7 @@ import {
   RotateCcw,
   HelpCircle
 } from "lucide-react";
-import { AIIcon } from "@/components/AIIcon";
+import { AIWandIcon } from "@/components/AIWandIcon";
 
 interface LeftToolbarProps {
   activeTool: string;
@@ -53,7 +53,7 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
                     className="w-full justify-start h-12 lg:h-10"
                   >
                     {tool.id === "ai" ? (
-                      <AIIcon className="lg:mr-3" size={16} />
+                      <AIWandIcon className="lg:mr-3" size={16} />
                     ) : (
                       <tool.icon className="w-4 h-4 lg:mr-3 icon-hover" />
                     )}
