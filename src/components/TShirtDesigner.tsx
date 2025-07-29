@@ -110,46 +110,139 @@ export const TShirtDesigner = () => {
       {/* Mobile Bottom Toolbar */}
       <div className="lg:hidden bg-card border-t border-border">
         <div className="flex items-center justify-around py-2 px-4">
-          <Button 
-            variant={activeTool === "products" ? "default" : "ghost"} 
-            size="sm" 
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-            onClick={() => handleToolChange("products")}
-          >
-            <Package className="h-4 w-4" />
-            <span className="text-xs">Products</span>
-          </Button>
+          {/* Products */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "products" ? "default" : "ghost"} 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+                onClick={() => handleToolChange("products")}
+              >
+                <Package className="h-4 w-4" />
+                <span className="text-xs">Products</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[80vh] p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Change Product</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto p-4">
+                <RightPanel
+                  activeTool="products"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={handleTextPropertiesChange}
+                  onImageUpload={handleImageUpload}
+                  onProductColorChange={handleProductColorChange}
+                  textObjects={(window as any).designCanvas?.textObjects || []}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={setSelectedProduct}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
           
-          <Button 
-            variant={activeTool === "text" ? "default" : "ghost"} 
-            size="sm" 
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-            onClick={() => handleToolChange("text")}
-          >
-            <Type className="h-4 w-4" />
-            <span className="text-xs">Add Text</span>
-          </Button>
+          {/* Add Text */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "text" ? "default" : "ghost"} 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+                onClick={() => handleToolChange("text")}
+              >
+                <Type className="h-4 w-4" />
+                <span className="text-xs">Add Text</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[80vh] p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Add Text</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto p-4">
+                <RightPanel
+                  activeTool="text"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={handleTextPropertiesChange}
+                  onImageUpload={handleImageUpload}
+                  onProductColorChange={handleProductColorChange}
+                  textObjects={(window as any).designCanvas?.textObjects || []}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={setSelectedProduct}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
           
-          <Button 
-            variant={activeTool === "upload" ? "default" : "ghost"} 
-            size="sm" 
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-            onClick={() => handleToolChange("upload")}
-          >
-            <Upload className="h-4 w-4" />
-            <span className="text-xs">Upload Art</span>
-          </Button>
+          {/* Upload Art */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "upload" ? "default" : "ghost"} 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+                onClick={() => handleToolChange("upload")}
+              >
+                <Upload className="h-4 w-4" />
+                <span className="text-xs">Upload Art</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[80vh] p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Upload Art</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto p-4">
+                <RightPanel
+                  activeTool="upload"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={handleTextPropertiesChange}
+                  onImageUpload={handleImageUpload}
+                  onProductColorChange={handleProductColorChange}
+                  textObjects={(window as any).designCanvas?.textObjects || []}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={setSelectedProduct}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
           
-          <Button 
-            variant={activeTool === "ai" ? "default" : "ghost"} 
-            size="sm" 
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3"
-            onClick={() => handleToolChange("ai")}
-          >
-            <Wand2 className="h-4 w-4" />
-            <span className="text-xs">Add Art</span>
-          </Button>
+          {/* Add Art (AI) */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "ai" ? "default" : "ghost"} 
+                size="sm" 
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3"
+                onClick={() => handleToolChange("ai")}
+              >
+                <Wand2 className="h-4 w-4" />
+                <span className="text-xs">Add Art</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[80vh] p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>AI Art Generator</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto p-4">
+                <RightPanel
+                  activeTool="ai"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={handleTextPropertiesChange}
+                  onImageUpload={handleImageUpload}
+                  onProductColorChange={handleProductColorChange}
+                  textObjects={(window as any).designCanvas?.textObjects || []}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={setSelectedProduct}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
           
+          {/* Properties */}
           <Sheet>
             <SheetTrigger asChild>
               <Button 
@@ -161,11 +254,11 @@ export const TShirtDesigner = () => {
                 <span className="text-xs">Properties</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 p-0">
+            <SheetContent side="bottom" className="h-[80vh] p-0">
               <SheetHeader className="p-4 border-b">
                 <SheetTitle>Properties</SheetTitle>
               </SheetHeader>
-              <div className="overflow-y-auto">
+              <div className="overflow-y-auto p-4">
                 <RightPanel
                   activeTool={activeTool}
                   selectedObject={selectedObject}
