@@ -129,34 +129,21 @@ export const TopControls = ({
           </Button>
         </div>
 
-        {/* Decoration Method and Next Button */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Button
-              variant={decorationMethod === "screen-print" ? "default" : "outline"}
-              size="sm"
-              onClick={() => onDecorationChange("screen-print")}
-            >
-              Digital Print
-            </Button>
-            <Button
-              variant={decorationMethod === "embroidery" ? "default" : "outline"}
-              size="sm"
-              onClick={() => onDecorationChange("embroidery")}
-            >
-              Embroidery
-            </Button>
-          </div>
-
-          {/* Next Step Button - Larger and prominent */}
-          <Button 
-            variant="default" 
-            size="default"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-2"
-            onClick={() => setIsQuantityModalOpen(true)}
+        {/* Decoration Method */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant={decorationMethod === "screen-print" ? "default" : "outline"}
+            size="sm"
+            onClick={() => onDecorationChange("screen-print")}
           >
-            <DollarSign className="w-4 h-4 mr-2" />
-            Next Step
+            Digital Print
+          </Button>
+          <Button
+            variant={decorationMethod === "embroidery" ? "default" : "outline"}
+            size="sm"
+            onClick={() => onDecorationChange("embroidery")}
+          >
+            Embroidery
           </Button>
         </div>
 

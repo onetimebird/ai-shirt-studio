@@ -4,6 +4,7 @@ import { FabricImage } from "fabric";
 interface DesignCanvasProps {
   selectedColor: string;
   currentSide: "front" | "back";
+  selectedProduct: string;
   activeTool: string;
   onSelectedObjectChange: (object: any) => void;
   onToolChange: (tool: string) => void;
@@ -12,6 +13,7 @@ interface DesignCanvasProps {
 export const DesignCanvas = ({
   selectedColor,
   currentSide,
+  selectedProduct,
   activeTool,
   onSelectedObjectChange,
   onToolChange,
@@ -20,6 +22,7 @@ export const DesignCanvas = ({
     <ProductCanvas 
       selectedColor={selectedColor}
       currentSide={currentSide}
+      selectedProduct={selectedProduct}
       onCanvasReady={(canvas) => {
         console.log("Canvas ready, setting up global designCanvas object");
         // Make canvas available globally for design tools

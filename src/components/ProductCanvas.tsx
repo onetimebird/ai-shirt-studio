@@ -1,17 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas as FabricCanvas, FabricImage } from "fabric";
 import { getColorByName } from "@/data/gildan2000Colors";
+import { Button } from "@/components/ui/button";
+import { QuantityModal } from "@/components/QuantityModal";
+import { DollarSign } from "lucide-react";
 
 interface ProductCanvasProps {
   selectedColor: string;
   currentSide: "front" | "back";
+  selectedProduct: string;
   onCanvasReady?: (canvas: FabricCanvas) => void;
 }
 
-export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: ProductCanvasProps) => {
+export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onCanvasReady }: ProductCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [productImage, setProductImage] = useState<FabricImage | null>(null);
+  const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
 
   // Initialize Fabric.js canvas
   useEffect(() => {
@@ -110,10 +115,29 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
             display: 'block'
           }}
         />
-        <div className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
-          {selectedColor} - {currentSide}
+        <div className="absolute top-2 right-2 flex items-center gap-2">
+          <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
+            {selectedColor} - {currentSide}
+          </div>
+          <Button 
+            variant="default" 
+            size="sm"
+            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex"
+            onClick={() => setIsQuantityModalOpen(true)}
+          >
+            <DollarSign className="w-4 h-4 mr-1" />
+            Next Step
+          </Button>
         </div>
       </div>
+      
+      {/* Quantity Modal */}
+      <QuantityModal 
+        isOpen={isQuantityModalOpen}
+        onClose={() => setIsQuantityModalOpen(false)}
+        selectedProduct={selectedProduct}
+        selectedColor={selectedColor}
+      />
     </div>
   );
 };

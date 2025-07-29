@@ -95,6 +95,7 @@ export const TShirtDesigner = () => {
           <DesignCanvas
             selectedColor={selectedColor}
             currentSide={currentSide}
+            selectedProduct={selectedProduct}
             activeTool={activeTool}
             onSelectedObjectChange={setSelectedObject}
             onToolChange={setActiveTool}
