@@ -30,8 +30,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
       preserveObjectStacking: true,
     });
 
-    // Make canvas available globally for design tools
-    (window as any).designCanvas = { canvas };
+    // Don't overwrite designCanvas here - it will be set by DesignCanvas component
+    // (window as any).designCanvas = { canvas };
 
     setFabricCanvas(canvas);
     onCanvasReady?.(canvas);
