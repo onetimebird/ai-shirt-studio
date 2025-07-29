@@ -22,10 +22,10 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Calculate responsive canvas dimensions
+    // Calculate larger canvas dimensions to accommodate full t-shirt
     const isMobile = window.innerWidth < 768;
-    const canvasWidth = isMobile ? Math.min(350, window.innerWidth - 40) : 600;
-    const canvasHeight = isMobile ? Math.min(420, (window.innerHeight - 200)) : 700;
+    const canvasWidth = isMobile ? Math.min(400, window.innerWidth - 20) : 800; // Much wider
+    const canvasHeight = isMobile ? Math.min(500, (window.innerHeight - 200)) : 900; // Much taller
 
     const canvas = new FabricCanvas(canvasRef.current, {
       width: canvasWidth,
@@ -64,9 +64,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
-      // Make t-shirt fill almost the entire canvas area
-      const isMobile = canvasWidth < 768;
-      const scaleFactor = isMobile ? 1.4 : 2.8; // Even larger now without border constraints
+      // Scale t-shirt to fit nicely within the larger canvas
+      const isMobile = canvasWidth < 500;
+      const scaleFactor = isMobile ? 1.0 : 1.8; // More reasonable scaling with larger canvas
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
