@@ -413,35 +413,33 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                  <button
-                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-md h-10 flex items-center justify-center cursor-pointer"
-                    onPointerDown={(e) => {
-                      console.log("[RightPanel] 👉 Add Text BUTTON pointerdown");
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleAddText();
-                    }}
-                    onTouchStart={(e) => {
-                      console.log("[RightPanel] 👉 Add Text BUTTON touchstart");
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleAddText();
-                    }}
-                    onClick={(e) => {
-                      console.log("[RightPanel] 👉 Add Text BUTTON click");
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleAddText();
-                    }}
-                    style={{
-                      WebkitTouchCallout: 'none',
-                      WebkitUserSelect: 'none',
-                      userSelect: 'none',
-                      touchAction: 'manipulation'
-                    }}
-                  >
-                    ✨ Add Text
-                  </button>
+                  {/* Direct trigger approach - bypass event issues */}
+                  <div className="w-full mt-4">
+                    <div
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-md h-10 flex items-center justify-center cursor-pointer select-none"
+                      onMouseDown={() => {
+                        console.log("[RightPanel] 👉 DIRECT Add Text triggered");
+                        handleAddText();
+                      }}
+                      onTouchEnd={() => {
+                        console.log("[RightPanel] 👉 DIRECT Add Text touchend");
+                        handleAddText();
+                      }}
+                    >
+                      ✨ Add Text
+                    </div>
+                    
+                    {/* Fallback button for debugging */}
+                    <button 
+                      className="w-full mt-2 text-xs text-gray-500 underline"
+                      onClick={() => {
+                        console.log("[RightPanel] 👉 FALLBACK button clicked");
+                        handleAddText();
+                      }}
+                    >
+                      Fallback: Add Text (Debug)
+                    </button>
+                  </div>
                 </CardContent>
               </Card>
 
