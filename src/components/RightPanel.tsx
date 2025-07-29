@@ -40,6 +40,7 @@ interface RightPanelProps {
   onImageUpload: (file: File) => void;
   onProductColorChange: (color: string) => void;
   textObjects: any[];
+  imageObjects?: any[];
   selectedProduct?: string;
   selectedColor?: string;
   onProductChange?: (productId: string) => void;
@@ -63,6 +64,7 @@ export const RightPanel = ({
   onImageUpload,
   onProductColorChange,
   textObjects = [],
+  imageObjects = [],
   selectedProduct = "bella-3001c",
   selectedColor = "White",
   onProductChange
@@ -1075,6 +1077,96 @@ export const RightPanel = ({
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Image Elements List */}
+              {imageObjects.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4" /> Image Elements
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {imageObjects.map((imageObj, index) => (
+                      <div
+                        key={index}
+                        className={`p-3 rounded border-2 cursor-pointer transition-all ${
+                          selectedObject === imageObj
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:border-primary/50'
+                        }`}
+                        onClick={() => {
+                          if ((window as any).designCanvas?.canvas) {
+                            (window as any).designCanvas.canvas.setActiveObject(imageObj);
+                            (window as any).designCanvas.canvas.renderAll();
+                          }
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="w-10 h-10 rounded border bg-muted flex items-center justify-center overflow-hidden">
+                              {imageObj.getSrc ? (
+                                <img 
+                                  src={imageObj.getSrc()} 
+                                  alt="thumbnail" 
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium truncate">
+                                Image Element
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {Math.round(imageObj.width || 0)} × {Math.round(imageObj.height || 0)}px
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if ((window as any).designCanvas?.canvas) {
+                                  (window as any).designCanvas.canvas.setActiveObject(imageObj);
+                                  (window as any).designCanvas.duplicateSelected();
+                                }
+                              }}
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0 text-destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if ((window as any).designCanvas?.canvas) {
+                                  (window as any).designCanvas.canvas.remove(imageObj);
+                                  (window as any).designCanvas.canvas.renderAll();
+                                  console.log('Image object deleted from list, updating image objects');
+                                  // Update image objects list
+                                  setTimeout(() => {
+                                    if ((window as any).designCanvas?.updateImageObjects) {
+                                      (window as any).designCanvas.updateImageObjects();
+                                    }
+                                  }, 100);
+                                }
+                              }}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
             </>
           )}
 
