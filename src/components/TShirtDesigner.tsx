@@ -5,8 +5,8 @@ import { TopControls } from "@/components/TopControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Settings, Type, Upload, Wand2, Package, Palette } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Settings, Type, Upload, Wand2, Package, Palette, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
@@ -129,7 +129,10 @@ export const TShirtDesigner = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
-              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
                 <SheetTitle className="text-lg">Manage Your Products</SheetTitle>
                 <p className="text-sm text-muted-foreground">You can select multiple products and colors.</p>
               </SheetHeader>
@@ -163,7 +166,10 @@ export const TShirtDesigner = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
-              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
                 <SheetTitle className="text-lg">Text Editor</SheetTitle>
                 <p className="text-sm text-muted-foreground">Add and customize text for your design</p>
               </SheetHeader>
@@ -197,7 +203,10 @@ export const TShirtDesigner = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
-              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
                 <SheetTitle className="text-lg">Upload Your Own Image</SheetTitle>
                 <p className="text-sm text-muted-foreground">Add your custom artwork to the design</p>
               </SheetHeader>
@@ -231,7 +240,10 @@ export const TShirtDesigner = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
-              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
                 <SheetTitle className="text-lg">Add Art <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded ml-2">AI</span></SheetTitle>
                 <p className="text-sm text-muted-foreground">Generate custom artwork with AI</p>
               </SheetHeader>
@@ -264,7 +276,10 @@ export const TShirtDesigner = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
-              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
                 <SheetTitle className="text-lg">Properties</SheetTitle>
                 <p className="text-sm text-muted-foreground">Customize selected elements</p>
               </SheetHeader>
