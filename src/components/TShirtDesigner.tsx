@@ -128,11 +128,12 @@ export const TShirtDesigner = () => {
                 <span className="text-xs">Products</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Change Product</SheetTitle>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+                <SheetTitle className="text-lg">Manage Your Products</SheetTitle>
+                <p className="text-sm text-muted-foreground">You can select multiple products and colors.</p>
               </SheetHeader>
-              <div className="overflow-y-auto p-4">
+              <div className="overflow-y-auto h-full pb-20 px-4">
                 <RightPanel
                   activeTool="products"
                   selectedObject={selectedObject}
@@ -161,11 +162,12 @@ export const TShirtDesigner = () => {
                 <span className="text-xs">Add Text</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Add Text</SheetTitle>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+                <SheetTitle className="text-lg">Text Editor</SheetTitle>
+                <p className="text-sm text-muted-foreground">Add and customize text for your design</p>
               </SheetHeader>
-              <div className="overflow-y-auto p-4">
+              <div className="overflow-y-auto h-full pb-20 px-4">
                 <RightPanel
                   activeTool="text"
                   selectedObject={selectedObject}
@@ -194,11 +196,12 @@ export const TShirtDesigner = () => {
                 <span className="text-xs">Upload Art</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Upload Art</SheetTitle>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+                <SheetTitle className="text-lg">Upload Your Own Image</SheetTitle>
+                <p className="text-sm text-muted-foreground">Add your custom artwork to the design</p>
               </SheetHeader>
-              <div className="overflow-y-auto p-4">
+              <div className="overflow-y-auto h-full pb-20 px-4">
                 <RightPanel
                   activeTool="upload"
                   selectedObject={selectedObject}
@@ -227,11 +230,12 @@ export const TShirtDesigner = () => {
                 <span className="text-xs">Add Art</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>AI Art Generator</SheetTitle>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+                <SheetTitle className="text-lg">Add Art <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded ml-2">AI</span></SheetTitle>
+                <p className="text-sm text-muted-foreground">Generate custom artwork with AI</p>
               </SheetHeader>
-              <div className="overflow-y-auto p-4">
+              <div className="overflow-y-auto h-full pb-20 px-4">
                 <RightPanel
                   activeTool="ai"
                   selectedObject={selectedObject}
@@ -259,11 +263,12 @@ export const TShirtDesigner = () => {
                 <span className="text-xs">Properties</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[80vh] p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Properties</SheetTitle>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+                <SheetTitle className="text-lg">Properties</SheetTitle>
+                <p className="text-sm text-muted-foreground">Customize selected elements</p>
               </SheetHeader>
-              <div className="overflow-y-auto p-4">
+              <div className="overflow-y-auto h-full pb-20 px-4">
                 <RightPanel
                   activeTool={activeTool}
                   selectedObject={selectedObject}
