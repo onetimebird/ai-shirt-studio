@@ -389,13 +389,28 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                  <Button
-                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 pointer-events-auto relative z-50"
-                    onClick={handleAddText}
-                    style={{ pointerEvents: 'auto' }}
+                  <div
+                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-md h-10 flex items-center justify-center cursor-pointer select-none touch-manipulation"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("[RightPanel] 👉 Add Text DIV mousedown");
+                      handleAddText();
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("[RightPanel] 👉 Add Text DIV touchstart");
+                      handleAddText();
+                    }}
+                    style={{ 
+                      WebkitTouchCallout: 'none',
+                      WebkitUserSelect: 'none',
+                      touchAction: 'manipulation'
+                    }}
                   >
                     ✨ Add Text
-                  </Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -687,15 +702,32 @@ export const RightPanel = ({
                     onChange={handleFileUpload}
                     hidden
                   />
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    onClick={handleUploadClick}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 pointer-events-auto relative z-50"
-                    style={{ pointerEvents: 'auto' }}
+                  <div
+                    className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0 rounded-md h-10 px-4 cursor-pointer select-none touch-manipulation"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("[RightPanel] 👉 Upload DIV mousedown");
+                      handleUploadClick();
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("[RightPanel] 👉 Upload DIV touchstart");
+                      handleUploadClick();
+                    }}
+                    style={{ 
+                      WebkitTouchCallout: 'none',
+                      WebkitUserSelect: 'none',
+                      touchAction: 'manipulation',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
                   >
                     📁 Choose File
-                  </Button>
+                  </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     PNG, JPEG, SVG up to 10MB
                   </p>
