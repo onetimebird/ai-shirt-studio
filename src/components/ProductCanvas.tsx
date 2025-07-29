@@ -30,7 +30,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     const canvas = new FabricCanvas(canvasRef.current, {
       width: canvasWidth,
       height: canvasHeight,
-      backgroundColor: "transparent",
+      backgroundColor: "transparent", // Keep transparent so we can see through
       selection: true,
       preserveObjectStacking: true,
       interactive: true,
@@ -45,18 +45,16 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     };
   }, []); // NO dependencies - only run once on mount
 
-  // Load product background image when canvas is ready AND when color/side changes
+  // Load the new t-shirt images as background
   useEffect(() => {
     if (!fabricCanvas) return;
 
-    const colorData = getColorByName(selectedColor);
-    if (!colorData || !colorData.available) {
-      console.log("Color not available:", selectedColor);
-      return;
-    }
-
-    const imageUrl = currentSide === "front" ? colorData.frontImage : colorData.backImage;
-    console.log("ProductCanvas: loading background image from", imageUrl);
+    // Use the uploaded t-shirt images instead of the color system
+    const imageUrl = currentSide === "front" 
+      ? "/lovable-uploads/3d1d2c3e-6ad3-4fdd-b060-e3071653ccdd.png"  // front
+      : "/lovable-uploads/24f3d8e6-2d8b-4f16-8f82-5b7aaae3331b.png"; // back
+      
+    console.log("Loading new t-shirt background:", imageUrl);
 
     // Load background image with CORS fix
     FabricImage.fromURL(imageUrl, {
@@ -66,8 +64,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
-      const scaleX = (canvasWidth * 0.8) / (img.width || 1);
-      const scaleY = (canvasHeight * 0.8) / (img.height || 1);
+      const scaleX = (canvasWidth * 0.9) / (img.width || 1);
+      const scaleY = (canvasHeight * 0.9) / (img.height || 1);
       const scale = Math.min(scaleX, scaleY);
 
       // Set as background image - this keeps it behind all user content
@@ -85,11 +83,11 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       fabricCanvas.backgroundImage = img;
       fabricCanvas.renderAll();
       
-      console.log("ProductCanvas: background set successfully for", selectedColor, currentSide);
+      console.log("New t-shirt background loaded successfully");
     }).catch((error) => {
       console.error("❌ Background load error:", error);
     });
-  }, [fabricCanvas, selectedColor, currentSide]); // Load when canvas ready OR when color/side changes
+  }, [fabricCanvas, currentSide]); // Load when canvas ready OR when side changes
 
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16 relative">
@@ -115,7 +113,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             border: '1px solid hsl(var(--border))',
             borderRadius: '8px',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            backgroundColor: 'hsl(var(--card))',
+            backgroundColor: 'transparent', // Remove solid background
             maxWidth: '100%',
             height: 'auto',
             cursor: 'default'
