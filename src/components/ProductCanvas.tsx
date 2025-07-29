@@ -4,6 +4,7 @@ import { getColorByName } from "@/data/gildan2000Colors";
 import { Button } from "@/components/ui/button";
 import { QuantityModal } from "@/components/QuantityModal";
 import { DollarSign } from "lucide-react";
+import "./ProductCanvas.css";
 
 interface ProductCanvasProps {
   selectedColor: string;
@@ -101,17 +102,25 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         <DollarSign className="w-5 h-5 mr-2" />
         Next Step
       </Button>
-      <div className="relative w-full max-w-full flex justify-center">
+      <div className="relative w-full h-full flex items-center justify-center">
+        {/* NO <img> here—Fabric is already drawing the shirt as a background */}
         <canvas 
           ref={canvasRef}
           id="design-canvas"
-          className="border border-border rounded-lg shadow-lg bg-card max-w-full relative z-10"
+          className="max-w-full"
           style={{ 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 50,
+            pointerEvents: 'auto',
+            border: '1px solid hsl(var(--border))',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            backgroundColor: 'hsl(var(--card))',
             maxWidth: '100%',
-            height: 'auto',
-            display: 'block',
-            position: 'relative',
-            zIndex: 10
+            height: 'auto'
           }}
         />
       </div>
