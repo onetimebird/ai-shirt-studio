@@ -8,31 +8,32 @@ interface AIWandIconProps {
 export const AIWandIcon = ({ className, size = 16 }: AIWandIconProps) => {
   return (
     <div className={cn("relative flex items-center justify-center", className)} style={{ width: size, height: size }}>
-      {/* Magic Wand */}
-      <svg 
-        viewBox="0 0 16 16" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="1.5"
-        className="w-full h-full text-foreground"
-      >
-        {/* Wand stick */}
-        <line x1="2" y1="14" x2="10" y2="6" />
-        {/* Wand tip */}
-        <circle cx="10" cy="6" r="1.5" fill="currentColor" />
-      </svg>
-      
-      {/* AI Text overlay with subtle glow */}
+      {/* Main AI Text - much bigger and centered */}
       <div 
-        className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[6px] font-bold px-1 py-0.5 rounded leading-none shadow-sm"
-        style={{ fontSize: size * 0.25 }}
+        className="font-black text-primary bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent"
+        style={{ fontSize: size * 0.8, lineHeight: 1 }}
       >
         AI
       </div>
       
-      {/* Subtle magic effect - just two small dots */}
-      <div className="absolute top-1 left-3 w-0.5 h-0.5 bg-primary/60 rounded-full animate-pulse"></div>
-      <div className="absolute top-3 right-1 w-1 h-1 bg-primary/40 rounded-full animate-pulse delay-700"></div>
+      {/* Decorative sparkles around AI */}
+      <div className="absolute -top-1 -right-1 w-1.5 h-1.5 text-primary/70">
+        <svg viewBox="0 0 12 12" fill="currentColor" className="w-full h-full">
+          <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5L6 0z" />
+        </svg>
+      </div>
+      
+      <div className="absolute -top-0.5 -left-1 w-1 h-1 text-primary/50">
+        <svg viewBox="0 0 12 12" fill="currentColor" className="w-full h-full">
+          <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5L6 0z" />
+        </svg>
+      </div>
+      
+      <div className="absolute -bottom-1 -left-0.5 w-1 h-1 text-primary/60">
+        <svg viewBox="0 0 12 12" fill="currentColor" className="w-full h-full">
+          <path d="M6 0l1.5 4.5L12 6l-4.5 1.5L6 12l-1.5-4.5L0 6l4.5-1.5L6 0z" />
+        </svg>
+      </div>
     </div>
   );
 };
