@@ -15,8 +15,8 @@ interface ProductCanvasProps {
 export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onCanvasReady }: ProductCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
-  const [productImage, setProductImage] = useState<FabricImage | null>(null);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
+  // Remove productImage state since we're using setBackgroundImage now
 
   // Initialize Fabric.js canvas
   useEffect(() => {
@@ -46,9 +46,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     };
   }, []); // Remove onCanvasReady from deps to prevent reinitializing
 
-  // Load product image when color or side changes
+  // Load product image as background when color or side changes
   useEffect(() => {
-    console.log("ProductCanvas useEffect triggered:", { fabricCanvas: !!fabricCanvas, selectedColor, currentSide });
+    console.log("ProductCanvas background useEffect triggered:", { fabricCanvas: !!fabricCanvas, selectedColor, currentSide });
     
     if (!fabricCanvas) return;
 
@@ -61,21 +61,15 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     }
 
     const imageUrl = currentSide === "front" ? colorData.frontImage : colorData.backImage;
-    console.log("Loading image from URL:", imageUrl);
+    console.log("Loading background image from URL:", imageUrl);
 
-    // Remove existing product image
-    if (productImage) {
-      fabricCanvas.remove(productImage);
-      setProductImage(null);
-    }
-
-    // Load new product image
+    // Load new product image as BACKGROUND (not as object)
     FabricImage.fromURL(imageUrl, {
       crossOrigin: "anonymous",
     }).then((img) => {
-      console.log("Image loaded successfully:", img);
+      console.log("Background image loaded successfully:", img);
       
-      // Scale image to fit canvas while maintaining aspect ratio
+      // Calculate scale to fit canvas while maintaining aspect ratio
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
@@ -83,23 +77,24 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const scaleY = (canvasHeight * 0.8) / (img.height || 1);
       const scale = Math.min(scaleX, scaleY);
 
-      img.scale(scale);
+      // Set as background image - this keeps it behind all user content
       img.set({
-        left: (canvasWidth - (img.width || 0) * scale) / 2,
-        top: (canvasHeight - (img.height || 0) * scale) / 2,
+        scaleX: scale,
+        scaleY: scale,
+        originX: "center",
+        originY: "center",
+        left: canvasWidth / 2,
+        top: canvasHeight / 2,
         selectable: false,
         evented: false,
-        excludeFromExport: false,
       });
-
-      // Add image as background layer
-      fabricCanvas.add(img);
-      fabricCanvas.sendObjectToBack(img);
-      setProductImage(img);
+      
+      fabricCanvas.backgroundImage = img;
       fabricCanvas.renderAll();
-      console.log("Image added to canvas successfully");
+      
+      console.log("Background image set successfully - user content will stay on top");
     }).catch((error) => {
-      console.error("Failed to load product image:", error);
+      console.error("Failed to load background image:", error);
     });
   }, [fabricCanvas, selectedColor, currentSide]);
 
