@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,72 +110,26 @@ export const RightPanel = ({
     }
   };
 
+  // --- CLEAN "Add Text" handler ---
   const handleAddText = () => {
-    console.log("=== ADD TEXT DEBUG START ===");
-    console.log("handleAddText called");
-    console.log("designCanvas object exists:", !!(window as any).designCanvas);
-    console.log("designCanvas.canvas exists:", !!(window as any).designCanvas?.canvas);
-    
-    const fabricCanvas = (window as any).designCanvas?.canvas;
-    console.log("Canvas available:", !!fabricCanvas);
-    console.log("Canvas type:", typeof fabricCanvas);
-    
-    if (!fabricCanvas) {
-      console.log("Canvas not ready, showing error");
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) {
       toast.error("Canvas not ready");
       return;
     }
-
-    console.log("Canvas dimensions:", {
-      width: fabricCanvas.width,
-      height: fabricCanvas.height
-    });
-
-    console.log("Creating textbox with:", {
-      textContent,
-      canvasWidth: fabricCanvas.width,
-      canvasHeight: fabricCanvas.height,
+    const textbox = new FabricTextbox(textContent, {
+      left: canvas.getWidth() / 2,
+      top: canvas.getHeight() / 2,
       fontFamily,
       fontSize,
-      textColor
+      fill: textColor,
+      textAlign: textAlign as any
     });
-
-    try {
-      const textbox = new FabricTextbox(textContent, {
-        left: fabricCanvas.width! / 2,
-        top: fabricCanvas.height! / 2,
-        width: 300, // initial wrap width
-        fontFamily,
-        fontSize,
-        fill: textColor,
-        fontWeight: isBold ? 'bold' : 'normal',
-        fontStyle: isItalic ? 'italic' : 'normal',
-        underline: isUnderline,
-        textAlign: textAlign as any,
-        originX: 'center',
-        originY: 'center',
-        editable: true,
-        objectCaching: false, // better for dynamic editing
-      });
-
-      console.log("Textbox created:", textbox);
-      console.log("Adding textbox to canvas");
-      fabricCanvas.add(textbox);
-      console.log("Setting active object");
-      fabricCanvas.setActiveObject(textbox);
-      console.log("Rendering all");
-      fabricCanvas.renderAll();
-      
-      // Reset text content for next text
-      setTextContent("New multi-line text\nType here...");
-      
-      console.log("Text added successfully");
-      console.log("=== ADD TEXT DEBUG END ===");
-      toast.success("Text added to design");
-    } catch (error) {
-      console.error("Error adding text:", error);
-      toast.error("Failed to add text");
-    }
+    canvas.add(textbox);
+    canvas.setActiveObject(textbox);
+    canvas.renderAll();
+    setTextContent("New multi-line text\nType here...");
+    toast.success("Text added to design");
   };
 
   const handleDelete = () => (window as any).designCanvas?.deleteSelected();
@@ -230,52 +184,26 @@ export const RightPanel = ({
     }
   };
 
+  // --- Clean file‐upload handler ---
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("=== FILE UPLOAD DEBUG START ===");
-    console.log("handleFileUpload called");
-    console.log("onImageUpload prop exists:", !!onImageUpload);
-    console.log("onImageUpload type:", typeof onImageUpload);
-    
     const file = event.target.files?.[0];
-    if (!file) {
-      console.log("No file selected");
+    if (!file) return;
+    const allowed = ["image/png","image/jpeg","image/jpg","image/svg+xml"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only PNG/JPG/SVG under 10 MB");
       return;
     }
-
-    console.log("File selected:", {
-      name: file.name,
-      type: file.type,
-      size: file.size
-    });
-
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
-    if (!allowedTypes.includes(file.type)) {
-      console.log("Invalid file type:", file.type);
-      toast.error("Please upload PNG, JPEG, or SVG files only");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File must be < 10 MB");
       return;
     }
-
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-      console.log("File too large:", file.size);
-      toast.error("File size must be less than 10MB");
-      return;
-    }
-
-    console.log("Calling onImageUpload with file");
-    console.log("designCanvas object exists:", !!(window as any).designCanvas);
-    console.log("designCanvas.addImage exists:", !!(window as any).designCanvas?.addImage);
-    
-    try {
-      onImageUpload(file);
-      console.log("onImageUpload called successfully");
-      console.log("=== FILE UPLOAD DEBUG END ===");
-      toast.success("Image uploaded successfully!");
-    } catch (error) {
-      console.error("Error in onImageUpload:", error);
-      toast.error("Failed to upload image");
-    }
+    onImageUpload(file);
+    toast.success("Image uploaded");
   };
+
+  // use a ref to reliably trigger the hidden input on both mobile & desktop
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleUploadClick = () => fileInputRef.current?.click();
 
   // Determine which tab should be active based on the current tool
   const getActiveTab = () => {
@@ -453,9 +381,10 @@ export const RightPanel = ({
                     </div>
                   </div>
                   
-                  <Button 
-                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" 
+                  <Button
+                    className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                     onClick={handleAddText}
+                    onPointerUp={handleAddText}
                     onTouchEnd={handleAddText}
                   >
                     ✨ Add Text
@@ -745,22 +674,22 @@ export const RightPanel = ({
                     Drag & drop or click to upload
                   </p>
                   <input
+                    ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleFileUpload}
-                    className="hidden"
-                    id="file-upload"
+                    hidden
                   />
-                  <label htmlFor="file-upload">
-                    <Button 
-                      variant="outline" 
-                      size="lg" 
-                      asChild
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
-                    >
-                      <span>📁 Choose File</span>
-                    </Button>
-                  </label>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    onClick={handleUploadClick}
+                    onPointerUp={handleUploadClick}
+                    onTouchEnd={handleUploadClick}
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
+                  >
+                    📁 Choose File
+                  </Button>
                   <p className="text-xs text-muted-foreground mt-2">
                     PNG, JPEG, SVG up to 10MB
                   </p>
