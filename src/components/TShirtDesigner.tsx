@@ -50,8 +50,19 @@ export const TShirtDesigner = () => {
   };
 
   const handleImageUpload = (file: File) => {
+    console.log("=== TShirtDesigner handleImageUpload DEBUG START ===");
     console.log("TShirtDesigner handleImageUpload called with file:", file.name);
-    (window as any).designCanvas?.addImage(file);
+    console.log("designCanvas object exists:", !!(window as any).designCanvas);
+    console.log("designCanvas.addImage exists:", !!(window as any).designCanvas?.addImage);
+    
+    if ((window as any).designCanvas?.addImage) {
+      console.log("Calling designCanvas.addImage");
+      (window as any).designCanvas.addImage(file);
+    } else {
+      console.error("designCanvas.addImage not available");
+      toast.error("Canvas not ready for image upload");
+    }
+    console.log("=== TShirtDesigner handleImageUpload DEBUG END ===");
   };
 
   const handleTextPropertiesChange = (properties: any) => {

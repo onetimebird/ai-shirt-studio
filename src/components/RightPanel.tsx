@@ -111,9 +111,14 @@ export const RightPanel = ({
   };
 
   const handleAddText = () => {
+    console.log("=== ADD TEXT DEBUG START ===");
     console.log("handleAddText called");
+    console.log("designCanvas object exists:", !!(window as any).designCanvas);
+    console.log("designCanvas.canvas exists:", !!(window as any).designCanvas?.canvas);
+    
     const fabricCanvas = (window as any).designCanvas?.canvas;
     console.log("Canvas available:", !!fabricCanvas);
+    console.log("Canvas type:", typeof fabricCanvas);
     
     if (!fabricCanvas) {
       console.log("Canvas not ready, showing error");
@@ -121,39 +126,56 @@ export const RightPanel = ({
       return;
     }
 
+    console.log("Canvas dimensions:", {
+      width: fabricCanvas.width,
+      height: fabricCanvas.height
+    });
+
     console.log("Creating textbox with:", {
       textContent,
       canvasWidth: fabricCanvas.width,
-      canvasHeight: fabricCanvas.height
-    });
-
-    const textbox = new FabricTextbox(textContent, {
-      left: fabricCanvas.width! / 2,
-      top: fabricCanvas.height! / 2,
-      width: 300, // initial wrap width
+      canvasHeight: fabricCanvas.height,
       fontFamily,
       fontSize,
-      fill: textColor,
-      fontWeight: isBold ? 'bold' : 'normal',
-      fontStyle: isItalic ? 'italic' : 'normal',
-      underline: isUnderline,
-      textAlign: textAlign as any,
-      originX: 'center',
-      originY: 'center',
-      editable: true,
-      objectCaching: false, // better for dynamic editing
+      textColor
     });
 
-    console.log("Adding textbox to canvas");
-    fabricCanvas.add(textbox);
-    fabricCanvas.setActiveObject(textbox);
-    fabricCanvas.renderAll();
-    
-    // Reset text content for next text
-    setTextContent("New multi-line text\nType here...");
-    
-    console.log("Text added successfully");
-    toast.success("Text added to design");
+    try {
+      const textbox = new FabricTextbox(textContent, {
+        left: fabricCanvas.width! / 2,
+        top: fabricCanvas.height! / 2,
+        width: 300, // initial wrap width
+        fontFamily,
+        fontSize,
+        fill: textColor,
+        fontWeight: isBold ? 'bold' : 'normal',
+        fontStyle: isItalic ? 'italic' : 'normal',
+        underline: isUnderline,
+        textAlign: textAlign as any,
+        originX: 'center',
+        originY: 'center',
+        editable: true,
+        objectCaching: false, // better for dynamic editing
+      });
+
+      console.log("Textbox created:", textbox);
+      console.log("Adding textbox to canvas");
+      fabricCanvas.add(textbox);
+      console.log("Setting active object");
+      fabricCanvas.setActiveObject(textbox);
+      console.log("Rendering all");
+      fabricCanvas.renderAll();
+      
+      // Reset text content for next text
+      setTextContent("New multi-line text\nType here...");
+      
+      console.log("Text added successfully");
+      console.log("=== ADD TEXT DEBUG END ===");
+      toast.success("Text added to design");
+    } catch (error) {
+      console.error("Error adding text:", error);
+      toast.error("Failed to add text");
+    }
   };
 
   const handleDelete = () => (window as any).designCanvas?.deleteSelected();
@@ -209,14 +231,22 @@ export const RightPanel = ({
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("=== FILE UPLOAD DEBUG START ===");
     console.log("handleFileUpload called");
+    console.log("onImageUpload prop exists:", !!onImageUpload);
+    console.log("onImageUpload type:", typeof onImageUpload);
+    
     const file = event.target.files?.[0];
     if (!file) {
       console.log("No file selected");
       return;
     }
 
-    console.log("File selected:", file.name, file.type, file.size);
+    console.log("File selected:", {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
     if (!allowedTypes.includes(file.type)) {
@@ -233,8 +263,18 @@ export const RightPanel = ({
     }
 
     console.log("Calling onImageUpload with file");
-    onImageUpload(file);
-    toast.success("Image uploaded successfully!");
+    console.log("designCanvas object exists:", !!(window as any).designCanvas);
+    console.log("designCanvas.addImage exists:", !!(window as any).designCanvas?.addImage);
+    
+    try {
+      onImageUpload(file);
+      console.log("onImageUpload called successfully");
+      console.log("=== FILE UPLOAD DEBUG END ===");
+      toast.success("Image uploaded successfully!");
+    } catch (error) {
+      console.error("Error in onImageUpload:", error);
+      toast.error("Failed to upload image");
+    }
   };
 
   // Determine which tab should be active based on the current tool
