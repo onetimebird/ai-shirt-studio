@@ -292,39 +292,39 @@ export const RightPanel = ({
   return (
     <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
       <div className="w-full p-4">
-        {/* Section Headers - Clean design without button appearance */}
+        {/* Section Headers - Interactive design with hover effects */}
         {activeTool === "text" || activeTool === "editText" ? (
           // Text tool header
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:scale-105 cursor-default">
               {activeTool === "text" ? "Add Text" : "Edit Text"}
             </h2>
           </div>
         ) : activeTool === "upload" ? (
           // Upload tool header
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:scale-105 cursor-default">
               Upload Image
             </h2>
           </div>
         ) : activeTool === "ai" ? (
           // AI tool header
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:scale-105 cursor-default">
               AI Image Generator
             </h2>
           </div>
         ) : activeTool === "products" ? (
           // Products tool header
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:scale-105 cursor-default">
               Change Product
             </h2>
           </div>
         ) : (
           // Default - show simple header
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:scale-105 cursor-default">
               Properties
             </h2>
           </div>
