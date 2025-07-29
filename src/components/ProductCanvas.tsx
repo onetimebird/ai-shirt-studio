@@ -115,17 +115,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             display: 'block'
           }}
         />
-        <div className="absolute top-2 right-2 flex items-center gap-2">
-          <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
-            {selectedColor} - {currentSide}
-          </div>
+        <div className="absolute top-2 right-2">
           <Button 
             variant="default" 
-            size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex"
+            size="default"
+            className="bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex px-6 py-2.5 text-base font-semibold"
             onClick={() => setIsQuantityModalOpen(true)}
           >
-            <DollarSign className="w-4 h-4 mr-1" />
+            <DollarSign className="w-5 h-5 mr-2" />
             Next Step
           </Button>
         </div>
