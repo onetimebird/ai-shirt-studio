@@ -115,7 +115,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             display: 'block'
           }}
         />
-        <div className="absolute top-1 right-6">
+        <div className="absolute top-1 -right-2">
           <Button 
             variant="default" 
             size="default"
