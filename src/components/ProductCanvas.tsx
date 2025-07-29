@@ -17,9 +17,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    // Calculate responsive canvas dimensions
+    const isMobile = window.innerWidth < 768;
+    const canvasWidth = isMobile ? Math.min(350, window.innerWidth - 40) : 600;
+    const canvasHeight = isMobile ? Math.min(420, (window.innerHeight - 200)) : 700;
+
     const canvas = new FabricCanvas(canvasRef.current, {
-      width: 600,
-      height: 700,
+      width: canvasWidth,
+      height: canvasHeight,
       backgroundColor: "transparent",
       selection: true,
       preserveObjectStacking: true,
@@ -94,11 +99,16 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
   }, [fabricCanvas, selectedColor, currentSide]);
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-6">
-      <div className="relative">
+    <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0">
+      <div className="relative w-full max-w-full flex justify-center">
         <canvas 
           ref={canvasRef}
-          className="border border-border rounded-lg shadow-lg bg-card"
+          className="border border-border rounded-lg shadow-lg bg-card max-w-full"
+          style={{ 
+            maxWidth: '100%',
+            height: 'auto',
+            display: 'block'
+          }}
         />
         <div className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
           {selectedColor} - {currentSide}
