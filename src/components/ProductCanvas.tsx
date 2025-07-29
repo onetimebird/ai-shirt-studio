@@ -104,7 +104,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   }, [fabricCanvas, selectedColor, currentSide]);
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0">
+    <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-2 md:p-6 min-h-0 md:pt-16">
       <div className="relative w-full max-w-full flex justify-center">
         <canvas 
           ref={canvasRef}
