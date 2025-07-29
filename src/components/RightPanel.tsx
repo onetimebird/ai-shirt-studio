@@ -441,6 +441,21 @@ export const RightPanel = ({
                   >
                     ✨ Add Text
                   </Button>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full mt-2"
+                    onClick={() => {
+                      const dc = (window as any).designCanvas;
+                      if (!dc) return toast.error("Canvas not ready");
+                      console.log("🖼️ Objects on canvas:", dc.canvas.getObjects());
+                      const dataURL = dc.canvas.toDataURL({ format: "png" });
+                      const w = window.open("");
+                      w!.document.write(`<h3>Canvas snapshot</h3><img src="${dataURL}" style="max-width:100%"/>`);
+                    }}
+                  >
+                    🐞 Debug Canvas
+                  </Button>
                 </CardContent>
               </Card>
 

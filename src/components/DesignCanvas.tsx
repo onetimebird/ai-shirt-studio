@@ -49,9 +49,9 @@ export const DesignCanvas = ({
                  originX: 'center',
                  originY: 'center',
                });
-                 canvas.add(img);
-                 canvas.bringObjectToFront(img); // Ensure image is on top
-                 canvas.renderAll();
+                  canvas.add(img);
+                  canvas.bringObjectToFront(img); // Ensure image is on top
+                  canvas.renderAll();
                  console.log("Image added to canvas successfully");
               }).catch((error) => {
                 console.error("Error adding image:", error);
@@ -76,9 +76,9 @@ export const DesignCanvas = ({
                 originX: 'center',
                 originY: 'center',
               });
-               canvas.add(img);
-               canvas.bringObjectToFront(img); // Ensure image is on top
-               canvas.renderAll();
+                canvas.add(img);
+                canvas.bringObjectToFront(img); // Ensure image is on top
+                canvas.renderAll();
                console.log("Image from URL added to canvas successfully");
             }).catch((error) => {
               console.error("Error adding image from URL:", error);
