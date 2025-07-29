@@ -295,6 +295,10 @@ export const RightPanel = ({
 
   return (
     <div className="w-full lg:w-80 bg-card border-l border-border overflow-y-auto shadow-soft">
+      {/* VISUAL DEBUG - This should be impossible to miss */}
+      <div className="bg-red-500 text-white p-4 text-center font-bold text-lg">
+        🔴 NEW RIGHTPANEL LOADED - Tool: {activeTool}
+      </div>
       <Tabs value={getActiveTab()} className="w-full p-4">
         {/* Only show tabs based on context */}
         {activeTool === "text" || activeTool === "editText" ? (
