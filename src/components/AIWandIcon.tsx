@@ -22,32 +22,17 @@ export const AIWandIcon = ({ className, size = 16 }: AIWandIconProps) => {
         <circle cx="10" cy="6" r="1.5" fill="currentColor" />
       </svg>
       
-      {/* AI Text overlay */}
+      {/* AI Text overlay with subtle glow */}
       <div 
-        className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[6px] font-bold px-1 py-0.5 rounded leading-none"
+        className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-[6px] font-bold px-1 py-0.5 rounded leading-none shadow-sm"
         style={{ fontSize: size * 0.25 }}
       >
         AI
       </div>
       
-      {/* Sparkles around wand */}
-      <div className="absolute top-0 left-2 w-1 h-1 text-primary opacity-80">
-        <svg viewBox="0 0 8 8" fill="currentColor" className="w-full h-full animate-pulse">
-          <path d="M4 0l1 3h3l-2.5 2L6.5 8 4 6 1.5 8 2.5 5 0 3h3L4 0z" />
-        </svg>
-      </div>
-      
-      <div className="absolute top-2 right-0 w-0.5 h-0.5 text-primary/60">
-        <svg viewBox="0 0 8 8" fill="currentColor" className="w-full h-full animate-pulse delay-150">
-          <path d="M4 0l1 3h3l-2.5 2L6.5 8 4 6 1.5 8 2.5 5 0 3h3L4 0z" />
-        </svg>
-      </div>
-      
-      <div className="absolute bottom-1 left-0 w-0.5 h-0.5 text-primary/50">
-        <svg viewBox="0 0 8 8" fill="currentColor" className="w-full h-full animate-pulse delay-300">
-          <path d="M4 0l1 3h3l-2.5 2L6.5 8 4 6 1.5 8 2.5 5 0 3h3L4 0z" />
-        </svg>
-      </div>
+      {/* Subtle magic effect - just two small dots */}
+      <div className="absolute top-1 left-3 w-0.5 h-0.5 bg-primary/60 rounded-full animate-pulse"></div>
+      <div className="absolute top-3 right-1 w-1 h-1 bg-primary/40 rounded-full animate-pulse delay-700"></div>
     </div>
   );
 };
