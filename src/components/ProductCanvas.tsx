@@ -64,9 +64,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
-      // Scale t-shirt to fit nicely within the larger canvas
+      // Keep t-shirt at reasonable size within the larger canvas
       const isMobile = canvasWidth < 500;
-      const scaleFactor = isMobile ? 1.0 : 1.8; // More reasonable scaling with larger canvas
+      const scaleFactor = isMobile ? 0.8 : 0.9; // Much smaller scale - just enough to show full t-shirt
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
