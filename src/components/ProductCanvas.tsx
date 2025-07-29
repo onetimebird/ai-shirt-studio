@@ -104,11 +104,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       <div className="relative w-full max-w-full flex justify-center">
         <canvas 
           ref={canvasRef}
-          className="border border-border rounded-lg shadow-lg bg-card max-w-full"
+          id="design-canvas"
+          className="border border-border rounded-lg shadow-lg bg-card max-w-full relative z-10"
           style={{ 
             maxWidth: '100%',
             height: 'auto',
-            display: 'block'
+            display: 'block',
+            position: 'relative',
+            zIndex: 10
           }}
         />
       </div>
