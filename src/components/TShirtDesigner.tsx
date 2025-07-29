@@ -19,6 +19,7 @@ export const TShirtDesigner = () => {
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);
   const [textObjects, setTextObjects] = useState<any[]>([]);
+  const [imageObjects, setImageObjects] = useState<any[]>([]);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -68,6 +69,10 @@ export const TShirtDesigner = () => {
     setTextObjects(objects);
   };
 
+  const handleImageObjectsUpdate = (objects: any[]) => {
+    setImageObjects(objects);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Smoke Test - Uncomment to test SVG loading */}
@@ -105,6 +110,7 @@ export const TShirtDesigner = () => {
             onSelectedObjectChange={setSelectedObject}
             onToolChange={setActiveTool}
             onTextObjectsUpdate={handleTextObjectsUpdate}
+            onImageObjectsUpdate={handleImageObjectsUpdate}
           />
         </div>
 
@@ -117,6 +123,7 @@ export const TShirtDesigner = () => {
             onImageUpload={handleImageUpload}
             onProductColorChange={handleProductColorChange}
             textObjects={textObjects}
+            imageObjects={imageObjects}
             selectedProduct={selectedProduct}
             selectedColor={selectedColor}
             onProductChange={setSelectedProduct}
@@ -156,6 +163,7 @@ export const TShirtDesigner = () => {
                   onImageUpload={handleImageUpload}
                   onProductColorChange={handleProductColorChange}
                   textObjects={(window as any).designCanvas?.textObjects || []}
+                  imageObjects={(window as any).designCanvas?.imageObjects || []}
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
@@ -193,6 +201,7 @@ export const TShirtDesigner = () => {
                   onImageUpload={handleImageUpload}
                   onProductColorChange={handleProductColorChange}
                   textObjects={(window as any).designCanvas?.textObjects || []}
+                  imageObjects={(window as any).designCanvas?.imageObjects || []}
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
@@ -230,6 +239,7 @@ export const TShirtDesigner = () => {
                   onImageUpload={handleImageUpload}
                   onProductColorChange={handleProductColorChange}
                   textObjects={(window as any).designCanvas?.textObjects || []}
+                  imageObjects={(window as any).designCanvas?.imageObjects || []}
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
@@ -267,6 +277,7 @@ export const TShirtDesigner = () => {
                   onImageUpload={handleImageUpload}
                   onProductColorChange={handleProductColorChange}
                   textObjects={(window as any).designCanvas?.textObjects || []}
+                  imageObjects={(window as any).designCanvas?.imageObjects || []}
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
@@ -303,6 +314,7 @@ export const TShirtDesigner = () => {
                   onImageUpload={handleImageUpload}
                   onProductColorChange={handleProductColorChange}
                   textObjects={(window as any).designCanvas?.textObjects || []}
+                  imageObjects={(window as any).designCanvas?.imageObjects || []}
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}

@@ -9,6 +9,7 @@ interface DesignCanvasProps {
   onSelectedObjectChange: (object: any) => void;
   onToolChange: (tool: string) => void;
   onTextObjectsUpdate?: (objects: any[]) => void;
+  onImageObjectsUpdate?: (objects: any[]) => void;
 }
 
 export const DesignCanvas = ({
@@ -18,7 +19,8 @@ export const DesignCanvas = ({
   activeTool,
   onSelectedObjectChange,
   onToolChange,
-  onTextObjectsUpdate
+  onTextObjectsUpdate,
+  onImageObjectsUpdate
 }: DesignCanvasProps) => {
   return (
     <ProductCanvas 
@@ -51,10 +53,16 @@ export const DesignCanvas = ({
                  originX: 'center',
                  originY: 'center',
                });
-                  canvas.add(img);
-                  canvas.bringObjectToFront(img); // Ensure image is on top
-                  canvas.renderAll();
-                 console.log("Image added to canvas successfully");
+                   canvas.add(img);
+                   canvas.bringObjectToFront(img); // Ensure image is on top
+                   canvas.renderAll();
+                   console.log("Image added to canvas successfully");
+                   // Update image objects list
+                   setTimeout(() => {
+                     if ((window as any).designCanvas?.updateImageObjects) {
+                       (window as any).designCanvas.updateImageObjects();
+                     }
+                   }, 100);
               }).catch((error) => {
                 console.error("Error adding image:", error);
               });
@@ -82,6 +90,12 @@ export const DesignCanvas = ({
                 canvas.bringObjectToFront(img); // Ensure image is on top
                 canvas.renderAll();
                console.log("Image from URL added to canvas successfully");
+               // Update image objects list
+               setTimeout(() => {
+                 if ((window as any).designCanvas?.updateImageObjects) {
+                   (window as any).designCanvas.updateImageObjects();
+                 }
+               }, 100);
             }).catch((error) => {
               console.error("Error adding image from URL:", error);
             });
@@ -91,11 +105,14 @@ export const DesignCanvas = ({
             if (activeObject) {
               canvas.remove(activeObject);
               canvas.renderAll();
-              console.log('Object deleted, updating text objects list');
-              // Update text objects list after a small delay to ensure canvas is updated
+              console.log('Object deleted, updating objects list');
+              // Update both text and image objects list after a small delay to ensure canvas is updated
               setTimeout(() => {
                 if ((window as any).designCanvas?.updateTextObjects) {
                   (window as any).designCanvas.updateTextObjects();
+                }
+                if ((window as any).designCanvas?.updateImageObjects) {
+                  (window as any).designCanvas.updateImageObjects();
                 }
               }, 100);
             }
@@ -111,10 +128,14 @@ export const DesignCanvas = ({
                 canvas.add(cloned);
                 canvas.setActiveObject(cloned);
                 canvas.renderAll();
-                // Update text objects list if it's a text object
+                // Update objects list based on type
                 if (cloned.type === 'textbox' || cloned.type === 'text') {
                   if ((window as any).designCanvas?.updateTextObjects) {
                     (window as any).designCanvas.updateTextObjects();
+                  }
+                } else if (cloned.type === 'image') {
+                  if ((window as any).designCanvas?.updateImageObjects) {
+                    (window as any).designCanvas.updateImageObjects();
                   }
                 }
               });
@@ -163,6 +184,17 @@ export const DesignCanvas = ({
             if (onTextObjectsUpdate) {
               onTextObjectsUpdate(textObjs);
             }
+          },
+          imageObjects: [],
+          updateImageObjects: () => {
+            const allObjects = canvas.getObjects();
+            const imageObjs = allObjects.filter(obj => obj.type === 'image');
+            (window as any).designCanvas.imageObjects = imageObjs;
+            console.log('Updated image objects:', imageObjs.length);
+            // Notify parent component
+            if (onImageObjectsUpdate) {
+              onImageObjectsUpdate(imageObjs);
+            }
           }
         };
 
@@ -187,11 +219,14 @@ export const DesignCanvas = ({
               canvas.remove(activeObject);
               canvas.renderAll();
               onSelectedObjectChange(null);
-              console.log('Object deleted via keyboard, updating text objects list');
-              // Update text objects list after a small delay
+              console.log('Object deleted via keyboard, updating objects list');
+              // Update both text and image objects list after a small delay
               setTimeout(() => {
                 if ((window as any).designCanvas?.updateTextObjects) {
                   (window as any).designCanvas.updateTextObjects();
+                }
+                if ((window as any).designCanvas?.updateImageObjects) {
+                  (window as any).designCanvas.updateImageObjects();
                 }
               }, 100);
             }
@@ -209,6 +244,16 @@ export const DesignCanvas = ({
                 canvas.add(cloned);
                 canvas.setActiveObject(cloned);
                 canvas.renderAll();
+                // Update objects list based on type
+                if (cloned.type === 'textbox' || cloned.type === 'text') {
+                  if ((window as any).designCanvas?.updateTextObjects) {
+                    (window as any).designCanvas.updateTextObjects();
+                  }
+                } else if (cloned.type === 'image') {
+                  if ((window as any).designCanvas?.updateImageObjects) {
+                    (window as any).designCanvas.updateImageObjects();
+                  }
+                }
               });
             }
           }
