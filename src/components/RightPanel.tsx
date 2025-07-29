@@ -67,6 +67,8 @@ export const RightPanel = ({
   selectedColor = "White",
   onProductChange
 }: RightPanelProps) => {
+  // IMMEDIATE DEBUG - check if component even loads
+  console.log("🔴 [RightPanel] COMPONENT LOADING - activeTool:", activeTool);
   // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
   const [fontFamily, setFontFamily] = useState("Arial");
