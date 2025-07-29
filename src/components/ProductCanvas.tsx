@@ -91,7 +91,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, onCanvasReady }: Pro
     }).catch((error) => {
       console.error("Failed to load product image:", error);
     });
-  }, [fabricCanvas, selectedColor, currentSide, productImage]);
+  }, [fabricCanvas, selectedColor, currentSide]);
 
   return (
     <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-6">
