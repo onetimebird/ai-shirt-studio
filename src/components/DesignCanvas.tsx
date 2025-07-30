@@ -68,10 +68,13 @@ export const DesignCanvas = ({
         };
         
         // Save initial empty state (no user objects)
+        console.log('[History] Initializing history system');
         saveUserObjectsState();
+        console.log('[History] Initial state saved');
         
         // Save state after any user object modification
         const setupHistoryListeners = () => {
+          console.log('[History] Setting up event listeners');
           canvas.on('object:added', (e) => {
             const obj = e.target;
             // Only save state for user-added objects (not template objects)
@@ -96,7 +99,9 @@ export const DesignCanvas = ({
           });
         };
         
+        console.log('[History] Calling setupHistoryListeners');
         setupHistoryListeners();
+        console.log('[History] Event listeners set up complete');
         
         // Make canvas available globally for design tools
         (window as any).designCanvas = { 

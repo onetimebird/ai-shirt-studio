@@ -28,10 +28,15 @@ export const UndoRedoControls = () => {
         size="sm"
         disabled={!canUndo}
         onClick={() => {
+          console.log('[UI] Undo button clicked');
           const designCanvas = (window as any).designCanvas;
+          console.log('[UI] Design canvas available:', !!designCanvas);
           if (designCanvas) {
+            console.log('[UI] Calling undo function');
             designCanvas.undo();
             updateUndoRedoState();
+          } else {
+            console.log('[UI] ERROR: Design canvas not available');
           }
         }}
         className="h-8 w-8 p-0 hover:bg-muted"
@@ -43,10 +48,15 @@ export const UndoRedoControls = () => {
         size="sm"
         disabled={!canRedo}
         onClick={() => {
+          console.log('[UI] Redo button clicked');
           const designCanvas = (window as any).designCanvas;
+          console.log('[UI] Design canvas available:', !!designCanvas);
           if (designCanvas) {
+            console.log('[UI] Calling redo function');
             designCanvas.redo();
             updateUndoRedoState();
+          } else {
+            console.log('[UI] ERROR: Design canvas not available');
           }
         }}
         className="h-8 w-8 p-0 hover:bg-muted"
