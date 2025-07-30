@@ -22,17 +22,21 @@ export const DesignCanvas = ({
   onTextObjectsUpdate,
   onImageObjectsUpdate
 }: DesignCanvasProps) => {
+  console.log('[DesignCanvas] Component rendering');
+  
   // State for undo/redo functionality
   const canvasHistory = {
     states: [] as string[],
     currentIndex: -1
   };
+  
   return (
     <ProductCanvas 
       selectedColor={selectedColor}
       currentSide={currentSide}
       selectedProduct={selectedProduct}
       onCanvasReady={(canvas) => {
+        console.log('[DesignCanvas] onCanvasReady callback triggered');
         console.log("Canvas ready, setting up global designCanvas object");
         console.log("Canvas details:", { width: canvas.width, height: canvas.height });
         
@@ -102,10 +106,12 @@ export const DesignCanvas = ({
         console.log('[History] Calling setupHistoryListeners');
         setupHistoryListeners();
         console.log('[History] Event listeners set up complete');
+        console.log('[History] Setting up global designCanvas object');
         
         // Make canvas available globally for design tools
         (window as any).designCanvas = { 
           canvas,
+          history: canvasHistory,  // Add reference to history object
           addImage: (file: File) => {
             console.log("addImage called with file:", file.name);
             const reader = new FileReader();
@@ -362,7 +368,13 @@ export const DesignCanvas = ({
           canUndo: () => canvasHistory.currentIndex > 0,
           canRedo: () => canvasHistory.currentIndex < canvasHistory.states.length - 1
         };
-
+        
+        console.log('[History] Global designCanvas object created with functions:', {
+          hasUndo: typeof (window as any).designCanvas.undo === 'function',
+          hasRedo: typeof (window as any).designCanvas.redo === 'function',
+          hasCanUndo: typeof (window as any).designCanvas.canUndo === 'function',
+          hasCanRedo: typeof (window as any).designCanvas.canRedo === 'function'
+        });
         // Handle object selection
         canvas.on('selection:created', (e: any) => {
           onSelectedObjectChange(e.selected?.[0] || null);

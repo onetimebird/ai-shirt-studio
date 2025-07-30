@@ -38,7 +38,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     });
 
     setFabricCanvas(canvas);
+    console.log('[ProductCanvas] Canvas created, calling onCanvasReady');
     onCanvasReady?.(canvas);
+    console.log('[ProductCanvas] onCanvasReady called');
 
     return () => {
       canvas.dispose();
