@@ -143,7 +143,6 @@ export const RightPanel = ({
     const textbox = new FabricTextbox(textContent, {
       left: fabricCanvas.width! / 2,
       top: fabricCanvas.height! / 2,
-      width: 300, // initial wrap width
       fontFamily,
       fontSize,
       fill: textColor,
@@ -155,6 +154,15 @@ export const RightPanel = ({
       originY: 'center',
       editable: true,
       objectCaching: false, // better for dynamic editing
+      // Auto-size the textbox to content
+      splitByGrapheme: false,
+      // Start with a reasonable width but allow it to adjust
+      width: Math.max(200, textContent.length * fontSize * 0.6),
+    });
+
+    // After creation, adjust the width to fit content better
+    textbox.set({
+      width: Math.max(textbox.width || 200, textbox.calcTextWidth() + 20)
     });
 
     console.log("[Debug] Textbox created with position:", {

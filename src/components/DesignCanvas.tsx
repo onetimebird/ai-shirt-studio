@@ -420,6 +420,44 @@ export const DesignCanvas = ({
           }
         });
 
+        // Long press support for mobile text editing
+        let longPressTimer: NodeJS.Timeout | null = null;
+        let longPressTarget: any = null;
+        const LONG_PRESS_DURATION = 800; // 800ms for long press
+
+        canvas.on('mouse:down', (e: any) => {
+          const target = e.target;
+          if (target && (target.type === 'textbox' || target.type === 'text')) {
+            longPressTarget = target;
+            longPressTimer = setTimeout(() => {
+              // Only trigger if we're on mobile (touch device)
+              if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                target.enterEditing();
+                canvas.setActiveObject(target);
+                canvas.renderAll();
+                console.log('Long press detected - entering text edit mode');
+              }
+            }, LONG_PRESS_DURATION);
+          }
+        });
+
+        canvas.on('mouse:up', () => {
+          if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }
+          longPressTarget = null;
+        });
+
+        canvas.on('mouse:move', (e: any) => {
+          // Cancel long press if mouse/finger moves too much
+          if (longPressTimer && longPressTarget && e.target !== longPressTarget) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+            longPressTarget = null;
+          }
+        });
+
         // Keyboard handlers - but only when NOT editing text
         const handleKeyDown = (e: KeyboardEvent) => {
           const activeObject = canvas.getActiveObject();
