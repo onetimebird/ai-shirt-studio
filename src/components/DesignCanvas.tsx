@@ -396,6 +396,7 @@ export const DesignCanvas = ({
           hasCanUndo: typeof (window as any).designCanvas.canUndo === 'function',
           hasCanRedo: typeof (window as any).designCanvas.canRedo === 'function'
         });
+        
         // Handle object selection
         canvas.on('selection:created', (e: any) => {
           onSelectedObjectChange(e.selected?.[0] || null);
@@ -409,10 +410,30 @@ export const DesignCanvas = ({
           onSelectedObjectChange(null);
         });
 
-        // Keyboard handlers
+        // Enable double-click to edit text
+        canvas.on('mouse:dblclick', (e: any) => {
+          const target = e.target;
+          if (target && (target.type === 'textbox' || target.type === 'text')) {
+            target.enterEditing();
+            canvas.setActiveObject(target);
+            canvas.renderAll();
+          }
+        });
+
+        // Keyboard handlers - but only when NOT editing text
         const handleKeyDown = (e: KeyboardEvent) => {
+          const activeObject = canvas.getActiveObject();
+          
+          // Don't interfere with text editing - check if we're in text editing mode
+          if (activeObject && (activeObject.type === 'textbox' || activeObject.type === 'text')) {
+            // Check if the text object is in editing mode
+            if ((activeObject as any).isEditing) {
+              console.log('Text is being edited, ignoring keyboard shortcuts');
+              return; // Don't handle delete/backspace when editing text content
+            }
+          }
+          
           if (e.key === 'Delete' || e.key === 'Backspace') {
-            const activeObject = canvas.getActiveObject();
             if (activeObject) {
               canvas.remove(activeObject);
               canvas.renderAll();

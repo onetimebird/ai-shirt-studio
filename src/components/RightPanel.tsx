@@ -177,8 +177,14 @@ export const RightPanel = ({
       opacity: obj.opacity
     })));
     
-    // Reset text content for next text
+    // Reset text content for next text and clear selection
     setTextContent("New multi-line text\nType here...");
+    
+    // Clear the canvas selection after a short delay to allow the new object to be selected first
+    setTimeout(() => {
+      fabricCanvas.discardActiveObject();
+      fabricCanvas.renderAll();
+    }, 200);
     
     // Update text objects list
     if ((window as any).designCanvas?.updateTextObjects) {
@@ -189,7 +195,29 @@ export const RightPanel = ({
     toast.success("Text added to design");
   };
 
-  const handleDelete = () => (window as any).designCanvas?.deleteSelected();
+  const handleDelete = () => {
+    const fabricCanvas = (window as any).designCanvas?.canvas;
+    const activeObject = fabricCanvas?.getActiveObject();
+    
+    if (!activeObject) {
+      toast.error("No object selected to delete");
+      return;
+    }
+    
+    fabricCanvas.remove(activeObject);
+    fabricCanvas.renderAll();
+    
+    // Update objects list
+    if ((window as any).designCanvas?.updateTextObjects) {
+      (window as any).designCanvas.updateTextObjects();
+    }
+    if ((window as any).designCanvas?.updateImageObjects) {
+      (window as any).designCanvas.updateImageObjects();
+    }
+    
+    toast.success("Object deleted");
+  };
+  
   const handleDuplicate = () => (window as any).designCanvas?.duplicateSelected();
   const handleRotate = () => (window as any).designCanvas?.rotateSelected();
   const handleCenter = () => (window as any).designCanvas?.centerSelected();
@@ -406,6 +434,35 @@ export const RightPanel = ({
                       <Type className="w-4 h-4 mr-2" />
                       Add Text to Design
                     </Button>
+                  )}
+
+                  {/* Deselect and Add New Text - When text is selected */}
+                  {selectedObject && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          // Clear selection
+                          const fabricCanvas = (window as any).designCanvas?.canvas;
+                          if (fabricCanvas) {
+                            fabricCanvas.discardActiveObject();
+                            fabricCanvas.renderAll();
+                          }
+                        }}
+                        className="w-full"
+                        size="sm"
+                      >
+                        Deselect
+                      </Button>
+                      <Button
+                        onClick={handleAddText}
+                        className="w-full"
+                        size="sm"
+                      >
+                        <Type className="w-4 h-4 mr-2" />
+                        Add New
+                      </Button>
+                    </div>
                   )}
 
                   {/* Action Buttons Row - Only show when text is selected */}
