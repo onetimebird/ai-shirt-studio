@@ -98,15 +98,6 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
             AI
           </span>
         </h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          or{' '}
-          <button 
-            onClick={() => document.getElementById('file-upload')?.click()}
-            className="text-primary hover:underline"
-          >
-            Upload Your Own Image
-          </button>
-        </p>
 
         <Tabs defaultValue="generative" className="mb-6 flex-1 flex flex-col">
           <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted p-1 rounded-lg">
