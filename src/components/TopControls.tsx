@@ -268,11 +268,11 @@ export const TopControls = ({
           <Button 
             variant="default" 
             size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white flex-1 min-w-0 whitespace-nowrap flex items-center justify-center"
+            className="bg-blue-500 hover:bg-blue-600 text-white flex-1 min-w-0 whitespace-nowrap flex items-center justify-center px-2 py-2 w-full"
             onClick={() => setIsQuantityModalOpen(true)}
           >
-            <DollarSign className="w-4 h-4 mr-1" />
-            Next
+            <DollarSign className="w-4 h-4 mr-1 flex-shrink-0" />
+            <span>Next</span>
           </Button>
         </div>
       </div>

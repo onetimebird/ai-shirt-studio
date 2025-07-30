@@ -114,7 +114,7 @@ export const TShirtDesigner = () => {
         </div>
 
         {/* Central Canvas - Scrollable area */}
-        <div className="flex-1 relative min-w-0 overflow-auto">
+        <div className="flex-1 relative min-w-0 overflow-auto scrollbar-hide">
           <div className="min-h-full flex items-center justify-center p-2 md:p-4">
             {/* Undo/Redo Controls - positioned over canvas */}
             <UndoRedoControls />
@@ -135,8 +135,8 @@ export const TShirtDesigner = () => {
         </div>
 
         {/* Right Panel - Sticky sidebar */}
-        <div className="hidden xl:block flex-shrink-0 w-80 2xl:w-96 sticky top-0 h-screen">
-          <div className="h-full overflow-y-auto">
+        <div className="hidden xl:block w-80 2xl:w-96 sticky top-0 h-screen border-l border-border">
+          <div className="h-full overflow-y-auto scrollbar-hide bg-card">
             <RightPanel
               activeTool={activeTool}
               selectedObject={selectedObject}
