@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Expand, Info } from 'lucide-react';
+import { Expand, Info, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const exampleImages = [
@@ -49,6 +49,29 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
+  const [promptHistory, setPromptHistory] = useState<string[]>([]);
+  const [generatedImages, setGeneratedImages] = useState<Array<{url: string, prompt: string}>>([]);
+  const [showTips, setShowTips] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("ai-prompts");
+    if (stored) {
+      try {
+        setPromptHistory(JSON.parse(stored));
+      } catch (e) {
+        console.error("Error parsing stored prompts:", e);
+      }
+    }
+  }, []);
+
+  const savePrompt = (p: string) => {
+    const trimmedPrompt = p.trim();
+    if (!trimmedPrompt) return;
+    
+    const next = [trimmedPrompt, ...promptHistory.filter(h => h !== trimmedPrompt)].slice(0, 10);
+    setPromptHistory(next);
+    localStorage.setItem("ai-prompts", JSON.stringify(next));
+  };
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -58,17 +81,37 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
 
     setIsGenerating(true);
     try {
-      // This is where you'd integrate with your AI service
-      // For now, we'll use a placeholder
-      toast.info("AI image generation coming soon!");
+      const response = await fetch('/functions/v1/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          prompt: prompt.trim(),
+          width: 1024,
+          height: 1024 
+        })
+      });
+
+      const data = await response.json();
       
-      // Placeholder - you can replace this with actual AI service call
-      // const result = await aiService.generateImage(prompt);
-      // onImageGenerated?.(result.url);
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate image');
+      }
+
+      if (data.url) {
+        const newImage = { url: data.url, prompt: prompt.trim() };
+        setGeneratedImages(prev => [newImage, ...prev]);
+        savePrompt(prompt.trim());
+        onImageGenerated?.(data.url);
+        toast.success("Image generated successfully!");
+      } else {
+        throw new Error('No image URL received');
+      }
       
     } catch (error) {
       console.error("AI generation error:", error);
-      toast.error("Failed to generate image");
+      toast.error(`Failed to generate image: ${error.message}`);
     } finally {
       setIsGenerating(false);
     }
@@ -130,10 +173,29 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
             />
             
             <div className="flex justify-between items-center text-sm py-2">
-              <button className="text-primary hover:underline font-medium">
-                Previous Prompts
-              </button>
-              <button className="text-primary hover:underline flex items-center gap-1 font-medium">
+              {promptHistory.length > 0 && (
+                <select
+                  className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setPrompt(e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Previous Prompts</option>
+                  {promptHistory.map((h, i) => (
+                    <option key={i} value={h} className="bg-background text-foreground">
+                      {h.length > 50 ? h.substring(0, 50) + "..." : h}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <button 
+                className="text-primary hover:underline flex items-center gap-1 font-medium"
+                onClick={() => setShowTips(true)}
+              >
                 AI prompt guide <Info className="w-4 h-4" />
               </button>
             </div>
@@ -154,6 +216,61 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
             </Button>
 
             <div className="flex-1 flex flex-col">
+              {generatedImages.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-sm font-semibold">Your Generated Images</h4>
+                    <button
+                      onClick={() => setGeneratedImages([])}
+                      className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Clear all
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {generatedImages.map((image, index) => (
+                      <div 
+                        key={index} 
+                        className="relative group cursor-pointer overflow-hidden rounded-md"
+                        onClick={() => handleExampleImageClick(image.url)}
+                      >
+                        <img 
+                          src={image.url} 
+                          alt={image.prompt}
+                          className="w-full h-24 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-end justify-end p-2 rounded-md transition-all duration-200">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button 
+                                className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Expand className="w-4 h-4" />
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl p-0 bg-transparent border-0">
+                              <div className="relative">
+                                <img 
+                                  src={image.url} 
+                                  alt={image.prompt}
+                                  className="w-full h-auto rounded-lg shadow-2xl animate-scale-in"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg">
+                                  <h3 className="text-white font-semibold text-lg">Generated Image</h3>
+                                  <p className="text-white/80 text-sm">{image.prompt}</p>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <h4 className="text-sm font-semibold mb-3">Example AI Image Creations</h4>
               <div className="grid grid-cols-2 gap-2 flex-1 overflow-y-auto">
                 {exampleImages.map((image, index) => (
@@ -170,15 +287,12 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                       className="w-full h-24 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
                     />
                     
-                    {/* Zoom overlay with icon */}
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-end justify-end p-2 rounded-md transition-all duration-200">
                       <Dialog>
                         <DialogTrigger asChild>
                           <button 
                             className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent triggering the image click
-                            }}
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Expand className="w-4 h-4" />
                           </button>
@@ -210,6 +324,41 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* AI Prompt Tips Modal */}
+        {showTips && (
+          <Dialog open={showTips} onOpenChange={setShowTips}>
+            <DialogContent className="max-w-md">
+              <div className="p-4">
+                <h2 className="text-xl font-semibold mb-4">AI Prompt Tips</h2>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <h3 className="font-medium mb-1">Be Specific:</h3>
+                    <p className="text-muted-foreground">"Retro 70s typography with bold orange letters"</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Include Style:</h3>
+                    <p className="text-muted-foreground">"Flat vector illustration, minimalist design"</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Mention Colors/Mood:</h3>
+                    <p className="text-muted-foreground">"Pastel colors, dreamy atmosphere, soft lighting"</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Add Context:</h3>
+                    <p className="text-muted-foreground">"Logo for a coffee shop, modern and friendly"</p>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => setShowTips(false)}
+                >
+                  Got it!
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </CardContent>
     </Card>
   );
