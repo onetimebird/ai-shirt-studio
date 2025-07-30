@@ -49,6 +49,14 @@ export const GILDAN_2000_COLORS: Gildan2000Color[] = [
     backImage: "/lovable-uploads/c6edff31-bd65-4bb0-9df2-5396a76b8f71.png",
     available: true,
   },
+  {
+    name: "antique-irish-green",
+    label: "Antique Irish Green",
+    value: "#1E8B3A",
+    frontImage: "/lovable-uploads/5500f518-39f9-41b0-a293-0156629ba285.png",
+    backImage: "/lovable-uploads/3cdae772-d4a2-43d4-975d-c48b79a05f8e.png",
+    available: true,
+  },
   // Placeholder entries for future colors (to be added as more images are uploaded)
   {
     name: "white",
