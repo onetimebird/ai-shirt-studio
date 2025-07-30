@@ -27,7 +27,8 @@ export const DesignCanvas = ({
   // State for undo/redo functionality
   const canvasHistory = {
     states: [] as string[],
-    currentIndex: -1
+    currentIndex: -1,
+    isRestoring: false  // Flag to prevent history saves during undo/redo
   };
   
   return (
@@ -81,24 +82,30 @@ export const DesignCanvas = ({
           console.log('[History] Setting up event listeners');
           canvas.on('object:added', (e) => {
             const obj = e.target;
-            // Only save state for user-added objects (not template objects)
-            if (obj && obj.selectable !== false && obj.evented !== false) {
+            // Only save state for user-added objects AND when not restoring from history
+            if (obj && obj.selectable !== false && obj.evented !== false && !canvasHistory.isRestoring) {
               console.log('[History] Object added, saving state:', obj.type);
               setTimeout(saveUserObjectsState, 100);
+            } else if (canvasHistory.isRestoring) {
+              console.log('[History] Object added during restore, skipping save');
             }
           });
           canvas.on('object:removed', (e) => {
             const obj = e.target;
-            if (obj && obj.selectable !== false && obj.evented !== false) {
+            if (obj && obj.selectable !== false && obj.evented !== false && !canvasHistory.isRestoring) {
               console.log('[History] Object removed, saving state:', obj.type);
               setTimeout(saveUserObjectsState, 100);
+            } else if (canvasHistory.isRestoring) {
+              console.log('[History] Object removed during restore, skipping save');
             }
           });
           canvas.on('object:modified', (e) => {
             const obj = e.target;
-            if (obj && obj.selectable !== false && obj.evented !== false) {
+            if (obj && obj.selectable !== false && obj.evented !== false && !canvasHistory.isRestoring) {
               console.log('[History] Object modified, saving state:', obj.type);
               setTimeout(saveUserObjectsState, 100);
+            } else if (canvasHistory.isRestoring) {
+              console.log('[History] Object modified during restore, skipping save');
             }
           });
         };
@@ -283,6 +290,9 @@ export const DesignCanvas = ({
             });
             
             if (canvasHistory.currentIndex > 0) {
+              console.log('[Undo] Setting isRestoring to true');
+              canvasHistory.isRestoring = true;
+              
               canvasHistory.currentIndex--;
               const previousState = canvasHistory.states[canvasHistory.currentIndex];
               const userObjectsData = JSON.parse(previousState);
@@ -309,10 +319,14 @@ export const DesignCanvas = ({
                   objects.forEach(obj => canvas.add(obj));
                   canvas.renderAll();
                   console.log('[Undo] Successfully restored', objects.length, 'user objects');
+                  canvasHistory.isRestoring = false;
+                  console.log('[Undo] Setting isRestoring to false');
                 });
               } else {
                 canvas.renderAll();
                 console.log('[Undo] No objects to restore');
+                canvasHistory.isRestoring = false;
+                console.log('[Undo] Setting isRestoring to false');
               }
               
               onSelectedObjectChange(null);
@@ -328,6 +342,9 @@ export const DesignCanvas = ({
             });
             
             if (canvasHistory.currentIndex < canvasHistory.states.length - 1) {
+              console.log('[Redo] Setting isRestoring to true');
+              canvasHistory.isRestoring = true;
+              
               canvasHistory.currentIndex++;
               const nextState = canvasHistory.states[canvasHistory.currentIndex];
               const userObjectsData = JSON.parse(nextState);
@@ -354,10 +371,14 @@ export const DesignCanvas = ({
                   objects.forEach(obj => canvas.add(obj));
                   canvas.renderAll();
                   console.log('[Redo] Successfully restored', objects.length, 'user objects');
+                  canvasHistory.isRestoring = false;
+                  console.log('[Redo] Setting isRestoring to false');
                 });
               } else {
                 canvas.renderAll();
                 console.log('[Redo] No objects to restore');
+                canvasHistory.isRestoring = false;
+                console.log('[Redo] Setting isRestoring to false');
               }
               
               onSelectedObjectChange(null);
