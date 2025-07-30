@@ -25,8 +25,16 @@ export const TShirtDesigner = () => {
     // Handle reset tool separately - don't change activeTool
     if (tool === "reset") {
       if ((window as any).designCanvas?.canvas) {
-        (window as any).designCanvas.canvas.clear();
-        (window as any).designCanvas.canvas.renderAll();
+        const canvas = (window as any).designCanvas.canvas;
+        // Remove all objects except the background image
+        const objects = canvas.getObjects();
+        objects.forEach((obj: any) => {
+          canvas.remove(obj);
+        });
+        canvas.renderAll();
+        // Reset the object tracking arrays
+        setTextObjects([]);
+        setImageObjects([]);
         toast.success("Design reset");
       }
       return; // Don't change activeTool for reset
