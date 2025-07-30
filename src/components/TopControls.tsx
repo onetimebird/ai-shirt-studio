@@ -68,7 +68,7 @@ export const TopControls = ({
         <div className="flex items-center gap-2">
           <Palette className="w-4 h-4 text-muted-foreground icon-hover" />
           <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-48 min-w-fit">
               <div className="flex items-center gap-2">
                 <div 
                   className="w-4 h-4 rounded border border-border" 
@@ -191,7 +191,7 @@ export const TopControls = ({
 
             {/* Color Picker */}
             <Select value={selectedColor} onValueChange={onColorChange}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-40 min-w-fit">
                 <div className="flex items-center gap-2">
                   <div 
                     className="w-4 h-4 rounded border border-border" 
