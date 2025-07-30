@@ -23,7 +23,7 @@ export const UndoRedoControls = () => {
 
   return (
     <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
-      <div className="relative group">
+      <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
@@ -44,12 +44,15 @@ export const UndoRedoControls = () => {
         >
           <Undo className="w-4 h-4" />
         </Button>
-        <div className="absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
+        {/* Mobile label */}
+        <span className="block md:hidden text-[10px] text-muted-foreground mt-0.5 leading-none">Undo</span>
+        {/* Desktop tooltip */}
+        <div className="hidden md:block absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Undo (Ctrl+Z)
         </div>
       </div>
 
-      <div className="relative group">
+      <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
@@ -70,7 +73,10 @@ export const UndoRedoControls = () => {
         >
           <Redo className="w-4 h-4" />
         </Button>
-        <div className="absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
+        {/* Mobile label */}
+        <span className="block md:hidden text-[10px] text-muted-foreground mt-0.5 leading-none">Redo</span>
+        {/* Desktop tooltip */}
+        <div className="hidden md:block absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Redo (Ctrl+Y)
         </div>
       </div>
