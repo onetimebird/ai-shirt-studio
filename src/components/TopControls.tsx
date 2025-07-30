@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign, ArrowRight } from "lucide-react";
+import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
 import { QuantityModal } from "@/components/QuantityModal";
@@ -126,7 +126,7 @@ export const TopControls = ({
           }}
           className="!bg-blue-500 !hover:bg-blue-600"
         >
-          <ArrowRight className="w-4 h-4 mr-1 icon-hover" />
+          <DollarSign className="w-4 h-4 mr-1 icon-hover" />
           Next Step
         </Button>
 
@@ -278,6 +278,19 @@ export const TopControls = ({
             </Button>
           </div>
 
+          {/* Next Step Button - NEW button following exact same pattern as Save button */}
+          <Button 
+            variant="creative" 
+            size="sm"
+            onClick={() => {
+              console.log('NEW Next Step button clicked');
+              setIsQuantityModalOpen(true);
+            }}
+            className="flex-1 min-w-0 !bg-blue-500 !hover:bg-blue-600"
+          >
+            <DollarSign className="w-4 h-4 mr-1 icon-hover" />
+            Next Step
+          </Button>
         </div>
       </div>
 
