@@ -116,6 +116,20 @@ export const TopControls = ({
           Save
         </Button>
 
+        {/* Next Step Button */}
+        <Button 
+          variant="creative" 
+          size="sm"
+          onClick={() => {
+            console.log('Desktop Next Step button clicked');
+            setIsQuantityModalOpen(true);
+          }}
+          className="!bg-blue-500 !hover:bg-blue-600"
+        >
+          <DollarSign className="w-4 h-4 mr-1 icon-hover" />
+          Next Step
+        </Button>
+
         {/* Front/Back Toggle */}
         <div className="flex items-center border border-border rounded-md">
           <Button
