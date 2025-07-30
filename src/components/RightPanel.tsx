@@ -335,108 +335,199 @@ export const RightPanel = ({
         <Tabs value={getActiveTab()} className="w-full">
           <TabsContent value="properties" className="space-y-4">
 
-          {/* Add Text Interface - Only when in text mode and no object selected */}
+          {/* Add Text Interface - Always show in text mode */}
           {activeTool === "text" && (
             <>
+              {/* Existing Text Objects List - Mobile friendly */}
+              {textObjects.length > 0 && (
+                <Card className="mb-4">
+                  <CardHeader className="p-3 pb-2">
+                    <CardTitle className="text-sm">Your Text Elements</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 p-3 pt-0">
+                    {textObjects.map((textObj, index) => (
+                      <div
+                        key={index}
+                        className={`p-2 border rounded-md cursor-pointer transition-colors ${
+                          selectedObject === textObj ? 'bg-primary/10 border-primary' : 'bg-muted/50 border-border hover:bg-muted'
+                        }`}
+                        onClick={() => {
+                          // Select this text object on canvas
+                          if ((window as any).designCanvas?.canvas) {
+                            const canvas = (window as any).designCanvas.canvas;
+                            canvas.setActiveObject(textObj);
+                            canvas.renderAll();
+                          }
+                        }}
+                      >
+                        <div className="text-xs font-medium truncate">
+                          {textObj.text || "Empty text"}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {textObj.fontFamily} • {Math.round(textObj.fontSize || 24)}px
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
               <Card>
                 <CardContent className="space-y-3 p-4">
                   {/* Text Content */}
                   <div>
+                    <Label className="text-sm font-medium mb-2 block">
+                      {selectedObject ? "Edit Text Content" : "New Text Content"}
+                    </Label>
                     <Textarea
-                      value={textContent}
-                      onChange={e => setTextContent(e.target.value)}
+                      value={selectedObject ? (selectedObject.text || "") : textContent}
+                      onChange={e => {
+                        if (selectedObject) {
+                          // Update existing text
+                          updateTextProperty('text', e.target.value);
+                        } else {
+                          // Update new text content
+                          setTextContent(e.target.value);
+                        }
+                      }}
                       placeholder="Enter your text here..."
                       rows={3}
                       className="text-sm resize-none"
                     />
                   </div>
                   
-                  {/* Action Buttons Row */}
-                  <div className="grid grid-cols-4 gap-1">
+                  {/* Add New Text Button */}
+                  {!selectedObject && (
                     <Button
-                      variant="outline"
+                      onClick={handleAddText}
+                      className="w-full"
                       size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.centerSelected) {
-                          (window as any).designCanvas.centerSelected();
-                        }
-                      }}
-                      className="h-8 text-xs"
                     >
-                      Center
+                      <Type className="w-4 h-4 mr-2" />
+                      Add Text to Design
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.duplicateSelected) {
-                          (window as any).designCanvas.duplicateSelected();
-                        }
-                      }}
-                      className="h-8 text-xs"
-                    >
-                      Duplicate
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.rotateSelected) {
-                          (window as any).designCanvas.rotateSelected();
-                        }
-                      }}
-                      className="h-8 text-xs"
-                    >
-                      Rotate
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.deleteSelected) {
-                          (window as any).designCanvas.deleteSelected();
-                        }
-                      }}
-                      className="h-8 text-xs text-destructive"
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                  )}
+
+                  {/* Action Buttons Row - Only show when text is selected */}
+                  {selectedObject && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if ((window as any).designCanvas?.centerSelected) {
+                              (window as any).designCanvas.centerSelected();
+                            }
+                          }}
+                          className="h-8 text-xs"
+                        >
+                          Center
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if ((window as any).designCanvas?.duplicateSelected) {
+                              (window as any).designCanvas.duplicateSelected();
+                            }
+                          }}
+                          className="h-8 text-xs"
+                        >
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if ((window as any).designCanvas?.rotateSelected) {
+                              (window as any).designCanvas.rotateSelected();
+                            }
+                          }}
+                          className="h-8 text-xs"
+                        >
+                          Rotate
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if ((window as any).designCanvas?.deleteSelected) {
+                              (window as any).designCanvas.deleteSelected();
+                            }
+                          }}
+                          className="h-8 text-xs text-destructive"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Font Row */}
-                  <div className="flex items-center justify-between py-1">
-                    <Label className="text-sm font-medium">Font</Label>
-                    <Select
-                      value={fontFamily}
-                      onValueChange={val => {
-                        setFontFamily(val);
-                        updateTextProperty('fontFamily', val);
-                      }}
-                    >
-                      <SelectTrigger className="w-32 h-7 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {fonts.map(f => (
-                          <SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <div className="space-y-2 py-1">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Font Family</Label>
+                      <Select
+                        value={selectedObject ? (selectedObject.fontFamily || "Arial") : fontFamily}
+                        onValueChange={val => {
+                          setFontFamily(val);
+                          if (selectedObject) {
+                            updateTextProperty('fontFamily', val);
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="w-32 h-7 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {fonts.map(f => (
+                            <SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {/* Font Size Slider */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium">Font Size</Label>
+                        <span className="text-xs text-muted-foreground">
+                          {selectedObject ? Math.round(selectedObject.fontSize || 24) : fontSize}px
+                        </span>
+                      </div>
+                      <Slider
+                        value={[selectedObject ? (selectedObject.fontSize || 24) : fontSize]}
+                        onValueChange={([value]) => {
+                          setFontSize(value);
+                          if (selectedObject) {
+                            updateTextProperty('fontSize', value);
+                          }
+                        }}
+                        min={8}
+                        max={120}
+                        step={1}
+                        className="w-full"
+                      />
+                    </div>
                   </div>
 
                   {/* Color Row */}
                   <div className="flex items-center justify-between py-1">
-                    <Label className="text-sm font-medium">Color</Label>
+                    <Label className="text-sm font-medium">Text Color</Label>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">Black</span>
                       <Input
                         type="color"
-                        value={textColor}
+                        value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
                         onChange={e => {
                           setTextColor(e.target.value);
-                          updateTextProperty('fill', e.target.value);
+                          if (selectedObject) {
+                            updateTextProperty('fill', e.target.value);
+                          }
                         }}
-                        className="w-8 h-7 p-0 border-0 rounded cursor-pointer"
+                        className="w-10 h-8 p-0 border rounded cursor-pointer"
                       />
                     </div>
                   </div>
@@ -507,36 +598,42 @@ export const RightPanel = ({
 
                   {/* Alignment Row */}
                   <div className="flex items-center justify-between py-1">
-                    <Label className="text-sm font-medium">Align</Label>
+                    <Label className="text-sm font-medium">Text Align</Label>
                     <div className="flex gap-1">
                       <Button 
-                        variant={textAlign==='left'?'default':'outline'} 
+                        variant={(selectedObject ? (selectedObject.textAlign || 'left') : textAlign)==='left'?'default':'outline'} 
                         size="sm" 
                         onClick={() => {
                           setTextAlign('left');
-                          updateTextProperty('textAlign', 'left');
+                          if (selectedObject) {
+                            updateTextProperty('textAlign', 'left');
+                          }
                         }}
                         className="h-7 w-7 p-0"
                       >
                         <AlignLeft className="w-3 h-3"/>
                       </Button>
                       <Button 
-                        variant={textAlign==='center'?'default':'outline'} 
+                        variant={(selectedObject ? (selectedObject.textAlign || 'left') : textAlign)==='center'?'default':'outline'} 
                         size="sm" 
                         onClick={() => {
                           setTextAlign('center');
-                          updateTextProperty('textAlign', 'center');
+                          if (selectedObject) {
+                            updateTextProperty('textAlign', 'center');
+                          }
                         }}
                         className="h-7 w-7 p-0"
                       >
                         <AlignCenter className="w-3 h-3"/>
                       </Button>
                       <Button 
-                        variant={textAlign==='right'?'default':'outline'} 
+                        variant={(selectedObject ? (selectedObject.textAlign || 'left') : textAlign)==='right'?'default':'outline'} 
                         size="sm" 
                         onClick={() => {
                           setTextAlign('right');
-                          updateTextProperty('textAlign', 'right');
+                          if (selectedObject) {
+                            updateTextProperty('textAlign', 'right');
+                          }
                         }}
                         className="h-7 w-7 p-0"
                       >
