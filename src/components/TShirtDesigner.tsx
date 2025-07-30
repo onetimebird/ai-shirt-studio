@@ -83,51 +83,55 @@ export const TShirtDesigner = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Smoke Test - Uncomment to test SVG loading */}
       {/* <SmokeTest /> */}
       
       {/* Top Controls Bar */}
-      <TopControls
-        selectedProduct={selectedProduct}
-        selectedColor={selectedColor}
-        decorationMethod={decorationMethod}
-        currentSide={currentSide}
-        onProductChange={setSelectedProduct}
-        onColorChange={setSelectedColor}
-        onDecorationChange={setDecorationMethod}
-        onSideChange={setCurrentSide}
-      />
+      <div className="flex-shrink-0">
+        <TopControls
+          selectedProduct={selectedProduct}
+          selectedColor={selectedColor}
+          decorationMethod={decorationMethod}
+          currentSide={currentSide}
+          onProductChange={setSelectedProduct}
+          onColorChange={setSelectedColor}
+          onDecorationChange={setDecorationMethod}
+          onSideChange={setCurrentSide}
+        />
+      </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Toolbar - Always visible on desktop, hidden on mobile */}
-        <div className="hidden lg:block">
+      <div className="flex-1 flex overflow-hidden relative min-h-0">
+        {/* Left Toolbar - Responsive visibility */}
+        <div className="hidden md:block flex-shrink-0">
           <LeftToolbar 
             activeTool={activeTool} 
             onToolChange={handleToolChange} 
           />
         </div>
 
-        {/* Central Canvas */}
-        <div className="flex-1 relative">
+        {/* Central Canvas - Always takes remaining space */}
+        <div className="flex-1 relative min-w-0 flex items-center justify-center p-2 md:p-4">
           {/* Undo/Redo Controls - positioned over canvas */}
           <UndoRedoControls />
           
-          <DesignCanvas
-            selectedColor={selectedColor}
-            currentSide={currentSide}
-            selectedProduct={selectedProduct}
-            activeTool={activeTool}
-            onSelectedObjectChange={setSelectedObject}
-            onToolChange={setActiveTool}
-            onTextObjectsUpdate={handleTextObjectsUpdate}
-            onImageObjectsUpdate={handleImageObjectsUpdate}
-          />
+          <div className="w-full h-full max-w-4xl max-h-full flex items-center justify-center">
+            <DesignCanvas
+              selectedColor={selectedColor}
+              currentSide={currentSide}
+              selectedProduct={selectedProduct}
+              activeTool={activeTool}
+              onSelectedObjectChange={setSelectedObject}
+              onToolChange={setActiveTool}
+              onTextObjectsUpdate={handleTextObjectsUpdate}
+              onImageObjectsUpdate={handleImageObjectsUpdate}
+            />
+          </div>
         </div>
 
-        {/* Right Panel - Only visible on desktop */}
-        <div className="hidden lg:block">
+        {/* Right Panel - Responsive visibility and sizing */}
+        <div className="hidden xl:block flex-shrink-0 w-80 2xl:w-96">
           <RightPanel
             activeTool={activeTool}
             selectedObject={selectedObject}
@@ -143,8 +147,8 @@ export const TShirtDesigner = () => {
         </div>
       </div>
 
-      {/* Mobile Bottom Toolbar */}
-      <div className="lg:hidden bg-card border-t border-border">
+      {/* Mobile/Tablet Bottom Toolbar */}
+      <div className="xl:hidden bg-card border-t border-border flex-shrink-0">
         <div className="flex items-center justify-around py-2 px-4">
           {/* Products */}
           <Sheet>

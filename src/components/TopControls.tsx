@@ -35,7 +35,7 @@ export const TopControls = ({
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
       {/* Desktop - Single Row Layout */}
-      <div className="hidden lg:flex items-center justify-between gap-4">
+      <div className="hidden md:flex items-center justify-between gap-2 lg:gap-4 flex-wrap">
         {/* Logo */}
         <div className="flex items-center">
           <img 
@@ -46,10 +46,10 @@ export const TopControls = ({
         </div>
 
         {/* Product Selector */}
-        <div className="flex items-center gap-2">
-          <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
+        <div className="flex items-center gap-2 min-w-0">
+          <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
           <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="w-56">
+            <SelectTrigger className="w-40 lg:w-56 min-w-0">
               <SelectValue placeholder="Change Product" />
             </SelectTrigger>
             <SelectContent>
@@ -65,10 +65,10 @@ export const TopControls = ({
         </div>
 
         {/* Color Picker */}
-        <div className="flex items-center gap-2">
-          <Palette className="w-4 h-4 text-muted-foreground icon-hover" />
+        <div className="flex items-center gap-2 min-w-0">
+          <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
           <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="w-48 min-w-fit">
+            <SelectTrigger className="w-36 lg:w-48 min-w-0">
               <div className="flex items-center gap-2">
                 <div 
                   className="w-4 h-4 rounded border border-border" 
@@ -157,7 +157,7 @@ export const TopControls = ({
         {/* Theme Toggle */}
         <ThemeToggle />
       </div>
-      <div className="flex flex-col gap-3 lg:hidden">
+      <div className="flex flex-col gap-3 md:hidden">
         {/* First Row - Logo, Product & Color Selectors */}
         <div className="flex items-center justify-between gap-2">
           {/* Logo */}
