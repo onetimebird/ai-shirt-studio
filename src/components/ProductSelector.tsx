@@ -175,7 +175,7 @@ export function ProductSelector({
                         <div key={colorData.name} className="relative group">
                           <button
                             onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
-                            className={`w-3 h-3 rounded-lg transition-all duration-200 border ${
+                            className={`w-4 h-4 rounded-lg transition-all duration-200 border ${
                               colorData.name === selectedColor 
                                 ? 'border-green-500 shadow-lg scale-110' 
                                 : 'border-gray-300 hover:border-gray-400 hover:scale-105'
@@ -206,7 +206,7 @@ export function ProductSelector({
                         <div key={color} className="relative group">
                           <button
                             onClick={() => handleColorSelect(color)}
-                            className={`w-3 h-3 rounded-lg transition-all duration-200 border cursor-pointer ${
+                            className={`w-4 h-4 rounded-lg transition-all duration-200 border cursor-pointer ${
                               color === selectedColor 
                                 ? 'border-green-500 shadow-lg scale-110' 
                                 : 'border-gray-300 hover:border-gray-400 hover:scale-105'
