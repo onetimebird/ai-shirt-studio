@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Expand, Info, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { openAIService } from '@/services/openai';
 
 const exampleImages = [
   {
@@ -79,31 +80,26 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       return;
     }
 
+    // Check if API key is set
+    if (!openAIService.getApiKey()) {
+      toast.error("Please set your OpenAI API key first in the Properties tab");
+      return;
+    }
+
     setIsGenerating(true);
     try {
-      const response = await fetch('/functions/v1/generate-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          prompt: prompt.trim(),
-          width: 1024,
-          height: 1024 
-        })
+      const result = await openAIService.generateImage({
+        prompt: prompt.trim(),
+        size: "1024x1024",
+        quality: "standard",
+        style: "vivid"
       });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate image');
-      }
-
-      if (data.url) {
-        const newImage = { url: data.url, prompt: prompt.trim() };
+      if (result.url) {
+        const newImage = { url: result.url, prompt: prompt.trim() };
         setGeneratedImages(prev => [newImage, ...prev]);
         savePrompt(prompt.trim());
-        onImageGenerated?.(data.url);
+        onImageGenerated?.(result.url);
         toast.success("Image generated successfully!");
       } else {
         throw new Error('No image URL received');
