@@ -178,7 +178,7 @@ export const TopControls = ({
             <img 
               src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
               alt="CoolShirt.Ai Logo" 
-              className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+              className="h-16 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
             />
           </div>
 
@@ -186,7 +186,7 @@ export const TopControls = ({
           <div className="flex items-center gap-2">
             {/* Product Selector */}
             <Select value={selectedProduct} onValueChange={onProductChange}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-32">
                 <SelectValue placeholder="Change Product" />
               </SelectTrigger>
               <SelectContent>
@@ -202,13 +202,13 @@ export const TopControls = ({
 
             {/* Color Picker */}
             <Select value={selectedColor} onValueChange={onColorChange}>
-              <SelectTrigger className="w-40 min-w-fit">
-                <div className="flex items-center gap-2">
+              <SelectTrigger className="w-32 min-w-fit">
+                <div className="flex items-center gap-1">
                   <div 
-                    className="w-4 h-4 rounded border border-border" 
+                    className="w-3 h-3 rounded border border-border" 
                     style={{ backgroundColor: currentColor?.value }}
                   />
-                  <span>{currentColor?.label}</span>
+                  <span className="text-xs">{currentColor?.label}</span>
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
@@ -279,15 +279,14 @@ export const TopControls = ({
 
           {/* Next Step Button - NEW button following exact same pattern as Save button */}
           <Button 
-            variant="creative" 
             size="sm"
             onClick={() => {
               console.log('NEW Next Step button clicked');
               setIsQuantityModalOpen(true);
             }}
-            className="flex-1 min-w-0 !bg-blue-500 !hover:bg-blue-600"
+            className="flex-1 min-w-0 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200"
           >
-            <DollarSign className="w-4 h-4 mr-1 icon-hover" />
+            <ArrowRight className="w-4 h-4 mr-1" strokeWidth={2.5} />
             Next Step
           </Button>
         </div>
