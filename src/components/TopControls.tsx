@@ -264,27 +264,19 @@ export const TopControls = ({
             </Button>
           </div>
 
-          {/* Next Step Button - Completely rebuilt */}
-          <div className="flex-1 min-w-0">
-            <div
-              role="button"
-              tabIndex={0}
-              className="w-full h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors duration-200 cursor-pointer flex items-center justify-center gap-1 text-sm font-medium"
-              onClick={() => {
-                console.log('Next button clicked - rebuilt version');
-                setIsQuantityModalOpen(true);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setIsQuantityModalOpen(true);
-                }
-              }}
-            >
-              <DollarSign className="w-4 h-4 flex-shrink-0" />
-              <span>Next</span>
-            </div>
-          </div>
+          {/* Next Step Button - NEW button following exact same pattern as Save button */}
+          <Button 
+            variant="creative" 
+            size="sm"
+            onClick={() => {
+              console.log('NEW Next Step button clicked');
+              setIsQuantityModalOpen(true);
+            }}
+            className="flex-1 min-w-0 !bg-blue-500 !hover:bg-blue-600"
+          >
+            <DollarSign className="w-4 h-4 mr-1 icon-hover" />
+            Next Step
+          </Button>
         </div>
       </div>
 
