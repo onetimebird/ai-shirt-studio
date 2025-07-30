@@ -22,22 +22,36 @@ export const UndoRedoControls = () => {
   }, []);
 
   return (
-    <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
+    <div className="absolute top-4 left-4 z-[100] flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg pointer-events-auto">
+      {/* Test button to verify clicks work */}
+      <Button
+        variant="outline" 
+        size="sm"
+        onClick={() => {
+          console.log('[TEST] Test button clicked - buttons are working!');
+          alert('Test button works!');
+        }}
+        className="h-8 w-8 p-0 mr-2"
+      >
+        T
+      </Button>
       <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
           disabled={!canUndo}
           onClick={() => {
-            console.log('[UI] Undo button clicked');
+            console.log('[UndoRedoControls] Undo button clicked');
             const designCanvas = (window as any).designCanvas;
-            console.log('[UI] Design canvas available:', !!designCanvas);
+            console.log('[UndoRedoControls] Design canvas available:', !!designCanvas);
+            console.log('[UndoRedoControls] Design canvas object:', designCanvas);
             if (designCanvas && designCanvas.undo) {
-              console.log('[UI] Calling undo function');
+              console.log('[UndoRedoControls] Calling undo function');
               designCanvas.undo();
               updateUndoRedoState();
             } else {
-              console.log('[UI] ERROR: Design canvas or undo function not available');
+              console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
+              console.log('[UndoRedoControls] Available functions:', Object.keys(designCanvas || {}));
             }
           }}
           className="h-8 w-8 p-0 hover:bg-muted"
@@ -58,15 +72,17 @@ export const UndoRedoControls = () => {
           size="sm"
           disabled={!canRedo}
           onClick={() => {
-            console.log('[UI] Redo button clicked');
+            console.log('[UndoRedoControls] Redo button clicked');
             const designCanvas = (window as any).designCanvas;
-            console.log('[UI] Design canvas available:', !!designCanvas);
+            console.log('[UndoRedoControls] Design canvas available:', !!designCanvas);
+            console.log('[UndoRedoControls] Design canvas object:', designCanvas);
             if (designCanvas && designCanvas.redo) {
-              console.log('[UI] Calling redo function');
+              console.log('[UndoRedoControls] Calling redo function');
               designCanvas.redo();
               updateUndoRedoState();
             } else {
-              console.log('[UI] ERROR: Design canvas or redo function not available');
+              console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
+              console.log('[UndoRedoControls] Available functions:', Object.keys(designCanvas || {}));
             }
           }}
           className="h-8 w-8 p-0 hover:bg-muted"
