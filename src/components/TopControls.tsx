@@ -77,16 +77,16 @@ export const TopControls = ({
                 <SelectValue />
               </div>
             </SelectTrigger>
-            <SelectContent className="bg-popover border border-border shadow-lg z-50">
+            <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
               {getAllColors().map((color) => (
-                <SelectItem key={color.name} value={color.name}>
-                  <div className="flex items-center gap-2">
+                <SelectItem key={color.name} value={color.name} className="flex items-center gap-2 p-2">
+                  <div className="flex items-center gap-2 w-full">
                     <div 
-                      className="w-4 h-4 rounded border border-border" 
+                      className="w-4 h-4 rounded border border-border flex-shrink-0" 
                       style={{ backgroundColor: color.value }}
                     />
-                    <span>{color.label}</span>
-                    {!color.available && <span className="text-xs text-muted-foreground">(Coming Soon)</span>}
+                    <span className="flex-1 truncate">{color.label}</span>
+                    {!color.available && <span className="text-xs text-muted-foreground flex-shrink-0">Coming Soon</span>}
                   </div>
                 </SelectItem>
               ))}
@@ -200,16 +200,16 @@ export const TopControls = ({
                   <SelectValue />
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-popover border border-border shadow-lg z-50">
+              <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
                 {getAllColors().map((color) => (
-                  <SelectItem key={color.name} value={color.name}>
-                    <div className="flex items-center gap-2">
+                  <SelectItem key={color.name} value={color.name} className="flex items-center gap-2 p-2">
+                    <div className="flex items-center gap-2 w-full">
                       <div 
-                        className="w-4 h-4 rounded border border-border" 
+                        className="w-4 h-4 rounded border border-border flex-shrink-0" 
                         style={{ backgroundColor: color.value }}
                       />
-                      <span>{color.label}</span>
-                      {!color.available && <span className="text-xs text-muted-foreground">(Coming Soon)</span>}
+                      <span className="flex-1 truncate">{color.label}</span>
+                      {!color.available && <span className="text-xs text-muted-foreground flex-shrink-0">Coming Soon</span>}
                     </div>
                   </SelectItem>
                 ))}
