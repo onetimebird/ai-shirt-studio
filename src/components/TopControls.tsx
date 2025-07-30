@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
-import { GILDAN_2000_COLORS, getAvailableColors } from "@/data/gildan2000Colors";
+import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
 import { QuantityModal } from "@/components/QuantityModal";
 import { toast } from "sonner";
@@ -78,9 +78,16 @@ export const TopControls = ({
               </div>
             </SelectTrigger>
             <SelectContent className="bg-popover border border-border shadow-lg z-50">
-              {getAvailableColors().map((color) => (
+              {getAllColors().map((color) => (
                 <SelectItem key={color.name} value={color.name}>
-                  {color.label}
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-4 h-4 rounded border border-border" 
+                      style={{ backgroundColor: color.value }}
+                    />
+                    <span>{color.label}</span>
+                    {!color.available && <span className="text-xs text-muted-foreground">(Coming Soon)</span>}
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -194,9 +201,16 @@ export const TopControls = ({
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-popover border border-border shadow-lg z-50">
-                {getAvailableColors().map((color) => (
+                {getAllColors().map((color) => (
                   <SelectItem key={color.name} value={color.name}>
-                    {color.label}
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-4 h-4 rounded border border-border" 
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span>{color.label}</span>
+                      {!color.available && <span className="text-xs text-muted-foreground">(Coming Soon)</span>}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
