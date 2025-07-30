@@ -140,7 +140,8 @@ export const RightPanel = ({
       objectCount: fabricCanvas.getObjects().length
     });
 
-    const textbox = new FabricTextbox(textContent, {
+    // Use FabricText instead of FabricTextbox for auto-sizing text
+    const textObject = new FabricText(textContent, {
       left: fabricCanvas.width! / 2,
       top: fabricCanvas.height! / 2,
       fontFamily,
@@ -153,29 +154,39 @@ export const RightPanel = ({
       originX: 'center',
       originY: 'center',
       editable: true,
-      objectCaching: false, // better for dynamic editing
-      // Auto-size the textbox to content
-      splitByGrapheme: false,
-      // Start with a reasonable width but allow it to adjust
-      width: Math.max(200, textContent.length * fontSize * 0.6),
+      objectCaching: false,
     });
 
-    // After creation, adjust the width to fit content better
-    textbox.set({
-      width: Math.max(textbox.width || 200, textbox.calcTextWidth() + 20)
-    });
-
-    console.log("[Debug] Textbox created with position:", {
-      left: textbox.left,
-      top: textbox.top,
-      fontSize: textbox.fontSize,
-      fill: textbox.fill
-    });
-
-    console.log("[Debug] Adding textbox to canvas");
-    fabricCanvas.add(textbox);
-    fabricCanvas.bringObjectToFront(textbox); // Ensure text is on top
-    fabricCanvas.setActiveObject(textbox);
+    // For multi-line text, convert to textbox but with better sizing
+    if (textContent.includes('\n')) {
+      const textbox = new FabricTextbox(textContent, {
+        left: fabricCanvas.width! / 2,
+        top: fabricCanvas.height! / 2,
+        fontFamily,
+        fontSize,
+        fill: textColor,
+        fontWeight: isBold ? 'bold' : 'normal',
+        fontStyle: isItalic ? 'italic' : 'normal',
+        underline: isUnderline,
+        textAlign: textAlign as any,
+        originX: 'center',
+        originY: 'center',
+        editable: true,
+        objectCaching: false,
+        // Set width to auto-adjust based on content
+        width: Math.min(400, Math.max(100, textContent.split('\n')[0].length * fontSize * 0.7))
+      });
+      
+      console.log("[Debug] Adding multi-line textbox to canvas");
+      fabricCanvas.add(textbox);
+      fabricCanvas.bringObjectToFront(textbox);
+      fabricCanvas.setActiveObject(textbox);
+    } else {
+      console.log("[Debug] Adding single-line text to canvas");
+      fabricCanvas.add(textObject);
+      fabricCanvas.bringObjectToFront(textObject);
+      fabricCanvas.setActiveObject(textObject);
+    }
     fabricCanvas.renderAll();
     console.log("[Debug] Canvas objects after addText:", fabricCanvas.getObjects().map((obj: any) => ({
       type: obj.type,
@@ -475,7 +486,7 @@ export const RightPanel = ({
 
                   {/* Action Buttons Row - Only show when text is selected */}
                   {selectedObject && (
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 mb-3">
                       <div className="grid grid-cols-2 gap-1">
                         <Button
                           variant="outline"
@@ -516,14 +527,10 @@ export const RightPanel = ({
                           Rotate
                         </Button>
                         <Button
-                          variant="outline"
+                          variant="destructive"
                           size="sm"
-                          onClick={() => {
-                            if ((window as any).designCanvas?.deleteSelected) {
-                              (window as any).designCanvas.deleteSelected();
-                            }
-                          }}
-                          className="h-8 text-xs text-destructive"
+                          onClick={handleDelete}
+                          className="h-8 text-xs"
                         >
                           Delete
                         </Button>

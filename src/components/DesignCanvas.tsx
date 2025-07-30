@@ -420,41 +420,50 @@ export const DesignCanvas = ({
           }
         });
 
-        // Long press support for mobile text editing
-        let longPressTimer: NodeJS.Timeout | null = null;
-        let longPressTarget: any = null;
-        const LONG_PRESS_DURATION = 800; // 800ms for long press
+        // Mobile long press for text editing - simpler approach
+        let pressTimer: NodeJS.Timeout | null = null;
+        let pressTarget: any = null;
 
         canvas.on('mouse:down', (e: any) => {
           const target = e.target;
+          pressTarget = target;
+          
           if (target && (target.type === 'textbox' || target.type === 'text')) {
-            longPressTarget = target;
-            longPressTimer = setTimeout(() => {
-              // Only trigger if we're on mobile (touch device)
-              if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                target.enterEditing();
-                canvas.setActiveObject(target);
-                canvas.renderAll();
+            // Clear any existing timer
+            if (pressTimer) {
+              clearTimeout(pressTimer);
+            }
+            
+            // Set up long press timer (750ms)
+            pressTimer = setTimeout(() => {
+              if (pressTarget === target) {
                 console.log('Long press detected - entering text edit mode');
+                try {
+                  target.enterEditing();
+                  canvas.setActiveObject(target);
+                  canvas.renderAll();
+                } catch (error) {
+                  console.error('Error entering edit mode:', error);
+                }
               }
-            }, LONG_PRESS_DURATION);
+            }, 750);
           }
         });
 
         canvas.on('mouse:up', () => {
-          if (longPressTimer) {
-            clearTimeout(longPressTimer);
-            longPressTimer = null;
+          // Clear the timer when mouse/touch is released
+          if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
           }
-          longPressTarget = null;
+          pressTarget = null;
         });
 
-        canvas.on('mouse:move', (e: any) => {
-          // Cancel long press if mouse/finger moves too much
-          if (longPressTimer && longPressTarget && e.target !== longPressTarget) {
-            clearTimeout(longPressTimer);
-            longPressTimer = null;
-            longPressTarget = null;
+        canvas.on('mouse:move', () => {
+          // Cancel long press if mouse/finger moves
+          if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
           }
         });
 
