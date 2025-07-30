@@ -168,78 +168,63 @@ export function ProductSelector({
               {/* Color Swatches Grid */}
               <div className="mt-6">
                 <h4 className="font-semibold mb-4 text-lg">Choose Your Color</h4>
-                <div className="grid grid-cols-10 gap-3 p-6 bg-card rounded-lg border">
+                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                   {selectedProductData.id === 'gildan-2000' ? (
-                    // Gildan 2000 color swatches
-                    getAllColors().map((colorData) => (
-                      <div 
-                        key={colorData.name}
-                        className="relative group"
-                      >
-                        <button
-                          onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
-                          className={`w-8 h-8 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
-                            colorData.name === selectedColor 
-                              ? 'border-primary shadow-md ring-2 ring-primary/20' 
-                              : 'border-border hover:border-primary/50 hover:shadow-sm'
-                          } ${!colorData.available ? 'opacity-50 cursor-not-allowed hover:scale-100' : ''}`}
-                          style={{ backgroundColor: colorData.value }}
-                          title={`${colorData.label}${!colorData.available ? ' (Coming Soon)' : ''}`}
-                          disabled={!colorData.available}
-                        >
-                          {/* Selection indicator */}
-                          {colorData.name === selectedColor && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <Check className="w-3 h-3 text-primary-foreground drop-shadow-sm" />
-                            </div>
-                          )}
-                          
-                          {/* Unavailable overlay */}
-                          {!colorData.available && (
-                            <div className="absolute inset-0 bg-background/20 rounded-lg flex items-center justify-center">
-                              <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full"></div>
-                            </div>
-                          )}
-                          
-                          {/* Hover tooltip */}
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none border">
+                    <div className="flex flex-wrap gap-2">
+                      {getAllColors().map((colorData) => (
+                        <div key={colorData.name} className="relative group">
+                          <button
+                            onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
+                            className={`w-10 h-10 rounded-xl transition-all duration-200 border-2 ${
+                              colorData.name === selectedColor 
+                                ? 'border-green-500 shadow-lg scale-110' 
+                                : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                            } ${!colorData.available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                            style={{ backgroundColor: colorData.value }}
+                            disabled={!colorData.available}
+                          >
+                            {colorData.name === selectedColor && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white drop-shadow-lg" />
+                              </div>
+                            )}
+                            {!colorData.available && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                              </div>
+                            )}
+                          </button>
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
                             {colorData.label}
-                            {!colorData.available && ' (Coming Soon)'}
                           </div>
-                        </button>
-                      </div>
-                    ))
+                        </div>
+                      ))}
+                    </div>
                   ) : (
-                    // Other product swatches
-                    selectedProductData.colors.map((color) => (
-                      <div 
-                        key={color}
-                        className="relative group"
-                      >
-                        <button
-                          onClick={() => handleColorSelect(color)}
-                          className={`w-8 h-8 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
-                            color === selectedColor 
-                              ? 'border-primary shadow-md ring-2 ring-primary/20' 
-                              : 'border-border hover:border-primary/50 hover:shadow-sm'
-                          }`}
-                          style={{ backgroundColor: colorMap[color] || '#ccc' }}
-                          title={color}
-                        >
-                          {/* Selection indicator */}
-                          {color === selectedColor && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <Check className="w-3 h-3 text-primary-foreground drop-shadow-sm" />
-                            </div>
-                          )}
-                          
-                          {/* Hover tooltip */}
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none border">
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProductData.colors.map((color) => (
+                        <div key={color} className="relative group">
+                          <button
+                            onClick={() => handleColorSelect(color)}
+                            className={`w-10 h-10 rounded-xl transition-all duration-200 border-2 cursor-pointer ${
+                              color === selectedColor 
+                                ? 'border-green-500 shadow-lg scale-110' 
+                                : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                            }`}
+                            style={{ backgroundColor: colorMap[color] || '#ccc' }}
+                          >
+                            {color === selectedColor && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Check className="w-4 h-4 text-white drop-shadow-lg" />
+                              </div>
+                            )}
+                          </button>
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
                             {color}
                           </div>
-                        </button>
-                      </div>
-                    ))
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
