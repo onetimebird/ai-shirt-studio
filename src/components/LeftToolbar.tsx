@@ -11,6 +11,7 @@ import {
   HelpCircle
 } from "lucide-react";
 import { AIWandIcon } from "@/components/AIWandIcon";
+import { HelpChatbot } from "@/components/HelpChatbot";
 
 interface LeftToolbarProps {
   activeTool: string;
@@ -26,6 +27,7 @@ const tools = [
 ];
 
 export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
+  const [isHelpChatOpen, setIsHelpChatOpen] = useState(false);
   return (
     <TooltipProvider>
       <div className="w-16 lg:w-64 bg-gradient-sidebar border-r border-border flex flex-col shadow-glass backdrop-blur-sm">
@@ -72,7 +74,12 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
         <div className="border-t border-border p-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="glass" size="sm" className="w-full justify-start h-12 lg:h-10">
+              <Button 
+                variant="glass" 
+                size="sm" 
+                className="w-full justify-start h-12 lg:h-10"
+                onClick={() => setIsHelpChatOpen(true)}
+              >
                 <HelpCircle className="w-4 h-4 lg:mr-3 icon-hover" />
                 <span className="hidden lg:inline">Help</span>
               </Button>
@@ -82,6 +89,12 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
             </TooltipContent>
           </Tooltip>
         </div>
+
+        {/* Help Chatbot */}
+        <HelpChatbot 
+          isOpen={isHelpChatOpen} 
+          onClose={() => setIsHelpChatOpen(false)} 
+        />
       </div>
     </TooltipProvider>
   );
