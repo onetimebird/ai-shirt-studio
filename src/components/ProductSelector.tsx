@@ -121,7 +121,7 @@ export function ProductSelector({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-screen overflow-y-auto pb-4">
       {/* Header */}
       <div className="text-center space-y-2">
         <Badge variant="secondary" className="text-xs">PRODUCTS</Badge>
