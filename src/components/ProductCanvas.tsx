@@ -101,7 +101,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         className="absolute top-4 right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex h-10 justify-start"
         onClick={() => setIsQuantityModalOpen(true)}
       >
-        <ArrowRight className="w-4 h-4 mr-3" />
+        <ArrowRight className="w-4 h-4 mr-2" />
         Next Step
       </Button>
       <div className="relative w-full h-full flex items-center justify-center">
