@@ -49,7 +49,7 @@ export const TopControls = ({
         <div className="flex items-center gap-2">
           <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
           <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-56">
               <SelectValue placeholder="Change Product" />
             </SelectTrigger>
             <SelectContent>
@@ -173,7 +173,7 @@ export const TopControls = ({
           <div className="flex items-center gap-2">
             {/* Product Selector */}
             <Select value={selectedProduct} onValueChange={onProductChange}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger className="w-40">
                 <SelectValue placeholder="Change Product" />
               </SelectTrigger>
               <SelectContent>
