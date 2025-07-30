@@ -265,14 +265,18 @@ export const TopControls = ({
           </div>
 
           {/* Next Step Button - Flexible sizing */}
-          <button 
-            type="button"
-            className="bg-blue-500 hover:bg-blue-600 text-white flex-1 min-w-0 rounded-md px-2 py-2 text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-1"
-            onClick={() => setIsQuantityModalOpen(true)}
+          <Button 
+            variant="default"
+            size="sm"
+            className="!bg-blue-500 !hover:bg-blue-600 !text-white flex-1 min-w-0 !border-0"
+            onClick={() => {
+              console.log('Next button clicked');
+              setIsQuantityModalOpen(true);
+            }}
           >
-            <DollarSign className="w-4 h-4" />
+            <DollarSign className="w-4 h-4 mr-1" />
             Next
-          </button>
+          </Button>
         </div>
       </div>
 
