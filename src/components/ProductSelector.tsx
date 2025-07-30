@@ -168,7 +168,7 @@ export function ProductSelector({
               {/* Color Swatches Grid */}
               <div className="mt-6">
                 <h4 className="font-semibold mb-4 text-lg">Choose Your Color</h4>
-                <div className="grid grid-cols-8 gap-4 p-4 bg-card rounded-lg border">
+                <div className="grid grid-cols-10 gap-3 p-6 bg-card rounded-lg border">
                   {selectedProductData.id === 'gildan-2000' ? (
                     // Gildan 2000 color swatches
                     getAllColors().map((colorData) => (
