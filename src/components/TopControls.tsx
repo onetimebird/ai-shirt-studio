@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign, Undo, Redo } from "lucide-react";
+import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
 import { QuantityModal } from "@/components/QuantityModal";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface TopControlsProps {
   selectedProduct: string;
@@ -31,74 +31,21 @@ export const TopControls = ({
 }: TopControlsProps) => {
   const currentColor = GILDAN_2000_COLORS.find(c => c.name === selectedColor);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
-
-  // Update undo/redo state
-  const updateUndoRedoState = () => {
-    const designCanvas = (window as any).designCanvas;
-    if (designCanvas) {
-      setCanUndo(designCanvas.canUndo());
-      setCanRedo(designCanvas.canRedo());
-    }
-  };
-
-  // Poll for undo/redo state changes
-  useEffect(() => {
-    const interval = setInterval(updateUndoRedoState, 100);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
       {/* Desktop - Single Row Layout */}
       <div className="hidden lg:flex items-center justify-between gap-4">
-        {/* Left side - Logo and Undo/Redo */}
-        <div className="flex items-center gap-3">
+        {/* Logo */}
+        <div className="flex items-center">
           <img 
             src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
             alt="CoolShirt.Ai Logo" 
             className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
           />
-          
-          {/* Undo/Redo Buttons */}
-          <div className="flex items-center gap-1 border border-border rounded-md p-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={!canUndo}
-              onClick={() => {
-                const designCanvas = (window as any).designCanvas;
-                if (designCanvas) {
-                  designCanvas.undo();
-                  updateUndoRedoState();
-                }
-              }}
-              className="h-8 w-8 p-0"
-            >
-              <Undo className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={!canRedo}
-              onClick={() => {
-                const designCanvas = (window as any).designCanvas;
-                if (designCanvas) {
-                  designCanvas.redo();
-                  updateUndoRedoState();
-                }
-              }}
-              className="h-8 w-8 p-0"
-            >
-              <Redo className="w-4 h-4" />
-            </Button>
-          </div>
         </div>
 
-        {/* Center controls */}
-        <div className="flex items-center gap-4">
-          {/* Product Selector */}
+        {/* Product Selector */}
         <div className="flex items-center gap-2">
           <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
           <Select value={selectedProduct} onValueChange={onProductChange}>
@@ -207,56 +154,19 @@ export const TopControls = ({
           </Button>
         </div>
 
-          {/* Theme Toggle */}
-          <ThemeToggle />
-        </div>
+        {/* Theme Toggle */}
+        <ThemeToggle />
       </div>
-
-      {/* Mobile - Two Row Layout */}
       <div className="flex flex-col gap-3 lg:hidden">
-        {/* First Row - Logo, Undo/Redo, Product & Color Selectors */}
+        {/* First Row - Logo, Product & Color Selectors */}
         <div className="flex items-center justify-between gap-2">
-          {/* Logo and Undo/Redo */}
-          <div className="flex items-center gap-2">
+          {/* Logo */}
+          <div className="flex items-center">
             <img 
               src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
               alt="CoolShirt.Ai Logo" 
-              className="h-10 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+              className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
             />
-            
-            {/* Undo/Redo Buttons for Mobile */}
-            <div className="flex items-center gap-1 border border-border rounded-md p-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={!canUndo}
-                onClick={() => {
-                  const designCanvas = (window as any).designCanvas;
-                  if (designCanvas) {
-                    designCanvas.undo();
-                    updateUndoRedoState();
-                  }
-                }}
-                className="h-6 w-6 p-0"
-              >
-                <Undo className="w-3 h-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={!canRedo}
-                onClick={() => {
-                  const designCanvas = (window as any).designCanvas;
-                  if (designCanvas) {
-                    designCanvas.redo();
-                    updateUndoRedoState();
-                  }
-                }}
-                className="h-6 w-6 p-0"
-              >
-                <Redo className="w-3 h-3" />
-              </Button>
-            </div>
           </div>
 
           {/* Product and Color Selectors */}

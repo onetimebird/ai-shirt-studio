@@ -4,6 +4,7 @@ import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
+import { UndoRedoControls } from "@/components/UndoRedoControls";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Settings, Type, Upload, Wand2, Package, Palette, X } from "lucide-react";
@@ -110,6 +111,9 @@ export const TShirtDesigner = () => {
 
         {/* Central Canvas */}
         <div className="flex-1 relative">
+          {/* Undo/Redo Controls - positioned over canvas */}
+          <UndoRedoControls />
+          
           <DesignCanvas
             selectedColor={selectedColor}
             currentSide={currentSide}
