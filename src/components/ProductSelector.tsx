@@ -136,57 +136,123 @@ export function ProductSelector({
         <Card className="border-2 border-primary bg-gradient-premium/10 shimmer-hover">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">{selectedProductData.name}</CardTitle>
-              <Badge variant="outline">Selected</Badge>
+              <div>
+                <CardTitle className="text-xl font-bold">{selectedProductData.name}</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">{selectedProductData.description}</p>
+              </div>
+              <div className="relative">
+                <Badge 
+                  variant="outline" 
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none shadow-lg animate-pulse font-semibold px-4 py-2"
+                >
+                  ✨ Selected
+                </Badge>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">{selectedProductData.description}</p>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <img 
-                  src={selectedProductData.image} 
-                  alt={selectedProductData.name}
-                  className="w-20 h-20 object-cover rounded-lg border-2 border-primary shadow-glow"
-                />
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow gentle-pulse">
-                  <Check className="w-3 h-3 text-primary-foreground" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-lg capitalize">{selectedColor?.toLowerCase().replace(/-/g, ' ')}</p>
+                  <p className="text-sm text-muted-foreground">{selectedProductData.price}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {selectedProductData.id === 'gildan-2000' ? 
+                      `${getAvailableColorCount()} of ${getTotalColorCount()} colors available` : 
+                      `${selectedProductData.colors.length} colors available`
+                    }
+                  </p>
                 </div>
               </div>
-              <div className="flex-1">
-                <p className="font-medium text-sm">{selectedColor}</p>
-                <p className="text-xs text-muted-foreground">{selectedProductData.price}</p>
-                <div className="flex flex-wrap gap-1 mt-2">
+              
+              {/* Enhanced Color Swatches Grid */}
+              <div className="mt-6">
+                <h4 className="font-semibold mb-4 text-lg">Choose Your Color</h4>
+                <div className="grid grid-cols-8 gap-3 p-4 bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 rounded-xl border shadow-inner">
                   {selectedProductData.id === 'gildan-2000' ? (
-                    // For Gildan 2000, use the structured color data
+                    // Enhanced Gildan 2000 color swatches
                     getAllColors().map((colorData) => (
-                      <button
+                      <div 
                         key={colorData.name}
-                        onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
-                        className={`w-6 h-6 rounded-full border-2 transition-all duration-300 hover:scale-125 transform icon-hover ${
-                          colorData.name === selectedColor 
-                            ? 'border-primary ring-4 ring-primary/40 shadow-glow' 
-                            : 'border-border hover:border-primary/50 hover:shadow-soft'
-                        } ${!colorData.available ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        style={{ backgroundColor: colorData.value }}
-                        title={`${colorData.label}${!colorData.available ? ' (Coming Soon)' : ''}`}
-                        disabled={!colorData.available}
-                      />
+                        className="relative group"
+                      >
+                        <button
+                          onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
+                          className={`w-12 h-12 rounded-full border-3 transition-all duration-500 hover:scale-125 transform relative overflow-hidden group ${
+                            colorData.name === selectedColor 
+                              ? 'border-white ring-4 ring-purple-400 shadow-2xl scale-110 z-10' 
+                              : 'border-gray-300 hover:border-purple-300 hover:shadow-xl hover:z-10'
+                          } ${!colorData.available ? 'opacity-60 cursor-not-allowed hover:scale-100' : 'hover:shadow-xl'}`}
+                          style={{ 
+                            backgroundColor: colorData.value,
+                            boxShadow: colorData.name === selectedColor ? 
+                              `0 0 30px ${colorData.value}40, 0 8px 32px rgba(0,0,0,0.3)` : 
+                              `0 4px 15px ${colorData.value}30`
+                          }}
+                          title={`${colorData.label}${!colorData.available ? ' (Coming Soon)' : ''}`}
+                          disabled={!colorData.available}
+                        >
+                          {/* Selection indicator */}
+                          {colorData.name === selectedColor && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                <Check className="w-2.5 h-2.5 text-purple-600" />
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Unavailable overlay */}
+                          {!colorData.available && (
+                            <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                            </div>
+                          )}
+                          
+                          {/* Hover tooltip */}
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
+                            {colorData.label}
+                            {!colorData.available && ' (Coming Soon)'}
+                          </div>
+                        </button>
+                      </div>
                     ))
                   ) : (
-                    // For other products, use the existing colorMap
+                    // Enhanced swatches for other products
                     selectedProductData.colors.map((color) => (
-                      <button
+                      <div 
                         key={color}
-                        onClick={() => handleColorSelect(color)}
-                        className={`w-6 h-6 rounded-full border-2 transition-all duration-300 hover:scale-125 transform icon-hover ${
-                          color === selectedColor 
-                            ? 'border-primary ring-4 ring-primary/40 shadow-glow' 
-                            : 'border-border hover:border-primary/50 hover:shadow-soft'
-                        }`}
-                        style={{ backgroundColor: colorMap[color] || '#ccc' }}
-                        title={color}
-                      />
+                        className="relative group"
+                      >
+                        <button
+                          onClick={() => handleColorSelect(color)}
+                          className={`w-12 h-12 rounded-full border-3 transition-all duration-500 hover:scale-125 transform relative overflow-hidden ${
+                            color === selectedColor 
+                              ? 'border-white ring-4 ring-purple-400 shadow-2xl scale-110 z-10' 
+                              : 'border-gray-300 hover:border-purple-300 hover:shadow-xl hover:z-10'
+                          }`}
+                          style={{ 
+                            backgroundColor: colorMap[color] || '#ccc',
+                            boxShadow: color === selectedColor ? 
+                              `0 0 30px ${colorMap[color] || '#ccc'}40, 0 8px 32px rgba(0,0,0,0.3)` : 
+                              `0 4px 15px ${colorMap[color] || '#ccc'}30`
+                          }}
+                          title={color}
+                        >
+                          {/* Selection indicator */}
+                          {color === selectedColor && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                <Check className="w-2.5 h-2.5 text-purple-600" />
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Hover tooltip */}
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
+                            {color}
+                          </div>
+                        </button>
+                      </div>
                     ))
                   )}
                 </div>
@@ -212,11 +278,6 @@ export function ProductSelector({
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                   <img 
-                     src={product.image} 
-                     alt={product.name}
-                     className="w-12 h-12 object-cover rounded border shadow-soft hover:shadow-glow transition-all duration-300"
-                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium text-sm">{product.name}</h4>
