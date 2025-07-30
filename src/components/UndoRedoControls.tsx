@@ -23,18 +23,6 @@ export const UndoRedoControls = () => {
 
   return (
     <div className="absolute top-4 left-4 z-[100] flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg pointer-events-auto">
-      {/* Test button to verify clicks work */}
-      <Button
-        variant="outline" 
-        size="sm"
-        onClick={() => {
-          console.log('[TEST] Test button clicked - buttons are working!');
-          alert('Test button works!');
-        }}
-        className="h-8 w-8 p-0 mr-2"
-      >
-        T
-      </Button>
       <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
