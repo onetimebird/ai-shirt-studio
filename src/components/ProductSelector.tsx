@@ -175,7 +175,7 @@ export function ProductSelector({
                         <div key={colorData.name} className="relative group">
                           <button
                             onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
-                            className={`w-10 h-10 rounded-xl transition-all duration-200 border-2 ${
+                            className={`w-3 h-3 rounded-lg transition-all duration-200 border ${
                               colorData.name === selectedColor 
                                 ? 'border-green-500 shadow-lg scale-110' 
                                 : 'border-gray-300 hover:border-gray-400 hover:scale-105'
@@ -185,7 +185,7 @@ export function ProductSelector({
                           >
                             {colorData.name === selectedColor && (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <Check className="w-4 h-4 text-white drop-shadow-lg" />
+                                <Check className="w-2 h-2 text-white drop-shadow-lg" />
                               </div>
                             )}
                             {!colorData.available && (
@@ -206,7 +206,7 @@ export function ProductSelector({
                         <div key={color} className="relative group">
                           <button
                             onClick={() => handleColorSelect(color)}
-                            className={`w-10 h-10 rounded-xl transition-all duration-200 border-2 cursor-pointer ${
+                            className={`w-3 h-3 rounded-lg transition-all duration-200 border cursor-pointer ${
                               color === selectedColor 
                                 ? 'border-green-500 shadow-lg scale-110' 
                                 : 'border-gray-300 hover:border-gray-400 hover:scale-105'
@@ -215,7 +215,7 @@ export function ProductSelector({
                           >
                             {color === selectedColor && (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <Check className="w-4 h-4 text-white drop-shadow-lg" />
+                                <Check className="w-2 h-2 text-white drop-shadow-lg" />
                               </div>
                             )}
                           </button>
