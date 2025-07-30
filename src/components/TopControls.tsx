@@ -74,7 +74,7 @@ export const TopControls = ({
                   className="w-4 h-4 rounded border border-border" 
                   style={{ backgroundColor: currentColor?.value }}
                 />
-                <SelectValue />
+                <span>{currentColor?.label}</span>
               </div>
             </SelectTrigger>
             <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
@@ -197,7 +197,7 @@ export const TopControls = ({
                     className="w-4 h-4 rounded border border-border" 
                     style={{ backgroundColor: currentColor?.value }}
                   />
-                  <SelectValue />
+                  <span>{currentColor?.label}</span>
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
