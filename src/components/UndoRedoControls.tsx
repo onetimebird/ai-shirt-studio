@@ -22,8 +22,8 @@ export const UndoRedoControls = () => {
   }, []);
 
   return (
-    <div className="absolute top-4 left-4 z-10 flex items-start gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
-      <div className="relative group flex flex-col items-center">
+    <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
+      <div className="relative group">
         <Button
           variant="ghost"
           size="sm"
@@ -40,19 +40,19 @@ export const UndoRedoControls = () => {
               console.log('[UI] ERROR: Design canvas not available');
             }
           }}
-          className="h-7 w-7 p-0 hover:bg-muted"
+          className="h-7 w-7 p-0 hover:bg-muted flex flex-col items-center"
         >
           <Undo className="w-3 h-3" />
+          {/* Mobile label */}
+          <span className="block md:hidden text-[8px] text-muted-foreground mt-0.5 leading-none">Undo</span>
         </Button>
-        {/* Mobile label */}
-        <span className="block md:hidden text-[8px] text-muted-foreground mt-0.5 leading-none">Undo</span>
         {/* Desktop tooltip */}
         <div className="hidden md:block absolute left-8 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Undo (Ctrl+Z)
         </div>
       </div>
 
-      <div className="relative group flex flex-col items-center">
+      <div className="relative group">
         <Button
           variant="ghost"
           size="sm"
@@ -69,12 +69,12 @@ export const UndoRedoControls = () => {
               console.log('[UI] ERROR: Design canvas not available');
             }
           }}
-          className="h-7 w-7 p-0 hover:bg-muted"
+          className="h-7 w-7 p-0 hover:bg-muted flex flex-col items-center"
         >
           <Redo className="w-3 h-3" />
+          {/* Mobile label */}
+          <span className="block md:hidden text-[8px] text-muted-foreground mt-0.5 leading-none">Redo</span>
         </Button>
-        {/* Mobile label */}
-        <span className="block md:hidden text-[8px] text-muted-foreground mt-0.5 leading-none">Redo</span>
         {/* Desktop tooltip */}
         <div className="hidden md:block absolute left-8 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Redo (Ctrl+Y)

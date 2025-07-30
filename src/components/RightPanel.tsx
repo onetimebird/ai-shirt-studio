@@ -196,8 +196,8 @@ export const RightPanel = ({
       opacity: obj.opacity
     })));
     
-    // Reset text content for next text and clear selection
-    setTextContent("New multi-line text\nType here...");
+    // Keep text content as is for adding multiple texts
+    // setTextContent("New multi-line text\nType here...");
     
     // Clear the canvas selection after a short delay to allow the new object to be selected first
     setTimeout(() => {
