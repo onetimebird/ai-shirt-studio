@@ -42,10 +42,8 @@ export const DesignCanvas = ({
           // Filter out the product template image - it's usually the first object or has specific properties
           const userObjects = allObjects.filter(obj => {
             // Skip objects that are part of the product template
-            return obj.selectable !== false && 
-                   !obj.evented === false && 
-                   obj.type !== 'group' || 
-                   (obj.type === 'group' && obj.selectable !== false);
+            // Template objects typically have selectable: false or evented: false
+            return obj.selectable !== false && obj.evented !== false;
           });
           
           const userObjectsData = userObjects.map(obj => obj.toObject());
@@ -62,7 +60,11 @@ export const DesignCanvas = ({
             canvasHistory.currentIndex--;
           }
           
-          console.log('Saved canvas state with', userObjects.length, 'user objects');
+          console.log('[History] Saved state:', {
+            totalStates: canvasHistory.states.length,
+            currentIndex: canvasHistory.currentIndex,
+            userObjectsCount: userObjects.length
+          });
         };
         
         // Save initial empty state (no user objects)
@@ -73,19 +75,22 @@ export const DesignCanvas = ({
           canvas.on('object:added', (e) => {
             const obj = e.target;
             // Only save state for user-added objects (not template objects)
-            if (obj && obj.selectable !== false) {
+            if (obj && obj.selectable !== false && obj.evented !== false) {
+              console.log('[History] Object added, saving state:', obj.type);
               setTimeout(saveUserObjectsState, 100);
             }
           });
           canvas.on('object:removed', (e) => {
             const obj = e.target;
-            if (obj && obj.selectable !== false) {
+            if (obj && obj.selectable !== false && obj.evented !== false) {
+              console.log('[History] Object removed, saving state:', obj.type);
               setTimeout(saveUserObjectsState, 100);
             }
           });
           canvas.on('object:modified', (e) => {
             const obj = e.target;
-            if (obj && obj.selectable !== false) {
+            if (obj && obj.selectable !== false && obj.evented !== false) {
+              console.log('[History] Object modified, saving state:', obj.type);
               setTimeout(saveUserObjectsState, 100);
             }
           });
@@ -260,22 +265,31 @@ export const DesignCanvas = ({
             }
           },
           undo: () => {
+            console.log('[Undo] Attempting undo. Current state:', {
+              currentIndex: canvasHistory.currentIndex,
+              totalStates: canvasHistory.states.length,
+              canUndo: canvasHistory.currentIndex > 0
+            });
+            
             if (canvasHistory.currentIndex > 0) {
               canvasHistory.currentIndex--;
               const previousState = canvasHistory.states[canvasHistory.currentIndex];
               const userObjectsData = JSON.parse(previousState);
               
+              console.log('[Undo] Restoring state:', {
+                newIndex: canvasHistory.currentIndex,
+                objectsToRestore: userObjectsData.length
+              });
+              
               // Get all current objects
               const allObjects = canvas.getObjects();
               
               // Remove only user objects (preserve product template)
               const objectsToRemove = allObjects.filter(obj => {
-                return obj.selectable !== false && 
-                       !obj.evented === false && 
-                       obj.type !== 'group' || 
-                       (obj.type === 'group' && obj.selectable !== false);
+                return obj.selectable !== false && obj.evented !== false;
               });
               
+              console.log('[Undo] Removing', objectsToRemove.length, 'user objects');
               objectsToRemove.forEach(obj => canvas.remove(obj));
               
               // Restore user objects from history
@@ -283,35 +297,44 @@ export const DesignCanvas = ({
                 util.enlivenObjects(userObjectsData).then((objects: any[]) => {
                   objects.forEach(obj => canvas.add(obj));
                   canvas.renderAll();
-                  console.log('Undo completed, restored', objects.length, 'user objects');
+                  console.log('[Undo] Successfully restored', objects.length, 'user objects');
                 });
               } else {
                 canvas.renderAll();
-                console.log('Undo completed, no objects to restore');
+                console.log('[Undo] No objects to restore');
               }
               
               onSelectedObjectChange(null);
             } else {
-              console.log('Cannot undo - at beginning of history');
+              console.log('[Undo] Cannot undo - at beginning of history');
             }
           },
           redo: () => {
+            console.log('[Redo] Attempting redo. Current state:', {
+              currentIndex: canvasHistory.currentIndex,
+              totalStates: canvasHistory.states.length,
+              canRedo: canvasHistory.currentIndex < canvasHistory.states.length - 1
+            });
+            
             if (canvasHistory.currentIndex < canvasHistory.states.length - 1) {
               canvasHistory.currentIndex++;
               const nextState = canvasHistory.states[canvasHistory.currentIndex];
               const userObjectsData = JSON.parse(nextState);
               
+              console.log('[Redo] Restoring state:', {
+                newIndex: canvasHistory.currentIndex,
+                objectsToRestore: userObjectsData.length
+              });
+              
               // Get all current objects
               const allObjects = canvas.getObjects();
               
               // Remove only user objects (preserve product template)
               const objectsToRemove = allObjects.filter(obj => {
-                return obj.selectable !== false && 
-                       !obj.evented === false && 
-                       obj.type !== 'group' || 
-                       (obj.type === 'group' && obj.selectable !== false);
+                return obj.selectable !== false && obj.evented !== false;
               });
               
+              console.log('[Redo] Removing', objectsToRemove.length, 'user objects');
               objectsToRemove.forEach(obj => canvas.remove(obj));
               
               // Restore user objects from history
@@ -319,16 +342,16 @@ export const DesignCanvas = ({
                 util.enlivenObjects(userObjectsData).then((objects: any[]) => {
                   objects.forEach(obj => canvas.add(obj));
                   canvas.renderAll();
-                  console.log('Redo completed, restored', objects.length, 'user objects');
+                  console.log('[Redo] Successfully restored', objects.length, 'user objects');
                 });
               } else {
                 canvas.renderAll();
-                console.log('Redo completed, no objects to restore');
+                console.log('[Redo] No objects to restore');
               }
               
               onSelectedObjectChange(null);
             } else {
-              console.log('Cannot redo - at end of history');
+              console.log('[Redo] Cannot redo - at end of history');
             }
           },
           canUndo: () => canvasHistory.currentIndex > 0,
