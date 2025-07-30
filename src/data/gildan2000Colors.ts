@@ -1,4 +1,4 @@
-// Gildan 2000 Ultra Cotton T-Shirt Colors - Real Product Data
+// Gildan 2000 Ultra Cotton T-Shirt Colors - Complete Product Data
 export interface Gildan2000Color {
   name: string;
   label: string;
@@ -9,6 +9,7 @@ export interface Gildan2000Color {
 }
 
 export const GILDAN_2000_COLORS: Gildan2000Color[] = [
+  // Available colors with actual product images
   {
     name: "cherry-red",
     label: "Cherry Red",
@@ -57,7 +58,8 @@ export const GILDAN_2000_COLORS: Gildan2000Color[] = [
     backImage: "/lovable-uploads/3cdae772-d4a2-43d4-975d-c48b79a05f8e.png",
     available: true,
   },
-  // Placeholder entries for future colors (to be added as more images are uploaded)
+
+  // Complete Gildan 2000 color palette (placeholders for future images)
   {
     name: "white",
     label: "White",
@@ -82,6 +84,366 @@ export const GILDAN_2000_COLORS: Gildan2000Color[] = [
     backImage: "/placeholder-navy-back.png", 
     available: false,
   },
+  {
+    name: "ash-grey",
+    label: "Ash Grey",
+    value: "#B2B2B2",
+    frontImage: "/placeholder-ash-grey-front.png",
+    backImage: "/placeholder-ash-grey-back.png",
+    available: false,
+  },
+  {
+    name: "red",
+    label: "Red",
+    value: "#FF0000",
+    frontImage: "/placeholder-red-front.png",
+    backImage: "/placeholder-red-back.png",
+    available: false,
+  },
+  {
+    name: "carolina-blue",
+    label: "Carolina Blue",
+    value: "#7BAFD4",
+    frontImage: "/placeholder-carolina-blue-front.png",
+    backImage: "/placeholder-carolina-blue-back.png",
+    available: false,
+  },
+  {
+    name: "dark-heather",
+    label: "Dark Heather",
+    value: "#616161",
+    frontImage: "/placeholder-dark-heather-front.png",
+    backImage: "/placeholder-dark-heather-back.png",
+    available: false,
+  },
+  {
+    name: "irish-green",
+    label: "Irish Green",
+    value: "#009639",
+    frontImage: "/placeholder-irish-green-front.png",
+    backImage: "/placeholder-irish-green-back.png",
+    available: false,
+  },
+  {
+    name: "light-blue",
+    label: "Light Blue",
+    value: "#ADD8E6",
+    frontImage: "/placeholder-light-blue-front.png",
+    backImage: "/placeholder-light-blue-back.png",
+    available: false,
+  },
+  {
+    name: "orange",
+    label: "Orange",
+    value: "#FF8C00",
+    frontImage: "/placeholder-orange-front.png",
+    backImage: "/placeholder-orange-back.png",
+    available: false,
+  },
+  {
+    name: "purple",
+    label: "Purple",
+    value: "#800080",
+    frontImage: "/placeholder-purple-front.png",
+    backImage: "/placeholder-purple-back.png",
+    available: false,
+  },
+  {
+    name: "yellow",
+    label: "Yellow",
+    value: "#FFFF00",
+    frontImage: "/placeholder-yellow-front.png",
+    backImage: "/placeholder-yellow-back.png",
+    available: false,
+  },
+  {
+    name: "maroon",
+    label: "Maroon",
+    value: "#800000",
+    frontImage: "/placeholder-maroon-front.png",
+    backImage: "/placeholder-maroon-back.png",
+    available: false,
+  },
+  {
+    name: "brown",
+    label: "Brown",
+    value: "#A0522D",
+    frontImage: "/placeholder-brown-front.png",
+    backImage: "/placeholder-brown-back.png",
+    available: false,
+  },
+  {
+    name: "kelly-green",
+    label: "Kelly Green",
+    value: "#4CBB17",
+    frontImage: "/placeholder-kelly-green-front.png",
+    backImage: "/placeholder-kelly-green-back.png",
+    available: false,
+  },
+  {
+    name: "tan",
+    label: "Tan",
+    value: "#D2B48C",
+    frontImage: "/placeholder-tan-front.png",
+    backImage: "/placeholder-tan-back.png",
+    available: false,
+  },
+  {
+    name: "violet",
+    label: "Violet",
+    value: "#8B00FF",
+    frontImage: "/placeholder-violet-front.png",
+    backImage: "/placeholder-violet-back.png",
+    available: false,
+  },
+  {
+    name: "gold",
+    label: "Gold",
+    value: "#FFD700",
+    frontImage: "/placeholder-gold-front.png",
+    backImage: "/placeholder-gold-back.png",
+    available: false,
+  },
+  {
+    name: "lime",
+    label: "Lime",
+    value: "#32CD32",
+    frontImage: "/placeholder-lime-front.png",
+    backImage: "/placeholder-lime-back.png",
+    available: false,
+  },
+  {
+    name: "antique-cherry-red",
+    label: "Antique Cherry Red",
+    value: "#8B0000",
+    frontImage: "/placeholder-antique-cherry-red-front.png",
+    backImage: "/placeholder-antique-cherry-red-back.png",
+    available: false,
+  },
+  {
+    name: "antique-royal",
+    label: "Antique Royal",
+    value: "#191970",
+    frontImage: "/placeholder-antique-royal-front.png",
+    backImage: "/placeholder-antique-royal-back.png",
+    available: false,
+  },
+  {
+    name: "antique-sapphire",
+    label: "Antique Sapphire",
+    value: "#0F52BA",
+    frontImage: "/placeholder-antique-sapphire-front.png",
+    backImage: "/placeholder-antique-sapphire-back.png",
+    available: false,
+  },
+  {
+    name: "charcoal",
+    label: "Charcoal",
+    value: "#36454F",
+    frontImage: "/placeholder-charcoal-front.png",
+    backImage: "/placeholder-charcoal-back.png",
+    available: false,
+  },
+  {
+    name: "daisy",
+    label: "Daisy",
+    value: "#FEF65B",
+    frontImage: "/placeholder-daisy-front.png",
+    backImage: "/placeholder-daisy-back.png",
+    available: false,
+  },
+  {
+    name: "garnet",
+    label: "Garnet",
+    value: "#733635",
+    frontImage: "/placeholder-garnet-front.png",
+    backImage: "/placeholder-garnet-back.png",
+    available: false,
+  },
+  {
+    name: "heather-grey",
+    label: "Heather Grey",
+    value: "#A8A8A8",
+    frontImage: "/placeholder-heather-grey-front.png",
+    backImage: "/placeholder-heather-grey-back.png",
+    available: false,
+  },
+  {
+    name: "heather-navy",
+    label: "Heather Navy",
+    value: "#3F4A5C",
+    frontImage: "/placeholder-heather-navy-front.png",
+    backImage: "/placeholder-heather-navy-back.png",
+    available: false,
+  },
+  {
+    name: "heather-red",
+    label: "Heather Red",
+    value: "#A52A2A",
+    frontImage: "/placeholder-heather-red-front.png",
+    backImage: "/placeholder-heather-red-back.png",
+    available: false,
+  },
+  {
+    name: "heather-royal",
+    label: "Heather Royal",
+    value: "#4682B4",
+    frontImage: "/placeholder-heather-royal-front.png",
+    backImage: "/placeholder-heather-royal-back.png",
+    available: false,
+  },
+  {
+    name: "heather-sport-scarlet-red",
+    label: "Heather Sport Scarlet Red",
+    value: "#FF2400",
+    frontImage: "/placeholder-heather-sport-scarlet-red-front.png",
+    backImage: "/placeholder-heather-sport-scarlet-red-back.png",
+    available: false,
+  },
+  {
+    name: "indigo-blue",
+    label: "Indigo Blue",
+    value: "#4B0082",
+    frontImage: "/placeholder-indigo-blue-front.png",
+    backImage: "/placeholder-indigo-blue-back.png",
+    available: false,
+  },
+  {
+    name: "jade-dome",
+    label: "Jade Dome",
+    value: "#00A86B",
+    frontImage: "/placeholder-jade-dome-front.png",
+    backImage: "/placeholder-jade-dome-back.png",
+    available: false,
+  },
+  {
+    name: "kiwi",
+    label: "Kiwi",
+    value: "#8EE53F",
+    frontImage: "/placeholder-kiwi-front.png",
+    backImage: "/placeholder-kiwi-back.png",
+    available: false,
+  },
+  {
+    name: "light-steel",
+    label: "Light Steel",
+    value: "#B0C4DE",
+    frontImage: "/placeholder-light-steel-front.png",
+    backImage: "/placeholder-light-steel-back.png",
+    available: false,
+  },
+  {
+    name: "military-green",
+    label: "Military Green",
+    value: "#4B5320",
+    frontImage: "/placeholder-military-green-front.png",
+    backImage: "/placeholder-military-green-back.png",
+    available: false,
+  },
+  {
+    name: "mint-green",
+    label: "Mint Green",
+    value: "#98FB98",
+    frontImage: "/placeholder-mint-green-front.png",
+    backImage: "/placeholder-mint-green-back.png",
+    available: false,
+  },
+  {
+    name: "natural",
+    label: "Natural",
+    value: "#F5F5DC",
+    frontImage: "/placeholder-natural-front.png",
+    backImage: "/placeholder-natural-back.png",
+    available: false,
+  },
+  {
+    name: "old-gold",
+    label: "Old Gold",
+    value: "#CFB53B",
+    frontImage: "/placeholder-old-gold-front.png",
+    backImage: "/placeholder-old-gold-back.png",
+    available: false,
+  },
+  {
+    name: "safety-green",
+    label: "Safety Green",
+    value: "#76FF03",
+    frontImage: "/placeholder-safety-green-front.png",
+    backImage: "/placeholder-safety-green-back.png",
+    available: false,
+  },
+  {
+    name: "safety-orange",
+    label: "Safety Orange",
+    value: "#FF8C00",
+    frontImage: "/placeholder-safety-orange-front.png",
+    backImage: "/placeholder-safety-orange-back.png",
+    available: false,
+  },
+  {
+    name: "safety-pink",
+    label: "Safety Pink",
+    value: "#FF69B4",
+    frontImage: "/placeholder-safety-pink-front.png",
+    backImage: "/placeholder-safety-pink-back.png",
+    available: false,
+  },
+  {
+    name: "sand",
+    label: "Sand",
+    value: "#F4A460",
+    frontImage: "/placeholder-sand-front.png",
+    backImage: "/placeholder-sand-back.png",
+    available: false,
+  },
+  {
+    name: "sapphire",
+    label: "Sapphire",
+    value: "#0F52BA",
+    frontImage: "/placeholder-sapphire-front.png",
+    backImage: "/placeholder-sapphire-back.png",
+    available: false,
+  },
+  {
+    name: "stonewashed-blue",
+    label: "Stonewashed Blue",
+    value: "#87CEEB",
+    frontImage: "/placeholder-stonewashed-blue-front.png",
+    backImage: "/placeholder-stonewashed-blue-back.png",
+    available: false,
+  },
+  {
+    name: "sunset",
+    label: "Sunset",
+    value: "#FAD5A5",
+    frontImage: "/placeholder-sunset-front.png",
+    backImage: "/placeholder-sunset-back.png",
+    available: false,
+  },
+  {
+    name: "texas-orange",
+    label: "Texas Orange",
+    value: "#FF8C00",
+    frontImage: "/placeholder-texas-orange-front.png",
+    backImage: "/placeholder-texas-orange-back.png",
+    available: false,
+  },
+  {
+    name: "turf-green",
+    label: "Turf Green",
+    value: "#228B22",
+    frontImage: "/placeholder-turf-green-front.png",
+    backImage: "/placeholder-turf-green-back.png",
+    available: false,
+  },
+  {
+    name: "tweed",
+    label: "Tweed",
+    value: "#8B8680",
+    frontImage: "/placeholder-tweed-front.png",
+    backImage: "/placeholder-tweed-back.png",
+    available: false,
+  },
 ];
 
 export const getColorByName = (name: string): Gildan2000Color | undefined => {
@@ -90,4 +452,16 @@ export const getColorByName = (name: string): Gildan2000Color | undefined => {
 
 export const getAvailableColors = (): Gildan2000Color[] => {
   return GILDAN_2000_COLORS.filter(color => color.available);
+};
+
+export const getAllColors = (): Gildan2000Color[] => {
+  return GILDAN_2000_COLORS;
+};
+
+export const getTotalColorCount = (): number => {
+  return GILDAN_2000_COLORS.length;
+};
+
+export const getAvailableColorCount = (): number => {
+  return GILDAN_2000_COLORS.filter(color => color.available).length;
 };

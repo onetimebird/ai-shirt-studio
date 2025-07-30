@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { getAllColors, getTotalColorCount, getAvailableColorCount } from '@/data/gildan2000Colors';
 
 const products = [
   {
@@ -11,7 +12,7 @@ const products = [
     name: 'Gildan 2000',
     description: 'Ultra Cotton T-Shirt',
     type: 'T-Shirt',
-    colors: ['White', 'Black', 'Navy', 'Red', 'Royal Blue', 'Forest Green'],
+    colors: getAllColors().map(color => color.label), // Use complete color list
     price: '$12.99',
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop'
   },
@@ -156,19 +157,38 @@ export function ProductSelector({
                 <p className="font-medium text-sm">{selectedColor}</p>
                 <p className="text-xs text-muted-foreground">{selectedProductData.price}</p>
                 <div className="flex flex-wrap gap-1 mt-2">
-                  {selectedProductData.colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => handleColorSelect(color)}
-                      className={`w-6 h-6 rounded-full border-2 transition-all duration-300 hover:scale-125 transform icon-hover ${
-                        color === selectedColor 
-                          ? 'border-primary ring-4 ring-primary/40 shadow-glow' 
-                          : 'border-border hover:border-primary/50 hover:shadow-soft'
-                      }`}
-                      style={{ backgroundColor: colorMap[color] || '#ccc' }}
-                      title={color}
-                    />
-                  ))}
+                  {selectedProductData.id === 'gildan-2000' ? (
+                    // For Gildan 2000, use the structured color data
+                    getAllColors().map((colorData) => (
+                      <button
+                        key={colorData.name}
+                        onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
+                        className={`w-6 h-6 rounded-full border-2 transition-all duration-300 hover:scale-125 transform icon-hover ${
+                          colorData.name === selectedColor 
+                            ? 'border-primary ring-4 ring-primary/40 shadow-glow' 
+                            : 'border-border hover:border-primary/50 hover:shadow-soft'
+                        } ${!colorData.available ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        style={{ backgroundColor: colorData.value }}
+                        title={`${colorData.label}${!colorData.available ? ' (Coming Soon)' : ''}`}
+                        disabled={!colorData.available}
+                      />
+                    ))
+                  ) : (
+                    // For other products, use the existing colorMap
+                    selectedProductData.colors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => handleColorSelect(color)}
+                        className={`w-6 h-6 rounded-full border-2 transition-all duration-300 hover:scale-125 transform icon-hover ${
+                          color === selectedColor 
+                            ? 'border-primary ring-4 ring-primary/40 shadow-glow' 
+                            : 'border-border hover:border-primary/50 hover:shadow-soft'
+                        }`}
+                        style={{ backgroundColor: colorMap[color] || '#ccc' }}
+                        title={color}
+                      />
+                    ))
+                  )}
                 </div>
               </div>
             </div>
