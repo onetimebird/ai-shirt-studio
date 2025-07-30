@@ -118,16 +118,14 @@ export const TopControls = ({
 
         {/* Next Step Button */}
         <Button 
-          variant="outline" 
           size="lg"
           onClick={() => {
             console.log('Desktop Next Step button clicked');
             setIsQuantityModalOpen(true);
           }}
-          className="!bg-blue-500 !hover:bg-blue-600 !text-white !border-blue-500 hover:!border-blue-600"
-          style={{ backgroundColor: '#3b82f6', borderColor: '#3b82f6' }}
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200"
         >
-          <ArrowRight className="w-4 h-4 mr-1 icon-hover" />
+          <ArrowRight className="w-4 h-4 mr-1" strokeWidth={2.5} />
           Next Step
         </Button>
 
