@@ -279,16 +279,20 @@ export const DesignCanvas = ({
               objectsToRemove.forEach(obj => canvas.remove(obj));
               
               // Restore user objects from history
-              userObjectsData.forEach((objData: any) => {
-                util.enlivenObjects([objData]).then((objects: any[]) => {
+              if (userObjectsData.length > 0) {
+                util.enlivenObjects(userObjectsData).then((objects: any[]) => {
                   objects.forEach(obj => canvas.add(obj));
                   canvas.renderAll();
+                  console.log('Undo completed, restored', objects.length, 'user objects');
                 });
-              });
+              } else {
+                canvas.renderAll();
+                console.log('Undo completed, no objects to restore');
+              }
               
-              canvas.renderAll();
               onSelectedObjectChange(null);
-              console.log('Undo completed, restored', userObjectsData.length, 'user objects');
+            } else {
+              console.log('Cannot undo - at beginning of history');
             }
           },
           redo: () => {
@@ -311,16 +315,20 @@ export const DesignCanvas = ({
               objectsToRemove.forEach(obj => canvas.remove(obj));
               
               // Restore user objects from history
-              userObjectsData.forEach((objData: any) => {
-                util.enlivenObjects([objData]).then((objects: any[]) => {
+              if (userObjectsData.length > 0) {
+                util.enlivenObjects(userObjectsData).then((objects: any[]) => {
                   objects.forEach(obj => canvas.add(obj));
                   canvas.renderAll();
+                  console.log('Redo completed, restored', objects.length, 'user objects');
                 });
-              });
+              } else {
+                canvas.renderAll();
+                console.log('Redo completed, no objects to restore');
+              }
               
-              canvas.renderAll();
               onSelectedObjectChange(null);
-              console.log('Redo completed, restored', userObjectsData.length, 'user objects');
+            } else {
+              console.log('Cannot redo - at end of history');
             }
           },
           canUndo: () => canvasHistory.currentIndex > 0,
