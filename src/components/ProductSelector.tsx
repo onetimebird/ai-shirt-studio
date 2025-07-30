@@ -112,6 +112,12 @@ export function ProductSelector({
       onProductChange?.(productId);
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
+      
+      // Auto-scroll to top
+      const container = document.querySelector('.scrollbar-hide');
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -135,19 +141,17 @@ export function ProductSelector({
       {selectedProductData && (
         <Card className="border-2 border-primary bg-gradient-premium/10 shimmer-hover">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-xl font-bold">{selectedProductData.name}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">{selectedProductData.description}</p>
-              </div>
-              <div className="relative">
-                <Badge 
-                  variant="outline" 
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none shadow-lg animate-pulse font-semibold px-4 py-2"
-                >
-                  ✨ Selected
-                </Badge>
-              </div>
+            <div className="text-center mb-4">
+              <Badge 
+                variant="outline" 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-none shadow-lg animate-pulse font-semibold px-4 py-2"
+              >
+                ✨ Selected
+              </Badge>
+            </div>
+            <div className="text-center">
+              <CardTitle className="text-xl font-bold">{selectedProductData.name}</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">{selectedProductData.description}</p>
             </div>
           </CardHeader>
           <CardContent>
