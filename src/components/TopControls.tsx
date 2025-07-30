@@ -219,8 +219,8 @@ export const TopControls = ({
           <MobileThemeToggle />
         </div>
 
-        {/* Second Row - Controls evenly spaced */}
-        <div className="flex items-center justify-between gap-2">
+        {/* Second Row - Controls evenly spaced with proper overflow handling */}
+        <div className="flex items-center justify-between gap-2 min-w-0">
           {/* Save Button */}
           <Button 
             variant="creative" 
@@ -238,14 +238,14 @@ export const TopControls = ({
                 toast.error("Canvas not ready");
               }
             }}
-            className="flex-1"
+            className="flex-1 min-w-0"
           >
             <Save className="w-4 h-4 mr-1 icon-hover" />
             Save
           </Button>
 
           {/* Front/Back Toggle */}
-          <div className="flex items-center border border-border rounded-md flex-1">
+          <div className="flex items-center border border-border rounded-md flex-1 min-w-0">
             <Button
               variant={currentSide === "front" ? "default" : "ghost"}
               size="sm"
@@ -264,11 +264,11 @@ export const TopControls = ({
             </Button>
           </div>
 
-          {/* Next Step Button - Takes more space */}
+          {/* Next Step Button - Flexible sizing */}
           <Button 
             variant="default" 
             size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white flex-2"
+            className="bg-blue-500 hover:bg-blue-600 text-white flex-1 min-w-0 whitespace-nowrap"
             onClick={() => setIsQuantityModalOpen(true)}
           >
             <DollarSign className="w-4 h-4 mr-1" />

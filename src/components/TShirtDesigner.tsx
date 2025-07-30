@@ -87,8 +87,8 @@ export const TShirtDesigner = () => {
       {/* Smoke Test - Uncomment to test SVG loading */}
       {/* <SmokeTest /> */}
       
-      {/* Top Controls Bar */}
-      <div className="flex-shrink-0">
+      {/* Top Controls Bar - Sticky */}
+      <div className="sticky top-0 z-50 flex-shrink-0">
         <TopControls
           selectedProduct={selectedProduct}
           selectedColor={selectedColor}
@@ -103,47 +103,53 @@ export const TShirtDesigner = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden relative min-h-0">
-        {/* Left Toolbar - Responsive visibility */}
-        <div className="hidden md:block flex-shrink-0">
-          <LeftToolbar 
-            activeTool={activeTool} 
-            onToolChange={handleToolChange} 
-          />
-        </div>
-
-        {/* Central Canvas - Always takes remaining space */}
-        <div className="flex-1 relative min-w-0 flex items-center justify-center p-2 md:p-4">
-          {/* Undo/Redo Controls - positioned over canvas */}
-          <UndoRedoControls />
-          
-          <div className="w-full h-full max-w-4xl max-h-full flex items-center justify-center">
-            <DesignCanvas
-              selectedColor={selectedColor}
-              currentSide={currentSide}
-              selectedProduct={selectedProduct}
-              activeTool={activeTool}
-              onSelectedObjectChange={setSelectedObject}
-              onToolChange={setActiveTool}
-              onTextObjectsUpdate={handleTextObjectsUpdate}
-              onImageObjectsUpdate={handleImageObjectsUpdate}
+        {/* Left Toolbar - Sticky sidebar */}
+        <div className="hidden md:block flex-shrink-0 sticky top-0 h-screen">
+          <div className="h-full overflow-y-auto">
+            <LeftToolbar 
+              activeTool={activeTool} 
+              onToolChange={handleToolChange} 
             />
           </div>
         </div>
 
-        {/* Right Panel - Responsive visibility and sizing */}
-        <div className="hidden xl:block flex-shrink-0 w-80 2xl:w-96">
-          <RightPanel
-            activeTool={activeTool}
-            selectedObject={selectedObject}
-            onTextPropertiesChange={handleTextPropertiesChange}
-            onImageUpload={handleImageUpload}
-            onProductColorChange={handleProductColorChange}
-            textObjects={textObjects}
-            imageObjects={imageObjects}
-            selectedProduct={selectedProduct}
-            selectedColor={selectedColor}
-            onProductChange={setSelectedProduct}
-          />
+        {/* Central Canvas - Scrollable area */}
+        <div className="flex-1 relative min-w-0 overflow-auto">
+          <div className="min-h-full flex items-center justify-center p-2 md:p-4">
+            {/* Undo/Redo Controls - positioned over canvas */}
+            <UndoRedoControls />
+            
+            <div className="w-full max-w-4xl flex items-center justify-center">
+              <DesignCanvas
+                selectedColor={selectedColor}
+                currentSide={currentSide}
+                selectedProduct={selectedProduct}
+                activeTool={activeTool}
+                onSelectedObjectChange={setSelectedObject}
+                onToolChange={setActiveTool}
+                onTextObjectsUpdate={handleTextObjectsUpdate}
+                onImageObjectsUpdate={handleImageObjectsUpdate}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel - Sticky sidebar */}
+        <div className="hidden xl:block flex-shrink-0 w-80 2xl:w-96 sticky top-0 h-screen">
+          <div className="h-full overflow-y-auto">
+            <RightPanel
+              activeTool={activeTool}
+              selectedObject={selectedObject}
+              onTextPropertiesChange={handleTextPropertiesChange}
+              onImageUpload={handleImageUpload}
+              onProductColorChange={handleProductColorChange}
+              textObjects={textObjects}
+              imageObjects={imageObjects}
+              selectedProduct={selectedProduct}
+              selectedColor={selectedColor}
+              onProductChange={setSelectedProduct}
+            />
+          </div>
         </div>
       </div>
 
