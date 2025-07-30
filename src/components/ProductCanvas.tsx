@@ -100,15 +100,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
 
   return (
     <div className="flex-1 flex items-start justify-center min-h-0 pt-1 lg:pt-2 relative">
-      <Button 
-        variant="default" 
-        size="sm"
-        className="absolute top-4 right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white hidden lg:flex h-10 justify-start"
-        onClick={() => setIsQuantityModalOpen(true)}
-      >
-        <ArrowRight className="w-5 h-4 mr-1" strokeWidth={3} />
-        Next Step
-      </Button>
       <div className="relative w-full h-full flex items-center justify-center">
         {/* NO <img> here—Fabric is already drawing the shirt as a background */}
         <canvas 
