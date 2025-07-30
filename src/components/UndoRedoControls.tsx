@@ -44,7 +44,7 @@ export const UndoRedoControls = () => {
         >
           <Undo className="w-4 h-4" />
         </Button>
-        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+        <div className="absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Undo (Ctrl+Z)
         </div>
       </div>
@@ -70,7 +70,7 @@ export const UndoRedoControls = () => {
         >
           <Redo className="w-4 h-4" />
         </Button>
-        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+        <div className="absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Redo (Ctrl+Y)
         </div>
       </div>
