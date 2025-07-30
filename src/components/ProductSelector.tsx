@@ -168,7 +168,7 @@ export function ProductSelector({
               {/* Color Swatches Grid */}
               <div className="mt-6">
                 <h4 className="font-semibold mb-4 text-lg">Choose Your Color</h4>
-                <div className="grid grid-cols-6 gap-3 p-4 bg-card rounded-lg border">
+                <div className="grid grid-cols-8 gap-4 p-4 bg-card rounded-lg border">
                   {selectedProductData.id === 'gildan-2000' ? (
                     // Gildan 2000 color swatches
                     getAllColors().map((colorData) => (
@@ -178,7 +178,7 @@ export function ProductSelector({
                       >
                         <button
                           onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
-                          className={`w-10 h-10 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
+                          className={`w-8 h-8 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
                             colorData.name === selectedColor 
                               ? 'border-primary shadow-md ring-2 ring-primary/20' 
                               : 'border-border hover:border-primary/50 hover:shadow-sm'
@@ -218,7 +218,7 @@ export function ProductSelector({
                       >
                         <button
                           onClick={() => handleColorSelect(color)}
-                          className={`w-10 h-10 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
+                          className={`w-8 h-8 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
                             color === selectedColor 
                               ? 'border-primary shadow-md ring-2 ring-primary/20' 
                               : 'border-border hover:border-primary/50 hover:shadow-sm'
