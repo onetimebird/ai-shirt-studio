@@ -1,5 +1,5 @@
 // src/lib/fabricTextControls.ts
-import { Textbox, Control, controlsUtils } from "fabric";
+import { Textbox, Text, Control, controlsUtils } from "fabric";
 
 // Base64-inlined SVG icons
 const deleteIcon  = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICA8cGF0aCBkPSJtMyA2IDMgMTJjMCAuNi40IDEgMSAxaDhjLjYgMCAxLS40IDEtMWwzLTEyIi8+CiAgPHBhdGggZD0iTTggNlY0YzAtLjYuNC0xIDEtMWg0Yy42IDAgMSAuNCAxIDF2MiIvPgogIDxsaW5lIHgxPSIxMCIgeDI9IjEwIiB5MT0iMTEiIHkyPSIxNyIvPgogIDxsaW5lIHgxPSIxNCIgeDI9IjE0IiB5MT0iMTEiIHkyPSIxNyIvPgo8L3N2Zz4=";
@@ -66,7 +66,8 @@ function makeImg(url: string): Promise<HTMLImageElement> {
       return true;
     };
 
-    Textbox.prototype.controls = {
+    // Apply controls to both Textbox and Text classes
+    const controls = {
       tl: makeControl(del, deleteH, { x:-0.5, y:-0.5 }),
       mt: makeControl(lay, layerH,  { x: 0.0, y:-0.5 }),
       tr: makeControl(clo, cloneH,  { x: 0.5, y:-0.5 }),
@@ -76,7 +77,11 @@ function makeImg(url: string): Promise<HTMLImageElement> {
       mtr:makeControl(rot, controlsUtils.rotationWithSnapping,{ x:0.0, y:-0.75 }),
     };
 
+    Textbox.prototype.controls = controls;
+    Text.prototype.controls = controls;
+    
     Textbox.prototype.objectCaching = false;
+    Text.prototype.objectCaching = false;
     console.log("✅ Inline Fabric controls installed");
   } catch(err) {
     console.error("❌ Inline Fabric controls error:", err);

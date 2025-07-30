@@ -1,5 +1,6 @@
 import { ProductCanvas } from "@/components/ProductCanvas";
 import { FabricImage, util } from "fabric";
+import "../lib/fabricTextControls";
 
 interface DesignCanvasProps {
   selectedColor: string;
