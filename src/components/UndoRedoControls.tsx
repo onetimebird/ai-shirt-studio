@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Undo, Redo } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -24,61 +23,57 @@ export const UndoRedoControls = () => {
 
   return (
     <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={!canUndo}
-            onClick={() => {
-              console.log('[UI] Undo button clicked');
-              const designCanvas = (window as any).designCanvas;
-              console.log('[UI] Design canvas available:', !!designCanvas);
-              if (designCanvas) {
-                console.log('[UI] Calling undo function');
-                designCanvas.undo();
-                updateUndoRedoState();
-              } else {
-                console.log('[UI] ERROR: Design canvas not available');
-              }
-            }}
-            className="h-8 w-8 p-0 hover:bg-muted"
-          >
-            <Undo className="w-4 h-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Undo (Ctrl+Z)</p>
-        </TooltipContent>
-      </Tooltip>
+      <div className="relative group">
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={!canUndo}
+          onClick={() => {
+            console.log('[UI] Undo button clicked');
+            const designCanvas = (window as any).designCanvas;
+            console.log('[UI] Design canvas available:', !!designCanvas);
+            if (designCanvas) {
+              console.log('[UI] Calling undo function');
+              designCanvas.undo();
+              updateUndoRedoState();
+            } else {
+              console.log('[UI] ERROR: Design canvas not available');
+            }
+          }}
+          className="h-8 w-8 p-0 hover:bg-muted"
+        >
+          <Undo className="w-4 h-4" />
+        </Button>
+        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+          Undo (Ctrl+Z)
+        </div>
+      </div>
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={!canRedo}
-            onClick={() => {
-              console.log('[UI] Redo button clicked');
-              const designCanvas = (window as any).designCanvas;
-              console.log('[UI] Design canvas available:', !!designCanvas);
-              if (designCanvas) {
-                console.log('[UI] Calling redo function');
-                designCanvas.redo();
-                updateUndoRedoState();
-              } else {
-                console.log('[UI] ERROR: Design canvas not available');
-              }
-            }}
-            className="h-8 w-8 p-0 hover:bg-muted"
-          >
-            <Redo className="w-4 h-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Redo (Ctrl+Y)</p>
-        </TooltipContent>
-      </Tooltip>
+      <div className="relative group">
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={!canRedo}
+          onClick={() => {
+            console.log('[UI] Redo button clicked');
+            const designCanvas = (window as any).designCanvas;
+            console.log('[UI] Design canvas available:', !!designCanvas);
+            if (designCanvas) {
+              console.log('[UI] Calling redo function');
+              designCanvas.redo();
+              updateUndoRedoState();
+            } else {
+              console.log('[UI] ERROR: Design canvas not available');
+            }
+          }}
+          className="h-8 w-8 p-0 hover:bg-muted"
+        >
+          <Redo className="w-4 h-4" />
+        </Button>
+        <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+          Redo (Ctrl+Y)
+        </div>
+      </div>
     </div>
   );
 };
