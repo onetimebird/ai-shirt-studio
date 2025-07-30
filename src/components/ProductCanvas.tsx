@@ -45,14 +45,17 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     };
   }, []); // NO dependencies - only run once on mount
 
-  // Load the new t-shirt images as background
+  // Load the t-shirt images based on selected color
   useEffect(() => {
     if (!fabricCanvas) return;
 
-    // Use the uploaded t-shirt images instead of the color system
+    // Get the color data to find the correct images
+    const colorData = getColorByName(selectedColor);
+    
+    // Use color-specific images if available, otherwise fall back to default
     const imageUrl = currentSide === "front" 
-      ? "/lovable-uploads/3d1d2c3e-6ad3-4fdd-b060-e3071653ccdd.png"  // front
-      : "/lovable-uploads/24f3d8e6-2d8b-4f16-8f82-5b7aaae3331b.png"; // back
+      ? (colorData?.frontImage || "/lovable-uploads/3d1d2c3e-6ad3-4fdd-b060-e3071653ccdd.png")
+      : (colorData?.backImage || "/lovable-uploads/24f3d8e6-2d8b-4f16-8f82-5b7aaae3331b.png");
       
     console.log("Loading new t-shirt background:", imageUrl);
 
@@ -91,7 +94,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     }).catch((error) => {
       console.error("❌ Background load error:", error);
     });
-  }, [fabricCanvas, currentSide]); // Load when canvas ready OR when side changes
+  }, [fabricCanvas, currentSide, selectedColor]); // Load when canvas ready, side changes, OR color changes
 
   return (
     <div className="flex-1 flex items-start justify-center min-h-0 pt-1 lg:pt-2 relative">
