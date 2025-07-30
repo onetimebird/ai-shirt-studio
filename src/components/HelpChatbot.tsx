@@ -107,7 +107,7 @@ export const HelpChatbot = ({ isOpen, onClose }: HelpChatbotProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[400px] h-[500px] flex flex-col p-0 fixed bottom-4 left-4 top-auto translate-x-0 translate-y-0">
+      <DialogContent className="sm:max-w-[400px] h-[500px] flex flex-col p-0 fixed bottom-4 right-4 top-auto left-auto translate-x-0 translate-y-0">
         <DialogHeader className="p-4 pb-2 border-b">
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
