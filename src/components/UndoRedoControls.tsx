@@ -23,7 +23,7 @@ export const UndoRedoControls = () => {
 
   return (
     <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
-      <div className="relative group">
+      <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
@@ -32,27 +32,27 @@ export const UndoRedoControls = () => {
             console.log('[UI] Undo button clicked');
             const designCanvas = (window as any).designCanvas;
             console.log('[UI] Design canvas available:', !!designCanvas);
-            if (designCanvas) {
+            if (designCanvas && designCanvas.undo) {
               console.log('[UI] Calling undo function');
               designCanvas.undo();
               updateUndoRedoState();
             } else {
-              console.log('[UI] ERROR: Design canvas not available');
+              console.log('[UI] ERROR: Design canvas or undo function not available');
             }
           }}
-          className="h-7 w-7 p-0 hover:bg-muted flex flex-col items-center"
+          className="h-8 w-8 p-0 hover:bg-muted"
         >
           <Undo className="w-3 h-3" />
-          {/* Mobile label */}
-          <span className="block md:hidden text-[8px] text-muted-foreground mt-0.5 leading-none">Undo</span>
         </Button>
+        {/* Mobile label */}
+        <span className="block md:hidden text-[8px] text-muted-foreground leading-none">Undo</span>
         {/* Desktop tooltip */}
-        <div className="hidden md:block absolute left-8 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
+        <div className="hidden md:block absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Undo (Ctrl+Z)
         </div>
       </div>
 
-      <div className="relative group">
+      <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
@@ -61,22 +61,22 @@ export const UndoRedoControls = () => {
             console.log('[UI] Redo button clicked');
             const designCanvas = (window as any).designCanvas;
             console.log('[UI] Design canvas available:', !!designCanvas);
-            if (designCanvas) {
+            if (designCanvas && designCanvas.redo) {
               console.log('[UI] Calling redo function');
               designCanvas.redo();
               updateUndoRedoState();
             } else {
-              console.log('[UI] ERROR: Design canvas not available');
+              console.log('[UI] ERROR: Design canvas or redo function not available');
             }
           }}
-          className="h-7 w-7 p-0 hover:bg-muted flex flex-col items-center"
+          className="h-8 w-8 p-0 hover:bg-muted"
         >
           <Redo className="w-3 h-3" />
-          {/* Mobile label */}
-          <span className="block md:hidden text-[8px] text-muted-foreground mt-0.5 leading-none">Redo</span>
         </Button>
+        {/* Mobile label */}
+        <span className="block md:hidden text-[8px] text-muted-foreground leading-none">Redo</span>
         {/* Desktop tooltip */}
-        <div className="hidden md:block absolute left-8 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
+        <div className="hidden md:block absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Redo (Ctrl+Y)
         </div>
       </div>
