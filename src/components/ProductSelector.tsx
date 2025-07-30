@@ -165,12 +165,12 @@ export function ProductSelector({
                 </div>
               </div>
               
-              {/* Enhanced Color Swatches Grid */}
+              {/* Color Swatches Grid */}
               <div className="mt-6">
                 <h4 className="font-semibold mb-4 text-lg">Choose Your Color</h4>
-                <div className="grid grid-cols-8 gap-3 p-4 bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 rounded-xl border shadow-inner">
+                <div className="grid grid-cols-6 gap-3 p-4 bg-card rounded-lg border">
                   {selectedProductData.id === 'gildan-2000' ? (
-                    // Enhanced Gildan 2000 color swatches
+                    // Gildan 2000 color swatches
                     getAllColors().map((colorData) => (
                       <div 
                         key={colorData.name}
@@ -178,38 +178,31 @@ export function ProductSelector({
                       >
                         <button
                           onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
-                          className={`w-12 h-12 rounded-full border-3 transition-all duration-500 hover:scale-125 transform relative overflow-hidden group ${
+                          className={`w-10 h-10 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
                             colorData.name === selectedColor 
-                              ? 'border-white ring-4 ring-purple-400 shadow-2xl scale-110 z-10' 
-                              : 'border-gray-300 hover:border-purple-300 hover:shadow-xl hover:z-10'
-                          } ${!colorData.available ? 'opacity-60 cursor-not-allowed hover:scale-100' : 'hover:shadow-xl'}`}
-                          style={{ 
-                            backgroundColor: colorData.value,
-                            boxShadow: colorData.name === selectedColor ? 
-                              `0 0 30px ${colorData.value}40, 0 8px 32px rgba(0,0,0,0.3)` : 
-                              `0 4px 15px ${colorData.value}30`
-                          }}
+                              ? 'border-primary shadow-md ring-2 ring-primary/20' 
+                              : 'border-border hover:border-primary/50 hover:shadow-sm'
+                          } ${!colorData.available ? 'opacity-50 cursor-not-allowed hover:scale-100' : ''}`}
+                          style={{ backgroundColor: colorData.value }}
                           title={`${colorData.label}${!colorData.available ? ' (Coming Soon)' : ''}`}
                           disabled={!colorData.available}
                         >
                           {/* Selection indicator */}
                           {colorData.name === selectedColor && (
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                <Check className="w-2.5 h-2.5 text-purple-600" />
-                              </div>
+                              <Check className="w-3 h-3 text-primary-foreground drop-shadow-sm" />
                             </div>
                           )}
                           
                           {/* Unavailable overlay */}
                           {!colorData.available && (
-                            <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                            <div className="absolute inset-0 bg-background/20 rounded-lg flex items-center justify-center">
+                              <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full"></div>
                             </div>
                           )}
                           
                           {/* Hover tooltip */}
-                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none border">
                             {colorData.label}
                             {!colorData.available && ' (Coming Soon)'}
                           </div>
@@ -217,7 +210,7 @@ export function ProductSelector({
                       </div>
                     ))
                   ) : (
-                    // Enhanced swatches for other products
+                    // Other product swatches
                     selectedProductData.colors.map((color) => (
                       <div 
                         key={color}
@@ -225,30 +218,23 @@ export function ProductSelector({
                       >
                         <button
                           onClick={() => handleColorSelect(color)}
-                          className={`w-12 h-12 rounded-full border-3 transition-all duration-500 hover:scale-125 transform relative overflow-hidden ${
+                          className={`w-10 h-10 rounded-lg border-2 transition-all duration-200 hover:scale-105 relative ${
                             color === selectedColor 
-                              ? 'border-white ring-4 ring-purple-400 shadow-2xl scale-110 z-10' 
-                              : 'border-gray-300 hover:border-purple-300 hover:shadow-xl hover:z-10'
+                              ? 'border-primary shadow-md ring-2 ring-primary/20' 
+                              : 'border-border hover:border-primary/50 hover:shadow-sm'
                           }`}
-                          style={{ 
-                            backgroundColor: colorMap[color] || '#ccc',
-                            boxShadow: color === selectedColor ? 
-                              `0 0 30px ${colorMap[color] || '#ccc'}40, 0 8px 32px rgba(0,0,0,0.3)` : 
-                              `0 4px 15px ${colorMap[color] || '#ccc'}30`
-                          }}
+                          style={{ backgroundColor: colorMap[color] || '#ccc' }}
                           title={color}
                         >
                           {/* Selection indicator */}
                           {color === selectedColor && (
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                <Check className="w-2.5 h-2.5 text-purple-600" />
-                              </div>
+                              <Check className="w-3 h-3 text-primary-foreground drop-shadow-sm" />
                             </div>
                           )}
                           
                           {/* Hover tooltip */}
-                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 pointer-events-none">
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none border">
                             {color}
                           </div>
                         </button>
