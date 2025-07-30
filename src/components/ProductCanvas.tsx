@@ -94,7 +94,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   }, [fabricCanvas, currentSide]); // Load when canvas ready OR when side changes
 
   return (
-    <div className="flex-1 flex items-start justify-center min-h-0 pt-2 lg:pt-4 relative">
+    <div className="flex-1 flex items-start justify-center min-h-0 pt-1 lg:pt-2 relative">
       <Button 
         variant="default" 
         size="default"
