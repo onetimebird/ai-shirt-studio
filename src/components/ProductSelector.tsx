@@ -121,7 +121,7 @@ export function ProductSelector({
   };
 
   return (
-    <div className="space-y-6 max-h-screen overflow-y-auto pb-4">
+    <div className="space-y-6 max-h-screen overflow-y-auto pb-4 scrollbar-hide">
       {/* Header */}
       <div className="text-center space-y-2">
         <Badge variant="secondary" className="text-xs">PRODUCTS</Badge>
@@ -168,9 +168,9 @@ export function ProductSelector({
               {/* Color Swatches Grid */}
               <div className="mt-6">
                 <h4 className="font-semibold mb-4 text-lg">Choose Your Color</h4>
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                   {selectedProductData.id === 'gildan-2000' ? (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-6 gap-3">
                       {getAllColors().map((colorData) => (
                         <div key={colorData.name} className="relative group">
                           <button
@@ -201,7 +201,7 @@ export function ProductSelector({
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-6 gap-3">
                       {selectedProductData.colors.map((color) => (
                         <div key={color} className="relative group">
                           <button
