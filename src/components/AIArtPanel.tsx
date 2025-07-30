@@ -80,29 +80,58 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       return;
     }
 
-    // Check if API key is set
-    if (!openAIService.getApiKey()) {
-      toast.error("Please set your OpenAI API key first in the Properties tab");
-      return;
-    }
-
     setIsGenerating(true);
     try {
-      const result = await openAIService.generateImage({
-        prompt: prompt.trim(),
-        size: "1024x1024",
-        quality: "standard",
-        style: "vivid"
+      // First try using the Supabase edge function
+      const response = await fetch('/functions/v1/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          prompt: prompt.trim(),
+          width: 1024,
+          height: 1024 
+        })
       });
 
-      if (result.url) {
-        const newImage = { url: result.url, prompt: prompt.trim() };
-        setGeneratedImages(prev => [newImage, ...prev]);
-        savePrompt(prompt.trim());
-        onImageGenerated?.(result.url);
-        toast.success("Image generated successfully!");
+      if (response.status === 404) {
+        // Edge function not available, use OpenAI service directly
+        if (!openAIService.getApiKey()) {
+          // Set the provided API key
+          openAIService.setApiKey('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');
+        }
+        
+        const result = await openAIService.generateImage({
+          prompt: prompt.trim(),
+          size: "1024x1024",
+          quality: "standard",
+          style: "vivid"
+        });
+
+        if (result.url) {
+          const newImage = { url: result.url, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          savePrompt(prompt.trim());
+          onImageGenerated?.(result.url);
+          toast.success("Image generated successfully!");
+        }
       } else {
-        throw new Error('No image URL received');
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to generate image');
+        }
+
+        if (data.url) {
+          const newImage = { url: data.url, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          savePrompt(prompt.trim());
+          onImageGenerated?.(data.url);
+          toast.success("Image generated successfully!");
+        } else {
+          throw new Error('No image URL received');
+        }
       }
       
     } catch (error) {
