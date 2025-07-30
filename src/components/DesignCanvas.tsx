@@ -22,6 +22,11 @@ export const DesignCanvas = ({
   onTextObjectsUpdate,
   onImageObjectsUpdate
 }: DesignCanvasProps) => {
+  // State for undo/redo functionality
+  const canvasHistory = {
+    states: [] as string[],
+    currentIndex: -1
+  };
   return (
     <ProductCanvas 
       selectedColor={selectedColor}
@@ -30,6 +35,40 @@ export const DesignCanvas = ({
       onCanvasReady={(canvas) => {
         console.log("Canvas ready, setting up global designCanvas object");
         console.log("Canvas details:", { width: canvas.width, height: canvas.height });
+        
+        // Initialize history with empty canvas state
+        const saveState = () => {
+          const currentState = JSON.stringify(canvas.toJSON());
+          // Remove any states after current index (when user did undo and then new action)
+          canvasHistory.states = canvasHistory.states.slice(0, canvasHistory.currentIndex + 1);
+          canvasHistory.states.push(currentState);
+          canvasHistory.currentIndex = canvasHistory.states.length - 1;
+          
+          // Limit history to 20 states to prevent memory issues
+          if (canvasHistory.states.length > 20) {
+            canvasHistory.states.shift();
+            canvasHistory.currentIndex--;
+          }
+        };
+        
+        // Save initial empty state
+        saveState();
+        
+        // Save state after any object modification
+        const setupHistoryListeners = () => {
+          canvas.on('object:added', () => {
+            setTimeout(saveState, 100);
+          });
+          canvas.on('object:removed', () => {
+            setTimeout(saveState, 100);
+          });
+          canvas.on('object:modified', () => {
+            setTimeout(saveState, 100);
+          });
+        };
+        
+        setupHistoryListeners();
+        
         // Make canvas available globally for design tools
         (window as any).designCanvas = { 
           canvas,
@@ -195,7 +234,29 @@ export const DesignCanvas = ({
             if (onImageObjectsUpdate) {
               onImageObjectsUpdate(imageObjs);
             }
-          }
+          },
+          undo: () => {
+            if (canvasHistory.currentIndex > 0) {
+              canvasHistory.currentIndex--;
+              const previousState = canvasHistory.states[canvasHistory.currentIndex];
+              canvas.loadFromJSON(previousState).then(() => {
+                canvas.renderAll();
+                onSelectedObjectChange(null);
+              });
+            }
+          },
+          redo: () => {
+            if (canvasHistory.currentIndex < canvasHistory.states.length - 1) {
+              canvasHistory.currentIndex++;
+              const nextState = canvasHistory.states[canvasHistory.currentIndex];
+              canvas.loadFromJSON(nextState).then(() => {
+                canvas.renderAll();
+                onSelectedObjectChange(null);
+              });
+            }
+          },
+          canUndo: () => canvasHistory.currentIndex > 0,
+          canRedo: () => canvasHistory.currentIndex < canvasHistory.states.length - 1
         };
 
         // Handle object selection
