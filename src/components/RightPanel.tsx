@@ -1179,6 +1179,48 @@ export const RightPanel = ({
                     </p>
                   </div>
 
+                  {/* Background Removal Option */}
+                  {uploadedFile && (
+                    <div className="mt-4 border border-primary/20 bg-primary/5 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">AI Background Removal</h4>
+                          <p className="text-xs text-muted-foreground">Remove backgrounds from your image</p>
+                        </div>
+                        <Button
+                          onClick={async () => {
+                            setIsRemovingBackground(true);
+                            try {
+                              const imageElement = await loadImage(uploadedFile);
+                              const processedBlob = await removeBackground(imageElement);
+                              const processedFile = new File([processedBlob], `${uploadedFile.name.split('.')[0]}_no_bg.png`, { type: 'image/png' });
+                              onImageUpload(processedFile);
+                              toast.success("Background removed successfully!");
+                              setUploadedFile(null);
+                            } catch (error) {
+                              toast.error("Failed to remove background");
+                              console.error(error);
+                            } finally {
+                              setIsRemovingBackground(false);
+                            }
+                          }}
+                          disabled={isRemovingBackground}
+                          size="sm"
+                          className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white border-0"
+                        >
+                          {isRemovingBackground ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Remove Background"
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Google Drive Upload */}
                   <div className="border border-border rounded-lg p-4 text-center">
                     <div className="flex items-center justify-center gap-2 mb-3">
