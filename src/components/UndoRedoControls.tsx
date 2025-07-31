@@ -33,21 +33,34 @@ export const UndoRedoControls = () => {
           variant="ghost"
           size="sm"
           disabled={!canUndo}
-          onClick={() => {
+          onTouchStart={(e) => {
+            e.preventDefault();
+            console.log('[UndoRedoControls] Undo button touched (mobile)');
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            console.log('[UndoRedoControls] Undo button touch end');
+            const designCanvas = (window as any).designCanvas;
+            if (designCanvas && designCanvas.undo) {
+              console.log('[UndoRedoControls] Calling undo function from touch');
+              designCanvas.undo();
+              updateUndoRedoState();
+            }
+          }}
+          onClick={(e) => {
+            e.preventDefault();
             console.log('[UndoRedoControls] Undo button clicked');
             const designCanvas = (window as any).designCanvas;
             console.log('[UndoRedoControls] Design canvas available:', !!designCanvas);
-            console.log('[UndoRedoControls] Design canvas object:', designCanvas);
             if (designCanvas && designCanvas.undo) {
               console.log('[UndoRedoControls] Calling undo function');
               designCanvas.undo();
               updateUndoRedoState();
             } else {
               console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
-              console.log('[UndoRedoControls] Available functions:', Object.keys(designCanvas || {}));
             }
           }}
-          className="h-8 w-8 p-0 hover:bg-muted"
+          className="h-8 w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
         >
           <Undo className="w-3 h-3" />
         </Button>
@@ -66,21 +79,34 @@ export const UndoRedoControls = () => {
           variant="ghost"
           size="sm"
           disabled={!canRedo}
-          onClick={() => {
+          onTouchStart={(e) => {
+            e.preventDefault();
+            console.log('[UndoRedoControls] Redo button touched (mobile)');
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            console.log('[UndoRedoControls] Redo button touch end');
+            const designCanvas = (window as any).designCanvas;
+            if (designCanvas && designCanvas.redo) {
+              console.log('[UndoRedoControls] Calling redo function from touch');
+              designCanvas.redo();
+              updateUndoRedoState();
+            }
+          }}
+          onClick={(e) => {
+            e.preventDefault();
             console.log('[UndoRedoControls] Redo button clicked');
             const designCanvas = (window as any).designCanvas;
             console.log('[UndoRedoControls] Design canvas available:', !!designCanvas);
-            console.log('[UndoRedoControls] Design canvas object:', designCanvas);
             if (designCanvas && designCanvas.redo) {
               console.log('[UndoRedoControls] Calling redo function');
               designCanvas.redo();
               updateUndoRedoState();
             } else {
               console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
-              console.log('[UndoRedoControls] Available functions:', Object.keys(designCanvas || {}));
             }
           }}
-          className="h-8 w-8 p-0 hover:bg-muted"
+          className="h-8 w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
         >
           <Redo className="w-3 h-3" />
         </Button>
