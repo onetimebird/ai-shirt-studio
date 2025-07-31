@@ -5,21 +5,26 @@ import { useState, useEffect } from "react";
 export const UndoRedoControls = () => {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  const [isDesignCanvasReady, setIsDesignCanvasReady] = useState(false);
 
   // Update undo/redo state
   const updateUndoRedoState = () => {
     const designCanvas = (window as any).designCanvas;
-    if (designCanvas) {
+    if (designCanvas && designCanvas.canUndo && designCanvas.canRedo) {
+      if (!isDesignCanvasReady) {
+        setIsDesignCanvasReady(true);
+        console.log('[UndoRedoControls] DesignCanvas is now ready!');
+      }
       setCanUndo(designCanvas.canUndo());
       setCanRedo(designCanvas.canRedo());
     }
   };
 
-  // Poll for undo/redo state changes
+  // Poll for undo/redo state changes and wait for designCanvas to be ready
   useEffect(() => {
     const interval = setInterval(updateUndoRedoState, 100);
     return () => clearInterval(interval);
-  }, []);
+  }, [isDesignCanvasReady]);
 
   return (
     <div className="absolute top-4 left-4 z-40 flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg pointer-events-auto">
