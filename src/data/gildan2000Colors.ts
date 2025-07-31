@@ -166,14 +166,6 @@ export const GILDAN_2000_COLORS: Gildan2000Color[] = [
     available: true,
   },
   {
-    name: "heather-cardinal",
-    label: "Heather Cardinal",
-    value: "#B91C4A",
-    frontImage: "/placeholder-heather-cardinal-front.png",
-    backImage: "/placeholder-heather-cardinal-back.png",
-    available: false,
-  },
-  {
     name: "heather-cardinal-red",
     label: "Heather Cardinal Red",
     value: "#7B3F59",
@@ -364,14 +356,6 @@ export const GILDAN_2000_COLORS: Gildan2000Color[] = [
     frontImage: "/lovable-uploads/04dc1809-345a-4feb-a30a-67a65252f994.png",
     backImage: "/lovable-uploads/55ff5778-1d7b-448e-a157-92c983b96ae7.png",
     available: true,
-  },
-  {
-    name: "pfd-white",
-    label: "PFD White",
-    value: "#FFFEF7",
-    frontImage: "/placeholder-pfd-white-front.png",
-    backImage: "/placeholder-pfd-white-back.png",
-    available: false,
   },
   {
     name: "pistachio",
