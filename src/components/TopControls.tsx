@@ -65,7 +65,7 @@ export const TopControls = ({
                 })()}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-background border border-border shadow-lg z-[120]">
               <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
               <SelectItem value="gildan-64000">Gildan 64000 Softstyle T-Shirt</SelectItem>
               <SelectItem value="bella-3001c">Bella 3001 Premium T-Shirt</SelectItem>
@@ -90,7 +90,7 @@ export const TopControls = ({
                 <span>{currentColor?.label}</span>
               </div>
             </SelectTrigger>
-            <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
+            <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
               {getAllColors().map((color) => (
                 <SelectItem key={color.name} value={color.name}>
                   <div className="flex items-center gap-2 w-full">
@@ -215,7 +215,7 @@ export const TopControls = ({
                   })()}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background border border-border shadow-lg z-[120]">
                 <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
                 <SelectItem value="gildan-64000">Gildan 64000 Softstyle T-Shirt</SelectItem>
                 <SelectItem value="bella-3001c">Bella 3001 Premium T-Shirt</SelectItem>
@@ -237,7 +237,7 @@ export const TopControls = ({
                   <span className="text-xs">{currentColor?.label}</span>
                 </div>
               </SelectTrigger>
-              <SelectContent className="bg-background border border-border shadow-lg z-[100] max-h-80 overflow-y-auto">
+              <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
                 {getAllColors().map((color) => (
                   <SelectItem key={color.name} value={color.name}>
                     <div className="flex items-center gap-2 w-full">
