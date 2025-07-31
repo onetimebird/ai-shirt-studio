@@ -54,12 +54,12 @@ export const TopControls = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
-              <SelectItem value="gildan-64000">Gildan 64000</SelectItem>
-              <SelectItem value="bella-3001c">Bella 3001C</SelectItem>
+              <SelectItem value="gildan-64000">Gildan 64000 Softstyle</SelectItem>
+              <SelectItem value="bella-3001c">Bella 3001C Premium</SelectItem>
+              <SelectItem value="bella-6400">Bella 6400 Premium Women's Tee</SelectItem>
+              <SelectItem value="gildan-18000">Gildan 18000 Crewneck</SelectItem>
               <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
-              <SelectItem value="bella-canvas-hoodie">Bella Canvas Hoodie</SelectItem>
-              <SelectItem value="bella-3480">Bella 3480 Tank Top</SelectItem>
-              <SelectItem value="bella-6004">Bella 6004 Women's T-Shirt</SelectItem>
+              <SelectItem value="bella-3719">Bella 3719 Premium Hoodie</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -191,12 +191,12 @@ export const TopControls = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
-                <SelectItem value="gildan-64000">Gildan 64000</SelectItem>
-                <SelectItem value="bella-3001c">Bella 3001C</SelectItem>
+                <SelectItem value="gildan-64000">Gildan 64000 Softstyle</SelectItem>
+                <SelectItem value="bella-3001c">Bella 3001C Premium</SelectItem>
+                <SelectItem value="bella-6400">Bella 6400 Premium Women's Tee</SelectItem>
+                <SelectItem value="gildan-18000">Gildan 18000 Crewneck</SelectItem>
                 <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
-                <SelectItem value="bella-canvas-hoodie">Bella Canvas Hoodie</SelectItem>
-                <SelectItem value="bella-3480">Bella 3480 Tank Top</SelectItem>
-                <SelectItem value="bella-6004">Bella 6004 Women's T-Shirt</SelectItem>
+                <SelectItem value="bella-3719">Bella 3719 Premium Hoodie</SelectItem>
               </SelectContent>
             </Select>
 
