@@ -265,14 +265,14 @@ export function ProductSelector({
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-medium text-sm leading-tight">{product.name}</h4>
                       <Badge 
                         variant="secondary" 
-                        className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-1 text-center min-w-fit"
+                        className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-1"
                       >
-                        {product.type.replace("'s", "'s")}
+                        {product.type}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">{product.description}</p>
