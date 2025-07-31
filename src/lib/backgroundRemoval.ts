@@ -1,8 +1,8 @@
-import { pipeline, env } from '@huggingface/transformers';
+import { pipeline, env, RawImage } from '@huggingface/transformers';
 
 // Configure transformers.js to always download models
 env.allowLocalModels = false;
-env.useBrowserCache = false;
+env.useBrowserCache = true;
 
 const MAX_IMAGE_DIMENSION = 1024;
 
@@ -34,9 +34,9 @@ function resizeImageIfNeeded(canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
 export const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
     console.log('Starting background removal process...');
-    const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512',{
-      device: 'webgpu',
-    });
+    
+    // Initialize the image segmentation pipeline with the RMBG 1.4 model
+    const segmentator = await pipeline("image-segmentation", "briaai/RMBG-1.4");
     
     // Convert HTMLImageElement to canvas
     const canvas = document.createElement('canvas');
@@ -48,44 +48,63 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     const wasResized = resizeImageIfNeeded(canvas, ctx, imageElement);
     console.log(`Image ${wasResized ? 'was' : 'was not'} resized. Final dimensions: ${canvas.width}x${canvas.height}`);
     
-    // Get image data as base64
-    const imageData = canvas.toDataURL('image/jpeg', 0.8);
-    console.log('Image converted to base64');
+    // Convert canvas to blob, then to RawImage
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('Failed to create blob'));
+      }, 'image/jpeg', 0.9);
+    });
+    
+    // Load the image using RawImage
+    const sourceImage = await RawImage.fromBlob(blob);
+    console.log('Image loaded with RawImage');
     
     // Process the image with the segmentation model
     console.log('Processing with segmentation model...');
-    const result = await segmenter(imageData);
+    const [result] = await segmentator(sourceImage, {
+      threshold: 0.5,
+    });
     
     console.log('Segmentation result:', result);
     
-    if (!result || !Array.isArray(result) || result.length === 0 || !result[0].mask) {
+    if (!result || !result.mask) {
       throw new Error('Invalid segmentation result');
     }
     
     // Create a new canvas for the masked image
     const outputCanvas = document.createElement('canvas');
-    outputCanvas.width = canvas.width;
-    outputCanvas.height = canvas.height;
+    outputCanvas.width = sourceImage.width;
+    outputCanvas.height = sourceImage.height;
     const outputCtx = outputCanvas.getContext('2d');
     
     if (!outputCtx) throw new Error('Could not get output canvas context');
     
-    // Draw original image
-    outputCtx.drawImage(canvas, 0, 0);
+    // Draw original image to output canvas
+    const sourceImageCanvas = sourceImage.toCanvas();
+    outputCtx.drawImage(sourceImageCanvas, 0, 0);
     
-    // Apply the mask
-    const outputImageData = outputCtx.getImageData(
-      0, 0,
-      outputCanvas.width,
-      outputCanvas.height
-    );
-    const data = outputImageData.data;
+    // Get the mask data
+    const maskImage = result.mask;
+    const maskCanvas = maskImage.toCanvas();
     
-    // Apply inverted mask to alpha channel
-    for (let i = 0; i < result[0].mask.data.length; i++) {
-      // Invert the mask value (1 - value) to keep the subject instead of the background
-      const alpha = Math.round((1 - result[0].mask.data[i]) * 255);
-      data[i * 4 + 3] = alpha;
+    // Apply the mask to create transparency
+    const outputImageData = outputCtx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
+    const outputData = outputImageData.data;
+    
+    // Create a temporary canvas to get mask data
+    const maskCtx = maskCanvas.getContext('2d');
+    if (!maskCtx) throw new Error('Could not get mask canvas context');
+    
+    const maskImageData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    const maskData = maskImageData.data;
+    
+    // Apply mask to alpha channel
+    for (let i = 0; i < outputData.length; i += 4) {
+      const maskIndex = Math.floor(i / 4) * 4;
+      // Use the red channel of the mask (assuming grayscale mask)
+      const alpha = maskData[maskIndex];
+      outputData[i + 3] = alpha; // Set alpha channel
     }
     
     outputCtx.putImageData(outputImageData, 0, 0);
