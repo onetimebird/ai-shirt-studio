@@ -67,6 +67,8 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   const adultSizes = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
   const youthSizes = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
+  const sizeUpcharge = 3.00; // Additional cost for 2XL and up
+  const upchargeSizes = ['2XL', '3XL', '4XL', '5XL']; // Sizes that get the upcharge
 
   // Check for designs on front and back when modal opens
   useEffect(() => {
@@ -123,9 +125,28 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   const calculateTotalPrice = () => {
     const product = getProductData();
-    const totalQty = getTotalQuantity();
-    const unitPrice = (hasFrontDesign && hasBackDesign) ? product.frontBackPrice : product.frontOnlyPrice;
-    return totalQty * unitPrice;
+    const baseUnitPrice = (hasFrontDesign && hasBackDesign) ? product.frontBackPrice : product.frontOnlyPrice;
+    
+    let totalPrice = 0;
+    
+    Object.entries(quantities).forEach(([size, qty]) => {
+      if (qty > 0) {
+        const unitPrice = upchargeSizes.includes(size) ? baseUnitPrice + sizeUpcharge : baseUnitPrice;
+        totalPrice += qty * unitPrice;
+      }
+    });
+    
+    return totalPrice;
+  };
+
+  const getSizeUpchargeInfo = () => {
+    const upchargeQty = Object.entries(quantities).reduce((sum, [size, qty]) => {
+      return sum + (upchargeSizes.includes(size) ? qty : 0);
+    }, 0);
+    
+    const regularQty = getTotalQuantity() - upchargeQty;
+    
+    return { upchargeQty, regularQty };
   };
 
   const handleCalculatePricing = () => {
@@ -219,8 +240,9 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[9px] lg:text-base text-muted-foreground">Per item</p>
+              <p className="text-[9px] lg:text-base text-muted-foreground">Starting at</p>
               <p className="text-[11px] lg:text-xl font-bold text-primary">${unitPrice.toFixed(2)}</p>
+              <p className="text-[8px] lg:text-xs text-orange-600">+$3.00 for 2XL+</p>
             </div>
           </div>
 
@@ -298,10 +320,27 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
                     <span className="text-xs lg:text-base text-green-700">Total Quantity:</span>
                     <span className="text-xs lg:text-base font-medium text-green-800">{getTotalQuantity()} items</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Price per item:</span>
-                    <span className="text-xs lg:text-base font-medium text-green-800">${unitPrice.toFixed(2)}</span>
-                  </div>
+                  
+                  {(() => {
+                    const { regularQty, upchargeQty } = getSizeUpchargeInfo();
+                    return (
+                      <>
+                        {regularQty > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs lg:text-base text-green-700">Standard sizes (S-XL):</span>
+                            <span className="text-xs lg:text-base font-medium text-green-800">{regularQty} × ${unitPrice.toFixed(2)}</span>
+                          </div>
+                        )}
+                        {upchargeQty > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs lg:text-base text-green-700">Large sizes (2XL-5XL):</span>
+                            <span className="text-xs lg:text-base font-medium text-green-800">{upchargeQty} × ${(unitPrice + sizeUpcharge).toFixed(2)}</span>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+                  
                   <div className="border-t border-green-200 pt-2 lg:pt-3">
                     <div className="flex justify-between items-center">
                       <span className="text-sm lg:text-lg font-semibold text-green-800">Total Price:</span>
