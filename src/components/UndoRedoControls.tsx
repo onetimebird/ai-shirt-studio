@@ -48,6 +48,8 @@ export const UndoRedoControls = () => {
         </Button>
         {/* Mobile label */}
         <span className="block md:hidden text-[8px] text-muted-foreground leading-none">Undo</span>
+        {/* Desktop label */}
+        <span className="hidden md:block text-[10px] text-muted-foreground leading-none mt-1">Undo</span>
         {/* Desktop tooltip */}
         <div className="hidden md:block absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Undo (Ctrl+Z)
@@ -79,6 +81,8 @@ export const UndoRedoControls = () => {
         </Button>
         {/* Mobile label */}
         <span className="block md:hidden text-[8px] text-muted-foreground leading-none">Redo</span>
+        {/* Desktop label */}
+        <span className="hidden md:block text-[10px] text-muted-foreground leading-none mt-1">Redo</span>
         {/* Desktop tooltip */}
         <div className="hidden md:block absolute left-10 top-1/2 transform -translate-y-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
           Redo (Ctrl+Y)
