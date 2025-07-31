@@ -148,40 +148,40 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-full lg:max-w-4xl w-full mx-0 lg:mx-auto p-0 bg-background border border-border/50 shadow-2xl h-[95vh] lg:h-[85vh] overflow-hidden [&>button]:hidden z-[60]">
         {/* Header with progress stepper */}
-        <div className="p-3 lg:p-6 pb-2 lg:pb-4 border-b border-border/20">
-          <div className="flex items-center justify-end mb-2 lg:mb-4">
-            <Button variant="ghost" size="sm" onClick={onClose} className="p-1 lg:p-2">
-              <X className="w-5 h-5 lg:w-6 lg:h-6" />
+        <div className="p-2 lg:p-4 pb-1 lg:pb-2 border-b border-border/20">
+          <div className="flex items-center justify-end mb-1 lg:mb-2">
+            <Button variant="ghost" size="sm" onClick={onClose} className="p-1">
+              <X className="w-4 h-4 lg:w-5 lg:h-5" />
             </Button>
           </div>
           
           {/* Progress Steps */}
-          <div className="flex items-center justify-center gap-2 lg:gap-4 mb-3 lg:mb-6">
-            <div className="flex items-center gap-1.5 lg:gap-3">
-              <div className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="text-xs lg:text-base font-medium text-primary">1</span>
+          <div className="flex items-center justify-center gap-2 lg:gap-3 mb-2 lg:mb-3">
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="w-5 h-5 lg:w-7 lg:h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <span className="text-xs lg:text-sm font-medium text-primary">1</span>
               </div>
-              <span className="text-sm lg:text-lg text-muted-foreground">DESIGN</span>
+              <span className="text-xs lg:text-sm text-muted-foreground">DESIGN</span>
             </div>
-            <div className="w-8 lg:w-16 h-0.5 lg:h-1 bg-primary"></div>
-            <div className="flex items-center gap-1.5 lg:gap-3">
-              <div className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-primary border border-primary flex items-center justify-center">
-                <span className="text-xs lg:text-base font-medium text-primary-foreground">2</span>
+            <div className="w-6 lg:w-10 h-0.5 bg-primary"></div>
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="w-5 h-5 lg:w-7 lg:h-7 rounded-full bg-primary border border-primary flex items-center justify-center">
+                <span className="text-xs lg:text-sm font-medium text-primary-foreground">2</span>
               </div>
-              <span className="text-sm lg:text-lg font-medium text-primary">QUANTITY</span>
+              <span className="text-xs lg:text-sm font-medium text-primary">QUANTITY</span>
             </div>
-            <div className="w-8 lg:w-16 h-0.5 lg:h-1 bg-border"></div>
-            <div className="flex items-center gap-1.5 lg:gap-3">
-              <div className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-muted border border-border flex items-center justify-center">
-                <span className="text-xs lg:text-base text-muted-foreground">3</span>
+            <div className="w-6 lg:w-10 h-0.5 bg-border"></div>
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="w-5 h-5 lg:w-7 lg:h-7 rounded-full bg-muted border border-border flex items-center justify-center">
+                <span className="text-xs lg:text-sm text-muted-foreground">3</span>
               </div>
-              <span className="text-sm lg:text-lg text-muted-foreground">REVIEW</span>
+              <span className="text-xs lg:text-sm text-muted-foreground">REVIEW</span>
             </div>
           </div>
 
           <div className="text-center">
-            <h2 className="text-lg lg:text-3xl font-semibold mb-1 lg:mb-3">How Many Do You Need?</h2>
-            <p className="text-sm lg:text-xl text-muted-foreground mb-1 lg:mb-2">
+            <h2 className="text-base lg:text-xl font-semibold mb-0.5 lg:mb-1">How Many Do You Need?</h2>
+            <p className="text-xs lg:text-sm text-muted-foreground mb-0.5 lg:mb-1">
               Enter quantities to calculate price.
             </p>
           </div>
