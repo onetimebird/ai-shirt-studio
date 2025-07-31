@@ -120,6 +120,49 @@ export const DesignCanvas = ({
         (window as any).designCanvas = { 
           canvas,
           history: canvasHistory,  // Add reference to history object
+          frontState: null,   // Store front side designs
+          backState: null,    // Store back side designs
+          currentSide: 'front', // Track current side
+          switchToSide: (side: 'front' | 'back') => {
+            console.log(`[SideSwitch] Switching from ${(window as any).designCanvas.currentSide} to ${side}`);
+            
+            // Save current state before switching
+            const currentSide = (window as any).designCanvas.currentSide;
+            const allObjects = canvas.getObjects();
+            const userObjects = allObjects.filter(obj => obj.selectable !== false && obj.evented !== false);
+            const currentStateData = userObjects.map(obj => obj.toObject());
+            
+            if (currentSide === 'front') {
+              (window as any).designCanvas.frontState = currentStateData;
+              console.log(`[SideSwitch] Saved front state:`, currentStateData.length, 'objects');
+            } else {
+              (window as any).designCanvas.backState = currentStateData;
+              console.log(`[SideSwitch] Saved back state:`, currentStateData.length, 'objects');
+            }
+            
+            // Clear current user objects
+            userObjects.forEach(obj => canvas.remove(obj));
+            
+            // Load objects for the new side
+            const newStateData = side === 'front' ? (window as any).designCanvas.frontState : (window as any).designCanvas.backState;
+            
+            if (newStateData && newStateData.length > 0) {
+              console.log(`[SideSwitch] Loading ${side} state:`, newStateData.length, 'objects');
+              canvasHistory.isRestoring = true;
+              util.enlivenObjects(newStateData).then((objects: any[]) => {
+                objects.forEach(obj => canvas.add(obj));
+                canvas.renderAll();
+                canvasHistory.isRestoring = false;
+                console.log(`[SideSwitch] Successfully loaded ${side} state`);
+              });
+            } else {
+              console.log(`[SideSwitch] No saved state for ${side} side`);
+              canvas.renderAll();
+            }
+            
+            // Update current side
+            (window as any).designCanvas.currentSide = side;
+          },
           addImage: (file: File) => {
             console.log("addImage called with file:", file.name);
             const reader = new FileReader();

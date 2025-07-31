@@ -98,6 +98,16 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     });
   }, [fabricCanvas, currentSide, selectedColor]); // Load when canvas ready, side changes, OR color changes
 
+  // Handle side switching to separate front/back designs
+  useEffect(() => {
+    if (!fabricCanvas) return;
+    
+    // Trigger side switch in the global canvas object
+    if ((window as any).designCanvas?.switchToSide) {
+      (window as any).designCanvas.switchToSide(currentSide);
+    }
+  }, [currentSide, fabricCanvas]);
+
   return (
     <div className="flex-1 flex items-start justify-center min-h-0 pt-1 lg:pt-2 relative">
       <div className="relative w-full h-full flex items-center justify-center">

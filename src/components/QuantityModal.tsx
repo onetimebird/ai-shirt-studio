@@ -78,11 +78,11 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
   const checkForDesigns = () => {
     const designCanvas = (window as any).designCanvas;
     if (designCanvas) {
-      // Check if there are saved designs for front and back
+      // Check saved states for front and back designs
       const frontState = designCanvas.frontState;
       const backState = designCanvas.backState;
       
-      // Check current canvas objects (exclude background/template objects)
+      // Also check current canvas objects for the current side
       const canvas = designCanvas.canvas;
       if (canvas) {
         const objects = canvas.getObjects();
@@ -90,14 +90,17 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
           obj.type !== 'image' || !obj.isTemplate
         );
         
-        // For now, check current side
-        if (userObjects.length > 0) {
-          setHasFrontDesign(true);
-        }
+        // Update front design status
+        setHasFrontDesign((frontState && frontState.length > 0) || 
+          (designCanvas.currentSide === 'front' && userObjects.length > 0));
         
-        // In a full implementation, you'd check saved states for both sides
-        // For demo purposes, we'll assume back design exists if user has switched sides
-        setHasBackDesign(false); // You can modify this logic based on your canvas implementation
+        // Update back design status  
+        setHasBackDesign((backState && backState.length > 0) || 
+          (designCanvas.currentSide === 'back' && userObjects.length > 0));
+      } else {
+        // Fallback to saved states only
+        setHasFrontDesign(frontState && frontState.length > 0);
+        setHasBackDesign(backState && backState.length > 0);
       }
     }
   };
