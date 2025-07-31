@@ -53,9 +53,9 @@ export const TopControls = ({
               <SelectValue placeholder="Change Product" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
-              <SelectItem value="gildan-64000">Gildan 64000 Softstyle</SelectItem>
-              <SelectItem value="bella-3001c">Bella 3001C Premium</SelectItem>
+              <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
+              <SelectItem value="gildan-64000">Gildan 64000 Softstyle T-Shirt</SelectItem>
+              <SelectItem value="bella-3001c">Bella 3001 Premium T-Shirt</SelectItem>
               <SelectItem value="bella-6400">Bella 6400 Premium Women's Tee</SelectItem>
               <SelectItem value="gildan-18000">Gildan 18000 Crewneck</SelectItem>
               <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
@@ -190,9 +190,9 @@ export const TopControls = ({
                 <SelectValue placeholder="Change Product" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
-                <SelectItem value="gildan-64000">Gildan 64000 Softstyle</SelectItem>
-                <SelectItem value="bella-3001c">Bella 3001C Premium</SelectItem>
+                <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
+                <SelectItem value="gildan-64000">Gildan 64000 Softstyle T-Shirt</SelectItem>
+                <SelectItem value="bella-3001c">Bella 3001 Premium T-Shirt</SelectItem>
                 <SelectItem value="bella-6400">Bella 6400 Premium Women's Tee</SelectItem>
                 <SelectItem value="gildan-18000">Gildan 18000 Crewneck</SelectItem>
                 <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
