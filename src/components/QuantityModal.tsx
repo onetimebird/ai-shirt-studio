@@ -68,6 +68,21 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
   const adultSizes = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
   const youthSizes = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
 
+  // Dynamic product image based on color
+  const getProductImage = () => {
+    // Default to a base product image, can be enhanced with color-specific images
+    const colorImageMap: Record<string, string> = {
+      'cherry-red': '/lovable-uploads/adad2959-903a-4b3a-864e-6bc78cf5bfa1.png',
+      'white': '/lovable-uploads/b6a4745c-848d-4882-a574-c7d02c4d9a03.png',
+      'black': '/lovable-uploads/e95f088c-404a-4172-955a-2385bf727e9e.png',
+      'navy': '/lovable-uploads/f1eaded1-4e15-4fb5-89e9-1cfae0bddd65.png',
+      'royal-blue': '/lovable-uploads/3cdae772-d4a2-43d4-975d-c48b79a05f8e.png',
+      'forest-green': '/lovable-uploads/826c245a-4fee-48aa-a58e-8b2a284b5f38.png',
+      'heather-grey': '/lovable-uploads/f973c009-4928-4f05-87d2-704d535ecddc.png',
+    };
+    return colorImageMap[selectedColor] || '/lovable-uploads/adad2959-903a-4b3a-864e-6bc78cf5bfa1.png';
+  };
+
   // Check for designs on front and back when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -148,167 +163,208 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-full lg:max-w-4xl w-full mx-0 lg:mx-auto p-0 bg-background border border-border/50 shadow-2xl h-[95vh] lg:h-[85vh] overflow-hidden [&>button]:hidden z-[60]">
         {/* Header with progress stepper */}
-        <div className="p-3 lg:p-6 pb-2 lg:pb-4 border-b border-border/20">
-          <div className="flex items-center justify-end mb-2 lg:mb-4">
+        <div className="p-2 lg:p-4 pb-1 lg:pb-2 border-b border-border/20">
+          <div className="flex items-center justify-end mb-1 lg:mb-2">
             <Button variant="ghost" size="sm" onClick={onClose} className="p-1 lg:p-2">
               <X className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
           </div>
           
           {/* Progress Steps */}
-          <div className="flex items-center justify-center gap-2 lg:gap-4 mb-3 lg:mb-6">
-            <div className="flex items-center gap-1.5 lg:gap-3">
-              <div className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                <span className="text-xs lg:text-base font-medium text-primary">1</span>
+          <div className="flex items-center justify-center gap-1 lg:gap-3 mb-2 lg:mb-3">
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="w-5 h-5 lg:w-8 lg:h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                <span className="text-xs lg:text-sm font-medium text-primary">1</span>
               </div>
-              <span className="text-sm lg:text-lg text-muted-foreground">DESIGN</span>
+              <span className="text-xs lg:text-base text-muted-foreground">DESIGN</span>
             </div>
-            <div className="w-8 lg:w-16 h-0.5 lg:h-1 bg-primary"></div>
-            <div className="flex items-center gap-1.5 lg:gap-3">
-              <div className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-primary border border-primary flex items-center justify-center">
-                <span className="text-xs lg:text-base font-medium text-primary-foreground">2</span>
+            <div className="w-6 lg:w-12 h-0.5 bg-primary"></div>
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="w-5 h-5 lg:w-8 lg:h-8 rounded-full bg-primary border border-primary flex items-center justify-center">
+                <span className="text-xs lg:text-sm font-medium text-primary-foreground">2</span>
               </div>
-              <span className="text-sm lg:text-lg font-medium text-primary">QUANTITY</span>
+              <span className="text-xs lg:text-base font-medium text-primary">QUANTITY</span>
             </div>
-            <div className="w-8 lg:w-16 h-0.5 lg:h-1 bg-border"></div>
-            <div className="flex items-center gap-1.5 lg:gap-3">
-              <div className="w-6 h-6 lg:w-10 lg:h-10 rounded-full bg-muted border border-border flex items-center justify-center">
-                <span className="text-xs lg:text-base text-muted-foreground">3</span>
+            <div className="w-6 lg:w-12 h-0.5 bg-border"></div>
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="w-5 h-5 lg:w-8 lg:h-8 rounded-full bg-muted border border-border flex items-center justify-center">
+                <span className="text-xs lg:text-sm text-muted-foreground">3</span>
               </div>
-              <span className="text-sm lg:text-lg text-muted-foreground">REVIEW</span>
+              <span className="text-xs lg:text-base text-muted-foreground">REVIEW</span>
             </div>
           </div>
 
           <div className="text-center">
-            <h2 className="text-lg lg:text-3xl font-semibold mb-1 lg:mb-3">How Many Do You Need?</h2>
-            <p className="text-sm lg:text-xl text-muted-foreground mb-1 lg:mb-2">
+            <h2 className="text-base lg:text-2xl font-semibold mb-0.5 lg:mb-1">How Many Do You Need?</h2>
+            <p className="text-xs lg:text-base text-muted-foreground">
               Enter quantities to calculate price.
             </p>
           </div>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-2 lg:p-8 pt-0 lg:pt-4 overscroll-contain" style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}>
-          {/* Product Display */}
-          <div className="flex items-center gap-2 lg:gap-4 p-1.5 lg:p-4 bg-muted/30 rounded-lg mb-2 lg:mb-6">
-            <img 
-              src="/lovable-uploads/adad2959-903a-4b3a-864e-6bc78cf5bfa1.png" 
-              alt="T-shirt" 
-              className="w-8 h-8 lg:w-16 lg:h-16 object-contain"
-            />
-            <div className="flex-1">
-              <h3 className="text-[11px] lg:text-xl font-medium">{productData.name}</h3>
-              <p className="text-[9px] lg:text-base text-muted-foreground capitalize">{selectedColor?.replace(/-/g, ' ')}</p>
-              <div className="flex items-center gap-2 mt-0.5 lg:mt-2">
-                <Badge variant="secondary" className="text-[9px] lg:text-sm px-1 lg:px-3 py-0 lg:py-1">
-                  {getTotalQuantity()} Items
-                </Badge>
-                {hasFrontDesign && (
-                  <Badge variant="outline" className="text-[8px] lg:text-xs px-1 lg:px-2 py-0 lg:py-0.5 bg-green-50 text-green-700 border-green-200">
-                    Front Design
-                  </Badge>
-                )}
-                {hasBackDesign && (
-                  <Badge variant="outline" className="text-[8px] lg:text-xs px-1 lg:px-2 py-0 lg:py-0.5 bg-blue-50 text-blue-700 border-blue-200">
-                    Back Design
-                  </Badge>
-                )}
+        {/* Main Content - Two Column Layout */}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full lg:grid lg:grid-cols-3 lg:gap-6 p-2 lg:p-6">
+            
+            {/* Left Column - Quantities */}
+            <div className="lg:col-span-2 space-y-3 lg:space-y-4 overflow-y-auto">
+              {/* Product Display */}
+              <div className="flex items-center gap-2 lg:gap-4 p-2 lg:p-4 bg-muted/30 rounded-lg">
+                <img 
+                  src={getProductImage()} 
+                  alt="Product" 
+                  className="w-10 h-10 lg:w-16 lg:h-16 object-contain"
+                />
+                <div className="flex-1">
+                  <h3 className="text-sm lg:text-lg font-medium">{productData.name}</h3>
+                  <p className="text-xs lg:text-base text-muted-foreground capitalize">{selectedColor?.replace(/-/g, ' ')}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                      {getTotalQuantity()} Items
+                    </Badge>
+                    {hasFrontDesign && (
+                      <Badge variant="outline" className="text-xs px-2 py-0.5 bg-green-50 text-green-700 border-green-200">
+                        Front Design
+                      </Badge>
+                    )}
+                    {hasBackDesign && (
+                      <Badge variant="outline" className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200">
+                        Back Design
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs lg:text-sm text-muted-foreground">Per item</p>
+                  <p className="text-sm lg:text-lg font-bold text-primary">${unitPrice.toFixed(2)}</p>
+                </div>
+              </div>
+
+              {/* Adult Sizes - More Space */}
+              <div>
+                <h3 className="text-sm lg:text-lg font-medium mb-2 lg:mb-3">Adult Sizes</h3>
+                <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 lg:gap-3">
+                  {adultSizes.map((size) => (
+                    <div key={size} className="text-center">
+                      <div className="text-xs lg:text-base font-medium mb-1 lg:mb-2">{size}</div>
+                      <div className="w-full h-12 lg:h-16 border-2 border-border rounded-lg flex items-center justify-center bg-background hover:border-primary/50 transition-colors">
+                        <input
+                          type="number"
+                          min="0"
+                          value={quantities[size] ? quantities[size].toString() : ''}
+                          onChange={(e) => handleQuantityChange(size, e.target.value)}
+                          className="w-full h-full text-center bg-transparent border-none outline-none text-base lg:text-xl font-medium text-foreground"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Youth Sizes - Compact */}
+              <div>
+                <h3 className="text-sm lg:text-lg font-medium mb-2">Youth Sizes</h3>
+                <div className="grid grid-cols-5 gap-2">
+                  {youthSizes.map((size) => (
+                    <div key={size} className="text-center">
+                      <div className="text-xs font-medium mb-1">{size}</div>
+                      <div className="w-full h-10 lg:h-12 border-2 border-border rounded-lg flex items-center justify-center bg-background hover:border-primary/50 transition-colors">
+                        <input
+                          type="number"
+                          min="0"
+                          value={quantities[size] ? quantities[size].toString() : ''}
+                          onChange={(e) => handleQuantityChange(size, e.target.value)}
+                          className="w-full h-full text-center bg-transparent border-none outline-none text-sm lg:text-base font-medium text-foreground"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-[9px] lg:text-base text-muted-foreground">Per item</p>
-              <p className="text-[11px] lg:text-xl font-bold text-primary">${unitPrice.toFixed(2)}</p>
-            </div>
-          </div>
 
-          {/* Adult Sizes */}
-          <div className="mb-2 lg:mb-8">
-            <h3 className="text-[10px] lg:text-lg font-medium mb-0.5 lg:mb-3">Adult Sizes</h3>
-            <div className="grid grid-cols-4 lg:grid-cols-8 gap-1 lg:gap-4">
-              {adultSizes.map((size) => (
-                <div key={size} className="text-center">
-                  <div className="text-[9px] lg:text-base font-medium mb-0.5 lg:mb-2">{size}</div>
-                  <div className="w-full h-9 lg:h-16 border-2 border-border rounded-md lg:rounded-lg flex items-center justify-center bg-background hover:border-primary/50 transition-colors">
-                    <input
-                      type="number"
-                      min="0"
-                      value={quantities[size] ? quantities[size].toString() : ''}
-                      onChange={(e) => handleQuantityChange(size, e.target.value)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none text-sm lg:text-xl font-medium text-foreground"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Youth Sizes */}
-          <div className="mb-2 lg:mb-8">
-            <h3 className="text-[10px] lg:text-lg font-medium mb-0.5 lg:mb-3">Youth Sizes</h3>
-            <div className="grid grid-cols-4 lg:grid-cols-5 gap-1 lg:gap-4">
-              {youthSizes.map((size) => (
-                <div key={size} className="text-center">
-                  <div className="text-[9px] lg:text-base font-medium mb-0.5 lg:mb-2">{size}</div>
-                  <div className="w-full h-9 lg:h-16 border-2 border-border rounded-md lg:rounded-lg flex items-center justify-center bg-background hover:border-primary/50 transition-colors">
-                    <input
-                      type="number"
-                      min="0"
-                      value={quantities[size] ? quantities[size].toString() : ''}
-                      onChange={(e) => handleQuantityChange(size, e.target.value)}
-                      className="w-full h-full text-center bg-transparent border-none outline-none text-sm lg:text-xl font-medium text-foreground"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pricing Summary - Only shown after calculation */}
-          {hasCalculated && getTotalQuantity() > 0 && (
-            <Card className="mb-4 lg:mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-              <CardContent className="p-3 lg:p-6">
-                <div className="flex items-center gap-2 mb-3 lg:mb-4">
-                  <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
-                  </div>
-                  <h3 className="text-sm lg:text-xl font-semibold text-green-800">Order Summary</h3>
-                </div>
-                
-                <div className="space-y-2 lg:space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Product:</span>
-                    <span className="text-xs lg:text-base font-medium text-green-800">{productData.name}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Color:</span>
-                    <span className="text-xs lg:text-base font-medium text-green-800 capitalize">{selectedColor?.replace(/-/g, ' ')}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Design Type:</span>
-                    <span className="text-xs lg:text-base font-medium text-green-800">
-                      {(hasFrontDesign && hasBackDesign) ? 'Front + Back' : 'Front Only'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Total Quantity:</span>
-                    <span className="text-xs lg:text-base font-medium text-green-800">{getTotalQuantity()} items</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Price per item:</span>
-                    <span className="text-xs lg:text-base font-medium text-green-800">${unitPrice.toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-green-200 pt-2 lg:pt-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm lg:text-lg font-semibold text-green-800">Total Price:</span>
-                      <span className="text-lg lg:text-2xl font-bold text-green-800">${totalPrice.toFixed(2)}</span>
+            {/* Right Column - Order Summary (Desktop) */}
+            <div className="hidden lg:block lg:col-span-1">
+              {hasCalculated && getTotalQuantity() > 0 && (
+                <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 sticky top-0">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-green-600" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-green-800">Order Summary</h3>
                     </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-green-700">Product:</span>
+                        <span className="text-sm font-medium text-green-800">{productData.name}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-green-700">Color:</span>
+                        <span className="text-sm font-medium text-green-800 capitalize">{selectedColor?.replace(/-/g, ' ')}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-green-700">Design Type:</span>
+                        <span className="text-sm font-medium text-green-800">
+                          {(hasFrontDesign && hasBackDesign) ? 'Front + Back' : 'Front Only'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-green-700">Total Quantity:</span>
+                        <span className="text-sm font-medium text-green-800">{getTotalQuantity()} items</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-green-700">Price per item:</span>
+                        <span className="text-sm font-medium text-green-800">${unitPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="border-t border-green-200 pt-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-base font-semibold text-green-800">Total Price:</span>
+                          <span className="text-xl font-bold text-green-800">${totalPrice.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Mobile Order Summary */}
+            <div className="lg:hidden mt-4">
+              {hasCalculated && getTotalQuantity() > 0 && (
+                <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+                  <CardContent className="p-3">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                        <Check className="w-3 h-3 text-green-600" />
+                      </div>
+                      <h3 className="text-sm font-semibold text-green-800">Order Summary</h3>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-green-700">Total Quantity:</span>
+                        <span className="text-xs font-medium text-green-800">{getTotalQuantity()} items</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-green-700">Price per item:</span>
+                        <span className="text-xs font-medium text-green-800">${unitPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="border-t border-green-200 pt-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-semibold text-green-800">Total Price:</span>
+                          <span className="text-lg font-bold text-green-800">${totalPrice.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Fixed Bottom Button */}
