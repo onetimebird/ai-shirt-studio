@@ -33,7 +33,7 @@ export const UndoRedoControls = () => {
   }, [isDesignCanvasReady]);
 
   return (
-    <div className="absolute top-4 left-4 z-50 flex items-center gap-2 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
+    <div className="absolute top-4 left-4 z-[110] flex items-center gap-2 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
       <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
