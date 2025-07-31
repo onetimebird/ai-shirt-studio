@@ -10,13 +10,19 @@ export const UndoRedoControls = () => {
   // Update undo/redo state
   const updateUndoRedoState = () => {
     const designCanvas = (window as any).designCanvas;
+    console.log('[UndoRedoControls] Checking undo/redo state, designCanvas exists:', !!designCanvas);
     if (designCanvas && designCanvas.canUndo && designCanvas.canRedo) {
       if (!isDesignCanvasReady) {
         setIsDesignCanvasReady(true);
         console.log('[UndoRedoControls] DesignCanvas is now ready!');
       }
-      setCanUndo(designCanvas.canUndo());
-      setCanRedo(designCanvas.canRedo());
+      const undoState = designCanvas.canUndo();
+      const redoState = designCanvas.canRedo();
+      console.log('[UndoRedoControls] undo:', undoState, 'redo:', redoState);
+      setCanUndo(undoState);
+      setCanRedo(redoState);
+    } else {
+      console.log('[UndoRedoControls] DesignCanvas not ready yet');
     }
   };
 
