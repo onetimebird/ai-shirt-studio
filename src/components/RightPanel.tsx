@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { removeBackground, loadImage } from "@/lib/backgroundRemoval";
 import { openAIService } from "@/services/openai";
 import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
@@ -95,6 +96,8 @@ export const RightPanel = ({
   const [apiKey, setApiKey] = useState(openAIService.getApiKey() || "");
   const [showApiKey, setShowApiKey] = useState(false);
   const [recentImages, setRecentImages] = useState<string[]>([]);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
   // Sync with selectedObject 
   useEffect(() => {
@@ -288,7 +291,7 @@ export const RightPanel = ({
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log("[Debug] handleFileUpload triggered, event:", event);
     const file = event.target.files?.[0];
     console.log("[Debug] Valid file picked:", file?.name);
@@ -315,6 +318,10 @@ export const RightPanel = ({
 
     console.log("[Debug] Forwarding file to onImageUpload");
     onImageUpload(file);
+    
+    // Store the uploaded file for potential background removal
+    setUploadedFile(file);
+    
     // give it a moment to land on the canvas
     setTimeout(() => {
       console.log("[Debug] Canvas objects after upload:", (window as any).designCanvas?.canvas.getObjects());
