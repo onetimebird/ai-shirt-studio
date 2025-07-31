@@ -242,7 +242,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
             <div className="text-right">
               <p className="text-[9px] lg:text-base text-muted-foreground">Starting at</p>
               <p className="text-[11px] lg:text-xl font-bold text-primary">${unitPrice.toFixed(2)}</p>
-              <p className="text-[8px] lg:text-xs text-orange-600">+$3.00 for 2XL+</p>
+              <p className="text-[8px] lg:text-xs text-gray-400">+$3.00 for 2XL+</p>
             </div>
           </div>
 
