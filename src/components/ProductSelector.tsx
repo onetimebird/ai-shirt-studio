@@ -9,66 +9,73 @@ import { getAllColors, getTotalColorCount, getAvailableColorCount } from '@/data
 const products = [
   {
     id: 'gildan-2000',
-    name: 'Gildan 2000',
+    name: 'Gildan 2000 Ultra Cotton',
     description: 'Ultra Cotton T-Shirt',
     type: 'T-Shirt',
     colors: getAllColors().map(color => color.label), // Use complete color list
-    price: '$12.99',
+    frontOnlyPrice: 12.95,
+    frontBackPrice: 18.95,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop'
   },
   {
     id: 'gildan-64000',
-    name: 'Gildan 64000',
+    name: 'Gildan 64000 Softstyle',
     description: 'Softstyle T-Shirt',
     type: 'T-Shirt',
     colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Red', 'Royal Blue'],
-    price: '$11.99',
+    frontOnlyPrice: 13.95,
+    frontBackPrice: 19.95,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop'
   },
   {
     id: 'bella-3001c',
-    name: 'Bella 3001C',
-    description: 'Canvas Unisex Jersey Tee',
+    name: 'Bella 3001C Premium',
+    description: 'Premium Unisex Jersey Tee',
     type: 'T-Shirt',
     colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Vintage Red', 'Forest'],
-    price: '$13.99',
+    frontOnlyPrice: 18.95,
+    frontBackPrice: 24.95,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop'
   },
   {
+    id: 'bella-6400',
+    name: 'Bella 6400 Premium Women\'s Tee',
+    description: 'Premium Women\'s T-Shirt',
+    type: 'Women\'s T-Shirt',
+    colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Pink', 'Purple'],
+    frontOnlyPrice: 18.95,
+    frontBackPrice: 24.95,
+    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=200&h=200&fit=crop'
+  },
+  {
+    id: 'gildan-18000',
+    name: 'Gildan 18000 Crewneck',
+    description: 'Heavy Blend Crewneck Sweatshirt',
+    type: 'Crewneck',
+    colors: ['White', 'Black', 'Dark Heather', 'Navy', 'Red', 'Royal Blue'],
+    frontOnlyPrice: 22.95,
+    frontBackPrice: 28.95,
+    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop'
+  },
+  {
     id: 'gildan-18500',
-    name: 'Gildan 18500',
+    name: 'Gildan 18500 Hoodie',
     description: 'Heavy Blend Hoodie',
     type: 'Hoodie',
     colors: ['White', 'Black', 'Dark Heather', 'Navy', 'Red', 'Royal Blue'],
-    price: '$24.99',
+    frontOnlyPrice: 27.95,
+    frontBackPrice: 33.95,
     image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop'
   },
   {
-    id: 'bella-canvas-hoodie',
-    name: 'Bella Canvas Hoodie',
-    description: 'Canvas Unisex Hoodie',
-    type: 'Hoodie',
+    id: 'bella-3719',
+    name: 'Bella 3719 Premium Hoodie',
+    description: 'Premium Unisex Hoodie',
+    type: 'Premium Hoodie',
     colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Forest', 'Maroon'],
-    price: '$26.99',
+    frontOnlyPrice: 49.95,
+    frontBackPrice: 55.95,
     image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop'
-  },
-  {
-    id: 'bella-3480',
-    name: 'Bella 3480',
-    description: 'Canvas Tank Top',
-    type: 'Tank Top',
-    colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Red', 'Royal Blue'],
-    price: '$9.99',
-    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=200&h=200&fit=crop'
-  },
-  {
-    id: 'bella-6004',
-    name: 'Bella 6004',
-    description: 'Women\'s The Favorite Tee',
-    type: 'Women\'s T-Shirt',
-    colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Pink', 'Purple'],
-    price: '$14.99',
-    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=200&h=200&fit=crop'
   }
 ];
 
@@ -103,6 +110,11 @@ export function ProductSelector({
 }: ProductSelectorProps) {
   // Use the props directly instead of internal state
   const selectedProductData = products.find(p => p.id === selectedProduct);
+
+  // Helper function to format price display
+  const formatPriceDisplay = (product: typeof products[0]) => {
+    return `$${product.frontOnlyPrice.toFixed(2)} - $${product.frontBackPrice.toFixed(2)}`;
+  };
 
   const handleProductSelect = (productId: string) => {
     const product = products.find(p => p.id === productId);
@@ -159,7 +171,7 @@ export function ProductSelector({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium text-lg capitalize">{selectedColor?.toLowerCase().replace(/-/g, ' ')}</p>
-                  <p className="text-sm text-muted-foreground">{selectedProductData.price}</p>
+                  <p className="text-sm text-muted-foreground">{formatPriceDisplay(selectedProductData)}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {selectedProductData.id === 'gildan-2000' ? 
                       `${getAvailableColorCount()} of ${getTotalColorCount()} colors available` : 
@@ -260,7 +272,7 @@ export function ProductSelector({
                     </div>
                     <p className="text-xs text-muted-foreground">{product.description}</p>
                     <div className="flex items-center justify-between mt-1">
-                      <span className="text-sm font-medium text-primary">{product.price}</span>
+                      <span className="text-sm font-medium text-primary">{formatPriceDisplay(product)}</span>
                       <span className="text-xs text-muted-foreground">{product.colors.length} colors</span>
                     </div>
                   </div>
