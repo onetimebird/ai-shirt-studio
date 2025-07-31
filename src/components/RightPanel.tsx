@@ -97,6 +97,7 @@ export const RightPanel = ({
   const [showApiKey, setShowApiKey] = useState(false);
   const [recentImages, setRecentImages] = useState<string[]>([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedImageObject, setUploadedImageObject] = useState<any>(null);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
   // Sync with selectedObject 
@@ -1206,9 +1207,29 @@ export const RightPanel = ({
                               const imageElement = await loadImage(uploadedFile);
                               const processedBlob = await removeBackground(imageElement);
                               const processedFile = new File([processedBlob], `${uploadedFile.name.split('.')[0]}_no_bg.png`, { type: 'image/png' });
+                              
+                              // Find and remove the original uploaded image if it exists
+                              if ((window as any).designCanvas?.canvas && uploadedImageObject) {
+                                console.log('Removing original image object before adding processed image');
+                                (window as any).designCanvas.canvas.remove(uploadedImageObject);
+                                (window as any).designCanvas.canvas.renderAll();
+                              } else if ((window as any).designCanvas?.canvas) {
+                                // If we don't have the specific object reference, remove the most recent image
+                                const canvas = (window as any).designCanvas.canvas;
+                                const objects = canvas.getObjects();
+                                const images = objects.filter((obj: any) => obj.type === 'image');
+                                if (images.length > 0) {
+                                  console.log('Removing most recent image object before adding processed image');
+                                  canvas.remove(images[images.length - 1]);
+                                  canvas.renderAll();
+                                }
+                              }
+                              
+                              // Add the processed image
                               onImageUpload(processedFile);
                               toast.success("Background removed successfully!");
                               setUploadedFile(null);
+                              setUploadedImageObject(null);
                             } catch (error) {
                               toast.error("Failed to remove background");
                               console.error(error);
