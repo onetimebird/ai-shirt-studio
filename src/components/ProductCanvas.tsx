@@ -71,20 +71,23 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       
       // Keep t-shirt at reasonable size within the larger canvas
       const isMobile = canvasWidth < 500;
-      const scaleFactor = isMobile ? 0.8 : 0.9; // Much smaller scale - just enough to show full t-shirt
+      const scaleFactor = isMobile ? 0.8 : 1.125; // 25% larger for desktop (0.9 * 1.25 = 1.125)
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
       const scale = Math.min(scaleX, scaleY);
 
       // Set as background image - this keeps it behind all user content
+      // Move higher on desktop by reducing the top position
+      const topPosition = isMobile ? canvasHeight / 2 : (canvasHeight / 2) - 40;
+      
       img.set({
         scaleX: scale,
         scaleY: scale,
         originX: "center",
         originY: "center",
         left: canvasWidth / 2,
-        top: canvasHeight / 2,
+        top: topPosition,
         selectable: false,
         evented: false,
       });
