@@ -50,7 +50,20 @@ export const TopControls = ({
           <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
           <Select value={selectedProduct} onValueChange={onProductChange}>
             <SelectTrigger className="w-40 lg:w-56 min-w-0">
-              <SelectValue placeholder="Change Product" />
+              <SelectValue placeholder="Change Product">
+                {(() => {
+                  const productMap: { [key: string]: string } = {
+                    'gildan-2000': 'Gildan 2000 Ultra Cotton T-Shirt',
+                    'gildan-64000': 'Gildan 64000 Softstyle T-Shirt',
+                    'bella-3001c': 'Bella 3001 Premium T-Shirt',
+                    'bella-6400': 'Bella 6400 Premium Women\'s Tee',
+                    'gildan-18000': 'Gildan 18000 Crewneck',
+                    'gildan-18500': 'Gildan 18500 Hoodie',
+                    'bella-3719': 'Bella 3719 Premium Hoodie'
+                  };
+                  return <span className="truncate block">{productMap[selectedProduct] || 'Select Product'}</span>;
+                })()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
@@ -187,7 +200,20 @@ export const TopControls = ({
             {/* Product Selector */}
             <Select value={selectedProduct} onValueChange={onProductChange}>
               <SelectTrigger className="w-32">
-                <SelectValue placeholder="Change Product" />
+                <SelectValue placeholder="Change Product">
+                  {(() => {
+                    const productMap: { [key: string]: string } = {
+                      'gildan-2000': 'Gildan 2000 Ultra Cotton T-Shirt',
+                      'gildan-64000': 'Gildan 64000 Softstyle T-Shirt',
+                      'bella-3001c': 'Bella 3001 Premium T-Shirt',
+                      'bella-6400': 'Bella 6400 Premium Women\'s Tee',
+                      'gildan-18000': 'Gildan 18000 Crewneck',
+                      'gildan-18500': 'Gildan 18500 Hoodie',
+                      'bella-3719': 'Bella 3719 Premium Hoodie'
+                    };
+                    return <span className="truncate block text-xs">{productMap[selectedProduct] || 'Select Product'}</span>;
+                  })()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
