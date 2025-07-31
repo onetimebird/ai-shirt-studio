@@ -265,24 +265,24 @@ export function ProductSelector({
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="font-medium text-sm leading-tight">{product.name}</h4>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h4 className="font-medium text-sm leading-tight break-words">{product.name}</h4>
                       <Badge 
                         variant="secondary" 
-                        className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-1"
+                        className="text-xs whitespace-nowrap flex-shrink-0 px-2 py-1 ml-2"
                       >
                         {product.type}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">{product.description}</p>
-                    <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-muted-foreground mb-2 leading-tight">{product.description}</p>
+                    <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-primary">{formatPriceDisplay(product)}</span>
                       <span className="text-xs text-muted-foreground">{product.colors.length} colors</span>
                     </div>
                   </div>
                   {product.id === selectedProduct && (
-                    <div className="w-5 h-5 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow gentle-pulse">
+                    <div className="w-5 h-5 bg-gradient-premium rounded-full flex items-center justify-center shadow-glow gentle-pulse flex-shrink-0">
                       <Check className="w-3 h-3 text-primary-foreground" />
                     </div>
                   )}
