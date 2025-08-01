@@ -1242,10 +1242,9 @@ export const RightPanel = ({
                           className="w-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white border-0 font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] group-hover:scale-[1.02]"
                         >
                           {isRemovingBackground ? (
-                            <div className="flex items-center justify-center w-full py-2">
-                              <span className="animate-pulse font-medium mr-4">Processing AI Magic</span>
+                            <div className="flex items-center justify-center w-full py-2 animate-pulse">
                               {/* Much Bigger Animated Bubbling Beaker */}
-                              <div className="relative">
+                              <div className="relative mr-4">
                                 <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
                                   {/* Beaker body */}
                                   <path d="M8 2h8v6l4 8c0 2.21-1.79 4-4 4H8c-2.21 0-4-1.79-4-4l4-8V2z" fill="currentColor" opacity="0.4"/>
@@ -1262,6 +1261,7 @@ export const RightPanel = ({
                                   <path d="M13 4c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1.5" fill="none" className="animate-pulse" style={{animationDelay: '800ms'}}/>
                                 </svg>
                               </div>
+                              <span className="font-medium">Processing AI Magic</span>
                             </div>
                           ) : (
                             <>
