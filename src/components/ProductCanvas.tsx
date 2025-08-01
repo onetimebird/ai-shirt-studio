@@ -71,8 +71,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       
       // Keep t-shirt at reasonable size within the larger canvas
       const isMobile = canvasWidth < 500;
-      // Reduced scale factor to compensate for larger canvas size, achieving the desired 25% increase
-      const scaleFactor = isMobile ? 0.8 : 0.9; // Back to 0.9 but with larger canvas gives us the 25% increase
+      // Increased mobile scale factor by 15% for better visibility
+      const scaleFactor = isMobile ? 0.92 : 0.9;
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
