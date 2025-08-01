@@ -79,8 +79,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const scale = Math.min(scaleX, scaleY);
 
       // Set as background image - this keeps it behind all user content
-      // Move higher on desktop by reducing the top position
-      const topPosition = isMobile ? canvasHeight / 2 : (canvasHeight / 2) - 40;
+      // Lower the image position to prevent cutoff
+      const topPosition = isMobile ? canvasHeight / 2 : (canvasHeight / 2) + 60;
       
       img.set({
         scaleX: scale,
