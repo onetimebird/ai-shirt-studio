@@ -99,6 +99,14 @@ export const RightPanel = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedImageObject, setUploadedImageObject] = useState<any>(null);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
+  const [isUpscaling, setIsUpscaling] = useState(false);
+  const [lovableApiKey, setLovableApiKey] = useState<string>(localStorage.getItem('lovable_ai_key') || '');
+
+  const UPSCALE_PROMPT = `
+Enhance the resolution of this image by a factor of 4.
+Sharpen fine details, reduce noise and JPEG artifacts,
+and return a high-quality transparent PNG suitable for print.
+`;
 
   // Sync with selectedObject 
   useEffect(() => {
@@ -1272,7 +1280,114 @@ export const RightPanel = ({
                             </>
                           )}
                         </Button>
+
+                        {/* AI Upscaler */}
+                        <Button
+                          onClick={async () => {
+                            if (!lovableApiKey) {
+                              toast.error("Please enter your Lovable AI API key first");
+                              return;
+                            }
+                            
+                            setIsUpscaling(true);
+                            try {
+                              const form = new FormData();
+                              form.append('model', 'nightmareai/real-esrgan:latest');
+                              form.append('prompt', UPSCALE_PROMPT);
+                              form.append('inputs', JSON.stringify({
+                                image: uploadedFile,
+                                scale: 4,
+                                face_enhance: false
+                              }));
+                              
+                              const res = await fetch('https://api.lovable.ai/v1/inference', {
+                                method: 'POST',
+                                headers: {
+                                  'Authorization': `Bearer ${lovableApiKey}`
+                                },
+                                body: form
+                              });
+                              
+                              if (!res.ok) {
+                                const errorText = await res.text();
+                                throw new Error(errorText);
+                              }
+                              
+                              const payload = await res.json();
+                              const upscaledUrl = payload.outputs[0].url;
+                              
+                              // Download the upscaled image and convert to file
+                              const upscaledResponse = await fetch(upscaledUrl);
+                              const upscaledBlob = await upscaledResponse.blob();
+                              const upscaledFile = new File([upscaledBlob], `${uploadedFile.name.split('.')[0]}_4x.png`, { type: 'image/png' });
+                              
+                              // Remove original image and add upscaled version
+                              if ((window as any).designCanvas?.canvas && uploadedImageObject) {
+                                (window as any).designCanvas.canvas.remove(uploadedImageObject);
+                                (window as any).designCanvas.canvas.renderAll();
+                              }
+                              
+                              onImageUpload(upscaledFile);
+                              toast.success("Image upscaled successfully!");
+                              setUploadedFile(null);
+                              setUploadedImageObject(null);
+                            } catch (error) {
+                              toast.error("Failed to upscale image: " + (error as Error).message);
+                              console.error(error);
+                            } finally {
+                              setIsUpscaling(false);
+                            }
+                          }}
+                          disabled={isUpscaling}
+                          size="default"
+                          className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white border-0 font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] mt-2"
+                        >
+                          {isUpscaling ? (
+                            <div className="flex items-center justify-center w-full py-2 animate-pulse">
+                              {/* Upscaling Icon */}
+                              <div className="relative mr-4">
+                                <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
+                                  {/* Base square */}
+                                  <rect x="6" y="6" width="4" height="4" fill="currentColor" opacity="0.4" className="animate-pulse"/>
+                                  {/* Expanded square */}
+                                  <rect x="12" y="12" width="8" height="8" stroke="currentColor" strokeWidth="1.5" fill="none" className="animate-pulse" style={{animationDelay: '300ms'}}/>
+                                  {/* Arrow */}
+                                  <path d="m9 9 4 4" stroke="currentColor" strokeWidth="2" className="animate-pulse" style={{animationDelay: '600ms'}}/>
+                                  <path d="m11 13 2-2 2 2" stroke="currentColor" strokeWidth="1.5" fill="none" className="animate-pulse" style={{animationDelay: '900ms'}}/>
+                                </svg>
+                              </div>
+                              <span className="font-medium">Upscaling 4x</span>
+                            </div>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                              </svg>
+                              AI Upscaler (4x)
+                            </>
+                          )}
+                        </Button>
                       </div>
+                    </div>
+                  )}
+
+                  {/* API Key Input for Lovable AI */}
+                  {uploadedFile && (
+                    <div className="border border-border rounded-lg p-4 mb-4">
+                      <Label className="text-sm font-medium mb-2 block">Lovable AI API Key</Label>
+                      <Input
+                        type="password"
+                        placeholder="Enter your Lovable AI API key"
+                        value={lovableApiKey}
+                        onChange={(e) => {
+                          setLovableApiKey(e.target.value);
+                          localStorage.setItem('lovable_ai_key', e.target.value);
+                        }}
+                        className="mb-2"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Required for AI upscaling. Your key is stored locally and only used for API calls.
+                      </p>
                     </div>
                   )}
 
