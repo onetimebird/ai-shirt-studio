@@ -36,6 +36,7 @@ import {
 import { BELLA_3001C_COLORS } from "../data/bellaColors";
 import { GILDAN_64000_COLORS } from "../data/gildan64000Colors";
 import { BELLA_6400_COLORS } from "../data/bella6400Colors";
+import { GILDAN_18000_COLORS } from "../data/gildan18000Colors";
 
 interface RightPanelProps {
   activeTool: string;
@@ -1607,6 +1608,8 @@ and return a high-quality transparent PNG suitable for print.
                     ? GILDAN_64000_COLORS
                     : selectedProduct === "bella-6400"
                     ? BELLA_6400_COLORS
+                    : selectedProduct === "gildan-18000"
+                    ? GILDAN_18000_COLORS
                     : BELLA_3001C_COLORS;
                   
                   return availableColors.map((colorItem) => (
