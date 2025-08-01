@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { getAllColors, getTotalColorCount, getAvailableColorCount } from '@/data/gildan2000Colors';
+import { getAllColors as getAllColors64000, getTotalColorCount as getTotalColorCount64000, getAvailableColorCount as getAvailableColorCount64000 } from '@/data/gildan64000Colors';
 
 const products = [
   {
@@ -22,7 +23,7 @@ const products = [
     name: 'Gildan 64000 Softstyle',
     description: 'Softstyle T-Shirt',
     type: 'T-Shirt',
-    colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Red', 'Royal Blue'],
+    colors: getAllColors64000().map(color => color.label), // Use complete color list
     frontOnlyPrice: 13.95,
     frontBackPrice: 19.95,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop'
@@ -175,6 +176,8 @@ export function ProductSelector({
                   <p className="text-xs text-muted-foreground mt-1">
                     {selectedProductData.id === 'gildan-2000' ? 
                       `${getAvailableColorCount()} of ${getTotalColorCount()} colors available` : 
+                      selectedProductData.id === 'gildan-64000' ?
+                      `${getAvailableColorCount64000()} of ${getTotalColorCount64000()} colors available` :
                       `${selectedProductData.colors.length} colors available`
                     }
                   </p>
@@ -188,6 +191,37 @@ export function ProductSelector({
                   {selectedProductData.id === 'gildan-2000' ? (
                     <div className="grid grid-cols-6 gap-3">
                       {getAllColors().map((colorData) => (
+                        <div key={colorData.name} className="relative group">
+                          <button
+                            onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
+                            className={`w-6 h-6 rounded-md transition-all duration-200 border ${
+                              colorData.name === selectedColor 
+                                ? 'border-green-500 shadow-lg scale-110' 
+                                : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                            } ${!colorData.available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                            style={{ backgroundColor: colorData.value }}
+                            disabled={!colorData.available}
+                          >
+                            {colorData.name === selectedColor && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Check className="w-2 h-2 text-white drop-shadow-lg" />
+                              </div>
+                            )}
+                            {!colorData.available && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                              </div>
+                            )}
+                          </button>
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+                            {colorData.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : selectedProductData.id === 'gildan-64000' ? (
+                    <div className="grid grid-cols-6 gap-3">
+                      {getAllColors64000().map((colorData) => (
                         <div key={colorData.name} className="relative group">
                           <button
                             onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
