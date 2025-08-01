@@ -21,6 +21,7 @@ export const TShirtDesigner = () => {
   const [selectedObject, setSelectedObject] = useState<any>(null);
   const [textObjects, setTextObjects] = useState<any[]>([]);
   const [imageObjects, setImageObjects] = useState<any[]>([]);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -62,6 +63,7 @@ export const TShirtDesigner = () => {
 
   const handleImageUpload = (file: File) => {
     console.log("TShirtDesigner handleImageUpload called with file:", file.name);
+    setUploadedFile(file); // Store the uploaded file for background removal
     (window as any).designCanvas?.addImage(file);
   };
 
@@ -137,18 +139,19 @@ export const TShirtDesigner = () => {
         {/* Right Panel - Sticky sidebar */}
         <div className="hidden xl:block w-80 2xl:w-96 sticky top-0 h-screen border-l border-border">
           <div className="h-full overflow-y-auto scrollbar-hide bg-card">
-            <RightPanel
-              activeTool={activeTool}
-              selectedObject={selectedObject}
-              onTextPropertiesChange={handleTextPropertiesChange}
-              onImageUpload={handleImageUpload}
-              onProductColorChange={handleProductColorChange}
-              textObjects={textObjects}
-              imageObjects={imageObjects}
-              selectedProduct={selectedProduct}
-              selectedColor={selectedColor}
-              onProductChange={setSelectedProduct}
-            />
+          <RightPanel
+            activeTool={activeTool}
+            selectedObject={selectedObject}
+            onTextPropertiesChange={handleTextPropertiesChange}
+            onImageUpload={handleImageUpload}
+            onProductColorChange={handleProductColorChange}
+            textObjects={textObjects}
+            imageObjects={imageObjects}
+            selectedProduct={selectedProduct}
+            selectedColor={selectedColor}
+            onProductChange={setSelectedProduct}
+            uploadedFile={uploadedFile}
+          />
           </div>
         </div>
       </div>
@@ -189,6 +192,7 @@ export const TShirtDesigner = () => {
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
+                  uploadedFile={uploadedFile}
                 />
               </div>
             </SheetContent>
@@ -227,6 +231,7 @@ export const TShirtDesigner = () => {
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
+                  uploadedFile={uploadedFile}
                 />
               </div>
             </SheetContent>
@@ -265,6 +270,7 @@ export const TShirtDesigner = () => {
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
+                  uploadedFile={uploadedFile}
                 />
               </div>
             </SheetContent>
@@ -303,6 +309,7 @@ export const TShirtDesigner = () => {
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
+                  uploadedFile={uploadedFile}
                 />
               </div>
             </SheetContent>
@@ -340,6 +347,7 @@ export const TShirtDesigner = () => {
                   selectedProduct={selectedProduct}
                   selectedColor={selectedColor}
                   onProductChange={setSelectedProduct}
+                  uploadedFile={uploadedFile}
                 />
               </div>
             </SheetContent>

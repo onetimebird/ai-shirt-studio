@@ -45,6 +45,7 @@ interface RightPanelProps {
   selectedProduct?: string;
   selectedColor?: string;
   onProductChange?: (productId: string) => void;
+  uploadedFile?: File | null;
 }
 
 const fonts = [
@@ -68,7 +69,8 @@ export const RightPanel = ({
   imageObjects = [],
   selectedProduct = "bella-3001c",
   selectedColor = "White",
-  onProductChange
+  onProductChange,
+  uploadedFile
 }: RightPanelProps) => {
   // Text states
   const [textContent, setTextContent] = useState("New multi-line text\nType here...");
@@ -96,7 +98,6 @@ export const RightPanel = ({
   const [apiKey, setApiKey] = useState(openAIService.getApiKey() || "");
   const [showApiKey, setShowApiKey] = useState(false);
   const [recentImages, setRecentImages] = useState<string[]>([]);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadedImageObject, setUploadedImageObject] = useState<any>(null);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [isUpscaling, setIsUpscaling] = useState(false);
@@ -327,9 +328,6 @@ and return a high-quality transparent PNG suitable for print.
 
     console.log("[Debug] Forwarding file to onImageUpload");
     onImageUpload(file);
-    
-    // Store the uploaded file for potential background removal
-    setUploadedFile(file);
     
     // give it a moment to land on the canvas
     setTimeout(() => {
@@ -1236,7 +1234,6 @@ and return a high-quality transparent PNG suitable for print.
                               // Add the processed image
                               onImageUpload(processedFile);
                               toast.success("Background removed successfully!");
-                              setUploadedFile(null);
                               setUploadedImageObject(null);
                             } catch (error) {
                               toast.error("Failed to remove background");
@@ -1329,7 +1326,6 @@ and return a high-quality transparent PNG suitable for print.
                               
                               onImageUpload(upscaledFile);
                               toast.success("Image upscaled successfully!");
-                              setUploadedFile(null);
                               setUploadedImageObject(null);
                             } catch (error) {
                               toast.error("Failed to upscale image: " + (error as Error).message);
