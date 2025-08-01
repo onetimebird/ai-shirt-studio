@@ -170,7 +170,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-full lg:max-w-4xl w-full mx-0 lg:mx-auto p-0 bg-background border border-border/50 shadow-2xl h-[95vh] lg:h-[85vh] overflow-hidden [&>button]:hidden z-[60]">
+      <DialogContent className="max-w-full lg:max-w-4xl w-full mx-0 lg:mx-auto p-0 bg-background border border-border/50 shadow-2xl h-[95vh] lg:h-[85vh] overflow-hidden [&>button]:hidden z-[120]">
         {/* Header with progress stepper */}
         <div className="pt-1 px-1.5 lg:pt-2 lg:px-3 pb-1 lg:pb-1.5 border-b border-border/20">
           <div className="flex items-center justify-end mb-1">
