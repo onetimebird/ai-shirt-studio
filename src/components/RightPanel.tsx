@@ -33,6 +33,8 @@ import {
   Eye,
   EyeOff
 } from "lucide-react";
+import { BELLA_3001C_COLORS } from "../data/bellaColors";
+import { GILDAN_64000_COLORS } from "../data/gildan64000Colors";
 
 interface RightPanelProps {
   activeTool: string;
@@ -1597,15 +1599,23 @@ and return a high-quality transparent PNG suitable for print.
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-4 gap-2">
-                {colors.map((color) => (
-                  <button
-                    key={color}
-                    className="w-12 h-12 rounded border-2 border-border hover:scale-110 transition-transform"
-                    style={{ backgroundColor: color }}
-                    onClick={() => onProductColorChange(color)}
-                    title={color}
-                  />
-                ))}
+                {(() => {
+                  const availableColors = selectedProduct === "bella-3001c" 
+                    ? BELLA_3001C_COLORS 
+                    : selectedProduct === "gildan-64000"
+                    ? GILDAN_64000_COLORS
+                    : BELLA_3001C_COLORS;
+                  
+                  return availableColors.map((colorItem) => (
+                    <button
+                      key={colorItem.value}
+                      className="w-12 h-12 rounded border-2 border-border hover:scale-110 transition-transform"
+                      style={{ backgroundColor: colorItem.value }}
+                      onClick={() => onProductColorChange(colorItem.value)}
+                      title={colorItem.label}
+                    />
+                  ));
+                })()}
               </div>
             </CardContent>
           </Card>
