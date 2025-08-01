@@ -3,6 +3,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign, ArrowRight } from "lucide-react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
+import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
+import { BELLA_3001C_COLORS, getAllColors as getAllColorsBella } from "@/data/bellaColors";
+import { BELLA_6400_COLORS, getAllColors as getAllColorsBella6400 } from "@/data/bella6400Colors";
 import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
 import { QuantityModal } from "@/components/QuantityModal";
 import { toast } from "sonner";
@@ -29,7 +32,34 @@ export const TopControls = ({
   onDecorationChange,
   onSideChange,
 }: TopControlsProps) => {
-  const currentColor = GILDAN_2000_COLORS.find(c => c.name === selectedColor);
+  // Get current color based on selected product
+  const getCurrentColors = () => {
+    switch (selectedProduct) {
+      case 'gildan-64000':
+        return GILDAN_64000_COLORS;
+      case 'bella-3001c':
+        return BELLA_3001C_COLORS;
+      case 'bella-6400':
+        return BELLA_6400_COLORS;
+      default:
+        return GILDAN_2000_COLORS;
+    }
+  };
+
+  const getAllCurrentColors = () => {
+    switch (selectedProduct) {
+      case 'gildan-64000':
+        return getAllColors64000();
+      case 'bella-3001c':
+        return getAllColorsBella();
+      case 'bella-6400':
+        return getAllColorsBella6400();
+      default:
+        return getAllColors();
+    }
+  };
+
+  const currentColor = getCurrentColors().find(c => c.name === selectedColor);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
 
   return (
@@ -91,7 +121,7 @@ export const TopControls = ({
               </div>
             </SelectTrigger>
             <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
-              {getAllColors().map((color) => (
+              {getAllCurrentColors().map((color) => (
                 <SelectItem key={color.name} value={color.name}>
                   <div className="flex items-center gap-2 w-full">
                     <div 
@@ -238,7 +268,7 @@ export const TopControls = ({
                 </div>
               </SelectTrigger>
               <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
-                {getAllColors().map((color) => (
+                {getAllCurrentColors().map((color) => (
                   <SelectItem key={color.name} value={color.name}>
                     <div className="flex items-center gap-2 w-full">
                       <div 
