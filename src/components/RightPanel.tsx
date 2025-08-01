@@ -1188,7 +1188,7 @@ and return a high-quality transparent PNG suitable for print.
                     </p>
                   </div>
 
-                  {/* Background Removal Option */}
+                  {/* Background Removal Option - Debug: uploadedFile=${uploadedFile?.name || 'null'} */}
                   {uploadedFile && (
                     <div className="mt-4 border border-primary/20 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/30 dark:to-blue-950/30 rounded-xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-300/40 group cursor-pointer">
                       <div className="flex flex-col space-y-4">
