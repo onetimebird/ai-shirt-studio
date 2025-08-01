@@ -9,6 +9,7 @@ import { getAllColors as getAllColors64000, getTotalColorCount as getTotalColorC
 import { getAllColors as getAllColorsBella, getTotalColorCount as getTotalColorCountBella, getAvailableColorCount as getAvailableColorCountBella } from '@/data/bellaColors';
 import { getAllColors as getAllColorsBella6400, getTotalColorCount as getTotalColorCountBella6400, getAvailableColorCount as getAvailableColorCountBella6400 } from '@/data/bella6400Colors';
 import { getAllColors as getAllColors18000, getTotalColorCount as getTotalColorCount18000, getAvailableColorCount as getAvailableColorCount18000 } from '@/data/gildan18000Colors';
+import { getAllColors as getAllColors18500, getTotalColorCount as getTotalColorCount18500, getAvailableColorCount as getAvailableColorCount18500 } from '@/data/gildan18500Colors';
 
 const products = [
   {
@@ -66,7 +67,7 @@ const products = [
     name: 'Gildan 18500 Hoodie',
     description: 'Heavy Blend Hoodie',
     type: 'Hoodie',
-    colors: ['White', 'Black', 'Dark Heather', 'Navy', 'Red', 'Royal Blue'],
+    colors: getAllColors18500().map(color => color.label), // Use complete color list
     frontOnlyPrice: 27.95,
     frontBackPrice: 33.95,
     image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop'
@@ -187,6 +188,8 @@ export function ProductSelector({
                       `${getAvailableColorCountBella6400()} of ${getTotalColorCountBella6400()} colors available` :
                       selectedProductData.id === 'gildan-18000' ?
                       `${getAvailableColorCount18000()} of ${getTotalColorCount18000()} colors available` :
+                      selectedProductData.id === 'gildan-18500' ?
+                      `${getAvailableColorCount18500()} of ${getTotalColorCount18500()} colors available` :
                       `${selectedProductData.colors.length} colors available`
                     }
                   </p>
@@ -321,6 +324,37 @@ export function ProductSelector({
                         </div>
                        ))}
                       </div>
+                  ) : selectedProductData.id === 'gildan-18500' ? (
+                    <div className="grid grid-cols-6 gap-3">
+                      {getAllColors18500().map((colorData) => (
+                        <div key={colorData.name} className="relative group">
+                          <button
+                            onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
+                            className={`w-6 h-6 rounded-md transition-all duration-200 border ${
+                              colorData.name === selectedColor 
+                                ? 'border-green-500 shadow-lg scale-110' 
+                                : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                            } ${!colorData.available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                            style={{ backgroundColor: colorData.value }}
+                            disabled={!colorData.available}
+                          >
+                            {colorData.name === selectedColor && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <Check className="w-2 h-2 text-white drop-shadow-lg" />
+                              </div>
+                            )}
+                            {!colorData.available && (
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                              </div>
+                            )}
+                          </button>
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+                            {colorData.label}
+                          </div>
+                        </div>
+                      ))}
+                     </div>
                   ) : selectedProductData.id === 'gildan-18000' ? (
                     <div className="grid grid-cols-6 gap-3">
                       {getAllColors18000().map((colorData) => (

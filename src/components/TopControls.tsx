@@ -7,6 +7,7 @@ import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/g
 import { BELLA_3001C_COLORS, getAllColors as getAllColorsBella } from "@/data/bellaColors";
 import { BELLA_6400_COLORS, getAllColors as getAllColorsBella6400 } from "@/data/bella6400Colors";
 import { GILDAN_18000_COLORS, getAllColors as getAllColors18000 } from "@/data/gildan18000Colors";
+import { GILDAN_18500_COLORS, getAllColors as getAllColors18500 } from "@/data/gildan18500Colors";
 import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
 import { QuantityModal } from "@/components/QuantityModal";
 import { toast } from "sonner";
@@ -44,6 +45,8 @@ export const TopControls = ({
         return BELLA_6400_COLORS;
       case 'gildan-18000':
         return GILDAN_18000_COLORS;
+      case 'gildan-18500':
+        return GILDAN_18500_COLORS;
       default:
         return GILDAN_2000_COLORS;
     }
@@ -59,6 +62,8 @@ export const TopControls = ({
         return getAllColorsBella6400();
       case 'gildan-18000':
         return getAllColors18000();
+      case 'gildan-18500':
+        return getAllColors18500();
       default:
         return getAllColors();
     }
