@@ -6,6 +6,7 @@ import { Check, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { getAllColors, getTotalColorCount, getAvailableColorCount } from '@/data/gildan2000Colors';
 import { getAllColors as getAllColors64000, getTotalColorCount as getTotalColorCount64000, getAvailableColorCount as getAvailableColorCount64000 } from '@/data/gildan64000Colors';
+import { getAllColors as getAllColorsBella, getTotalColorCount as getTotalColorCountBella, getAvailableColorCount as getAvailableColorCountBella } from '@/data/bellaColors';
 
 const products = [
   {
@@ -33,9 +34,9 @@ const products = [
     name: 'Bella 3001C Premium',
     description: 'Premium Unisex Jersey Tee',
     type: 'T-Shirt',
-    colors: ['White', 'Black', 'Heather Grey', 'Navy', 'Vintage Red', 'Forest'],
-    frontOnlyPrice: 18.95,
-    frontBackPrice: 24.95,
+    colors: getAllColorsBella().map(color => color.label), // Use complete color list
+    frontOnlyPrice: 15.95,
+    frontBackPrice: 21.95,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&h=200&fit=crop'
   },
   {
@@ -178,6 +179,8 @@ export function ProductSelector({
                       `${getAvailableColorCount()} of ${getTotalColorCount()} colors available` : 
                       selectedProductData.id === 'gildan-64000' ?
                       `${getAvailableColorCount64000()} of ${getTotalColorCount64000()} colors available` :
+                      selectedProductData.id === 'bella-3001c' ?
+                      `${getAvailableColorCountBella()} of ${getTotalColorCountBella()} colors available` :
                       `${selectedProductData.colors.length} colors available`
                     }
                   </p>
@@ -232,6 +235,37 @@ export function ProductSelector({
                             } ${!colorData.available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
                             style={{ backgroundColor: colorData.value }}
                             disabled={!colorData.available}
+                           >
+                             {colorData.name === selectedColor && (
+                               <div className="absolute inset-0 flex items-center justify-center">
+                                 <Check className="w-2 h-2 text-white drop-shadow-lg" />
+                               </div>
+                             )}
+                             {!colorData.available && (
+                               <div className="absolute inset-0 flex items-center justify-center">
+                                 <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                               </div>
+                             )}
+                           </button>
+                           <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+                             {colorData.label}
+                           </div>
+                         </div>
+                       ))}
+                    </div>
+                  ) : selectedProductData.id === 'bella-3001c' ? (
+                    <div className="grid grid-cols-6 gap-3">
+                      {getAllColorsBella().map((colorData) => (
+                        <div key={colorData.name} className="relative group">
+                          <button
+                            onClick={() => colorData.available ? handleColorSelect(colorData.name) : toast.info(`${colorData.label} coming soon!`)}
+                            className={`w-6 h-6 rounded-md transition-all duration-200 border ${
+                              colorData.name === selectedColor 
+                                ? 'border-green-500 shadow-lg scale-110' 
+                                : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                            } ${!colorData.available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                            style={{ backgroundColor: colorData.value }}
+                            disabled={!colorData.available}
                           >
                             {colorData.name === selectedColor && (
                               <div className="absolute inset-0 flex items-center justify-center">
@@ -249,7 +283,7 @@ export function ProductSelector({
                           </div>
                         </div>
                       ))}
-                    </div>
+                     </div>
                   ) : (
                     <div className="grid grid-cols-6 gap-3">
                       {selectedProductData.colors.map((color) => (
