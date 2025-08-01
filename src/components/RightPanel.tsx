@@ -1606,6 +1606,10 @@ and return a high-quality transparent PNG suitable for print.
                     ? GILDAN_64000_COLORS
                     : BELLA_3001C_COLORS;
                   
+                  console.log("Selected product:", selectedProduct);
+                  console.log("Available colors count:", availableColors.length);
+                  console.log("Available colors:", availableColors);
+                  
                   return availableColors.map((colorItem) => (
                     <button
                       key={colorItem.value}
