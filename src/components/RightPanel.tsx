@@ -1242,29 +1242,25 @@ export const RightPanel = ({
                           className="w-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white border-0 font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] group-hover:scale-[1.02]"
                         >
                           {isRemovingBackground ? (
-                            <div className="flex items-center justify-center w-full py-1">
-                              {/* Animated Bubbling Beaker */}
-                              <div className="relative mr-3">
-                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+                            <div className="flex items-center justify-center w-full py-2">
+                              <span className="animate-pulse font-medium mr-4">Processing AI Magic</span>
+                              {/* Much Bigger Animated Bubbling Beaker */}
+                              <div className="relative">
+                                <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none">
                                   {/* Beaker body */}
-                                  <path d="M8 2h8v6l4 8c0 2.21-1.79 4-4 4H8c-2.21 0-4-1.79-4-4l4-8V2z" fill="currentColor" opacity="0.3"/>
+                                  <path d="M8 2h8v6l4 8c0 2.21-1.79 4-4 4H8c-2.21 0-4-1.79-4-4l4-8V2z" fill="currentColor" opacity="0.4"/>
                                   {/* Beaker outline */}
                                   <path d="M8 2h8v6l4 8c0 2.21-1.79 4-4 4H8c-2.21 0-4-1.79-4-4l4-8V2z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
                                   {/* Bubbles */}
-                                  <circle cx="10" cy="14" r="1" fill="currentColor" className="animate-pulse" style={{animationDelay: '0ms', animationDuration: '1s'}}/>
-                                  <circle cx="14" cy="16" r="0.8" fill="currentColor" className="animate-pulse" style={{animationDelay: '300ms', animationDuration: '1.2s'}}/>
-                                  <circle cx="12" cy="12" r="0.6" fill="currentColor" className="animate-pulse" style={{animationDelay: '600ms', animationDuration: '0.8s'}}/>
+                                  <circle cx="10" cy="14" r="1.2" fill="currentColor" className="animate-pulse" style={{animationDelay: '0ms', animationDuration: '1s'}}/>
+                                  <circle cx="14" cy="16" r="1" fill="currentColor" className="animate-pulse" style={{animationDelay: '300ms', animationDuration: '1.2s'}}/>
+                                  <circle cx="12" cy="12" r="0.8" fill="currentColor" className="animate-pulse" style={{animationDelay: '600ms', animationDuration: '0.8s'}}/>
+                                  <circle cx="11" cy="15" r="0.6" fill="currentColor" className="animate-pulse" style={{animationDelay: '900ms', animationDuration: '1.1s'}}/>
                                   {/* Steam/vapor lines */}
-                                  <path d="M9 4c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1" fill="none" className="animate-pulse" style={{animationDelay: '200ms'}}/>
-                                  <path d="M11 3c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1" fill="none" className="animate-pulse" style={{animationDelay: '500ms'}}/>
-                                  <path d="M13 4c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1" fill="none" className="animate-pulse" style={{animationDelay: '800ms'}}/>
+                                  <path d="M9 4c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1.5" fill="none" className="animate-pulse" style={{animationDelay: '200ms'}}/>
+                                  <path d="M11 3c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1.5" fill="none" className="animate-pulse" style={{animationDelay: '500ms'}}/>
+                                  <path d="M13 4c0-1 1-1 1 0s-1 1-1 0" stroke="currentColor" strokeWidth="1.5" fill="none" className="animate-pulse" style={{animationDelay: '800ms'}}/>
                                 </svg>
-                              </div>
-                              <span className="animate-pulse font-medium mr-3">Processing AI Magic</span>
-                              <div className="flex space-x-1">
-                                <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                               </div>
                             </div>
                           ) : (
