@@ -33,7 +33,7 @@ export const UndoRedoControls = () => {
   }, [isDesignCanvasReady]);
 
   return (
-    <div className="absolute top-4 left-4 z-[110] flex items-center gap-2 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
+    <div className="absolute top-4 left-4 z-[110] flex items-center gap-1.5 md:gap-2 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1.5 md:p-2 shadow-lg">
       <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
@@ -66,12 +66,12 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
             }
           }}
-          className="h-8 w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
+          className="h-6 w-6 md:h-8 md:w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
         >
-          <Undo className="w-3 h-3" />
+          <Undo className="w-2.5 h-2.5 md:w-3 md:h-3" />
         </Button>
         {/* Mobile label */}
-        <span className="block md:hidden text-[8px] text-muted-foreground leading-none">Undo</span>
+        <span className="block md:hidden text-[7px] text-muted-foreground leading-none">Undo</span>
         {/* Desktop label */}
         <span className="hidden md:block text-[10px] text-muted-foreground leading-none mt-1">Undo</span>
         {/* Desktop tooltip */}
@@ -112,12 +112,12 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
             }
           }}
-          className="h-8 w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
+          className="h-6 w-6 md:h-8 md:w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
         >
-          <Redo className="w-3 h-3" />
+          <Redo className="w-2.5 h-2.5 md:w-3 md:h-3" />
         </Button>
         {/* Mobile label */}
-        <span className="block md:hidden text-[8px] text-muted-foreground leading-none">Redo</span>
+        <span className="block md:hidden text-[7px] text-muted-foreground leading-none">Redo</span>
         {/* Desktop label */}
         <span className="hidden md:block text-[10px] text-muted-foreground leading-none mt-1">Redo</span>
         {/* Desktop tooltip */}
