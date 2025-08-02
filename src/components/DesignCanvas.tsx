@@ -374,9 +374,17 @@ export const DesignCanvas = ({
               // Restore user objects from history
               if (userObjectsData.length > 0) {
                 util.enlivenObjects(userObjectsData).then((objects: any[]) => {
-                  objects.forEach(obj => canvas.add(obj));
+                  objects.forEach(obj => {
+                    canvas.add(obj);
+                    // Reapply custom controls after restoration
+                    if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                      import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                        applyCustomControlsToObject(obj);
+                      });
+                    }
+                  });
                   canvas.renderAll();
-                  console.log('[Undo] Successfully restored', objects.length, 'user objects');
+                  console.log('[Undo] Successfully restored', objects.length, 'user objects with custom controls');
                   canvasHistory.isRestoring = false;
                   console.log('[Undo] Setting isRestoring to false');
                 });
@@ -426,9 +434,17 @@ export const DesignCanvas = ({
               // Restore user objects from history
               if (userObjectsData.length > 0) {
                 util.enlivenObjects(userObjectsData).then((objects: any[]) => {
-                  objects.forEach(obj => canvas.add(obj));
+                  objects.forEach(obj => {
+                    canvas.add(obj);
+                    // Reapply custom controls after restoration
+                    if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                      import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                        applyCustomControlsToObject(obj);
+                      });
+                    }
+                  });
                   canvas.renderAll();
-                  console.log('[Redo] Successfully restored', objects.length, 'user objects');
+                  console.log('[Redo] Successfully restored', objects.length, 'user objects with custom controls');
                   canvasHistory.isRestoring = false;
                   console.log('[Redo] Setting isRestoring to false');
                 });
