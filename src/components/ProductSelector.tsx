@@ -123,6 +123,7 @@ export function ProductSelector({
   };
 
   const handleProductSelect = (productId: string) => {
+    console.log('PRODUCT SELECTED:', productId);
     const product = products.find(p => p.id === productId);
     if (product) {
       // Set first available color when switching products
