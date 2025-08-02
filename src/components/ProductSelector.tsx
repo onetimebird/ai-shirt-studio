@@ -131,25 +131,19 @@ export function ProductSelector({
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
       
-      // Auto-scroll to top for mobile - try multiple scroll targets
+      // For mobile sheet containers - target the specific mobile scrollable div
+      const mobileSheetContent = document.querySelector('[data-state="open"] .overflow-y-auto.h-full');
+      if (mobileSheetContent) {
+        mobileSheetContent.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
+      // Fallback: Auto-scroll to top for any other mobile scenarios
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
-      // Scroll the right panel container specifically
+      // Desktop: Scroll the right panel container specifically
       const rightPanelContainer = document.querySelector('.w-full.lg\\:w-80.bg-card.border-l.border-border.overflow-y-auto');
       if (rightPanelContainer) {
         rightPanelContainer.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      
-      // Also try the main scrollable container
-      const container = document.querySelector('.scrollbar-hide');
-      if (container) {
-        container.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-      
-      // Try scrolling any parent container with overflow
-      const productSelectorContainer = document.querySelector('[data-state="active"] .space-y-6');
-      if (productSelectorContainer) {
-        productSelectorContainer.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
