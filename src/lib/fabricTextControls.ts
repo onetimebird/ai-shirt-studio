@@ -1,67 +1,28 @@
 import * as fabric from "fabric";
 
-// SVG icon data as strings for better reliability
-const svgIcons = {
-  delete: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="m3 6 3 12c0 .6.4 1 1 1h8c.6 0 1-.4 1-1l3-12"/>
-    <path d="M8 6V4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v2"/>
-    <line x1="10" x2="10" y1="11" y2="17"/>
-    <line x1="14" x2="14" y1="11" y2="17"/>
-  </svg>`,
-  
-  rotate: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-    <path d="M3 3v5h5"/>
-    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
-    <path d="M16 16h5v5"/>
-  </svg>`,
-  
-  stretch: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="5 9 2 12 5 15"/>
-    <polyline points="19 9 22 12 19 15"/>
-    <line x1="2" x2="22" y1="12" y2="12"/>
-  </svg>`,
-  
-  stretchVertical: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="9 5 12 2 15 5"/>
-    <polyline points="9 19 12 22 15 19"/>
-    <line x1="12" x2="12" y1="2" y2="22"/>
-  </svg>`,
-  
-  scale: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 3 9 15"/>
-    <path d="M12 3h9v9"/>
-    <path d="M3 21 15 9"/>
-    <path d="M3 12v9h9"/>
-  </svg>`,
-  
-  layer: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <polyline points="9 10 4 15 9 20"/>
-    <path d="m20 4-5 5h-4"/>
-    <line x1="15" x2="20" y1="9" y2="4"/>
-  </svg>`,
-  
-  clone: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-  </svg>`
-};
+// Import SVG files directly
+import deleteIconUrl from "@/assets/icons/delete-control.svg";
+import rotateIconUrl from "@/assets/icons/rotate-control.svg";
+import stretchIconUrl from "@/assets/icons/stretch-control.svg";
+import stretchVerticalIconUrl from "@/assets/icons/stretch-vertical-control.svg";
+import scaleIconUrl from "@/assets/icons/scale-control.svg";
+import layerIconUrl from "@/assets/icons/layer-control.svg";
+import cloneIconUrl from "@/assets/icons/clone-control.svg";
 
-// Convert SVG string to Image object
-const createImageFromSvg = (svgString: string): Promise<HTMLImageElement> => {
+// Simple image loader that works with imported URLs
+const loadImageFromUrl = (url: string): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
-    const blob = new Blob([svgString], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
     const img = new Image();
+    img.crossOrigin = 'anonymous';
     
     img.onload = () => {
-      URL.revokeObjectURL(url);
+      console.log(`✅ Loaded icon: ${url}`);
       resolve(img);
     };
     
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Failed to load SVG'));
+    img.onerror = (error) => {
+      console.error(`❌ Failed to load icon: ${url}`, error);
+      reject(error);
     };
     
     img.src = url;
@@ -179,15 +140,15 @@ export async function initializeTextControls() {
   console.log('🔧 Initializing custom text controls from scratch...');
   
   try {
-    // Load all icons
+    // Load all icons from actual files
     const iconImages = await Promise.all([
-      createImageFromSvg(svgIcons.delete),
-      createImageFromSvg(svgIcons.rotate),
-      createImageFromSvg(svgIcons.stretch),
-      createImageFromSvg(svgIcons.stretchVertical),
-      createImageFromSvg(svgIcons.scale),
-      createImageFromSvg(svgIcons.layer),
-      createImageFromSvg(svgIcons.clone),
+      loadImageFromUrl(deleteIconUrl),
+      loadImageFromUrl(rotateIconUrl),
+      loadImageFromUrl(stretchIconUrl),
+      loadImageFromUrl(stretchVerticalIconUrl),
+      loadImageFromUrl(scaleIconUrl),
+      loadImageFromUrl(layerIconUrl),
+      loadImageFromUrl(cloneIconUrl),
     ]);
     
     const [deleteImg, rotateImg, stretchImg, stretchVerticalImg, scaleImg, layerImg, cloneImg] = iconImages;
