@@ -186,11 +186,11 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Left Chest area box - positioned closer to center, halfway between center and edge */}
+            {/* Left Chest area box - positioned on wearer's left (viewer's right) */}
             <div
               style={{
                 position: 'absolute',
-                left: '37.5%',
+                left: '62.5%',
                 top: '22%',
                 width: '18%',
                 height: '15%',
@@ -220,30 +220,10 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Top instruction text - smaller and more subtle */}
             <div
               style={{
                 position: 'absolute',
-                left: '50%',
-                top: '12%',
-                transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.8)',
-                color: 'white',
-                padding: '2px 6px',
-                borderRadius: '2px',
-                fontSize: '8px',
-                fontWeight: '400',
-                zIndex: 101,
-                pointerEvents: 'none'
-              }}
-            >
-              Please keep your design inside the bounding box
-            </div>
-            
-            <div
-              style={{
-                position: 'absolute',
-                left: '37.5%',
+                left: '62.5%',
                 top: '18%',
                 transform: 'translateX(-50%)',
                 backgroundColor: 'rgba(96, 165, 250, 0.8)',
