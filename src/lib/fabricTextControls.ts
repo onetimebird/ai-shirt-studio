@@ -8,12 +8,12 @@ export function initializeTextControls() {
   console.log('🔧 initializeTextControls called - creating ROT-style controls...');
   
   try {
-    // Create delete control with refined trash icon
+    // Create delete control with gradient background matching design system
     const deleteControl = new fabric.Control({
       x: -0.5,
       y: -0.5,
-      offsetX: -12,
-      offsetY: -12,
+      offsetX: -8,
+      offsetY: -8,
       cursorStyleHandler: () => 'pointer',
       actionHandler: (eventData: MouseEvent, transform: fabric.Transform) => {
         const target = transform.target;
@@ -25,231 +25,267 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 24;
+        const size = 20;
         ctx.save();
         ctx.translate(left, top);
         
-        // Draw white circle background with subtle shadow
+        // Create gradient background matching design system
+        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
+        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        
+        // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = gradient;
         ctx.fill();
-        ctx.strokeStyle = 'hsl(220, 13%, 91%)';
+        
+        // Add elegant shadow
+        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+        
+        // Add subtle border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add subtle shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetY = 2;
-        
-        // Draw refined trash can icon
-        ctx.strokeStyle = 'hsl(215, 16%, 47%)';
-        ctx.fillStyle = 'hsl(215, 16%, 47%)';
+        // Draw white trash icon
+        ctx.strokeStyle = 'white';
+        ctx.fillStyle = 'white';
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        ctx.shadowColor = 'transparent';
         
         // Trash can lid
         ctx.beginPath();
-        ctx.moveTo(-6, -4);
-        ctx.lineTo(6, -4);
+        ctx.moveTo(-4, -3);
+        ctx.lineTo(4, -3);
         ctx.stroke();
         
-        // Trash can body (more refined shape)
+        // Trash can body
         ctx.beginPath();
-        ctx.moveTo(-4, -2);
-        ctx.lineTo(-3, 6);
-        ctx.lineTo(3, 6);
-        ctx.lineTo(4, -2);
+        ctx.moveTo(-3, -1);
+        ctx.lineTo(-2.5, 4);
+        ctx.lineTo(2.5, 4);
+        ctx.lineTo(3, -1);
         ctx.closePath();
         ctx.stroke();
         
-        // Vertical lines inside (cleaner spacing)
+        // Vertical lines inside
         ctx.beginPath();
-        ctx.moveTo(-1.5, 0);
-        ctx.lineTo(-1.5, 4);
-        ctx.moveTo(1.5, 0);
-        ctx.lineTo(1.5, 4);
+        ctx.moveTo(-1, 1);
+        ctx.lineTo(-1, 3);
+        ctx.moveTo(1, 1);
+        ctx.lineTo(1, 3);
         ctx.stroke();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 20,
+      sizeY: 20,
     });
 
-    // Create rotation control with refined rotate icon (restored original functionality)
+    // Create rotation control with gradient background
     const rotateControl = new fabric.Control({
       x: 0.5,
       y: -0.5,
-      offsetX: 12,
-      offsetY: -12,
+      offsetX: 8,
+      offsetY: -8,
       cursorStyleHandler: () => 'crosshair',
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
-        const size = 24;
+        const size = 20;
         ctx.save();
         ctx.translate(left, top);
         
-        // Draw white circle background with subtle shadow
+        // Create gradient background matching design system
+        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
+        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        
+        // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = gradient;
         ctx.fill();
-        ctx.strokeStyle = 'hsl(220, 13%, 91%)';
+        
+        // Add elegant shadow
+        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+        
+        // Add subtle border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add subtle shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetY = 2;
-        
-        // Draw refined rotation arrow
-        ctx.strokeStyle = 'hsl(215, 16%, 47%)';
+        // Draw white rotation arrow
+        ctx.strokeStyle = 'white';
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        ctx.shadowColor = 'transparent';
         
-        // Curved arrow (more refined)
+        // Curved arrow
         ctx.beginPath();
-        ctx.arc(0, 0, 5, -Math.PI/2, Math.PI/3);
+        ctx.arc(0, 0, 4, -Math.PI/2, Math.PI/3);
         ctx.stroke();
         
-        // Arrow head (more precise)
+        // Arrow head
         ctx.beginPath();
-        ctx.moveTo(3.5, 3.5);
-        ctx.lineTo(2, 5.5);
-        ctx.lineTo(5.5, 2);
+        ctx.moveTo(3, 3);
+        ctx.lineTo(1.5, 4.5);
+        ctx.lineTo(4.5, 1.5);
         ctx.closePath();
-        ctx.fillStyle = 'hsl(215, 16%, 47%)';
+        ctx.fillStyle = 'white';
         ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 20,
+      sizeY: 20,
     });
 
-    // Create uniform scale control with refined resize arrows (restored original functionality)
+    // Create uniform scale control with gradient background
     const scaleControl = new fabric.Control({
       x: 0.5,
       y: 0.5,
-      offsetX: 12,
-      offsetY: 12,
+      offsetX: 8,
+      offsetY: 8,
       cursorStyleHandler: () => 'nw-resize',
       actionHandler: fabric.controlsUtils.scalingEqually,
       render: (ctx, left, top) => {
-        const size = 24;
+        const size = 20;
         ctx.save();
         ctx.translate(left, top);
         
-        // Draw white circle background with subtle shadow
+        // Create gradient background matching design system
+        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
+        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        
+        // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = gradient;
         ctx.fill();
-        ctx.strokeStyle = 'hsl(220, 13%, 91%)';
+        
+        // Add elegant shadow
+        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+        
+        // Add subtle border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add subtle shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetY = 2;
-        
-        // Draw refined diagonal double arrow
-        ctx.strokeStyle = 'hsl(215, 16%, 47%)';
+        // Draw white diagonal double arrow
+        ctx.strokeStyle = 'white';
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        ctx.shadowColor = 'transparent';
         
         // Main diagonal line
         ctx.beginPath();
-        ctx.moveTo(-5, -5);
-        ctx.lineTo(5, 5);
+        ctx.moveTo(-4, -4);
+        ctx.lineTo(4, 4);
         ctx.stroke();
         
-        // Arrow heads (more refined)
+        // Arrow heads
         ctx.beginPath();
         // Top-left arrow
-        ctx.moveTo(-5, -5);
-        ctx.lineTo(-2, -5);
-        ctx.moveTo(-5, -5);
-        ctx.lineTo(-5, -2);
+        ctx.moveTo(-4, -4);
+        ctx.lineTo(-2, -4);
+        ctx.moveTo(-4, -4);
+        ctx.lineTo(-4, -2);
         
         // Bottom-right arrow
-        ctx.moveTo(5, 5);
-        ctx.lineTo(2, 5);
-        ctx.moveTo(5, 5);
-        ctx.lineTo(5, 2);
+        ctx.moveTo(4, 4);
+        ctx.lineTo(2, 4);
+        ctx.moveTo(4, 4);
+        ctx.lineTo(4, 2);
         ctx.stroke();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 20,
+      sizeY: 20,
     });
 
-    // Create horizontal stretch control (restored original functionality)
+    // Create horizontal stretch control with gradient background and better positioning
     const stretchControl = new fabric.Control({
       x: 1,
       y: 0,
-      offsetX: 12,
+      offsetX: 8,
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const size = 24;
+        const size = 20;
         ctx.save();
         ctx.translate(left, top);
         
-        // Draw white circle background with subtle shadow
+        // Create gradient background matching design system
+        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
+        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        
+        // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = gradient;
         ctx.fill();
-        ctx.strokeStyle = 'hsl(220, 13%, 91%)';
+        
+        // Add elegant shadow
+        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+        
+        // Add subtle border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Add subtle shadow
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetY = 2;
-        
-        // Draw refined horizontal double arrow
-        ctx.strokeStyle = 'hsl(215, 16%, 47%)';
+        // Draw white horizontal double arrow
+        ctx.strokeStyle = 'white';
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        ctx.shadowColor = 'transparent';
         
         // Main horizontal line
         ctx.beginPath();
-        ctx.moveTo(-6, 0);
-        ctx.lineTo(6, 0);
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(5, 0);
         ctx.stroke();
         
-        // Arrow heads (more refined)
+        // Arrow heads
         ctx.beginPath();
         // Left arrow
-        ctx.moveTo(-6, 0);
-        ctx.lineTo(-3, -2.5);
-        ctx.moveTo(-6, 0);
-        ctx.lineTo(-3, 2.5);
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(-2.5, -2);
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(-2.5, 2);
         
         // Right arrow
-        ctx.moveTo(6, 0);
-        ctx.lineTo(3, -2.5);
-        ctx.moveTo(6, 0);
-        ctx.lineTo(3, 2.5);
+        ctx.moveTo(5, 0);
+        ctx.lineTo(2.5, -2);
+        ctx.moveTo(5, 0);
+        ctx.lineTo(2.5, 2);
         ctx.stroke();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 20,
+      sizeY: 20,
     });
 
     // Apply controls to fabric objects
