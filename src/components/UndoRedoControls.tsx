@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Undo, Redo } from "lucide-react";
 import { useState, useEffect } from "react";
 
+// CRITICAL TEST: This component IS loading (we see its logs) 
+console.log('🔥 UndoRedoControls.tsx loaded - CONFIRMING MAIN.TSX ISSUE');
+
 export const UndoRedoControls = () => {
+
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isDesignCanvasReady, setIsDesignCanvasReady] = useState(false);
-
-  // Update undo/redo state
   const updateUndoRedoState = () => {
     const designCanvas = (window as any).designCanvas;
     console.log('[UndoRedoControls] Checking undo/redo state, designCanvas exists:', !!designCanvas);
