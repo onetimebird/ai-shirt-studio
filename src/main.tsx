@@ -9,4 +9,14 @@ console.log('📦 All imports successful, rendering app...');
 
 createRoot(document.getElementById("root")!).render(<App />);
 
-console.log('📦 App rendered successfully!');
+console.log('📦 App rendered successfully! Now initializing text controls...');
+
+// Import and initialize text controls
+import('./lib/fabricTextControls').then(module => {
+  console.log('🔧 Text controls module imported successfully');
+  return module.initializeTextControls();
+}).then(() => {
+  console.log('🎉 Text controls initialized successfully!');
+}).catch(error => {
+  console.error('❌ Text controls failed:', error);
+});
