@@ -53,7 +53,30 @@ export default {
 				'russo': ['Russo One', 'sans-serif'],
 				'acme': ['Acme', 'sans-serif'],
 				'passion': ['Passion One', 'cursive'],
-				'bungee': ['Bungee', 'cursive']
+				'bungee': ['Bungee', 'cursive'],
+				// Collegiate & Athletic Fonts
+				'graduate': ['Graduate', 'cursive'],
+				'alfa-slab': ['Alfa Slab One', 'cursive'],
+				'black-ops': ['Black Ops One', 'cursive'],
+				'squada': ['Squada One', 'cursive'],
+				'staatliches': ['Staatliches', 'cursive'],
+				'bowlby': ['Bowlby One', 'cursive'],
+				'titan': ['Titan One', 'cursive'],
+				'fugaz': ['Fugaz One', 'cursive'],
+				// Popular T-Shirt Design Fonts
+				'orbitron': ['Orbitron', 'sans-serif'],
+				'exo': ['Exo', 'sans-serif'],
+				'rubik': ['Rubik', 'sans-serif'],
+				'work-sans': ['Work Sans', 'sans-serif'],
+				'archivo-black': ['Archivo Black', 'sans-serif'],
+				'barlow': ['Barlow', 'sans-serif'],
+				'kanit': ['Kanit', 'sans-serif'],
+				'saira': ['Saira', 'sans-serif'],
+				'teko': ['Teko', 'sans-serif'],
+				'changa': ['Changa', 'sans-serif'],
+				'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
+				'audiowide': ['Audiowide', 'cursive'],
+				'kalam': ['Kalam', 'cursive']
 			},
 			flex: {
 				'2': '2 2 0%'
