@@ -226,15 +226,18 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '62.5%',
                 top: '18%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)))',
                 color: 'white',
                 padding: '1px 4px',
                 borderRadius: '2px',
                 fontSize: '7px',
                 fontWeight: '400',
                 zIndex: 101,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                backgroundSize: '200% 200%',
+                animation: 'shimmer 2s ease-in-out infinite'
               }}
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] before:animate-[shimmer_2s_ease-in-out_infinite]"
             >
               Left Chest
             </div>
@@ -245,15 +248,17 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '50%',
                 top: '69%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)))',
                 color: 'white',
                 padding: '1px 4px',
                 borderRadius: '2px',
                 fontSize: '7px',
                 fontWeight: '400',
                 zIndex: 101,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                backgroundSize: '200% 200%'
               }}
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] before:animate-[shimmer_2s_ease-in-out_infinite]"
             >
               Youth
             </div>
@@ -264,15 +269,17 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '50%',
                 top: '88%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)))',
                 color: 'white',
                 padding: '1px 4px',
                 borderRadius: '2px',
                 fontSize: '7px',
                 fontWeight: '400',
                 zIndex: 101,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                backgroundSize: '200% 200%'
               }}
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] before:animate-[shimmer_2s_ease-in-out_infinite]"
             >
               Adult
             </div>
