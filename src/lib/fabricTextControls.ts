@@ -462,6 +462,11 @@ export function applyCustomControlsToObject(obj: fabric.Object) {
       (canvas as any).hasHoverListeners = true;
     }
     
+    // Ensure rotation happens from center
+    obj.set('originX', 'center');
+    obj.set('originY', 'center');
+    obj.set('centeredRotation', true);
+    
     // Apply dotted border styling
     obj.borderColor = 'hsl(262, 100%, 65%)'; // Primary color
     obj.borderDashArray = [5, 5]; // Dotted line pattern
