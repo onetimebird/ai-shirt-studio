@@ -207,15 +207,49 @@ export const DesignToolbar = ({
       {activeTab === "text" && (
         <div className="p-4 space-y-4">
           {/* Add Text */}
-          <div className="flex gap-2">
-            <Input
-              placeholder="Enter text"
-              value={newText}
-              onChange={(e) => setNewText(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
-              className="flex-1"
-            />
-            <Button onClick={handleAddText}>Add</Button>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter text"
+                value={newText}
+                onChange={(e) => setNewText(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
+                className="flex-1"
+              />
+              <Button onClick={handleAddText}>Add</Button>
+            </div>
+
+            {/* Font selection for new text */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Select value={fontFamily} onValueChange={(value) => {
+                console.log('Font changed to:', value);
+                setFontFamily(value);
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Font" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {FONTS.map((font) => (
+                    <SelectItem key={font.value} value={font.value}>
+                      <span style={{ fontFamily: font.value }}>{font.name}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm whitespace-nowrap">Size:</span>
+                <Slider
+                  value={fontSize}
+                  onValueChange={setFontSize}
+                  max={72}
+                  min={8}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="text-sm w-8 text-right">{fontSize[0]}</span>
+              </div>
+            </div>
           </div>
 
           {/* Text Properties */}
