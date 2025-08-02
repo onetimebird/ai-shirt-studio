@@ -131,20 +131,37 @@ export function ProductSelector({
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
       
-      // For mobile sheet containers - target the specific mobile scrollable div
-      const mobileSheetContent = document.querySelector('[data-state="open"] .overflow-y-auto.h-full');
-      if (mobileSheetContent) {
-        mobileSheetContent.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      // DEBUG: Let's see what scroll containers actually exist
+      console.log('=== DEBUGGING SCROLL CONTAINERS ===');
+      console.log('All elements with overflow-y-auto:', document.querySelectorAll('[class*="overflow-y-auto"]'));
+      console.log('All elements with data-state="open":', document.querySelectorAll('[data-state="open"]'));
+      console.log('Sheet content elements:', document.querySelectorAll('[class*="SheetContent"]'));
+      console.log('Current scroll positions:', {
+        window: window.scrollY,
+        body: document.body.scrollTop,
+        documentElement: document.documentElement.scrollTop
+      });
       
-      // Fallback: Auto-scroll to top for any other mobile scenarios
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Try all possible scroll targets and log results
+      const targets = [
+        { name: 'window', element: window },
+        { name: 'mobile sheet', element: document.querySelector('[data-state="open"] .overflow-y-auto.h-full') },
+        { name: 'right panel', element: document.querySelector('.w-full.lg\\:w-80.bg-card.border-l.border-border.overflow-y-auto') },
+        { name: 'sheet content', element: document.querySelector('[data-state="open"]') },
+        { name: 'any overflow-auto', element: document.querySelector('.overflow-y-auto') }
+      ];
       
-      // Desktop: Scroll the right panel container specifically
-      const rightPanelContainer = document.querySelector('.w-full.lg\\:w-80.bg-card.border-l.border-border.overflow-y-auto');
-      if (rightPanelContainer) {
-        rightPanelContainer.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      targets.forEach(target => {
+        console.log(`${target.name}:`, target.element);
+        if (target.element) {
+          if (target.name === 'window') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            (target.element as Element).scrollTo({ top: 0, behavior: 'smooth' });
+          }
+          console.log(`Attempted scroll on ${target.name}`);
+        }
+      });
     }
   };
 
