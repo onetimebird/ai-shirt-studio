@@ -153,15 +153,15 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         {/* Center guideline and bounding box */}
         {showCenterGuide && fabricCanvas && (
           <>
-            {/* Center vertical line */}
+            {/* Center vertical line - only within shirt area */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: 0,
-                width: '2px',
-                height: '100%',
-                backgroundColor: '#10b981',
+                top: '15%',
+                width: '1px',
+                height: '70%',
+                backgroundColor: '#22c55e',
                 transform: 'translateX(-50%)',
                 zIndex: 100,
                 pointerEvents: 'none',
@@ -169,20 +169,54 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Printable area bounding box */}
+            {/* Main printable area bounding box - centered area */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: '25%',
-                width: '45%',
-                height: '50%',
-                border: '2px dashed #3b82f6',
+                width: '40%',
+                height: '45%',
+                border: '1px dashed #60a5fa',
                 transform: 'translateX(-50%)',
                 zIndex: 99,
                 pointerEvents: 'none',
-                opacity: 0.7,
-                borderRadius: '8px'
+                opacity: 0.8,
+                borderRadius: '4px'
+              }}
+            />
+            
+            {/* Left Chest area box - positioned on right side (left from wearer's perspective) */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '65%',
+                top: '30%',
+                width: '15%',
+                height: '12%',
+                border: '1px dashed #60a5fa',
+                transform: 'translateX(-50%)',
+                zIndex: 99,
+                pointerEvents: 'none',
+                opacity: 0.8,
+                borderRadius: '3px'
+              }}
+            />
+            
+            {/* Youth size area indicator */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '60%',
+                width: '30%',
+                height: '15%',
+                border: '1px dashed #a855f7',
+                transform: 'translateX(-50%)',
+                zIndex: 98,
+                pointerEvents: 'none',
+                opacity: 0.6,
+                borderRadius: '4px'
               }}
             />
             
@@ -193,11 +227,11 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '50%',
                 top: '20%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(59, 130, 246, 0.9)',
+                backgroundColor: 'rgba(96, 165, 250, 0.9)',
                 color: 'white',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '12px',
+                padding: '3px 8px',
+                borderRadius: '3px',
+                fontSize: '11px',
                 fontWeight: '500',
                 zIndex: 101,
                 pointerEvents: 'none'
@@ -209,12 +243,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             <div
               style={{
                 position: 'absolute',
-                left: '25%',
-                top: '35%',
+                left: '65%',
+                top: '25%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                backgroundColor: 'rgba(96, 165, 250, 0.9)',
                 color: 'white',
-                padding: '3px 6px',
+                padding: '2px 6px',
                 borderRadius: '3px',
                 fontSize: '10px',
                 fontWeight: '500',
@@ -223,6 +257,44 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             >
               Left Chest
+            </div>
+            
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '78%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                color: 'white',
+                padding: '2px 6px',
+                borderRadius: '3px',
+                fontSize: '10px',
+                fontWeight: '500',
+                zIndex: 101,
+                pointerEvents: 'none'
+              }}
+            >
+              Youth
+            </div>
+            
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '85%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(96, 165, 250, 0.8)',
+                color: 'white',
+                padding: '2px 6px',
+                borderRadius: '3px',
+                fontSize: '10px',
+                fontWeight: '500',
+                zIndex: 101,
+                pointerEvents: 'none'
+              }}
+            >
+              Adult
             </div>
           </>
         )}
