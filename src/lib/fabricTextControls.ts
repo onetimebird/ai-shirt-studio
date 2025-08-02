@@ -3,9 +3,12 @@ import * as fabric from "fabric";
 
 console.log('🔧 fabricTextControls.ts loaded');
 
-// Create custom controls that match RushOrderTees style
+// Track hover states for controls
+let hoveredControl: string | null = null;
+
+// Create custom controls that match RushOrderTees style with shimmer hover effects
 export function initializeTextControls() {
-  console.log('🔧 initializeTextControls called - creating ROT-style controls...');
+  console.log('🔧 initializeTextControls called - creating ROT-style controls with shimmer...');
   
   try {
     // Create delete control with gradient background - positioned top-right
@@ -29,13 +32,20 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background matching design system
+        // Create gradient background with shimmer effect when hovered
         const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        
-        // Draw gradient circle background
+        if (hoveredControl === 'delete') {
+          // Shimmer effect - brighter colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
+          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
+          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
+          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
+        } else {
+          // Normal colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        }
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
         ctx.fillStyle = gradient;
@@ -101,12 +111,20 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background matching design system
+        // Create gradient background with shimmer effect when hovered
         const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        
+        if (hoveredControl === 'rotate') {
+          // Shimmer effect - brighter colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
+          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
+          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
+          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
+        } else {
+          // Normal colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        }
         // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
@@ -123,7 +141,7 @@ export function initializeTextControls() {
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Draw white curved rotation arrow like undo/redo
+        // Draw white curved rotation arrow with clear arrow head
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 2;
         ctx.lineCap = 'round';
@@ -135,14 +153,19 @@ export function initializeTextControls() {
         ctx.arc(0, 0, 4, -Math.PI/2, Math.PI, false);
         ctx.stroke();
         
-        // Draw arrow head at the end
+        // Draw clear arrow head pointing counterclockwise
         ctx.beginPath();
         ctx.moveTo(-4, 0);
-        ctx.lineTo(-2, -2);
-        ctx.lineTo(-2, 2);
+        ctx.lineTo(-1.5, -2);
+        ctx.lineTo(-1.5, 2);
         ctx.closePath();
         ctx.fillStyle = 'white';
         ctx.fill();
+        
+        // Add arrow outline for better visibility
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 1;
+        ctx.stroke();
         
         ctx.restore();
       },
@@ -163,12 +186,20 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background matching design system
+        // Create gradient background with shimmer effect when hovered
         const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        
+        if (hoveredControl === 'scale') {
+          // Shimmer effect - brighter colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
+          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
+          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
+          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
+        } else {
+          // Normal colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        }
         // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
@@ -219,11 +250,11 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create horizontal stretch control TIGHT to bounding box
+    // Create horizontal stretch control aligned with trash can positioning
     const stretchHorizontalControl = new fabric.Control({
-      x: 1, // Right edge of bounding box
-      y: 0,
-      offsetX: 0, // No offset to keep it tight
+      x: 0.5, // Same x position as trash can
+      y: 0, // Middle right
+      offsetX: 8, // Same offset as trash can
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
@@ -232,12 +263,20 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background matching design system
+        // Create gradient background with shimmer effect when hovered
         const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        
+        if (hoveredControl === 'stretchH') {
+          // Shimmer effect - brighter colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
+          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
+          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
+          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
+        } else {
+          // Normal colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        }
         // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
@@ -301,12 +340,20 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background matching design system
+        // Create gradient background with shimmer effect when hovered
         const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        
+        if (hoveredControl === 'stretchV') {
+          // Shimmer effect - brighter colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
+          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
+          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
+          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
+        } else {
+          // Normal colors
+          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        }
         // Draw gradient circle background
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
