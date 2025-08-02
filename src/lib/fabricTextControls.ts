@@ -11,12 +11,18 @@ import cloneIconUrl from "@/assets/icons/clone-control.svg";
 
 // Simple image loader that works with imported URLs
 const loadImageFromUrl = (url: string): Promise<HTMLImageElement> => {
+  console.log(`🔍 Attempting to load icon from: ${url}`);
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     
     img.onload = () => {
-      console.log(`✅ Loaded icon: ${url}`);
+      console.log(`✅ Successfully loaded icon: ${url}`, {
+        width: img.width,
+        height: img.height,
+        complete: img.complete,
+        naturalWidth: img.naturalWidth
+      });
       resolve(img);
     };
     
@@ -25,6 +31,7 @@ const loadImageFromUrl = (url: string): Promise<HTMLImageElement> => {
       reject(error);
     };
     
+    console.log(`📡 Setting image src to: ${url}`);
     img.src = url;
   });
 };
@@ -103,6 +110,13 @@ const createControl = (
     cursorStyleHandler: () => cursorStyle,
     actionHandler,
     render: (ctx, left, top, styleOverride, fabricObject) => {
+      console.log(`🎨 Rendering control at (${left}, ${top})`, {
+        iconComplete: icon.complete,
+        iconWidth: icon.width,
+        iconHeight: icon.height,
+        iconNaturalWidth: icon.naturalWidth
+      });
+      
       ctx.save();
       ctx.translate(left, top);
       
@@ -121,9 +135,19 @@ const createControl = (
       ctx.lineWidth = 1;
       ctx.stroke();
       
-      // Draw icon
+      // Draw icon - with multiple fallback attempts
       if (icon.complete && icon.naturalWidth > 0) {
+        console.log(`✅ Drawing icon successfully`);
         ctx.drawImage(icon, -ICON_SIZE/2, -ICON_SIZE/2, ICON_SIZE, ICON_SIZE);
+      } else {
+        console.warn(`❌ Icon not ready for drawing:`, {
+          complete: icon.complete,
+          naturalWidth: icon.naturalWidth,
+          src: icon.src
+        });
+        // Draw fallback indicator
+        ctx.fillStyle = '#666';
+        ctx.fillRect(-ICON_SIZE/4, -ICON_SIZE/4, ICON_SIZE/2, ICON_SIZE/2);
       }
       
       ctx.restore();
@@ -140,6 +164,16 @@ export async function initializeTextControls() {
   console.log('🔧 Initializing custom text controls from scratch...');
   
   try {
+    console.log('🔧 Starting control initialization with icon URLs:', {
+      deleteIconUrl,
+      rotateIconUrl,
+      stretchIconUrl,
+      stretchVerticalIconUrl,
+      scaleIconUrl,
+      layerIconUrl,
+      cloneIconUrl
+    });
+    
     // Load all icons from actual files
     const iconImages = await Promise.all([
       loadImageFromUrl(deleteIconUrl),
@@ -150,6 +184,12 @@ export async function initializeTextControls() {
       loadImageFromUrl(layerIconUrl),
       loadImageFromUrl(cloneIconUrl),
     ]);
+    
+    console.log('🎯 All icons loaded successfully:', iconImages.map(img => ({
+      width: img.width,
+      height: img.height,
+      complete: img.complete
+    })));
     
     const [deleteImg, rotateImg, stretchImg, stretchVerticalImg, scaleImg, layerImg, cloneImg] = iconImages;
     
@@ -202,9 +242,15 @@ export async function initializeTextControls() {
 
 // Function to apply controls to a specific object
 export function applyCustomControlsToObject(obj: fabric.Object) {
+  console.log('🔧 Attempting to apply custom controls to object:', obj.type);
   const customControls = (window as any).customFabricControls;
+  console.log('🔍 Available custom controls:', !!customControls, customControls ? Object.keys(customControls) : 'none');
+  
   if (customControls && obj) {
     obj.controls = { ...obj.controls, ...customControls };
     console.log('✅ Applied custom controls to object:', obj.type);
+    console.log('🎯 Object now has controls:', Object.keys(obj.controls));
+  } else {
+    console.error('❌ Failed to apply controls:', { customControls: !!customControls, obj: !!obj });
   }
 }

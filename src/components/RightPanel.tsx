@@ -207,8 +207,12 @@ and return a high-quality transparent PNG suitable for print.
       console.log("[Debug] Adding single-line text to canvas");
       fabricCanvas.add(textObject);
       fabricCanvas.bringObjectToFront(textObject);
+      
       // Apply custom controls to the text object
+      console.log("[Debug] Applying custom controls to text object");
       applyCustomControlsToObject(textObject);
+      console.log("[Debug] Text object controls applied:", Object.keys(textObject.controls || {}));
+      
       fabricCanvas.setActiveObject(textObject);
     }
     fabricCanvas.renderAll();
