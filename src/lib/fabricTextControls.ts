@@ -176,8 +176,8 @@ export async function initializeTextControls() {
     const layerControl = createControl(-0.5, 0.5, layerImg, layerHandler, 'pointer', -OFFSET, OFFSET);
     const cloneControl = createControl(-0.5, 0, cloneImg, cloneHandler, 'copy', -OFFSET, 0);
     
-    // Apply controls to all fabric objects
-    fabric.Object.prototype.controls = {
+    // Apply controls to specific object types instead of globally
+    const customControls = {
       tl: deleteControl,
       tr: rotateControl,
       br: scaleControl,
@@ -189,9 +189,22 @@ export async function initializeTextControls() {
       mtr: new fabric.Control({ visible: false }),
     };
     
+    // Store controls globally for objects to use
+    (window as any).customFabricControls = customControls;
+    
     console.log('✅ Custom text controls initialized successfully!');
+    console.log('🔧 Controls stored in window.customFabricControls');
     
   } catch (error) {
     console.error('❌ Failed to initialize text controls:', error);
+  }
+}
+
+// Function to apply controls to a specific object
+export function applyCustomControlsToObject(obj: fabric.Object) {
+  const customControls = (window as any).customFabricControls;
+  if (customControls && obj) {
+    obj.controls = { ...obj.controls, ...customControls };
+    console.log('✅ Applied custom controls to object:', obj.type);
   }
 }

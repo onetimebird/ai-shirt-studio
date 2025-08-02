@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { applyCustomControlsToObject } from '@/lib/fabricTextControls';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -199,11 +200,15 @@ and return a high-quality transparent PNG suitable for print.
       console.log("[Debug] Adding multi-line textbox to canvas");
       fabricCanvas.add(textbox);
       fabricCanvas.bringObjectToFront(textbox);
+      // Apply custom controls to the textbox object
+      applyCustomControlsToObject(textbox);
       fabricCanvas.setActiveObject(textbox);
     } else {
       console.log("[Debug] Adding single-line text to canvas");
       fabricCanvas.add(textObject);
       fabricCanvas.bringObjectToFront(textObject);
+      // Apply custom controls to the text object
+      applyCustomControlsToObject(textObject);
       fabricCanvas.setActiveObject(textObject);
     }
     fabricCanvas.renderAll();
