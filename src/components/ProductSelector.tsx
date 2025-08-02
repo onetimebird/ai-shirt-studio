@@ -131,7 +131,10 @@ export function ProductSelector({
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
       
-      // Auto-scroll to top
+      // Auto-scroll to top for mobile
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Also scroll the container if it exists
       const container = document.querySelector('.scrollbar-hide');
       if (container) {
         container.scrollTo({ top: 0, behavior: 'smooth' });
