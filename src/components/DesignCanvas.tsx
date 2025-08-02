@@ -150,10 +150,18 @@ export const DesignCanvas = ({
               console.log(`[SideSwitch] Loading ${side} state:`, newStateData.length, 'objects');
               canvasHistory.isRestoring = true;
               util.enlivenObjects(newStateData).then((objects: any[]) => {
-                objects.forEach(obj => canvas.add(obj));
+                objects.forEach(obj => {
+                  canvas.add(obj);
+                  // Reapply custom controls after side switch
+                  if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                    import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                      applyCustomControlsToObject(obj);
+                    });
+                  }
+                });
                 canvas.renderAll();
                 canvasHistory.isRestoring = false;
-                console.log(`[SideSwitch] Successfully loaded ${side} state`);
+                console.log(`[SideSwitch] Successfully loaded ${side} state with custom controls`);
               });
             } else {
               console.log(`[SideSwitch] No saved state for ${side} side`);
