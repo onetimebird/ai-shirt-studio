@@ -133,28 +133,30 @@ export function ProductSelector({
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
       
-      // Try multiple scroll strategies for mobile sheet
-      setTimeout(() => {
-        // Strategy 1: Find the mobile sheet container
-        const sheetContainer = document.querySelector('[data-state="open"] div.overflow-y-auto.h-full');
-        if (sheetContainer) {
-          sheetContainer.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
-        
-        // Strategy 2: Find any open sheet content and scroll its overflow container
-        const openSheet = document.querySelector('[data-state="open"]');
-        if (openSheet) {
-          const scrollableDiv = openSheet.querySelector('.overflow-y-auto');
-          if (scrollableDiv) {
-            scrollableDiv.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-          }
-        }
-        
-        // Strategy 3: Fallback to window scroll
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100); // Small delay to ensure DOM is updated
+      // NUCLEAR OPTION: Scroll everything that could possibly be scrollable
+      // 1. Window
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      
+      // 2. All elements with overflow-y-auto
+      document.querySelectorAll('.overflow-y-auto').forEach(el => {
+        el.scrollTop = 0;
+        (el as any).scrollTo?.({ top: 0, behavior: 'smooth' });
+      });
+      
+      // 3. All elements with overflow-auto  
+      document.querySelectorAll('.overflow-auto').forEach(el => {
+        el.scrollTop = 0;
+        (el as any).scrollTo?.({ top: 0, behavior: 'smooth' });
+      });
+      
+      // 4. Parent containers
+      const productSelector = document.querySelector('.space-y-6.max-h-screen');
+      if (productSelector && productSelector.parentElement) {
+        productSelector.parentElement.scrollTop = 0;
+        (productSelector.parentElement as any).scrollTo?.({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
