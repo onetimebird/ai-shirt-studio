@@ -17,6 +17,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
+  const [showCenterGuide, setShowCenterGuide] = useState(false);
 
   // Initialize Fabric.js canvas ONLY ONCE
   useEffect(() => {
@@ -38,6 +39,24 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     });
 
     setFabricCanvas(canvas);
+    
+    // Add center guideline event handlers
+    canvas.on('object:moving', () => {
+      setShowCenterGuide(true);
+    });
+    
+    canvas.on('object:modified', () => {
+      setShowCenterGuide(false);
+    });
+    
+    canvas.on('selection:cleared', () => {
+      setShowCenterGuide(false);
+    });
+    
+    canvas.on('mouse:up', () => {
+      setShowCenterGuide(false);
+    });
+    
     console.log('[ProductCanvas] Canvas created, calling onCanvasReady');
     onCanvasReady?.(canvas);
     console.log('[ProductCanvas] onCanvasReady called');
@@ -130,6 +149,24 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             cursor: 'default'
           }}
         />
+        
+        {/* Center guideline */}
+        {showCenterGuide && fabricCanvas && (
+          <div
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: 0,
+              width: '2px',
+              height: '100%',
+              backgroundColor: '#10b981',
+              transform: 'translateX(-50%)',
+              zIndex: 100,
+              pointerEvents: 'none',
+              opacity: 0.8
+            }}
+          />
+        )}
       </div>
       
       {/* Quantity Modal */}
