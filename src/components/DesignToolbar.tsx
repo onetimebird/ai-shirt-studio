@@ -35,16 +35,59 @@ interface DesignToolbarProps {
 }
 
 const FONTS = [
+  // System Fonts
   { name: "Arial", value: "Arial" },
   { name: "Helvetica", value: "Helvetica" },
   { name: "Times New Roman", value: "Times New Roman" },
   { name: "Georgia", value: "Georgia" },
   { name: "Impact", value: "Impact" },
-  { name: "Comic Sans MS", value: "Comic Sans MS" },
-  { name: "Trebuchet MS", value: "Trebuchet MS" },
-  { name: "Verdana", value: "Verdana" },
-  { name: "Courier New", value: "Courier New" },
-  { name: "Palatino", value: "Palatino" },
+  
+  // Clean & Modern Google Fonts
+  { name: "Inter", value: "Inter" },
+  { name: "Poppins", value: "Poppins" },
+  { name: "Montserrat", value: "Montserrat" },
+  { name: "Open Sans", value: "Open Sans" },
+  { name: "Lato", value: "Lato" },
+  { name: "Roboto", value: "Roboto" },
+  { name: "Nunito", value: "Nunito" },
+  { name: "Ubuntu", value: "Ubuntu" },
+  { name: "Source Sans Pro", value: "Source Sans Pro" },
+  { name: "Raleway", value: "Raleway" },
+  { name: "Quicksand", value: "Quicksand" },
+  { name: "Comfortaa", value: "Comfortaa" },
+  { name: "Josefin Sans", value: "Josefin Sans" },
+  
+  // Bold & Strong Fonts
+  { name: "Oswald", value: "Oswald" },
+  { name: "Anton", value: "Anton" },
+  { name: "Bebas Neue", value: "Bebas Neue" },
+  { name: "Fjalla One", value: "Fjalla One" },
+  { name: "Russo One", value: "Russo One" },
+  { name: "Righteous", value: "Righteous" },
+  { name: "Acme", value: "Acme" },
+  { name: "Passion One", value: "Passion One" },
+  
+  // Decorative & Fun Fonts
+  { name: "Bangers", value: "Bangers" },
+  { name: "Fredoka One", value: "Fredoka One" },
+  { name: "Bungee", value: "Bungee" },
+  { name: "Creepster", value: "Creepster" },
+  { name: "Permanent Marker", value: "Permanent Marker" },
+  
+  // Script & Handwritten Fonts
+  { name: "Dancing Script", value: "Dancing Script" },
+  { name: "Pacifico", value: "Pacifico" },
+  { name: "Lobster", value: "Lobster" },
+  { name: "Satisfy", value: "Satisfy" },
+  
+  // Elegant & Serif Fonts
+  { name: "Playfair Display", value: "Playfair Display" },
+  { name: "Merriweather", value: "Merriweather" },
+  { name: "Crimson Text", value: "Crimson Text" },
+  { name: "Abril Fatface", value: "Abril Fatface" },
+  
+  // Clean Sans Fonts
+  { name: "PT Sans", value: "PT Sans" },
 ];
 
 export const DesignToolbar = ({
