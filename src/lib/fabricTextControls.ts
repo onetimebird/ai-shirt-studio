@@ -79,16 +79,14 @@ export function initializeTextControls() {
       sizeY: 24,
     });
 
-    // Create rotation control with refined rotate icon
+    // Create rotation control with refined rotate icon (restored original functionality)
     const rotateControl = new fabric.Control({
       x: 0.5,
       y: -0.5,
       offsetX: 12,
       offsetY: -12,
       cursorStyleHandler: () => 'crosshair',
-      actionHandler: (eventData: MouseEvent, transform: fabric.Transform) => {
-        return fabric.controlsUtils.rotationWithSnapping(eventData, transform, 0, 0);
-      },
+      actionHandler: fabric.controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
         const size = 24;
         ctx.save();
@@ -134,17 +132,14 @@ export function initializeTextControls() {
       sizeY: 24,
     });
 
-    // Create uniform scale control with refined resize arrows
+    // Create uniform scale control with refined resize arrows (restored original functionality)
     const scaleControl = new fabric.Control({
       x: 0.5,
       y: 0.5,
       offsetX: 12,
       offsetY: 12,
       cursorStyleHandler: () => 'nw-resize',
-      actionHandler: (eventData: MouseEvent, transform: fabric.Transform) => {
-        // Use scaleCursorStyleHandler for smooth scaling
-        return fabric.controlsUtils.scalingEqually(eventData, transform, 0.5, 0.5);
-      },
+      actionHandler: fabric.controlsUtils.scalingEqually,
       render: (ctx, left, top) => {
         const size = 24;
         ctx.save();
@@ -197,16 +192,14 @@ export function initializeTextControls() {
       sizeY: 24,
     });
 
-    // Create horizontal stretch control
+    // Create horizontal stretch control (restored original functionality)
     const stretchControl = new fabric.Control({
       x: 1,
       y: 0,
       offsetX: 12,
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
-      actionHandler: (eventData: MouseEvent, transform: fabric.Transform) => {
-        return fabric.controlsUtils.scalingX(eventData, transform, 1, 0);
-      },
+      actionHandler: fabric.controlsUtils.scalingX,
       render: (ctx, left, top) => {
         const size = 24;
         ctx.save();
