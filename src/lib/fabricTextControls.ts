@@ -88,7 +88,7 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create rotation control with curved arrow like undo/redo style
+    // Create rotation control with proper curved arrow
     const rotateControl = new fabric.Control({
       x: 0.5,
       y: -0.5,
@@ -123,23 +123,23 @@ export function initializeTextControls() {
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Draw white undo-style curved arrow
+        // Draw white curved rotation arrow like undo/redo
         ctx.strokeStyle = 'white';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.shadowColor = 'transparent';
         
-        // Draw curved arrow similar to undo icon
+        // Draw curved arrow path (3/4 circle)
         ctx.beginPath();
-        ctx.arc(0, 1, 4, Math.PI * 0.2, Math.PI * 1.2);
+        ctx.arc(0, 0, 4, -Math.PI/2, Math.PI, false);
         ctx.stroke();
         
-        // Arrow head pointing counterclockwise
+        // Draw arrow head at the end
         ctx.beginPath();
-        ctx.moveTo(-3.5, 3);
-        ctx.lineTo(-2, 4.5);
-        ctx.lineTo(-1.5, 2.5);
+        ctx.moveTo(-4, 0);
+        ctx.lineTo(-2, -2);
+        ctx.lineTo(-2, 2);
         ctx.closePath();
         ctx.fillStyle = 'white';
         ctx.fill();
@@ -219,11 +219,11 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create horizontal stretch control with better positioning close to bounding box
-    const stretchControl = new fabric.Control({
-      x: 1,
+    // Create horizontal stretch control positioned closer to bounding box
+    const stretchHorizontalControl = new fabric.Control({
+      x: 0.8, // Closer to the box edge
       y: 0,
-      offsetX: 5, // Much smaller offset to keep close to bounding box
+      offsetX: -3, // Negative offset to bring it closer
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
@@ -288,14 +288,83 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
+    // Create vertical stretch control
+    const stretchVerticalControl = new fabric.Control({
+      x: 0,
+      y: 0.8, // Position at bottom edge
+      offsetX: 0,
+      offsetY: -3, // Negative offset to bring it closer
+      cursorStyleHandler: () => 'ns-resize',
+      actionHandler: fabric.controlsUtils.scalingY,
+      render: (ctx, left, top) => {
+        const size = 20;
+        ctx.save();
+        ctx.translate(left, top);
+        
+        // Create gradient background matching design system
+        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
+        gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
+        gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
+        gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
+        
+        // Draw gradient circle background
+        ctx.beginPath();
+        ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
+        // Add elegant shadow
+        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
+        
+        // Add subtle border
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Draw white vertical double arrow
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 1.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = 'transparent';
+        
+        // Main vertical line
+        ctx.beginPath();
+        ctx.moveTo(0, -5);
+        ctx.lineTo(0, 5);
+        ctx.stroke();
+        
+        // Arrow heads
+        ctx.beginPath();
+        // Top arrow
+        ctx.moveTo(0, -5);
+        ctx.lineTo(-2, -2.5);
+        ctx.moveTo(0, -5);
+        ctx.lineTo(2, -2.5);
+        
+        // Bottom arrow
+        ctx.moveTo(0, 5);
+        ctx.lineTo(-2, 2.5);
+        ctx.moveTo(0, 5);
+        ctx.lineTo(2, 2.5);
+        ctx.stroke();
+        
+        ctx.restore();
+      },
+      sizeX: 20,
+      sizeY: 20,
+    });
+
     // Apply controls to fabric objects
     const customControls = {
       tl: deleteControl,
       tr: rotateControl,
       br: scaleControl,
-      mr: stretchControl,
+      mr: stretchHorizontalControl,
+      mb: stretchVerticalControl,
       // Hide default controls we don't want
-      mb: new fabric.Control({ visible: false }),
       ml: new fabric.Control({ visible: false }),
       mt: new fabric.Control({ visible: false }),
       bl: new fabric.Control({ visible: false }),
