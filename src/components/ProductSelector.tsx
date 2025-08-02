@@ -125,7 +125,6 @@ export function ProductSelector({
   };
 
   const handleProductSelect = (productId: string) => {
-    console.log('PRODUCT SELECTED:', productId);
     const product = products.find(p => p.id === productId);
     if (product) {
       // Set first available color when switching products
@@ -134,17 +133,28 @@ export function ProductSelector({
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
       
-      // Target the specific mobile sheet scroll container
-      const mobileSheetScrollContainer = document.querySelector('div.overflow-y-auto.h-full.pb-20.px-4');
-      console.log('Found mobile sheet container:', mobileSheetScrollContainer);
-      
-      if (mobileSheetScrollContainer) {
-        console.log('Scrolling mobile sheet to top');
-        mobileSheetScrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        console.log('Mobile container not found, trying window scroll');
+      // Try multiple scroll strategies for mobile sheet
+      setTimeout(() => {
+        // Strategy 1: Find the mobile sheet container
+        const sheetContainer = document.querySelector('[data-state="open"] div.overflow-y-auto.h-full');
+        if (sheetContainer) {
+          sheetContainer.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        
+        // Strategy 2: Find any open sheet content and scroll its overflow container
+        const openSheet = document.querySelector('[data-state="open"]');
+        if (openSheet) {
+          const scrollableDiv = openSheet.querySelector('.overflow-y-auto');
+          if (scrollableDiv) {
+            scrollableDiv.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+        }
+        
+        // Strategy 3: Fallback to window scroll
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      }, 100); // Small delay to ensure DOM is updated
     }
   };
 
