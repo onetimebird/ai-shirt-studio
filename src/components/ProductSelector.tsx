@@ -131,13 +131,25 @@ export function ProductSelector({
       onColorChange?.(firstColor);
       toast.success(`Switched to ${product.name}`);
       
-      // Auto-scroll to top for mobile
+      // Auto-scroll to top for mobile - try multiple scroll targets
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
-      // Also scroll the container if it exists
+      // Scroll the right panel container specifically
+      const rightPanelContainer = document.querySelector('.w-full.lg\\:w-80.bg-card.border-l.border-border.overflow-y-auto');
+      if (rightPanelContainer) {
+        rightPanelContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
+      // Also try the main scrollable container
       const container = document.querySelector('.scrollbar-hide');
       if (container) {
         container.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
+      // Try scrolling any parent container with overflow
+      const productSelectorContainer = document.querySelector('[data-state="active"] .space-y-6');
+      if (productSelectorContainer) {
+        productSelectorContainer.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
