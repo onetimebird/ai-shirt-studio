@@ -88,7 +88,7 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create rotation control with gradient background
+    // Create rotation control with curved arrow like undo/redo style
     const rotateControl = new fabric.Control({
       x: 0.5,
       y: -0.5,
@@ -123,23 +123,23 @@ export function initializeTextControls() {
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Draw white rotation arrow
+        // Draw white undo-style curved arrow
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.shadowColor = 'transparent';
         
-        // Curved arrow
+        // Draw curved arrow similar to undo icon
         ctx.beginPath();
-        ctx.arc(0, 0, 4, -Math.PI/2, Math.PI/3);
+        ctx.arc(0, 1, 4, Math.PI * 0.2, Math.PI * 1.2);
         ctx.stroke();
         
-        // Arrow head
+        // Arrow head pointing counterclockwise
         ctx.beginPath();
-        ctx.moveTo(3, 3);
-        ctx.lineTo(1.5, 4.5);
-        ctx.lineTo(4.5, 1.5);
+        ctx.moveTo(-3.5, 3);
+        ctx.lineTo(-2, 4.5);
+        ctx.lineTo(-1.5, 2.5);
         ctx.closePath();
         ctx.fillStyle = 'white';
         ctx.fill();
@@ -219,11 +219,11 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create horizontal stretch control with gradient background and better positioning
+    // Create horizontal stretch control with better positioning close to bounding box
     const stretchControl = new fabric.Control({
       x: 1,
       y: 0,
-      offsetX: 8,
+      offsetX: 5, // Much smaller offset to keep close to bounding box
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
@@ -320,6 +320,16 @@ export function applyCustomControlsToObject(obj: fabric.Object) {
   const customControls = (window as any).customFabricControls;
   if (customControls && obj) {
     obj.controls = customControls;
-    console.log('✅ ROT-style controls applied to object');
+    
+    // Apply dotted border styling
+    obj.borderColor = 'hsl(262, 100%, 65%)'; // Primary color
+    obj.borderDashArray = [5, 5]; // Dotted line pattern
+    obj.borderScaleFactor = 2; // Make border slightly thicker
+    obj.cornerColor = 'transparent'; // Hide corner squares
+    obj.cornerSize = 0; // Remove corner size
+    obj.transparentCorners = true;
+    obj.borderOpacityWhenMoving = 0.8;
+    
+    console.log('✅ ROT-style controls and dotted border applied to object');
   }
 }
