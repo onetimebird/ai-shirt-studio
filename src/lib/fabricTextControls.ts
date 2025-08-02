@@ -1,13 +1,20 @@
 import * as fabric from "fabric";
 
+console.log('🔧 Importing SVG files...');
 // Import SVG files directly
-import deleteIconUrl from "@/assets/icons/delete-control.svg";
-import rotateIconUrl from "@/assets/icons/rotate-control.svg";
-import stretchIconUrl from "@/assets/icons/stretch-control.svg";
-import stretchVerticalIconUrl from "@/assets/icons/stretch-vertical-control.svg";
-import scaleIconUrl from "@/assets/icons/scale-control.svg";
-import layerIconUrl from "@/assets/icons/layer-control.svg";
-import cloneIconUrl from "@/assets/icons/clone-control.svg";
+try {
+  console.log('📁 Attempting SVG imports...');
+  var deleteIconUrl = "/src/assets/icons/delete-control.svg";
+  var rotateIconUrl = "/src/assets/icons/rotate-control.svg";
+  var stretchIconUrl = "/src/assets/icons/stretch-control.svg";
+  var stretchVerticalIconUrl = "/src/assets/icons/stretch-vertical-control.svg";
+  var scaleIconUrl = "/src/assets/icons/scale-control.svg";
+  var layerIconUrl = "/src/assets/icons/layer-control.svg";
+  var cloneIconUrl = "/src/assets/icons/clone-control.svg";
+  console.log('✅ SVG imports successful');
+} catch (error) {
+  console.error('❌ SVG import failed:', error);
+}
 
 // Simple image loader that works with imported URLs
 const loadImageFromUrl = (url: string): Promise<HTMLImageElement> => {
