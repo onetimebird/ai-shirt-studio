@@ -150,22 +150,81 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
           }}
         />
         
-        {/* Center guideline */}
+        {/* Center guideline and bounding box */}
         {showCenterGuide && fabricCanvas && (
-          <div
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: 0,
-              width: '2px',
-              height: '100%',
-              backgroundColor: '#10b981',
-              transform: 'translateX(-50%)',
-              zIndex: 100,
-              pointerEvents: 'none',
-              opacity: 0.8
-            }}
-          />
+          <>
+            {/* Center vertical line */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: 0,
+                width: '2px',
+                height: '100%',
+                backgroundColor: '#10b981',
+                transform: 'translateX(-50%)',
+                zIndex: 100,
+                pointerEvents: 'none',
+                opacity: 0.8
+              }}
+            />
+            
+            {/* Printable area bounding box */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '25%',
+                width: '45%',
+                height: '50%',
+                border: '2px dashed #3b82f6',
+                transform: 'translateX(-50%)',
+                zIndex: 99,
+                pointerEvents: 'none',
+                opacity: 0.7,
+                borderRadius: '8px'
+              }}
+            />
+            
+            {/* Area labels */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '20%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(59, 130, 246, 0.9)',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: '500',
+                zIndex: 101,
+                pointerEvents: 'none'
+              }}
+            >
+              Centered
+            </div>
+            
+            <div
+              style={{
+                position: 'absolute',
+                left: '25%',
+                top: '35%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                color: 'white',
+                padding: '3px 6px',
+                borderRadius: '3px',
+                fontSize: '10px',
+                fontWeight: '500',
+                zIndex: 101,
+                pointerEvents: 'none'
+              }}
+            >
+              Left Chest
+            </div>
+          </>
         )}
       </div>
       
