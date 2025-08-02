@@ -182,12 +182,16 @@ export const DesignToolbar = ({
                 console.log('Font changed to:', value);
                 setFontFamily(value);
               }}>
-                <SelectTrigger>
+                <SelectTrigger className="touch-manipulation">
                   <SelectValue placeholder="Select Font" />
                 </SelectTrigger>
-                <SelectContent className="max-h-60">
+                <SelectContent className="max-h-60" position="popper" sideOffset={5}>
                   {FONTS.map((font) => (
-                    <SelectItem key={font.value} value={font.value}>
+                    <SelectItem 
+                      key={font.value} 
+                      value={font.value}
+                      className="touch-manipulation cursor-pointer"
+                    >
                       <span style={{ fontFamily: font.value }}>{font.name}</span>
                     </SelectItem>
                   ))}
