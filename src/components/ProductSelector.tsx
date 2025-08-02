@@ -472,7 +472,10 @@ export function ProductSelector({
                   ? 'border-primary bg-gradient-premium/10 shadow-elevated shimmer-hover' 
                   : 'hover:border-primary/50 hover:shadow-glass bg-gradient-sidebar'
               }`}
-              onClick={() => handleProductSelect(product.id)}
+              onClick={() => {
+                console.log('CARD CLICKED:', product.id);
+                handleProductSelect(product.id);
+              }}
             >
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
