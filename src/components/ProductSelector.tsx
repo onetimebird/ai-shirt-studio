@@ -114,6 +114,8 @@ export function ProductSelector({
   onProductChange,
   onColorChange 
 }: ProductSelectorProps) {
+  console.log('ProductSelector RENDERED with:', { selectedProduct, selectedColor });
+  
   // Use the props directly instead of internal state
   const selectedProductData = products.find(p => p.id === selectedProduct);
 
