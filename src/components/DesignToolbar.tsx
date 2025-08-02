@@ -38,79 +38,36 @@ const FONTS = [
   // System Fonts
   { name: "Arial", value: "Arial" },
   { name: "Helvetica", value: "Helvetica" },
-  { name: "Times New Roman", value: "Times New Roman" },
-  { name: "Georgia", value: "Georgia" },
   { name: "Impact", value: "Impact" },
   
-  // Clean & Modern Google Fonts
-  { name: "Inter", value: "Inter" },
-  { name: "Poppins", value: "Poppins" },
-  { name: "Montserrat", value: "Montserrat" },
-  { name: "Open Sans", value: "Open Sans" },
-  { name: "Lato", value: "Lato" },
-  { name: "Roboto", value: "Roboto" },
-  { name: "Roboto Condensed", value: "Roboto Condensed" },
-  { name: "Nunito", value: "Nunito" },
-  { name: "Ubuntu", value: "Ubuntu" },
-  { name: "Source Sans Pro", value: "Source Sans Pro" },
-  { name: "Raleway", value: "Raleway" },
-  { name: "Quicksand", value: "Quicksand" },
-  { name: "Comfortaa", value: "Comfortaa" },
-  { name: "Josefin Sans", value: "Josefin Sans" },
-  { name: "Work Sans", value: "Work Sans" },
-  { name: "Rubik", value: "Rubik" },
-  { name: "Barlow", value: "Barlow" },
-  { name: "Kanit", value: "Kanit" },
-  { name: "Saira", value: "Saira" },
-  { name: "Changa", value: "Changa" },
-  
-  // Bold & Strong Fonts (Popular for T-Shirts)
+  // Essential T-Shirt Design Fonts
   { name: "Oswald", value: "Oswald" },
   { name: "Anton", value: "Anton" },
   { name: "Bebas Neue", value: "Bebas Neue" },
-  { name: "Fjalla One", value: "Fjalla One" },
-  { name: "Russo One", value: "Russo One" },
-  { name: "Righteous", value: "Righteous" },
-  { name: "Acme", value: "Acme" },
-  { name: "Passion One", value: "Passion One" },
-  { name: "Archivo Black", value: "Archivo Black" },
-  { name: "Teko", value: "Teko" },
-  { name: "Exo", value: "Exo" },
+  { name: "Montserrat", value: "Montserrat" },
+  { name: "Poppins", value: "Poppins" },
+  { name: "Roboto", value: "Roboto" },
   
-  // Collegiate & Athletic Fonts
+  // Collegiate & Athletic
   { name: "Graduate", value: "Graduate" },
   { name: "Alfa Slab One", value: "Alfa Slab One" },
   { name: "Black Ops One", value: "Black Ops One" },
-  { name: "Squada One", value: "Squada One" },
   { name: "Staatliches", value: "Staatliches" },
-  { name: "Bowlby One", value: "Bowlby One" },
-  { name: "Titan One", value: "Titan One" },
-  { name: "Fugaz One", value: "Fugaz One" },
   
-  // Decorative & Fun Fonts
+  // Bold & Strong
+  { name: "Russo One", value: "Russo One" },
+  { name: "Righteous", value: "Righteous" },
+  { name: "Archivo Black", value: "Archivo Black" },
+  { name: "Fjalla One", value: "Fjalla One" },
+  
+  // Fun & Decorative
   { name: "Bangers", value: "Bangers" },
   { name: "Fredoka One", value: "Fredoka One" },
-  { name: "Bungee", value: "Bungee" },
-  { name: "Creepster", value: "Creepster" },
   { name: "Permanent Marker", value: "Permanent Marker" },
-  { name: "Audiowide", value: "Audiowide" },
-  { name: "Orbitron", value: "Orbitron" },
-  { name: "Kalam", value: "Kalam" },
   
-  // Script & Handwritten Fonts
-  { name: "Dancing Script", value: "Dancing Script" },
+  // Script
   { name: "Pacifico", value: "Pacifico" },
-  { name: "Lobster", value: "Lobster" },
-  { name: "Satisfy", value: "Satisfy" },
-  
-  // Elegant & Serif Fonts
-  { name: "Playfair Display", value: "Playfair Display" },
-  { name: "Merriweather", value: "Merriweather" },
-  { name: "Crimson Text", value: "Crimson Text" },
-  { name: "Abril Fatface", value: "Abril Fatface" },
-  
-  // Clean Sans Fonts
-  { name: "PT Sans", value: "PT Sans" },
+  { name: "Dancing Script", value: "Dancing Script" },
 ];
 
 export const DesignToolbar = ({
