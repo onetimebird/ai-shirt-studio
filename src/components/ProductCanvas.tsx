@@ -186,14 +186,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Left Chest area box - positioned higher and more to the right */}
+            {/* Left Chest area box - positioned closer to center, halfway between center and edge */}
             <div
               style={{
                 position: 'absolute',
-                left: '70%',
-                top: '25%',
-                width: '12%',
-                height: '10%',
+                left: '37.5%',
+                top: '22%',
+                width: '18%',
+                height: '15%',
                 border: '1px dashed #60a5fa',
                 transform: 'translateX(-50%)',
                 zIndex: 100,
@@ -203,14 +203,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Youth size area indicator - smaller and repositioned */}
+            {/* Youth size area indicator - larger and starting near collar */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '50%',
-                width: '35%',
-                height: '20%',
+                top: '22%',
+                width: '45%',
+                height: '45%',
                 border: '1px dashed #60a5fa',
                 transform: 'translateX(-50%)',
                 zIndex: 98,
@@ -220,18 +220,18 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Top instruction text */}
+            {/* Top instruction text - smaller and more subtle */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: '12%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                backgroundColor: 'rgba(96, 165, 250, 0.8)',
                 color: 'white',
-                padding: '3px 8px',
-                borderRadius: '3px',
-                fontSize: '11px',
+                padding: '2px 6px',
+                borderRadius: '2px',
+                fontSize: '8px',
                 fontWeight: '400',
                 zIndex: 101,
                 pointerEvents: 'none'
@@ -243,15 +243,15 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             <div
               style={{
                 position: 'absolute',
-                left: '70%',
-                top: '20%',
+                left: '37.5%',
+                top: '18%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                backgroundColor: 'rgba(96, 165, 250, 0.8)',
                 color: 'white',
-                padding: '2px 6px',
-                borderRadius: '3px',
-                fontSize: '10px',
-                fontWeight: '500',
+                padding: '1px 4px',
+                borderRadius: '2px',
+                fontSize: '7px',
+                fontWeight: '400',
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
@@ -263,14 +263,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '72%',
+                top: '69%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                backgroundColor: 'rgba(96, 165, 250, 0.8)',
                 color: 'white',
-                padding: '2px 6px',
-                borderRadius: '3px',
-                fontSize: '11px',
-                fontWeight: '500',
+                padding: '1px 4px',
+                borderRadius: '2px',
+                fontSize: '7px',
+                fontWeight: '400',
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
@@ -284,12 +284,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '50%',
                 top: '88%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                backgroundColor: 'rgba(96, 165, 250, 0.8)',
                 color: 'white',
-                padding: '2px 6px',
-                borderRadius: '3px',
-                fontSize: '11px',
-                fontWeight: '500',
+                padding: '1px 4px',
+                borderRadius: '2px',
+                fontSize: '7px',
+                fontWeight: '400',
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
