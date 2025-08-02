@@ -8,11 +8,11 @@ export function initializeTextControls() {
   console.log('🔧 initializeTextControls called - creating ROT-style controls...');
   
   try {
-    // Create delete control with gradient background matching design system
+    // Create delete control with gradient background - positioned top-right
     const deleteControl = new fabric.Control({
-      x: -0.5,
+      x: 0.5,
       y: -0.5,
-      offsetX: -8,
+      offsetX: 8,
       offsetY: -8,
       cursorStyleHandler: () => 'pointer',
       actionHandler: (eventData: MouseEvent, transform: fabric.Transform) => {
@@ -88,11 +88,11 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create rotation control with proper curved arrow
+    // Create rotation control with proper curved arrow - positioned top-left
     const rotateControl = new fabric.Control({
-      x: 0.5,
+      x: -0.5,
       y: -0.5,
-      offsetX: 8,
+      offsetX: -8,
       offsetY: -8,
       cursorStyleHandler: () => 'crosshair',
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
@@ -219,11 +219,11 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create horizontal stretch control positioned closer to bounding box
+    // Create horizontal stretch control TIGHT to bounding box
     const stretchHorizontalControl = new fabric.Control({
-      x: 0.8, // Closer to the box edge
+      x: 1, // Right edge of bounding box
       y: 0,
-      offsetX: -3, // Negative offset to bring it closer
+      offsetX: 0, // No offset to keep it tight
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
@@ -288,12 +288,12 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create vertical stretch control
+    // Create vertical stretch control - positioned on top
     const stretchVerticalControl = new fabric.Control({
       x: 0,
-      y: 0.8, // Position at bottom edge
+      y: -0.8, // Position at top edge
       offsetX: 0,
-      offsetY: -3, // Negative offset to bring it closer
+      offsetY: 3, // Positive offset to bring it down from top
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: fabric.controlsUtils.scalingY,
       render: (ctx, left, top) => {
@@ -359,14 +359,14 @@ export function initializeTextControls() {
 
     // Apply controls to fabric objects
     const customControls = {
-      tl: deleteControl,
-      tr: rotateControl,
-      br: scaleControl,
-      mr: stretchHorizontalControl,
-      mb: stretchVerticalControl,
+      tl: rotateControl,         // Rotate on top-left
+      tr: deleteControl,         // Delete (trash) on top-right
+      mt: stretchVerticalControl, // Vertical stretch on top
+      mr: stretchHorizontalControl, // Horizontal stretch on right (tight to box)
+      br: scaleControl,          // Scale on bottom-right
       // Hide default controls we don't want
       ml: new fabric.Control({ visible: false }),
-      mt: new fabric.Control({ visible: false }),
+      mb: new fabric.Control({ visible: false }),
       bl: new fabric.Control({ visible: false }),
       mtr: new fabric.Control({ visible: false }),
     };
