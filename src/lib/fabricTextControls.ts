@@ -6,6 +6,26 @@ console.log('🔧 fabricTextControls.ts loaded');
 // Track hover states for controls
 let hoveredControl: string | null = null;
 
+// Add mouse event listeners for hover effects
+function addHoverListeners(canvas: any) {
+  canvas.on('mouse:move', (options: any) => {
+    const pointer = canvas.getPointer(options.e);
+    const activeObject = canvas.getActiveObject();
+    
+    if (activeObject) {
+      // Check which control is being hovered
+      const control = activeObject._findTargetCorner(pointer, false);
+      if (control !== hoveredControl) {
+        hoveredControl = control;
+        canvas.renderAll();
+      }
+    } else if (hoveredControl) {
+      hoveredControl = null;
+      canvas.renderAll();
+    }
+  });
+}
+
 // Create custom controls that match RushOrderTees style with shimmer hover effects
 export function initializeTextControls() {
   console.log('🔧 initializeTextControls called - creating ROT-style controls with shimmer...');
@@ -98,11 +118,11 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create rotation control with proper curved arrow - positioned top-left
+    // Create rotation control with uploaded icon - positioned top middle
     const rotateControl = new fabric.Control({
-      x: -0.5,
+      x: 0,
       y: -0.5,
-      offsetX: -8,
+      offsetX: 0,
       offsetY: -8,
       cursorStyleHandler: () => 'crosshair',
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
@@ -141,31 +161,29 @@ export function initializeTextControls() {
         ctx.lineWidth = 1;
         ctx.stroke();
         
-        // Draw white curved rotation arrow with clear arrow head
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        // Draw the uploaded rotate icon
+        ctx.fillStyle = 'white';
         ctx.shadowColor = 'transparent';
         
-        // Draw curved arrow path (3/4 circle)
+        // Create a circular arrow icon similar to the uploaded image
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'white';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        // Draw main circular arrow
         ctx.beginPath();
-        ctx.arc(0, 0, 4, -Math.PI/2, Math.PI, false);
+        ctx.arc(0, 0, 5, -Math.PI/4, Math.PI * 3/2, false);
         ctx.stroke();
         
-        // Draw clear arrow head pointing counterclockwise
+        // Draw arrow head at the end
         ctx.beginPath();
-        ctx.moveTo(-4, 0);
-        ctx.lineTo(-1.5, -2);
-        ctx.lineTo(-1.5, 2);
+        ctx.moveTo(-3.5, -3.5);
+        ctx.lineTo(-1, -3.5);
+        ctx.lineTo(-2.5, -2);
         ctx.closePath();
         ctx.fillStyle = 'white';
         ctx.fill();
-        
-        // Add arrow outline for better visibility
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 1;
-        ctx.stroke();
         
         ctx.restore();
       },
@@ -327,12 +345,12 @@ export function initializeTextControls() {
       sizeY: 20,
     });
 
-    // Create vertical stretch control - positioned on top
+    // Create vertical stretch control - positioned on bottom
     const stretchVerticalControl = new fabric.Control({
       x: 0,
-      y: -0.8, // Position at top edge
+      y: 0.5, // Position at bottom edge
       offsetX: 0,
-      offsetY: 3, // Positive offset to bring it down from top
+      offsetY: 8, // Positive offset to move down from bottom
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: fabric.controlsUtils.scalingY,
       render: (ctx, left, top) => {
@@ -406,14 +424,14 @@ export function initializeTextControls() {
 
     // Apply controls to fabric objects
     const customControls = {
-      tl: rotateControl,         // Rotate on top-left
+      mt: rotateControl,         // Rotate on top-middle
       tr: deleteControl,         // Delete (trash) on top-right
-      mt: stretchVerticalControl, // Vertical stretch on top
+      mb: stretchVerticalControl, // Vertical stretch on bottom
       mr: stretchHorizontalControl, // Horizontal stretch on right (tight to box)
       br: scaleControl,          // Scale on bottom-right
       // Hide default controls we don't want
       ml: new fabric.Control({ visible: false }),
-      mb: new fabric.Control({ visible: false }),
+      tl: new fabric.Control({ visible: false }),
       bl: new fabric.Control({ visible: false }),
       mtr: new fabric.Control({ visible: false }),
     };
@@ -436,6 +454,13 @@ export function applyCustomControlsToObject(obj: fabric.Object) {
   const customControls = (window as any).customFabricControls;
   if (customControls && obj) {
     obj.controls = customControls;
+    
+    // Set up hover listeners if not already done
+    const canvas = obj.canvas;
+    if (canvas && !(canvas as any).hasHoverListeners) {
+      addHoverListeners(canvas);
+      (canvas as any).hasHoverListeners = true;
+    }
     
     // Apply dotted border styling
     obj.borderColor = 'hsl(262, 100%, 65%)'; // Primary color
