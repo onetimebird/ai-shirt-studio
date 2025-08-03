@@ -103,11 +103,11 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
             </div>
           ) : (
             <>
-              <ScrollArea className="flex-1 py-4">
-                <div className="space-y-4">
+              <ScrollArea className="flex-1 py-4 [&>[data-radix-scroll-area-viewport]]:max-h-96 scrollbar-hide">
+                <div className="space-y-3 pr-2">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="flex gap-4 p-4 rounded-lg bg-card/50 border border-border/50">
-                      <div className="w-16 h-16 rounded-md overflow-hidden bg-muted">
+                    <div key={item.id} className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border/50">
+                      <div className="w-12 h-12 rounded-md overflow-hidden bg-muted flex-shrink-0">
                         <img 
                           src={item.image} 
                           alt={item.name}
@@ -115,26 +115,26 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                         />
                       </div>
                       
-                      <div className="flex-1 space-y-1">
-                        <h4 className="font-medium leading-tight">{item.name}</h4>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="flex-1 space-y-1 min-w-0">
+                        <h4 className="font-medium leading-tight text-sm truncate">{item.name}</h4>
+                        <p className="text-xs text-muted-foreground">
                           {item.color} • Size {item.size}
                         </p>
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1">
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-6 w-6 p-0"
+                              className="h-5 w-5 p-0 text-xs"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             >
                               -
                             </Button>
-                            <span className="text-sm w-6 text-center">{item.quantity}</span>
+                            <span className="text-xs w-5 text-center">{item.quantity}</span>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="h-6 w-6 p-0"
+                              className="h-5 w-5 p-0 text-xs"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             >
                               +
@@ -143,16 +143,16 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                            className="h-5 w-5 p-0 text-muted-foreground hover:text-destructive"
                             onClick={() => removeItem(item.id)}
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="w-2.5 h-2.5" />
                           </Button>
                         </div>
                       </div>
                       
-                      <div className="text-right">
-                        <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                      <div className="text-right flex-shrink-0">
+                        <p className="font-medium text-sm">${(item.price * item.quantity).toFixed(2)}</p>
                         <p className="text-xs text-muted-foreground">${item.price.toFixed(2)} each</p>
                       </div>
                     </div>
