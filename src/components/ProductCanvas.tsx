@@ -226,16 +226,21 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '62.5%',
                 top: '18%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
                 padding: '1px 4px',
-                borderRadius: '2px',
-                fontSize: window.innerWidth >= 768 ? '24px' : '7px',
-                fontWeight: window.innerWidth >= 768 ? 'bold' : '400',
+                borderRadius: '8px',
+                fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                fontWeight: window.innerWidth >= 768 ? '600' : '400',
                 zIndex: 101,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-4 md:py-1 md:min-w-[100px]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
             >
               Left Chest
             </div>
@@ -246,16 +251,21 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '50%',
                 top: '69%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
                 padding: '1px 4px',
-                borderRadius: '2px',
-                fontSize: window.innerWidth >= 768 ? '24px' : '7px',
-                fontWeight: window.innerWidth >= 768 ? 'bold' : '400',
+                borderRadius: '8px',
+                fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                fontWeight: window.innerWidth >= 768 ? '600' : '400',
                 zIndex: 101,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-4 md:py-1 md:min-w-[100px]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
             >
               Youth
             </div>
@@ -266,16 +276,21 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 left: '50%',
                 top: '88%',
                 transform: 'translateX(-50%)',
-                backgroundColor: 'rgba(96, 165, 250, 0.9)',
+                background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
                 padding: '1px 4px',
-                borderRadius: '2px',
-                fontSize: window.innerWidth >= 768 ? '24px' : '7px',
-                fontWeight: window.innerWidth >= 768 ? 'bold' : '400',
+                borderRadius: '8px',
+                fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                fontWeight: window.innerWidth >= 768 ? '600' : '400',
                 zIndex: 101,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-4 md:py-1 md:min-w-[100px]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
             >
               Adult
             </div>
