@@ -51,14 +51,20 @@ const FONTS = [
   { name: "Lato", value: "Lato" },
   { name: "Inter", value: "Inter" },
   
-  // Collegiate & Athletic
+  // Collegiate & Athletic Fonts
   { name: "Graduate", value: "Graduate" },
   { name: "Alfa Slab One", value: "Alfa Slab One" },
   { name: "Black Ops One", value: "Black Ops One" },
   { name: "Staatliches", value: "Staatliches" },
   { name: "Squada One", value: "Squada One" },
+  { name: "Big Shoulders Display", value: "Big Shoulders Display" },
+  { name: "Concert One", value: "Concert One" },
+  { name: "Press Start 2P", value: "Press Start 2P" },
+  { name: "Rajdhani", value: "Rajdhani" },
+  { name: "Play", value: "Play" },
+  { name: "Saira Condensed", value: "Saira Condensed" },
   
-  // Bold & Strong
+  // Bold Sports & Team Fonts
   { name: "Russo One", value: "Russo One" },
   { name: "Righteous", value: "Righteous" },
   { name: "Archivo Black", value: "Archivo Black" },
@@ -66,13 +72,16 @@ const FONTS = [
   { name: "Fugaz One", value: "Fugaz One" },
   { name: "Titan One", value: "Titan One" },
   { name: "Bowlby One", value: "Bowlby One" },
+  { name: "Bungee", value: "Bungee" },
+  { name: "Bungee Shade", value: "Bungee Shade" },
+  { name: "Teko", value: "Teko" },
   
   // Fun & Decorative
   { name: "Bangers", value: "Bangers" },
   { name: "Fredoka One", value: "Fredoka One" },
+  { name: "Fredoka", value: "Fredoka" },
   { name: "Permanent Marker", value: "Permanent Marker" },
   { name: "Creepster", value: "Creepster" },
-  { name: "Bungee", value: "Bungee" },
   { name: "Passion One", value: "Passion One" },
   { name: "Acme", value: "Acme" },
   
@@ -83,11 +92,12 @@ const FONTS = [
   { name: "Satisfy", value: "Satisfy" },
   { name: "Playfair Display", value: "Playfair Display" },
   
-  // Modern & Tech
+  // Modern & Tech (Perfect for Esports)
   { name: "Orbitron", value: "Orbitron" },
   { name: "Audiowide", value: "Audiowide" },
   { name: "Exo", value: "Exo" },
-  { name: "Teko", value: "Teko" },
+  { name: "Michroma", value: "Michroma" },
+  { name: "Electrolize", value: "Electrolize" },
   
   // Clean & Professional
   { name: "Nunito", value: "Nunito" },
