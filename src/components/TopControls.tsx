@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, User } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AuthModal } from "@/components/AuthModal";
+import { CartPopup } from "@/components/CartPopup";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -55,14 +56,16 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
 
         {/* Right Side - Cart, User, Theme */}
         <div className="flex items-center gap-3">
-          <Button 
-            variant="glass" 
-            size="default" 
-            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
-          >
-            <ShoppingCart className="w-5 h-5 mr-2" />
-            Cart
-          </Button>
+          <CartPopup>
+            <Button 
+              variant="glass" 
+              size="default" 
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+            >
+              <ShoppingCart className="w-5 h-5 mr-2" />
+              Cart
+            </Button>
+          </CartPopup>
           {user ? (
             <Button 
               variant="glass" 
@@ -102,13 +105,15 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
         {/* Cart and User Actions */}
         <div className="flex items-center gap-2">
           {/* Cart and User Icons */}
-          <Button 
-            variant="glass" 
-            size="default"
-            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
-          >
-            <ShoppingCart className="w-5 h-5" />
-          </Button>
+          <CartPopup>
+            <Button 
+              variant="glass" 
+              size="default"
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+            >
+              <ShoppingCart className="w-5 h-5" />
+            </Button>
+          </CartPopup>
           {user ? (
             <Button 
               variant="glass" 
