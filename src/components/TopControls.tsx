@@ -6,11 +6,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
-interface TopControlsProps {
-  onAuthModalChange?: (isOpen: boolean) => void;
-}
-
-export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
+export const TopControls = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
@@ -32,11 +28,6 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-  };
-
-  const handleAuthModalChange = (isOpen: boolean) => {
-    setAuthModalOpen(isOpen);
-    onAuthModalChange?.(isOpen);
   };
 
   return (
@@ -77,7 +68,7 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
             <Button 
               variant="glass" 
               size="default"
-              onClick={() => handleAuthModalChange(true)}
+              onClick={() => setAuthModalOpen(true)}
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
             >
               <User className="w-5 h-5 mr-2" />
@@ -122,7 +113,7 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
             <Button 
               variant="glass" 
               size="default"
-              onClick={() => handleAuthModalChange(true)}
+              onClick={() => setAuthModalOpen(true)}
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
               <User className="w-5 h-5" />
@@ -131,7 +122,7 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
         </div>
       </div>
 
-      <AuthModal open={authModalOpen} onOpenChange={handleAuthModalChange} />
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
     </div>
   );
 };

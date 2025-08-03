@@ -4,28 +4,20 @@ import { UndoRedoControls } from "@/components/UndoRedoControls";
 interface CanvasControlsProps {
   currentSide: "front" | "back";
   onSideChange: (side: "front" | "back") => void;
-  isAuthModalOpen?: boolean;
 }
 
-export const CanvasControls = ({ currentSide, onSideChange, isAuthModalOpen }: CanvasControlsProps) => {
-  console.log("CanvasControls render - isAuthModalOpen:", isAuthModalOpen);
-  
-  if (isAuthModalOpen) {
-    console.log("Hiding canvas controls because auth modal is open");
-    return null;
-  }
-  
+export const CanvasControls = ({ currentSide, onSideChange }: CanvasControlsProps) => {
   return (
     <>
       {/* Undo/Redo Controls - positioned on the left, stacked vertically */}
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute top-4 left-4 z-10">
         <div className="flex flex-col gap-2">
           <UndoRedoControls />
         </div>
       </div>
       
       {/* Front/Back Toggle - positioned on the right, stacked vertically */}
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-4 right-4 z-10">
         <div className="flex flex-col gap-1 bg-background/95 backdrop-blur-sm shadow-sm rounded-md border border-border p-1">
           <Button
             variant={currentSide === "front" ? "default" : "ghost"}
