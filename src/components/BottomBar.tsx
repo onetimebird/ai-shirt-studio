@@ -72,7 +72,7 @@ export const BottomBar = ({
   const currentColor = getCurrentColors().find(c => c.name === selectedColor);
 
   return (
-    <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-5 shadow-glass backdrop-blur-sm z-40">
+    <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-4 shadow-glass backdrop-blur-sm z-40">
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between gap-4 lg:gap-6">
         {/* Left Side - Product and Color Selectors */}
@@ -81,7 +81,7 @@ export const BottomBar = ({
           <div className="flex items-center gap-2">
             <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
             <Select value={selectedProduct} onValueChange={onProductChange}>
-              <SelectTrigger className="w-56 h-14 text-base">
+              <SelectTrigger className="w-56 h-14 text-base relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-md hover:scale-[1.02] hover:bg-accent/20 transition-all duration-300">
                 <SelectValue placeholder="Change Product">
                   {(() => {
                     const productMap: { [key: string]: string } = {
@@ -109,14 +109,11 @@ export const BottomBar = ({
             </Select>
           </div>
 
-          {/* Divider */}
-          <div className="h-12 w-px bg-border/50"></div>
-
           {/* Color Picker */}
           <div className="flex items-center gap-2">
             <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
             <Select value={selectedColor} onValueChange={onColorChange}>
-              <SelectTrigger className="w-48 h-14 text-base">
+              <SelectTrigger className="w-48 h-14 text-base relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-md hover:scale-[1.02] hover:bg-accent/20 transition-all duration-300">
                 <SelectValue placeholder="Change Color">
                   <div className="flex items-center gap-2">
                     <div 
@@ -147,8 +144,6 @@ export const BottomBar = ({
 
         {/* Center - Decoration Method */}
         <div className="flex items-center gap-2 mx-8">
-          {/* Divider */}
-          <div className="h-12 w-px bg-border/50"></div>
           <Button
             variant={decorationMethod === "screen-print" ? "default" : "outline"}
             size="lg"
@@ -165,15 +160,10 @@ export const BottomBar = ({
           >
             Embroidery
           </Button>
-
-          {/* Divider */}
-          <div className="h-12 w-px bg-border/50"></div>
         </div>
 
         {/* Right Side - Action Buttons */}
         <div className="flex items-center gap-6">
-          {/* Divider */}
-          <div className="h-12 w-px bg-border/50"></div>
           {/* Save Button */}
           <Button 
             variant="creative" 
@@ -218,7 +208,7 @@ export const BottomBar = ({
         <div className="flex items-center gap-2">
           {/* Product Selector */}
           <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="flex-1 h-12 text-sm">
+            <SelectTrigger className="flex-1 h-12 text-sm relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-md hover:scale-[1.02] hover:bg-accent/20 transition-all duration-300">
               <SelectValue placeholder="Change Product">
                 {(() => {
                   const productMap: { [key: string]: string } = {
@@ -247,7 +237,7 @@ export const BottomBar = ({
 
           {/* Color Picker */}
           <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="flex-1 h-12 text-sm">
+            <SelectTrigger className="flex-1 h-12 text-sm relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-md hover:scale-[1.02] hover:bg-accent/20 transition-all duration-300">
               <div className="flex items-center gap-1">
                 <div 
                   className="w-3 h-3 rounded border border-border" 
@@ -274,7 +264,7 @@ export const BottomBar = ({
         </div>
 
         {/* Decoration Method with dividers */}
-        <div className="flex items-center gap-2 border-y border-border/30 py-1">
+        <div className="flex items-center gap-2">
           <Button
             variant={decorationMethod === "screen-print" ? "default" : "outline"}
             size="sm"
@@ -294,7 +284,7 @@ export const BottomBar = ({
         </div>
 
         {/* Mobile Action Buttons with dividers */}
-        <div className="flex items-center gap-3 border-y border-border/30 py-1">
+        <div className="flex items-center gap-3">
           {/* Save Button */}
           <Button 
             variant="creative" 
