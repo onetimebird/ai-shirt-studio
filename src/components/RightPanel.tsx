@@ -144,6 +144,37 @@ const FONTS = [
   { name: "Quicksand", value: "Quicksand" },
   { name: "Josefin Sans", value: "Josefin Sans" },
   { name: "Kalam", value: "Kalam" },
+
+  // NEW: Advanced Collegiate/Athletic/Sports Fonts
+  { name: "Big Shoulders Stencil Display", value: "Big Shoulders Stencil Display" },
+  { name: "Alumni Sans", value: "Alumni Sans" },
+  { name: "Anton SC", value: "Anton SC" },
+  { name: "Bungee Outline", value: "Bungee Outline" },
+  { name: "Faster One", value: "Faster One" },
+  { name: "Chakra Petch", value: "Chakra Petch" },
+  { name: "Syncopate", value: "Syncopate" },
+  { name: "Kranky", value: "Kranky" },
+  { name: "Frijole", value: "Frijole" },
+  { name: "Metal Mania", value: "Metal Mania" },
+  { name: "Hanalei Fill", value: "Hanalei Fill" },
+  { name: "Bungee Hairline", value: "Bungee Hairline" },
+  { name: "Wallpoet", value: "Wallpoet" },
+  { name: "Eater", value: "Eater" },
+  { name: "Jolly Lodger", value: "Jolly Lodger" },
+  { name: "Griffy", value: "Griffy" },
+  { name: "Lacquer", value: "Lacquer" },
+  { name: "Rye", value: "Rye" },
+  { name: "UnifrakturCook", value: "UnifrakturCook" },
+  { name: "Fredericka the Great", value: "Fredericka the Great" },
+  { name: "Rammetto One", value: "Rammetto One" },
+  { name: "Covered By Your Grace", value: "Covered By Your Grace" },
+  { name: "Shadows Into Light", value: "Shadows Into Light" },
+  { name: "Special Elite", value: "Special Elite" },
+  { name: "Monoton", value: "Monoton" },
+  { name: "Megrim", value: "Megrim" },
+  { name: "Nosifer", value: "Nosifer" },
+  { name: "Butcherman", value: "Butcherman" },
+  { name: "New Rocker", value: "New Rocker" },
 ];
 
 const colors = [
@@ -222,8 +253,12 @@ and return a high-quality transparent PNG suitable for print.
   }, [selectedObject]);
 
   const updateTextProperty = (property: string, value: any) => {
+    console.log('[RightPanel] updateTextProperty called:', property, value);
     if ((window as any).designCanvas?.updateSelectedTextProperty) {
+      console.log('[RightPanel] Calling updateSelectedTextProperty');
       (window as any).designCanvas.updateSelectedTextProperty(property, value);
+    } else {
+      console.log('[RightPanel] updateSelectedTextProperty method not found');
     }
   };
 
@@ -702,17 +737,19 @@ and return a high-quality transparent PNG suitable for print.
                   <div className="flex items-center justify-between py-1">
                     <Label className="text-sm font-medium">Text Color</Label>
                     <div className="flex items-center gap-2">
-                      <Input
-                        type="color"
-                        value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
-                        onChange={e => {
-                          setTextColor(e.target.value);
-                          if (selectedObject) {
-                            updateTextProperty('fill', e.target.value);
-                          }
-                        }}
-                        className="w-10 h-8 p-0 border rounded cursor-pointer"
-                      />
+                       <Input
+                         type="color"
+                         value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
+                         onChange={e => {
+                           console.log('[RightPanel] Color changed to:', e.target.value);
+                           setTextColor(e.target.value);
+                           if (selectedObject) {
+                             console.log('[RightPanel] Updating selected object color');
+                             updateTextProperty('fill', e.target.value);
+                           }
+                         }}
+                         className="w-10 h-8 p-0 border rounded cursor-pointer"
+                       />
                     </div>
                   </div>
 
