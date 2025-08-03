@@ -98,8 +98,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       const scale = Math.min(scaleX, scaleY);
 
       // Set as background image - this keeps it behind all user content
-      // Center the image position
-      const topPosition = isMobile ? canvasHeight / 2 : canvasHeight / 2;
+      // Position higher on desktop for better visibility
+      const topPosition = isMobile ? canvasHeight / 2 : canvasHeight * 0.45;
       
       img.set({
         scaleX: scale,
