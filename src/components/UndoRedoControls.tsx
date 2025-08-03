@@ -35,8 +35,8 @@ export const UndoRedoControls = () => {
   }, [isDesignCanvasReady]);
 
   return (
-    <div className="flex flex-col gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
-      <div className="relative group flex flex-col items-center">
+    <div className="flex flex-col gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg">
+      <div className="relative group flex flex-col items-center py-0.5">
         <Button
           variant="ghost"
           size="sm"
@@ -68,17 +68,17 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
             }
           }}
-          className="h-8 w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
+          className="h-6 w-6 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
         >
-          <Undo className="w-4 h-4" />
+          <Undo className="w-3.5 h-3.5" />
         </Button>
-        <span className="text-xs text-muted-foreground mt-1">Undo</span>
+        <span className="text-xs text-muted-foreground">Undo</span>
       </div>
 
       {/* Subtle divider line */}
-      <div className="h-px bg-border/50 mx-2"></div>
+      <div className="h-px bg-border/50 mx-1"></div>
 
-      <div className="relative group flex flex-col items-center">
+      <div className="relative group flex flex-col items-center py-0.5">
         <Button
           variant="ghost"
           size="sm"
@@ -110,11 +110,11 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
             }
           }}
-          className="h-8 w-8 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
+          className="h-6 w-6 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
         >
-          <Redo className="w-4 h-4" />
+          <Redo className="w-3.5 h-3.5" />
         </Button>
-        <span className="text-xs text-muted-foreground mt-1">Redo</span>
+        <span className="text-xs text-muted-foreground">Redo</span>
       </div>
     </div>
   );
