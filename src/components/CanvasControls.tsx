@@ -28,8 +28,10 @@ export const CanvasControls = ({ currentSide, onSideChange }: CanvasControlsProp
             Front
           </Button>
           
-          {/* Subtle divider line */}
-          <div className="h-px bg-border/50 mx-2"></div>
+          {/* Embossed divider line */}
+          <div className="relative mx-1 my-0.5">
+            <div className="h-0.5 bg-border/30 border-t border-border/60 border-b border-background/60 shadow-inner"></div>
+          </div>
           
           <Button
             variant={currentSide === "back" ? "default" : "ghost"}

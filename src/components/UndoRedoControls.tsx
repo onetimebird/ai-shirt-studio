@@ -68,7 +68,7 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
             }
           }}
-          className="h-6 w-6 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
+          className="h-6 w-6 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none transition-all duration-200 hover:scale-105 hover:shadow-md"
         >
           <Undo className="w-3.5 h-3.5" />
         </Button>
@@ -113,7 +113,7 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
             }
           }}
-          className="h-6 w-6 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none"
+          className="h-6 w-6 p-0 hover:bg-muted active:bg-muted/80 touch-manipulation select-none transition-all duration-200 hover:scale-105 hover:shadow-md"
         >
           <Redo className="w-3.5 h-3.5" />
         </Button>
