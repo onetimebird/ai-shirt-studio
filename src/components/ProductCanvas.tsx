@@ -235,7 +235,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-2xl md:px-8 md:py-3 md:min-w-[120px]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-4xl md:px-6 md:py-2 md:min-w-[140px] md:font-bold"
             >
               Left Chest
             </div>
@@ -255,7 +255,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-2xl md:px-8 md:py-3 md:min-w-[120px]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-4xl md:px-6 md:py-2 md:min-w-[140px] md:font-bold"
             >
               Youth
             </div>
@@ -275,7 +275,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-2xl md:px-8 md:py-3 md:min-w-[120px]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-4xl md:px-6 md:py-2 md:min-w-[140px] md:font-bold"
             >
               Adult
             </div>
