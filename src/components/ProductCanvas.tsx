@@ -132,19 +132,20 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   }, [currentSide, fabricCanvas]);
 
   return (
-    <div className="flex-1 flex items-start justify-center min-h-0 pt-1 lg:pt-2 relative">
-      <div className="relative w-full h-full flex items-center justify-center">
+    <div className="flex-1 flex items-center justify-center relative max-h-full">
+      <div className="relative w-full h-full flex items-center justify-center max-h-full">
         {/* NO <img> here—Fabric is already drawing the shirt as a background */}
         <canvas 
           ref={canvasRef}
           id="design-canvas"
-          className="max-w-full"
+          className="max-w-full max-h-full"
           style={{ 
             position: 'relative',
             zIndex: 50,
             pointerEvents: 'auto',
             backgroundColor: 'transparent',
             maxWidth: '100%',
+            maxHeight: '100%',
             height: 'auto',
             cursor: 'default'
           }}

@@ -2,9 +2,10 @@ import { useState } from "react";
 // import SmokeTest from "@/components/SmokeTest"; // Uncomment to test
 import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
+import { BottomBar } from "@/components/BottomBar";
+import { CanvasControls } from "@/components/CanvasControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
-import { UndoRedoControls } from "@/components/UndoRedoControls";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Settings, Type, Upload, Wand2, Package, Palette, X } from "lucide-react";
@@ -94,12 +95,6 @@ export const TShirtDesigner = () => {
         <TopControls
           selectedProduct={selectedProduct}
           selectedColor={selectedColor}
-          decorationMethod={decorationMethod}
-          currentSide={currentSide}
-          onProductChange={setSelectedProduct}
-          onColorChange={setSelectedColor}
-          onDecorationChange={setDecorationMethod}
-          onSideChange={setCurrentSide}
         />
       </div>
 
@@ -115,11 +110,14 @@ export const TShirtDesigner = () => {
           </div>
         </div>
 
-        {/* Central Canvas - Scrollable area */}
-        <div className="flex-1 relative min-w-0 overflow-auto scrollbar-hide">
-          <div className="min-h-full flex items-center justify-center p-2 md:p-4">
-            {/* Undo/Redo Controls - positioned over canvas */}
-            <UndoRedoControls />
+        {/* Central Canvas - Fixed height, no scrolling */}
+        <div className="flex-1 relative min-w-0 flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center p-2 md:p-4 relative">
+            {/* Canvas Controls - positioned over canvas */}
+            <CanvasControls 
+              currentSide={currentSide}
+              onSideChange={setCurrentSide}
+            />
             
             <div className="w-full max-w-4xl flex items-center justify-center">
               <DesignCanvas
@@ -353,6 +351,18 @@ export const TShirtDesigner = () => {
             </SheetContent>
           </Sheet>
         </div>
+      </div>
+
+      {/* Bottom Bar - Sticky */}
+      <div className="flex-shrink-0">
+        <BottomBar
+          selectedProduct={selectedProduct}
+          selectedColor={selectedColor}
+          decorationMethod={decorationMethod}
+          onProductChange={setSelectedProduct}
+          onColorChange={setSelectedColor}
+          onDecorationChange={setDecorationMethod}
+        />
       </div>
     </div>
   );
