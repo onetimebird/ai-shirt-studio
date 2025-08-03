@@ -25,8 +25,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
 
     // Calculate larger canvas dimensions to accommodate full t-shirt
     const isMobile = window.innerWidth < 768;
-    const canvasWidth = isMobile ? Math.min(400, window.innerWidth - 20) : 1150; // Increased by 15% from 1000
-    const canvasHeight = isMobile ? Math.min(500, (window.innerHeight - 200)) : 1265; // Increased by 15% from 1100
+    const canvasWidth = isMobile ? Math.min(400, window.innerWidth - 20) : 1012; // Reduced by 12% from 1150
+    const canvasHeight = isMobile ? Math.min(500, (window.innerHeight - 200)) : 1113; // Reduced by 12% from 1265
 
     const canvas = new FabricCanvas(canvasRef.current, {
       width: canvasWidth,
