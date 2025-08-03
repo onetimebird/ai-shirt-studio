@@ -481,17 +481,14 @@ export const DesignCanvas = ({
         
         // Handle object selection
         canvas.on('selection:created', (e: any) => {
-          console.log('[DesignCanvas] Selection created:', e.selected?.[0]?.type, e.selected?.[0]);
           onSelectedObjectChange(e.selected?.[0] || null);
         });
 
         canvas.on('selection:updated', (e: any) => {
-          console.log('[DesignCanvas] Selection updated:', e.selected?.[0]?.type, e.selected?.[0]);
           onSelectedObjectChange(e.selected?.[0] || null);
         });
 
         canvas.on('selection:cleared', () => {
-          console.log('[DesignCanvas] Selection cleared');
           onSelectedObjectChange(null);
         });
 

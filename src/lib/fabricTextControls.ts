@@ -13,16 +13,8 @@ function addHoverListeners(canvas: any) {
     const activeObject = canvas.getActiveObject();
     
     if (activeObject) {
-      // Check which control is being hovered - using correct v6 method
-      let control = null;
-      try {
-        // Use the correct method for Fabric.js v6
-        control = activeObject.findControl(pointer) || null;
-      } catch (e) {
-        // Fallback if method doesn't exist
-        control = null;
-      }
-      
+      // Check which control is being hovered
+      const control = activeObject._findTargetCorner(pointer, false);
       if (control !== hoveredControl) {
         hoveredControl = control;
         canvas.renderAll();
