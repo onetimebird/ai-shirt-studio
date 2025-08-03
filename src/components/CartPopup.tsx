@@ -176,7 +176,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                         className="h-10 px-3 bg-[#ffc439] hover:bg-[#e6b033] border-[#ffc439] hover:border-[#e6b033]"
                       >
                         <img 
-                          src="/lovable-uploads/52f373ed-d57c-457d-9811-9cf234a5927e.png" 
+                          src="/lovable-uploads/paypal-logo.png" 
                           alt="PayPal" 
                           className="h-4 object-contain"
                         />
@@ -200,9 +200,9 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                         className="h-10 px-3 bg-black hover:bg-gray-800 border-black hover:border-gray-800"
                       >
                         <img 
-                          src="/lovable-uploads/52f373ed-d57c-457d-9811-9cf234a5927e.png" 
+                          src="/lovable-uploads/apple-pay-logo.png" 
                           alt="Apple Pay" 
-                          className="h-4 object-contain"
+                          className="h-4 object-contain filter brightness-0 invert"
                         />
                       </Button>
                       
