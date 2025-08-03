@@ -12,22 +12,31 @@ const PRESET_COLORS = [
   "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", "#ffff00",
   "#ff00ff", "#00ffff", "#ffa500", "#800080", "#008000", "#ff69b4",
   "#ffc0cb", "#a52a2a", "#808080", "#000080", "#008080", "#800000",
-  "#ff6347", "#40e0d0", "#ee82ee", "#90ee90", "#ffb6c1", "#dda0dd"
+  "#ff6347", "#40e0d0", "#ee82ee", "#90ee90", "#ffb6c1", "#dda0dd",
+  "#87ceeb", "#deb887", "#5f9ea0", "#7fff00", "#d2691e", "#ff7f50",
+  "#6495ed", "#dc143c", "#00008b", "#008b8b", "#b8860b", "#a9a9a9"
 ];
 
 export const CustomColorPicker = ({ value, onChange, className = "" }: CustomColorPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [customColor, setCustomColor] = useState(value);
 
   const handlePresetClick = (color: string) => {
     onChange(color);
     setIsOpen(false);
   };
 
-  const handleCustomColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newColor = e.target.value;
-    setCustomColor(newColor);
-    onChange(newColor);
+  const handleHexInput = (hexValue: string) => {
+    // Allow typing # and hex characters
+    if (hexValue.startsWith('#') && /^#[0-9A-Fa-f]{0,6}$/.test(hexValue)) {
+      if (hexValue.length === 7) {
+        onChange(hexValue.toUpperCase());
+      }
+    } else if (!hexValue.startsWith('#') && /^[0-9A-Fa-f]{0,6}$/.test(hexValue)) {
+      const fullHex = '#' + hexValue;
+      if (fullHex.length === 7) {
+        onChange(fullHex.toUpperCase());
+      }
+    }
   };
 
   return (
@@ -60,28 +69,23 @@ export const CustomColorPicker = ({ value, onChange, className = "" }: CustomCol
           </div>
           
           <div>
-            <label className="text-sm font-medium mb-2 block">Custom Color</label>
+            <label className="text-sm font-medium mb-2 block">Custom Hex Color</label>
             <div className="flex gap-2 items-center">
-              <input
-                type="color"
-                value={customColor}
-                onChange={handleCustomColorChange}
-                className="w-12 h-8 border rounded cursor-pointer"
-                style={{ padding: 0 }}
+              <div 
+                className="w-12 h-8 border rounded flex-shrink-0"
+                style={{ backgroundColor: value }}
+                title={`Current color: ${value}`}
               />
               <input
                 type="text"
-                value={customColor}
-                onChange={(e) => {
-                  setCustomColor(e.target.value);
-                  if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
-                    onChange(e.target.value);
-                  }
-                }}
-                className="flex-1 px-2 py-1 border rounded text-sm"
+                value={value}
+                onChange={(e) => handleHexInput(e.target.value)}
+                className="flex-1 px-2 py-1 border rounded text-sm font-mono"
                 placeholder="#000000"
+                maxLength={7}
               />
             </div>
+            <p className="text-xs text-gray-500 mt-1">Enter hex color (e.g., #FF0000 for red)</p>
           </div>
         </div>
       </PopoverContent>
