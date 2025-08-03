@@ -139,7 +139,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-sm border-border/50 z-[70]">
+      <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-sm border-border/50">
         <div className="space-y-3">
           {/* Company Logo */}
           <div className="flex justify-center">
