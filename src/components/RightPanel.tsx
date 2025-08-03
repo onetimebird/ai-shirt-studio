@@ -742,7 +742,7 @@ and return a high-quality transparent PNG suitable for print.
                   <div className="flex items-center justify-between py-1">
                     <Label className="text-sm font-medium">Text Color</Label>
                     <div className="flex items-center gap-2">
-                       <Input
+                       <input
                          type="color"
                          value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
                          onChange={e => {
@@ -753,7 +753,8 @@ and return a high-quality transparent PNG suitable for print.
                              updateTextProperty('fill', e.target.value);
                            }
                          }}
-                         className="w-10 h-8 p-0 border rounded cursor-pointer"
+                         className="w-10 h-8 border rounded cursor-pointer"
+                         style={{ padding: 0 }}
                        />
                     </div>
                   </div>
@@ -766,15 +767,17 @@ and return a high-quality transparent PNG suitable for print.
                         {strokeWidth > 0 ? `${strokeWidth}px` : 'None'}
                       </span>
                       {strokeWidth > 0 && (
-                        <Input
-                          type="color"
-                          value={strokeColor}
-                          onChange={e => {
-                            setStrokeColor(e.target.value);
-                            updateTextProperty('stroke', e.target.value);
-                          }}
-                          className="w-8 h-7 p-0 border-0 rounded cursor-pointer"
-                        />
+                         <input
+                           type="color"
+                           value={strokeColor}
+                           onChange={e => {
+                             console.log('[RightPanel] Stroke color changed to:', e.target.value);
+                             setStrokeColor(e.target.value);
+                             updateTextProperty('stroke', e.target.value);
+                           }}
+                           className="w-8 h-7 border rounded cursor-pointer"
+                           style={{ padding: 0 }}
+                         />
                       )}
                     </div>
                   </div>
