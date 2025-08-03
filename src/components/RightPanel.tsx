@@ -13,6 +13,7 @@ import { removeBackground, loadImage } from "@/lib/backgroundRemoval";
 import { openAIService } from "@/services/openai";
 import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
+import { CustomColorPicker } from "@/components/CustomColorPicker";
 import { ProductSelector } from "@/components/ProductSelector";
 import {
   Type,
@@ -745,40 +746,15 @@ and return a high-quality transparent PNG suitable for print.
                   <div className="flex items-center justify-between py-1">
                     <Label className="text-sm font-medium">Text Color</Label>
                     <div className="flex items-center gap-2">
-                       <input
-                         type="color"
+                       <CustomColorPicker
                          value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
-                         onChange={e => {
-                           console.log('[RightPanel] onChange triggered with:', e.target.value);
-                           const newColor = e.target.value;
-                           setTextColor(newColor);
+                         onChange={(color) => {
+                           console.log('[RightPanel] CustomColorPicker changed to:', color);
+                           setTextColor(color);
                            if (selectedObject) {
-                             updateTextProperty('fill', newColor);
+                             updateTextProperty('fill', color);
                            }
                          }}
-                         onInput={e => {
-                           console.log('[RightPanel] onInput triggered with:', (e.target as HTMLInputElement).value);
-                           const newColor = (e.target as HTMLInputElement).value;
-                           setTextColor(newColor);
-                           if (selectedObject) {
-                             updateTextProperty('fill', newColor);
-                           }
-                         }}
-                         onBlur={e => {
-                           console.log('[RightPanel] onBlur triggered with:', e.target.value);
-                           const newColor = e.target.value;
-                           setTextColor(newColor);
-                           if (selectedObject) {
-                             updateTextProperty('fill', newColor);
-                           }
-                         }}
-                         className="w-10 h-8 border rounded cursor-pointer"
-                         style={{ 
-                           padding: 0,
-                           minWidth: '40px',
-                           minHeight: '32px'
-                         }}
-                         title="Click to select color"
                        />
                     </div>
                   </div>
