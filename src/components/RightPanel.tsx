@@ -767,17 +767,15 @@ and return a high-quality transparent PNG suitable for print.
                         {strokeWidth > 0 ? `${strokeWidth}px` : 'None'}
                       </span>
                       {strokeWidth > 0 && (
-                         <input
-                           type="color"
-                           value={strokeColor}
-                           onChange={e => {
-                             console.log('[RightPanel] Stroke color changed to:', e.target.value);
-                             setStrokeColor(e.target.value);
-                             updateTextProperty('stroke', e.target.value);
-                           }}
-                           className="w-8 h-7 border rounded cursor-pointer"
-                           style={{ padding: 0 }}
-                         />
+                        <CustomColorPicker
+                          value={strokeColor}
+                          onChange={(color) => {
+                            console.log('[RightPanel] Stroke color changed to:', color);
+                            setStrokeColor(color);
+                            updateTextProperty('stroke', color);
+                          }}
+                          className="w-8 h-7"
+                        />
                       )}
                     </div>
                   </div>
