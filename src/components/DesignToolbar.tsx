@@ -410,7 +410,15 @@ export const DesignToolbar = ({
                       }
                     }}
                     className="w-12 h-8 border rounded cursor-pointer"
-                    style={{ padding: 0 }}
+                    style={{ 
+                      padding: 0,
+                      WebkitAppearance: 'none',
+                      appearance: 'none',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                    title="Click to select color"
                   />
                 </div>
               </div>

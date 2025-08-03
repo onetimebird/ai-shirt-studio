@@ -751,21 +751,21 @@ and return a high-quality transparent PNG suitable for print.
                          onChange={e => {
                            console.log('[RightPanel] Color picker onChange triggered');
                            console.log('[RightPanel] New color value:', e.target.value);
-                           console.log('[RightPanel] Current textColor state:', textColor);
-                           console.log('[RightPanel] Selected object:', selectedObject);
                            setTextColor(e.target.value);
                            if (selectedObject) {
-                             console.log('[RightPanel] Updating selected object color');
                              updateTextProperty('fill', e.target.value);
-                           } else {
-                             console.log('[RightPanel] No selected object to update');
                            }
                          }}
-                         onClick={() => {
-                           console.log('[RightPanel] Color picker clicked');
-                         }}
                          className="w-10 h-8 border rounded cursor-pointer"
-                         style={{ padding: 0 }}
+                         style={{ 
+                           padding: 0,
+                           WebkitAppearance: 'none',
+                           appearance: 'none',
+                           border: 'none',
+                           borderRadius: '4px',
+                           cursor: 'pointer'
+                         }}
+                         title="Click to select color"
                        />
                     </div>
                   </div>
@@ -1122,17 +1122,19 @@ and return a high-quality transparent PNG suitable for print.
                         value={textColor}
                         onChange={e => {
                           console.log('[RightPanel] Bottom color picker onChange triggered');
-                          console.log('[RightPanel] Event target value:', e.target.value);
-                          console.log('[RightPanel] Current textColor before change:', textColor);
                           setTextColor(e.target.value);
                           updateTextProperty('fill', e.target.value);
                         }}
-                        onClick={() => {
-                          console.log('[RightPanel] Bottom color picker clicked');
-                          console.log('[RightPanel] Current value:', textColor);
-                        }}
                         className="w-12 h-8 border rounded cursor-pointer"
-                        style={{ padding: 0 }}
+                        style={{ 
+                          padding: 0,
+                          WebkitAppearance: 'none',
+                          appearance: 'none',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                        title="Click to select color"
                       />
                     </div>
 
