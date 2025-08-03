@@ -399,7 +399,7 @@ export const DesignToolbar = ({
 
                 <div className="flex items-center gap-2 ml-auto">
                   <span className="text-sm">Color:</span>
-                  <Input
+                  <input
                     type="color"
                     value={textColor}
                     onChange={(e) => {
@@ -409,7 +409,8 @@ export const DesignToolbar = ({
                         onUpdateTextProperties({ fill: e.target.value });
                       }
                     }}
-                    className="w-12 h-8 p-0 border-0"
+                    className="w-12 h-8 border rounded cursor-pointer"
+                    style={{ padding: 0 }}
                   />
                 </div>
               </div>
