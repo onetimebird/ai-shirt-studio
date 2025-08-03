@@ -87,11 +87,11 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
   const SocialButton = ({ 
     provider, 
-    icon, 
+    logoSrc, 
     label 
   }: { 
     provider: 'google' | 'facebook'; 
-    icon: string; 
+    logoSrc: string; 
     label: string; 
   }) => (
     <Button
@@ -100,7 +100,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       onClick={() => handleSocialAuth(provider)}
     >
       <div className="w-5 h-5 flex items-center justify-center">
-        <span className="text-xl">{icon}</span>
+        <img src={logoSrc} alt={`${provider} logo`} className="w-5 h-5 object-contain" />
       </div>
       {label}
     </Button>
@@ -116,38 +116,13 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         </DialogHeader>
         
         <div className="space-y-4">
-          {/* Social Login Buttons */}
-          <div className="space-y-3">
-            <SocialButton
-              provider="google"
-              icon="🔗"
-              label="Continue with Google"
+          {/* Company Logo */}
+          <div className="flex justify-center pb-2">
+            <img 
+              src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
+              alt="CoolShirt.Ai Logo" 
+              className="h-16 w-auto object-contain"
             />
-            <SocialButton
-              provider="facebook" 
-              icon="📘"
-              label="Continue with Facebook"
-            />
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3 h-12 text-foreground border-border hover:bg-accent/50"
-              disabled
-            >
-              <div className="w-5 h-5 flex items-center justify-center">
-                <span className="text-xl">🍎</span>
-              </div>
-              Continue with Apple
-              <span className="ml-auto text-xs text-muted-foreground">(Soon)</span>
-            </Button>
-          </div>
-
-          <div className="relative">
-            <Separator />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-background px-4 text-sm text-muted-foreground">
-                or
-              </span>
-            </div>
           </div>
 
           {/* Email Form */}
@@ -204,6 +179,40 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
               {loading ? "Please wait..." : (isSignUp ? "Create Account" : "Sign In")}
             </Button>
           </form>
+
+          <div className="relative">
+            <Separator />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-background px-4 text-sm text-muted-foreground">
+                or continue with
+              </span>
+            </div>
+          </div>
+
+          {/* Social Login Buttons */}
+          <div className="space-y-3">
+            <SocialButton
+              provider="google"
+              logoSrc="/lovable-uploads/4ba5e67d-f81c-403f-9053-5f21f4555c31.png"
+              label="Continue with Google"
+            />
+            <SocialButton
+              provider="facebook" 
+              logoSrc="/lovable-uploads/b13162d1-3f99-4a37-9aa9-2270208f101e.png"
+              label="Continue with Facebook"
+            />
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-3 h-12 text-foreground border-border hover:bg-accent/50"
+              disabled
+            >
+              <div className="w-5 h-5 flex items-center justify-center">
+                <img src="/lovable-uploads/20987df2-74e1-4dc3-af61-a729a615d183.png" alt="Apple logo" className="w-5 h-5 object-contain" />
+              </div>
+              Continue with Apple
+              <span className="ml-auto text-xs text-muted-foreground">(Soon)</span>
+            </Button>
+          </div>
 
           {/* Toggle Sign In/Sign Up */}
           <div className="text-center pt-4">
