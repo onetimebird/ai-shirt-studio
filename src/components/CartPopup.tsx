@@ -47,6 +47,51 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
       quantity: 1,
       price: 49.99,
       image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
+    },
+    {
+      id: "3",
+      name: "Vintage Tank Top",
+      color: "White",
+      size: "S",
+      quantity: 3,
+      price: 19.99,
+      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
+    },
+    {
+      id: "4",
+      name: "Designer Sweatshirt",
+      color: "Gray",
+      size: "XL",
+      quantity: 1,
+      price: 59.99,
+      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
+    },
+    {
+      id: "5",
+      name: "Sport Jersey",
+      color: "Red",
+      size: "L",
+      quantity: 2,
+      price: 34.99,
+      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
+    },
+    {
+      id: "6",
+      name: "Polo Shirt",
+      color: "Green",
+      size: "M",
+      quantity: 1,
+      price: 29.99,
+      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
+    },
+    {
+      id: "7",
+      name: "Long Sleeve Tee",
+      color: "Purple",
+      size: "S",
+      quantity: 4,
+      price: 27.99,
+      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
     }
   ]);
 
