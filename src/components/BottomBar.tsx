@@ -81,7 +81,7 @@ export const BottomBar = ({
         <div className="flex items-center gap-2">
           <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
           <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="w-56">
+            <SelectTrigger className="w-56 h-14 text-base">
               <SelectValue placeholder="Change Product">
                 {(() => {
                   const productMap: { [key: string]: string } = {
@@ -113,7 +113,7 @@ export const BottomBar = ({
         <div className="flex items-center gap-2">
           <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
           <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 h-14 text-base">
               <SelectValue placeholder="Change Color">
                 <div className="flex items-center gap-2">
                   <div 
@@ -145,15 +145,17 @@ export const BottomBar = ({
         <div className="flex items-center gap-2">
           <Button
             variant={decorationMethod === "screen-print" ? "default" : "outline"}
-            size="sm"
+            size="lg"
             onClick={() => onDecorationChange("screen-print")}
+            className="h-14 px-6 text-base"
           >
             Digital Print
           </Button>
           <Button
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
-            size="sm"
+            size="lg"
             onClick={() => onDecorationChange("embroidery")}
+            className="h-14 px-6 text-base"
           >
             Embroidery
           </Button>
@@ -206,7 +208,7 @@ export const BottomBar = ({
         <div className="flex items-center gap-2">
           {/* Product Selector */}
           <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="flex-1">
+            <SelectTrigger className="flex-1 h-12 text-sm">
               <SelectValue placeholder="Change Product">
                 {(() => {
                   const productMap: { [key: string]: string } = {
@@ -235,7 +237,7 @@ export const BottomBar = ({
 
           {/* Color Picker */}
           <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="flex-1">
+            <SelectTrigger className="flex-1 h-12 text-sm">
               <div className="flex items-center gap-1">
                 <div 
                   className="w-3 h-3 rounded border border-border" 
@@ -267,7 +269,7 @@ export const BottomBar = ({
             variant={decorationMethod === "screen-print" ? "default" : "outline"}
             size="sm"
             onClick={() => onDecorationChange("screen-print")}
-            className="flex-1"
+            className="flex-1 h-12 text-sm"
           >
             Digital Print
           </Button>
@@ -275,7 +277,7 @@ export const BottomBar = ({
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
             size="sm"
             onClick={() => onDecorationChange("embroidery")}
-            className="flex-1"
+            className="flex-1 h-12 text-sm"
           >
             Embroidery
           </Button>

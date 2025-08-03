@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const TopControls = () => {
 
   return (
-    <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
+    <div className="bg-gradient-card border-b border-border px-4 py-2 shadow-glass backdrop-blur-sm">
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between gap-4">
         {/* Logo */}
@@ -13,7 +13,7 @@ export const TopControls = () => {
           <img 
             src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
             alt="CoolShirt.Ai Logo" 
-            className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+            className="h-9 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
           />
         </div>
 
@@ -47,7 +47,7 @@ export const TopControls = () => {
           <img 
             src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
             alt="CoolShirt.Ai Logo" 
-            className="h-10 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+            className="h-7 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
           />
         </div>
 
