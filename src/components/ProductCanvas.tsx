@@ -90,16 +90,16 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       
       // Keep t-shirt at reasonable size within the larger canvas
       const isMobile = canvasWidth < 500;
-      // Increased mobile scale factor by 15% for better visibility
-      const scaleFactor = isMobile ? 0.92 : 0.9;
+      // Reduced scale factor to ensure t-shirt fits within viewport
+      const scaleFactor = isMobile ? 0.75 : 0.7;
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
       const scale = Math.min(scaleX, scaleY);
 
       // Set as background image - this keeps it behind all user content
-      // Position higher on desktop for better visibility
-      const topPosition = isMobile ? canvasHeight / 2 : canvasHeight * 0.45;
+      // Center the t-shirt properly within the smaller scale
+      const topPosition = canvasHeight / 2;
       
       img.set({
         scaleX: scale,

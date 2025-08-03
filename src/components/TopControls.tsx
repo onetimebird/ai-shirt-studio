@@ -34,7 +34,7 @@ export const TopControls = ({
           {/* Save Button */}
           <Button 
             variant="creative" 
-            size="sm"
+            size="lg"
             onClick={() => {
               const canvas = (window as any).designCanvas?.canvas;
               if (canvas) {
@@ -69,11 +69,19 @@ export const TopControls = ({
 
         {/* Right Side - Cart, User, Theme */}
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="glass" 
+            size="sm" 
+            className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
             <ShoppingCart className="w-4 h-4 mr-1" />
             Cart
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="glass" 
+            size="sm"
+            className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
             <User className="w-4 h-4 mr-1" />
             Sign In
           </Button>
@@ -128,10 +136,18 @@ export const TopControls = ({
           </Button>
 
           {/* Cart and User Icons */}
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="glass" 
+            size="sm"
+            className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
             <ShoppingCart className="w-4 h-4" />
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="glass" 
+            size="sm"
+            className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
+          >
             <User className="w-4 h-4" />
           </Button>
         </div>
