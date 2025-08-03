@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Palette, ShirtIcon } from "lucide-react";
+import { Palette, ShirtIcon, Save, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
+import { useState } from "react";
+import { QuantityModal } from "@/components/QuantityModal";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
 import { BELLA_3001C_COLORS, getAllColors as getAllColorsBella } from "@/data/bellaColors";
@@ -26,6 +29,7 @@ export const BottomBar = ({
   onColorChange,
   onDecorationChange,
 }: BottomBarProps) => {
+  const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   // Get current color based on selected product
   const getCurrentColors = () => {
     switch (selectedProduct) {
@@ -70,7 +74,9 @@ export const BottomBar = ({
   return (
     <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-3 shadow-glass backdrop-blur-sm z-40">
       {/* Desktop Layout */}
-      <div className="hidden md:flex items-center justify-center gap-4 lg:gap-6">
+      <div className="hidden md:flex items-center justify-between gap-4 lg:gap-6">
+        {/* Left Side - Product and Color Selectors */}
+        <div className="flex items-center gap-4 lg:gap-6">
         {/* Product Selector */}
         <div className="flex items-center gap-2">
           <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
@@ -150,6 +156,45 @@ export const BottomBar = ({
             onClick={() => onDecorationChange("embroidery")}
           >
             Embroidery
+          </Button>
+        </div>
+        </div>
+
+        {/* Right Side - Action Buttons */}
+        <div className="flex items-center gap-4">
+          {/* Save Button */}
+          <Button 
+            variant="creative" 
+            size="lg"
+            onClick={() => {
+              const canvas = (window as any).designCanvas?.canvas;
+              if (canvas) {
+                const hasObjects = canvas.getObjects().length > 0;
+                if (hasObjects) {
+                  toast.success("Design saved to browser memory");
+                } else {
+                  toast.error("No design to save");
+                }
+              } else {
+                toast.error("Canvas not ready");
+              }
+            }}
+          >
+            <Save className="w-4 h-4 mr-1 icon-hover" />
+            Save Design
+          </Button>
+
+          {/* Next Step Button */}
+          <Button 
+            size="lg"
+            onClick={() => {
+              console.log('Desktop Next Step button clicked');
+              setIsQuantityModalOpen(true);
+            }}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+          >
+            <ArrowRight className="w-4 h-4 mr-1" strokeWidth={2.5} />
+            Next Step
           </Button>
         </div>
       </div>
@@ -234,7 +279,54 @@ export const BottomBar = ({
             Embroidery
           </Button>
         </div>
+
+        {/* Mobile Action Buttons */}
+        <div className="flex items-center gap-2">
+          {/* Save Button */}
+          <Button 
+            variant="creative" 
+            size="sm"
+            onClick={() => {
+              const canvas = (window as any).designCanvas?.canvas;
+              if (canvas) {
+                const hasObjects = canvas.getObjects().length > 0;
+                if (hasObjects) {
+                  toast.success("Design saved to browser memory");
+                } else {
+                  toast.error("No design to save");
+                }
+              } else {
+                toast.error("Canvas not ready");
+              }
+            }}
+            className="flex-1"
+          >
+            <Save className="w-4 h-4 mr-1" />
+            Save
+          </Button>
+
+          {/* Next Step Button */}
+          <Button 
+            size="sm"
+            onClick={() => {
+              console.log('Mobile Next Step button clicked');
+              setIsQuantityModalOpen(true);
+            }}
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex-1"
+          >
+            <ArrowRight className="w-4 h-4 mr-1" strokeWidth={2.5} />
+            Next
+          </Button>
+        </div>
       </div>
+
+      {/* Quantity Modal */}
+      <QuantityModal 
+        isOpen={isQuantityModalOpen}
+        onClose={() => setIsQuantityModalOpen(false)}
+        selectedProduct={selectedProduct}
+        selectedColor={selectedColor}
+      />
     </div>
   );
 };

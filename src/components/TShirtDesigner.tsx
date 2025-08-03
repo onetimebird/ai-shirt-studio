@@ -92,10 +92,7 @@ export const TShirtDesigner = () => {
       
       {/* Top Controls Bar - Sticky */}
       <div className="sticky top-0 z-50 flex-shrink-0">
-        <TopControls
-          selectedProduct={selectedProduct}
-          selectedColor={selectedColor}
-        />
+        <TopControls />
       </div>
 
       {/* Main Content Area */}
