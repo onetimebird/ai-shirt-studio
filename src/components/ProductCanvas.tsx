@@ -283,7 +283,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.63)) / (fabricCanvas?.height || 1)) * 100}%`,
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.85)) / (fabricCanvas?.height || 1)) * 100}%`,
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
