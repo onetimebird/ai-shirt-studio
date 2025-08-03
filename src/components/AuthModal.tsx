@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -18,6 +18,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -66,7 +67,37 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
     }
   };
 
-  const handleSocialAuth = async (provider: 'google' | 'facebook') => {
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address to reset your password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password reset email sent",
+        description: "Check your email for a link to reset your password.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSocialAuth = async (provider: 'google' | 'facebook' | 'apple') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -109,20 +140,20 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-sm border-border/50">
-        <DialogHeader className="text-center pb-2">
-          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            {isSignUp ? "Create Account" : "Welcome Back"}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Company Logo */}
-          <div className="flex justify-center pb-2">
+          <div className="flex justify-center">
             <img 
               src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
               alt="CoolShirt.Ai Logo" 
-              className="h-16 w-auto object-contain"
+              className="h-12 w-auto object-contain"
             />
+          </div>
+          
+          <div className="text-center">
+            <h2 className="text-lg font-semibold text-foreground">
+              {isSignUp ? "Create Account" : "Welcome back"}
+            </h2>
           </div>
 
           {/* Email Form */}
@@ -144,7 +175,19 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                {!isSignUp && (
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="text-xs text-primary hover:text-primary/80 p-0 h-auto"
+                    onClick={handleForgotPassword}
+                  >
+                    Forgot password?
+                  </Button>
+                )}
+              </div>
               <div className="relative">
                 <Input
                   id="password"
@@ -171,6 +214,19 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
               </div>
             </div>
 
+            {!isSignUp && (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <Label htmlFor="remember" className="text-sm text-muted-foreground">
+                  Remember me
+                </Label>
+              </div>
+            )}
+
             <Button
               type="submit"
               className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
@@ -180,13 +236,8 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             </Button>
           </form>
 
-          <div className="relative">
-            <Separator />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-background px-4 text-sm text-muted-foreground">
-                or continue with
-              </span>
-            </div>
+          <div className="text-center py-4">
+            <span className="text-sm text-muted-foreground">or continue with</span>
           </div>
 
           {/* Social Login Buttons */}
@@ -204,13 +255,12 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             <Button
               variant="outline"
               className="w-full justify-start gap-3 h-12 text-foreground border-border hover:bg-accent/50"
-              disabled
+              onClick={() => handleSocialAuth('apple')}
             >
               <div className="w-5 h-5 flex items-center justify-center">
                 <img src="/lovable-uploads/20987df2-74e1-4dc3-af61-a729a615d183.png" alt="Apple logo" className="w-5 h-5 object-contain" />
               </div>
               Continue with Apple
-              <span className="ml-auto text-xs text-muted-foreground">(Soon)</span>
             </Button>
           </div>
 
