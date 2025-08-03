@@ -315,15 +315,21 @@ export const DesignCanvas = ({
             canvas.renderAll();
           },
           updateSelectedTextProperty: (property: string, value: any) => {
-            console.log(`Updating text property: ${property} = ${value}`);
+            console.log(`[DesignCanvas] updateSelectedTextProperty called: ${property} = ${value}`);
             const activeObject = canvas.getActiveObject();
+            console.log(`[DesignCanvas] Active object:`, activeObject);
+            console.log(`[DesignCanvas] Active object type:`, activeObject?.type);
+            
             if (activeObject && (activeObject.type === 'textbox' || activeObject.type === 'text')) {
-              console.log(`Found active text object, updating ${property}`);
+              console.log(`[DesignCanvas] Found active text object, current fill:`, (activeObject as any).fill);
+              console.log(`[DesignCanvas] Setting ${property} to:`, value);
               (activeObject as any).set(property, value);
               canvas.renderAll();
-              console.log(`Property ${property} updated successfully`);
+              console.log(`[DesignCanvas] After update, object fill:`, (activeObject as any).fill);
+              console.log(`[DesignCanvas] Property ${property} updated successfully`);
             } else {
-              console.log(`No active text object found. Active object:`, activeObject);
+              console.log(`[DesignCanvas] No active text object found or wrong type. Active object:`, activeObject);
+              console.log(`[DesignCanvas] Available objects:`, canvas.getObjects().map(o => ({ type: o.type, visible: o.visible })));
             }
           },
           textObjects: [],
