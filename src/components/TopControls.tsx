@@ -6,6 +6,7 @@ import { CartPopup } from "@/components/CartPopup";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
+import { useCart } from "@/contexts/CartContext";
 
 interface TopControlsProps {
   onAuthModalChange?: (isOpen: boolean) => void;
@@ -16,6 +17,9 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [cartModalOpen, setCartModalOpen] = useState(false);
+  const { getTotalItems } = useCart();
+
+  const totalItems = getTotalItems();
 
   useEffect(() => {
     // Get initial session
@@ -69,8 +73,17 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
               size="default" 
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
             >
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              Cart
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <ShoppingCart className="w-5 h-5" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                  )}
+                </div>
+                <span>Cart</span>
+              </div>
             </Button>
           </CartPopup>
           {user ? (
@@ -118,7 +131,14 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
               size="default"
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <div className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
+              </div>
             </Button>
           </CartPopup>
           {user ? (
