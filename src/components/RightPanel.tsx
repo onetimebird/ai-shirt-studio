@@ -55,10 +55,126 @@ interface RightPanelProps {
   uploadedFile?: File | null;
 }
 
-const fonts = [
-  "Arial", "Helvetica", "Times New Roman", "Georgia", "Impact",
-  "Comic Sans MS", "Trebuchet MS", "Verdana", "Courier New", "Palatino",
-  "Open Sans", "Roboto", "Lato", "Montserrat", "Oswald"
+const FONTS = [
+  // System Fonts
+  { name: "Arial", value: "Arial" },
+  { name: "Helvetica", value: "Helvetica" },
+  { name: "Impact", value: "Impact" },
+  
+  // Essential T-Shirt Design Fonts
+  { name: "Oswald", value: "Oswald" },
+  { name: "Anton", value: "Anton" },
+  { name: "Bebas Neue", value: "Bebas Neue" },
+  { name: "Montserrat", value: "Montserrat" },
+  { name: "Poppins", value: "Poppins" },
+  { name: "Roboto", value: "Roboto" },
+  { name: "Open Sans", value: "Open Sans" },
+  { name: "Lato", value: "Lato" },
+  { name: "Inter", value: "Inter" },
+  
+  // Collegiate & Athletic Fonts
+  { name: "Graduate", value: "Graduate" },
+  { name: "Alfa Slab One", value: "Alfa Slab One" },
+  { name: "Black Ops One", value: "Black Ops One" },
+  { name: "Staatliches", value: "Staatliches" },
+  { name: "Squada One", value: "Squada One" },
+  { name: "Big Shoulders Display", value: "Big Shoulders Display" },
+  { name: "Concert One", value: "Concert One" },
+  { name: "Press Start 2P", value: "Press Start 2P" },
+  { name: "Rajdhani", value: "Rajdhani" },
+  { name: "Play", value: "Play" },
+  { name: "Saira Condensed", value: "Saira Condensed" },
+  
+  // Bold Sports & Team Fonts
+  { name: "Russo One", value: "Russo One" },
+  { name: "Righteous", value: "Righteous" },
+  { name: "Archivo Black", value: "Archivo Black" },
+  { name: "Fjalla One", value: "Fjalla One" },
+  { name: "Fugaz One", value: "Fugaz One" },
+  { name: "Titan One", value: "Titan One" },
+  { name: "Bowlby One", value: "Bowlby One" },
+  { name: "Bungee", value: "Bungee" },
+  { name: "Bungee Shade", value: "Bungee Shade" },
+  { name: "Teko", value: "Teko" },
+  
+  // Fun & Decorative
+  { name: "Bangers", value: "Bangers" },
+  { name: "Fredoka One", value: "Fredoka One" },
+  { name: "Fredoka", value: "Fredoka" },
+  { name: "Permanent Marker", value: "Permanent Marker" },
+  { name: "Creepster", value: "Creepster" },
+  { name: "Passion One", value: "Passion One" },
+  { name: "Acme", value: "Acme" },
+  
+  // Script & Elegant
+  { name: "Pacifico", value: "Pacifico" },
+  { name: "Dancing Script", value: "Dancing Script" },
+  { name: "Lobster", value: "Lobster" },
+  { name: "Satisfy", value: "Satisfy" },
+  { name: "Playfair Display", value: "Playfair Display" },
+  
+  // Modern & Tech (Perfect for Esports)
+  { name: "Orbitron", value: "Orbitron" },
+  { name: "Audiowide", value: "Audiowide" },
+  { name: "Exo", value: "Exo" },
+  { name: "Michroma", value: "Michroma" },
+  { name: "Electrolize", value: "Electrolize" },
+  
+  // Clean & Professional
+  { name: "Nunito", value: "Nunito" },
+  { name: "Source Sans Pro", value: "Source Sans Pro" },
+  { name: "Ubuntu", value: "Ubuntu" },
+  { name: "Raleway", value: "Raleway" },
+  { name: "Work Sans", value: "Work Sans" },
+  { name: "Rubik", value: "Rubik" },
+  { name: "Barlow", value: "Barlow" },
+  { name: "Kanit", value: "Kanit" },
+  { name: "Saira", value: "Saira" },
+  { name: "Changa", value: "Changa" },
+  { name: "Roboto Condensed", value: "Roboto Condensed" },
+  
+  // Serif & Classic
+  { name: "Merriweather", value: "Merriweather" },
+  { name: "PT Sans", value: "PT Sans" },
+  { name: "Crimson Text", value: "Crimson Text" },
+  { name: "Abril Fatface", value: "Abril Fatface" },
+  
+  // Rounded & Friendly
+  { name: "Comfortaa", value: "Comfortaa" },
+  { name: "Quicksand", value: "Quicksand" },
+  { name: "Josefin Sans", value: "Josefin Sans" },
+  { name: "Kalam", value: "Kalam" },
+
+  // NEW: Advanced Collegiate/Athletic/Sports Fonts
+  { name: "Big Shoulders Stencil Display", value: "Big Shoulders Stencil Display" },
+  { name: "Alumni Sans", value: "Alumni Sans" },
+  { name: "Anton SC", value: "Anton SC" },
+  { name: "Bungee Outline", value: "Bungee Outline" },
+  { name: "Faster One", value: "Faster One" },
+  { name: "Chakra Petch", value: "Chakra Petch" },
+  { name: "Syncopate", value: "Syncopate" },
+  { name: "Kranky", value: "Kranky" },
+  { name: "Frijole", value: "Frijole" },
+  { name: "Metal Mania", value: "Metal Mania" },
+  { name: "Hanalei Fill", value: "Hanalei Fill" },
+  { name: "Bungee Hairline", value: "Bungee Hairline" },
+  { name: "Wallpoet", value: "Wallpoet" },
+  { name: "Eater", value: "Eater" },
+  { name: "Jolly Lodger", value: "Jolly Lodger" },
+  { name: "Griffy", value: "Griffy" },
+  { name: "Lacquer", value: "Lacquer" },
+  { name: "Rye", value: "Rye" },
+  { name: "UnifrakturCook", value: "UnifrakturCook" },
+  { name: "Fredericka the Great", value: "Fredericka the Great" },
+  { name: "Rammetto One", value: "Rammetto One" },
+  { name: "Covered By Your Grace", value: "Covered By Your Grace" },
+  { name: "Shadows Into Light", value: "Shadows Into Light" },
+  { name: "Special Elite", value: "Special Elite" },
+  { name: "Monoton", value: "Monoton" },
+  { name: "Megrim", value: "Megrim" },
+  { name: "Nosifer", value: "Nosifer" },
+  { name: "Butcherman", value: "Butcherman" },
+  { name: "New Rocker", value: "New Rocker" },
 ];
 
 const colors = [
@@ -118,7 +234,9 @@ and return a high-quality transparent PNG suitable for print.
 
   // Sync with selectedObject 
   useEffect(() => {
+    console.log('[RightPanel] selectedObject changed:', selectedObject?.type, selectedObject);
     if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
+      console.log('[RightPanel] Syncing text properties from selected object');
       setTextContent(selectedObject.text || "");
       setFontFamily(selectedObject.fontFamily || "Arial");
       setFontSize(selectedObject.fontSize || 24);
@@ -133,12 +251,19 @@ and return a high-quality transparent PNG suitable for print.
       setStrokeColor(selectedObject.stroke || "#000000");
       setStrokeWidth(selectedObject.strokeWidth || 0);
       setLetterSpacing(selectedObject.charSpacing || 0);
+      console.log('[RightPanel] Text properties synced, color is:', selectedObject.fill);
+    } else {
+      console.log('[RightPanel] No text object selected or wrong type');
     }
   }, [selectedObject]);
 
   const updateTextProperty = (property: string, value: any) => {
+    console.log('[RightPanel] updateTextProperty called:', property, value);
     if ((window as any).designCanvas?.updateSelectedTextProperty) {
+      console.log('[RightPanel] Calling updateSelectedTextProperty');
       (window as any).designCanvas.updateSelectedTextProperty(property, value);
+    } else {
+      console.log('[RightPanel] updateSelectedTextProperty method not found');
     }
   };
 
@@ -164,7 +289,7 @@ and return a high-quality transparent PNG suitable for print.
     const textObject = new FabricText(textContent, {
       left: fabricCanvas.width! / 2,
       top: fabricCanvas.height! / 2,
-      fontFamily,
+        fontFamily: fontFamily,
       fontSize,
       fill: textColor,
       fontWeight: isBold ? 'bold' : 'normal',
@@ -176,6 +301,8 @@ and return a high-quality transparent PNG suitable for print.
       editable: true,
       objectCaching: false,
     });
+    
+    console.log('[RightPanel] Created text object with fontFamily:', textObject.fontFamily);
 
     // For multi-line text, convert to textbox but with better sizing
     if (textContent.includes('\n')) {
@@ -578,8 +705,10 @@ and return a high-quality transparent PNG suitable for print.
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {fonts.map(f => (
-                            <SelectItem key={f} value={f} className="text-xs">{f}</SelectItem>
+                          {FONTS.map(font => (
+                            <SelectItem key={font.value} value={font.value} className="text-xs">
+                              <span style={{ fontFamily: font.value }}>{font.name}</span>
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -613,17 +742,20 @@ and return a high-quality transparent PNG suitable for print.
                   <div className="flex items-center justify-between py-1">
                     <Label className="text-sm font-medium">Text Color</Label>
                     <div className="flex items-center gap-2">
-                      <Input
-                        type="color"
-                        value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
-                        onChange={e => {
-                          setTextColor(e.target.value);
-                          if (selectedObject) {
-                            updateTextProperty('fill', e.target.value);
-                          }
-                        }}
-                        className="w-10 h-8 p-0 border rounded cursor-pointer"
-                      />
+                       <input
+                         type="color"
+                         value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
+                         onChange={e => {
+                           console.log('[RightPanel] Color changed to:', e.target.value);
+                           setTextColor(e.target.value);
+                           if (selectedObject) {
+                             console.log('[RightPanel] Updating selected object color');
+                             updateTextProperty('fill', e.target.value);
+                           }
+                         }}
+                         className="w-10 h-8 border rounded cursor-pointer"
+                         style={{ padding: 0 }}
+                       />
                     </div>
                   </div>
 
@@ -635,15 +767,17 @@ and return a high-quality transparent PNG suitable for print.
                         {strokeWidth > 0 ? `${strokeWidth}px` : 'None'}
                       </span>
                       {strokeWidth > 0 && (
-                        <Input
-                          type="color"
-                          value={strokeColor}
-                          onChange={e => {
-                            setStrokeColor(e.target.value);
-                            updateTextProperty('stroke', e.target.value);
-                          }}
-                          className="w-8 h-7 p-0 border-0 rounded cursor-pointer"
-                        />
+                         <input
+                           type="color"
+                           value={strokeColor}
+                           onChange={e => {
+                             console.log('[RightPanel] Stroke color changed to:', e.target.value);
+                             setStrokeColor(e.target.value);
+                             updateTextProperty('stroke', e.target.value);
+                           }}
+                           className="w-8 h-7 border rounded cursor-pointer"
+                           style={{ padding: 0 }}
+                         />
                       )}
                     </div>
                   </div>
@@ -949,8 +1083,10 @@ and return a high-quality transparent PNG suitable for print.
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {fonts.map(f => (
-                        <SelectItem key={f} value={f}>{f}</SelectItem>
+                      {FONTS.map(font => (
+                        <SelectItem key={font.value} value={font.value}>
+                          <span style={{ fontFamily: font.value }}>{font.name}</span>
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
