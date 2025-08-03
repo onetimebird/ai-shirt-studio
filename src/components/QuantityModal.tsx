@@ -173,6 +173,22 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
     const upchargeSizes = ['2XL', '3XL', '4XL', '5XL'];
     const sizeUpcharge = 3.00;
 
+    // Get current design data from canvas
+    const getDesignData = () => {
+      const canvas = (window as any).designCanvas?.canvas;
+      if (!canvas) return null;
+      
+      return {
+        canvasData: canvas.toJSON(),
+        currentSide: (window as any).designCanvas?.currentSide || 'front',
+        objects: canvas.getObjects().filter((obj: any) => obj.type !== 'image' || !obj.isBackground),
+        productType: selectedProduct,
+        productColor: selectedColor
+      };
+    };
+
+    const designData = getDesignData();
+
     // Convert quantities to cart items
     const cartItems = Object.entries(quantities)
       .filter(([size, qty]) => qty > 0)
@@ -185,7 +201,9 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
           size,
           quantity,
           price: finalPrice,
-          image: getProductImage(selectedProduct, selectedColor)
+          image: getProductImage(selectedProduct, selectedColor),
+          designData: designData,
+          designName: `${productData.name} - ${selectedColor.replace(/-/g, ' ')}`
         };
       });
 

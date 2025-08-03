@@ -118,6 +118,8 @@ export const TShirtDesigner = () => {
           onSideChange={setCurrentSide}
           isAuthModalOpen={isAuthModalOpen}
           isCartModalOpen={isCartModalOpen}
+          selectedProduct={selectedProduct}
+          selectedColor={selectedColor}
         />
             
             <div className="w-full max-w-4xl flex items-center justify-center">
