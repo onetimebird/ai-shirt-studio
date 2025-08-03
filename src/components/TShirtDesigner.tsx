@@ -23,6 +23,7 @@ export const TShirtDesigner = () => {
   const [textObjects, setTextObjects] = useState<any[]>([]);
   const [imageObjects, setImageObjects] = useState<any[]>([]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -92,7 +93,7 @@ export const TShirtDesigner = () => {
       
       {/* Top Controls Bar - Sticky */}
       <div className="sticky top-0 z-50 flex-shrink-0">
-        <TopControls />
+        <TopControls onAuthModalChange={setIsAuthModalOpen} />
       </div>
 
       {/* Main Content Area */}
@@ -114,6 +115,7 @@ export const TShirtDesigner = () => {
             <CanvasControls 
               currentSide={currentSide}
               onSideChange={setCurrentSide}
+              isAuthModalOpen={isAuthModalOpen}
             />
             
             <div className="w-full max-w-4xl flex items-center justify-center">
