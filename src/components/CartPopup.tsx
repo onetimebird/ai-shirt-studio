@@ -119,7 +119,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-[400px] bg-background/95 backdrop-blur-md border-border/50 flex flex-col h-full">
+      <SheetContent side="right" className="w-full sm:w-[400px] bg-background/95 backdrop-blur-md border-border/50 flex flex-col h-full pr-12">
         <SheetHeader className="space-y-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-xl font-semibold">Your Bag</SheetTitle>
