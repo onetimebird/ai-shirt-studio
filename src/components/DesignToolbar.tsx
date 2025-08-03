@@ -143,7 +143,46 @@ export const DesignToolbar = ({
   setTextAlign,
 }: DesignToolbarProps) => {
   const handleAddText = () => {
-    (window as any).designCanvas?.addText();
+    console.log('[DesignToolbar] Adding text with font:', fontFamily);
+    const fabricCanvas = (window as any).designCanvas?.canvas;
+    
+    if (!fabricCanvas) {
+      console.log('[DesignToolbar] Canvas not ready');
+      return;
+    }
+
+    // Import fabric classes and text controls
+    import('fabric').then(({ IText, Textbox }) => {
+      import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+        // Create text object with selected properties
+        const textObject = new IText(newText || "New Text", {
+          left: fabricCanvas.width! / 2,
+          top: fabricCanvas.height! / 2,
+          fontFamily: fontFamily,
+          fontSize: fontSize[0] || 24,
+          fill: textColor,
+          fontWeight: isBold ? 'bold' : 'normal',
+          fontStyle: isItalic ? 'italic' : 'normal',
+          underline: isUnderline,
+          textAlign: textAlign as any,
+          originX: 'center',
+          originY: 'center',
+          editable: true,
+          objectCaching: false,
+        });
+
+        console.log('[DesignToolbar] Created text with fontFamily:', textObject.fontFamily);
+        
+        fabricCanvas.add(textObject);
+        fabricCanvas.bringObjectToFront(textObject);
+        applyCustomControlsToObject(textObject);
+        fabricCanvas.setActiveObject(textObject);
+        fabricCanvas.renderAll();
+        
+        // Clear the input for next text
+        setNewText("");
+      });
+    });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
