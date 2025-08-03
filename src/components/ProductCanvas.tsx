@@ -175,7 +175,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '13%' : '18%',
+                top: window.innerWidth >= 768 ? '16%' : '21%',
                 width: '55%',
                 height: '50%',
                 border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
@@ -192,7 +192,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: window.innerWidth >= 768 ? '17%' : '22%',
+                top: window.innerWidth >= 768 ? '20%' : '25%',
                 width: '18%',
                 height: '15%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -209,7 +209,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '17%' : '22%',
+                top: window.innerWidth >= 768 ? '20%' : '25%',
                 width: '45%',
                 height: '34%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -225,7 +225,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: window.innerWidth >= 768 ? '13%' : '18%',
+                top: window.innerWidth >= 768 ? '16%' : '21%',
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
