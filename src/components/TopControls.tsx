@@ -75,7 +75,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
             >
               <div className="flex items-center gap-2">
                 {totalItems > 0 && (
-                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium animate-pulse">
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
@@ -131,7 +131,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
             >
               <div className="flex items-center gap-1">
                 {totalItems > 0 && (
-                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium animate-pulse">
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
