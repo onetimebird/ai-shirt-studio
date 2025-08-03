@@ -72,77 +72,83 @@ export const BottomBar = ({
   const currentColor = getCurrentColors().find(c => c.name === selectedColor);
 
   return (
-    <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-6 shadow-glass backdrop-blur-sm z-40">
+    <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-5 shadow-glass backdrop-blur-sm z-40">
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between gap-4 lg:gap-6">
         {/* Left Side - Product and Color Selectors */}
         <div className="flex items-center gap-4 lg:gap-6">
-        {/* Product Selector */}
-        <div className="flex items-center gap-2">
-          <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
-          <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="w-56 h-14 text-base">
-              <SelectValue placeholder="Change Product">
-                {(() => {
-                  const productMap: { [key: string]: string } = {
-                    'gildan-2000': 'Gildan 2000 Ultra Cotton T-Shirt',
-                    'gildan-64000': 'Gildan 64000 Softstyle T-Shirt',
-                    'bella-3001c': 'Bella 3001 Premium T-Shirt',
-                    'bella-6400': 'Bella 6400 Premium Women\'s Tee',
-                    'gildan-18000': 'Gildan 18000 Crewneck',
-                    'gildan-18500': 'Gildan 18500 Hoodie',
-                    'bella-3719': 'Bella 3719 Premium Hoodie'
-                  };
-                  return <span className="truncate block">{productMap[selectedProduct] || 'Select Product'}</span>;
-                })()}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="bg-background border border-border shadow-lg z-[120]">
-              <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
-              <SelectItem value="gildan-64000">Gildan 64000 Softstyle T-Shirt</SelectItem>
-              <SelectItem value="bella-3001c">Bella 3001 Premium T-Shirt</SelectItem>
-              <SelectItem value="bella-6400">Bella 6400 Premium Women's Tee</SelectItem>
-              <SelectItem value="gildan-18000">Gildan 18000 Crewneck</SelectItem>
-              <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
-              <SelectItem value="bella-3719">Bella 3719 Premium Hoodie</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          {/* Product Selector */}
+          <div className="flex items-center gap-2">
+            <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
+            <Select value={selectedProduct} onValueChange={onProductChange}>
+              <SelectTrigger className="w-56 h-14 text-base">
+                <SelectValue placeholder="Change Product">
+                  {(() => {
+                    const productMap: { [key: string]: string } = {
+                      'gildan-2000': 'Gildan 2000 Ultra Cotton T-Shirt',
+                      'gildan-64000': 'Gildan 64000 Softstyle T-Shirt',
+                      'bella-3001c': 'Bella 3001 Premium T-Shirt',
+                      'bella-6400': 'Bella 6400 Premium Women\'s Tee',
+                      'gildan-18000': 'Gildan 18000 Crewneck',
+                      'gildan-18500': 'Gildan 18500 Hoodie',
+                      'bella-3719': 'Bella 3719 Premium Hoodie'
+                    };
+                    return <span className="truncate block">{productMap[selectedProduct] || 'Select Product'}</span>;
+                  })()}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border shadow-lg z-[120]">
+                <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton T-Shirt</SelectItem>
+                <SelectItem value="gildan-64000">Gildan 64000 Softstyle T-Shirt</SelectItem>
+                <SelectItem value="bella-3001c">Bella 3001 Premium T-Shirt</SelectItem>
+                <SelectItem value="bella-6400">Bella 6400 Premium Women's Tee</SelectItem>
+                <SelectItem value="gildan-18000">Gildan 18000 Crewneck</SelectItem>
+                <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
+                <SelectItem value="bella-3719">Bella 3719 Premium Hoodie</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        {/* Color Picker */}
-        <div className="flex items-center gap-2">
-          <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
-          <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="w-48 h-14 text-base">
-              <SelectValue placeholder="Change Color">
-                <div className="flex items-center gap-2">
-                  <div 
-                    className="w-4 h-4 rounded border border-border" 
-                    style={{ backgroundColor: currentColor?.value }}
-                  />
-                  <span>{currentColor?.label}</span>
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
-              {getAllCurrentColors().map((color) => (
-                <SelectItem key={color.name} value={color.name}>
-                  <div className="flex items-center gap-2 w-full">
+          {/* Divider */}
+          <div className="h-12 w-px bg-border/50"></div>
+
+          {/* Color Picker */}
+          <div className="flex items-center gap-2">
+            <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
+            <Select value={selectedColor} onValueChange={onColorChange}>
+              <SelectTrigger className="w-48 h-14 text-base">
+                <SelectValue placeholder="Change Color">
+                  <div className="flex items-center gap-2">
                     <div 
-                      className="w-4 h-4 rounded border border-border flex-shrink-0" 
-                      style={{ backgroundColor: color.value }}
+                      className="w-4 h-4 rounded border border-border" 
+                      style={{ backgroundColor: currentColor?.value }}
                     />
-                    <span className="flex-1">{color.label}</span>
-                    {!color.available && <span className="text-xs text-muted-foreground">Coming Soon</span>}
+                    <span>{currentColor?.label}</span>
                   </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
+                {getAllCurrentColors().map((color) => (
+                  <SelectItem key={color.name} value={color.name}>
+                    <div className="flex items-center gap-2 w-full">
+                      <div 
+                        className="w-4 h-4 rounded border border-border flex-shrink-0" 
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span className="flex-1">{color.label}</span>
+                      {!color.available && <span className="text-xs text-muted-foreground">Coming Soon</span>}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Decoration Method */}
-        <div className="flex items-center gap-2">
+        {/* Center - Decoration Method */}
+        <div className="flex items-center gap-2 mx-8">
+          {/* Divider */}
+          <div className="h-12 w-px bg-border/50"></div>
           <Button
             variant={decorationMethod === "screen-print" ? "default" : "outline"}
             size="lg"
@@ -159,11 +165,15 @@ export const BottomBar = ({
           >
             Embroidery
           </Button>
-        </div>
+
+          {/* Divider */}
+          <div className="h-12 w-px bg-border/50"></div>
         </div>
 
         {/* Right Side - Action Buttons */}
         <div className="flex items-center gap-6">
+          {/* Divider */}
+          <div className="h-12 w-px bg-border/50"></div>
           {/* Save Button */}
           <Button 
             variant="creative" 
@@ -263,8 +273,8 @@ export const BottomBar = ({
           </Select>
         </div>
 
-        {/* Decoration Method */}
-        <div className="flex items-center gap-2">
+        {/* Decoration Method with dividers */}
+        <div className="flex items-center gap-2 border-y border-border/30 py-1">
           <Button
             variant={decorationMethod === "screen-print" ? "default" : "outline"}
             size="sm"
@@ -283,8 +293,8 @@ export const BottomBar = ({
           </Button>
         </div>
 
-        {/* Mobile Action Buttons */}
-        <div className="flex items-center gap-3">
+        {/* Mobile Action Buttons with dividers */}
+        <div className="flex items-center gap-3 border-y border-border/30 py-1">
           {/* Save Button */}
           <Button 
             variant="creative" 
