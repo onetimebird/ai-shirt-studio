@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const TopControls = () => {
 
   return (
-    <div className="bg-gradient-card border-b border-border px-4 py-2 shadow-glass backdrop-blur-sm">
+    <div className="bg-gradient-card border-b border-border px-4 py-4 shadow-glass backdrop-blur-sm">
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between gap-4">
         {/* Logo */}
@@ -13,7 +13,7 @@ export const TopControls = () => {
           <img 
             src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
             alt="CoolShirt.Ai Logo" 
-            className="h-9 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+            className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
           />
         </div>
 
@@ -22,18 +22,18 @@ export const TopControls = () => {
         <div className="flex items-center gap-3">
           <Button 
             variant="glass" 
-            size="sm" 
+            size="default" 
             className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
-            <ShoppingCart className="w-4 h-4 mr-1" />
+            <ShoppingCart className="w-5 h-5 mr-2" />
             Cart
           </Button>
           <Button 
             variant="glass" 
-            size="sm"
+            size="default"
             className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
-            <User className="w-4 h-4 mr-1" />
+            <User className="w-5 h-5 mr-2" />
             Sign In
           </Button>
           <ThemeToggle />
@@ -47,7 +47,7 @@ export const TopControls = () => {
           <img 
             src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
             alt="CoolShirt.Ai Logo" 
-            className="h-7 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+            className="h-10 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
           />
         </div>
 
@@ -56,17 +56,17 @@ export const TopControls = () => {
           {/* Cart and User Icons */}
           <Button 
             variant="glass" 
-            size="sm"
+            size="default"
             className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
-            <ShoppingCart className="w-4 h-4" />
+            <ShoppingCart className="w-5 h-5" />
           </Button>
           <Button 
             variant="glass" 
-            size="sm"
+            size="default"
             className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
-            <User className="w-4 h-4" />
+            <User className="w-5 h-5" />
           </Button>
         </div>
       </div>
