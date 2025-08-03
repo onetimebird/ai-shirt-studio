@@ -230,12 +230,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 color: 'white',
                 padding: '1px 4px',
                 borderRadius: '2px',
-                fontSize: '7px',
-                fontWeight: '400',
+                fontSize: window.innerWidth >= 768 ? '24px' : '7px',
+                fontWeight: window.innerWidth >= 768 ? 'bold' : '400',
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-4xl md:px-6 md:py-2 md:min-w-[140px] md:font-bold"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-4 md:py-1 md:min-w-[100px]"
             >
               Left Chest
             </div>
@@ -250,12 +250,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 color: 'white',
                 padding: '1px 4px',
                 borderRadius: '2px',
-                fontSize: '7px',
-                fontWeight: '400',
+                fontSize: window.innerWidth >= 768 ? '24px' : '7px',
+                fontWeight: window.innerWidth >= 768 ? 'bold' : '400',
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-4xl md:px-6 md:py-2 md:min-w-[140px] md:font-bold"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-4 md:py-1 md:min-w-[100px]"
             >
               Youth
             </div>
@@ -270,12 +270,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 color: 'white',
                 padding: '1px 4px',
                 borderRadius: '2px',
-                fontSize: '7px',
-                fontWeight: '400',
+                fontSize: window.innerWidth >= 768 ? '24px' : '7px',
+                fontWeight: window.innerWidth >= 768 ? 'bold' : '400',
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-4xl md:px-6 md:py-2 md:min-w-[140px] md:font-bold"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-4 md:py-1 md:min-w-[100px]"
             >
               Adult
             </div>
