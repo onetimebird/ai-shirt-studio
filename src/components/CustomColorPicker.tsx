@@ -61,73 +61,90 @@ export const CustomColorPicker = ({ value, onChange, className = "" }: CustomCol
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hueRef = useRef<HTMLCanvasElement>(null);
 
-  // Draw canvases when component mounts and when hue changes
+  // Force initial render of both canvases
   useEffect(() => {
-    const drawCanvases = () => {
+    const initializeCanvases = () => {
+      console.log('CustomColorPicker: Initializing canvases');
       const canvas = canvasRef.current;
       const hueCanvas = hueRef.current;
       
-      if (canvas && hueCanvas) {
-        const ctx = canvas.getContext('2d');
-        const hueCtx = hueCanvas.getContext('2d');
-        
-        if (ctx && hueCtx) {
-          // Draw main color area
-          const width = canvas.width;
-          const height = canvas.height;
-          
-          for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-              const s = x / width;
-              const v = 1 - (y / height);
-              const [r, g, b] = hsvToRgb(hue, s, v);
-              ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-              ctx.fillRect(x, y, 1, 1);
-            }
-          }
+      if (!canvas || !hueCanvas) {
+        console.log('CustomColorPicker: Canvases not ready yet');
+        return;
+      }
 
-          // Draw hue bar - ensure this is always drawn
-          const hueWidth = hueCanvas.width;
-          const hueHeight = hueCanvas.height;
-          
-          for (let x = 0; x < hueWidth; x++) {
-            const h = (x / hueWidth) * 360;
-            const [r, g, b] = hsvToRgb(h, 1, 1);
-            hueCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-            hueCtx.fillRect(x, 0, 1, hueHeight);
-          }
+      const ctx = canvas.getContext('2d');
+      const hueCtx = hueCanvas.getContext('2d');
+      
+      if (!ctx || !hueCtx) {
+        console.log('CustomColorPicker: Contexts not available');
+        return;
+      }
+
+      console.log('CustomColorPicker: Drawing hue bar');
+      // Always draw the hue bar first
+      const hueWidth = hueCanvas.width;
+      const hueHeight = hueCanvas.height;
+      
+      for (let x = 0; x < hueWidth; x++) {
+        const h = (x / hueWidth) * 360;
+        const [r, g, b] = hsvToRgb(h, 1, 1);
+        hueCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+        hueCtx.fillRect(x, 0, 1, hueHeight);
+      }
+
+      console.log('CustomColorPicker: Drawing main color area with hue:', hue);
+      // Draw main color area
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const s = x / width;
+          const v = 1 - (y / height);
+          const [r, g, b] = hsvToRgb(hue, s, v);
+          ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+          ctx.fillRect(x, y, 1, 1);
         }
       }
+      
+      console.log('CustomColorPicker: Canvas initialization complete');
     };
 
-    // Small delay to ensure canvases are ready
-    const timer = setTimeout(drawCanvases, 10);
-    return () => clearTimeout(timer);
-  }, [hue]);
-
-  // Initial draw on mount
-  useEffect(() => {
-    const drawInitialHueBar = () => {
-      const hueCanvas = hueRef.current;
-      if (hueCanvas) {
-        const hueCtx = hueCanvas.getContext('2d');
-        if (hueCtx) {
-          const hueWidth = hueCanvas.width;
-          const hueHeight = hueCanvas.height;
-          
-          for (let x = 0; x < hueWidth; x++) {
-            const h = (x / hueWidth) * 360;
-            const [r, g, b] = hsvToRgb(h, 1, 1);
-            hueCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-            hueCtx.fillRect(x, 0, 1, hueHeight);
-          }
-        }
-      }
+    // Try multiple times with different delays to ensure canvases are ready
+    const timer1 = setTimeout(initializeCanvases, 0);
+    const timer2 = setTimeout(initializeCanvases, 50);
+    const timer3 = setTimeout(initializeCanvases, 100);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
     };
-
-    const timer = setTimeout(drawInitialHueBar, 50);
-    return () => clearTimeout(timer);
   }, []);
+
+  // Update main color area when hue changes
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    console.log('CustomColorPicker: Updating color area for hue:', hue);
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const s = x / width;
+        const v = 1 - (y / height);
+        const [r, g, b] = hsvToRgb(hue, s, v);
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+  }, [hue]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
