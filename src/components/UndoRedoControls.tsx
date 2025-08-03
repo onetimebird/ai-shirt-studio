@@ -36,7 +36,7 @@ export const UndoRedoControls = () => {
 
   return (
     <div className="flex flex-col gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg">
-      <div className="relative group flex flex-col items-center">
+      <div className="relative group flex justify-center">
         <Button
           variant="ghost"
           size="sm"
@@ -72,10 +72,9 @@ export const UndoRedoControls = () => {
         >
           <Undo className="w-4 h-4" />
         </Button>
-        <span className="text-[8px] text-muted-foreground leading-none mt-0.5">Undo</span>
       </div>
 
-      <div className="relative group flex flex-col items-center">
+      <div className="relative group flex justify-center">
         <Button
           variant="ghost"
           size="sm"
@@ -111,7 +110,6 @@ export const UndoRedoControls = () => {
         >
           <Redo className="w-4 h-4" />
         </Button>
-        <span className="text-[8px] text-muted-foreground leading-none mt-0.5">Redo</span>
       </div>
     </div>
   );

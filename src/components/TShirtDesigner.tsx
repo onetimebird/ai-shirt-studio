@@ -357,9 +357,11 @@ export const TShirtDesigner = () => {
       <div className="flex-shrink-0">
         <BottomBar
           selectedProduct={selectedProduct}
-          onProductChange={setSelectedProduct}
           selectedColor={selectedColor}
+          decorationMethod={decorationMethod}
+          onProductChange={setSelectedProduct}
           onColorChange={setSelectedColor}
+          onDecorationChange={setDecorationMethod}
         />
       </div>
     </div>
