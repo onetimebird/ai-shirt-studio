@@ -35,7 +35,7 @@ export const UndoRedoControls = () => {
   }, [isDesignCanvasReady]);
 
   return (
-    <div className="flex flex-col gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg">
+    <div className="flex flex-col gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg w-16">
       <div className="relative group flex flex-col items-center py-0.5">
         <Button
           variant="ghost"
@@ -76,7 +76,10 @@ export const UndoRedoControls = () => {
       </div>
 
       {/* Subtle divider line */}
-      <div className="h-px bg-border/50 mx-1"></div>
+      {/* Embossed divider line */}
+      <div className="relative mx-1 my-0.5">
+        <div className="h-0.5 bg-border/30 border-t border-border/60 border-b border-background/60 shadow-inner"></div>
+      </div>
 
       <div className="relative group flex flex-col items-center py-0.5">
         <Button
