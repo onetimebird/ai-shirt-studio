@@ -9,11 +9,13 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface TopControlsProps {
   onAuthModalChange?: (isOpen: boolean) => void;
+  onCartModalChange?: (isOpen: boolean) => void;
 }
 
-export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
+export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControlsProps = {}) => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -40,6 +42,11 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
     onAuthModalChange?.(isOpen);
   };
 
+  const handleCartModalChange = (isOpen: boolean) => {
+    setCartModalOpen(isOpen);
+    onCartModalChange?.(isOpen);
+  };
+
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
       {/* Desktop Layout */}
@@ -56,7 +63,7 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
 
         {/* Right Side - Cart, User, Theme */}
         <div className="flex items-center gap-3">
-          <CartPopup>
+          <CartPopup onOpenChange={handleCartModalChange}>
             <Button 
               variant="glass" 
               size="default" 
@@ -105,7 +112,7 @@ export const TopControls = ({ onAuthModalChange }: TopControlsProps = {}) => {
         {/* Cart and User Actions */}
         <div className="flex items-center gap-2">
           {/* Cart and User Icons */}
-          <CartPopup>
+           <CartPopup onOpenChange={handleCartModalChange}>
             <Button 
               variant="glass" 
               size="default"

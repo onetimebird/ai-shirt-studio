@@ -17,10 +17,16 @@ interface CartItem {
 
 interface CartPopupProps {
   children: React.ReactNode;
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
-export const CartPopup = ({ children }: CartPopupProps) => {
+export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    onOpenChange?.(open);
+  };
   
   // Mock cart items - replace with actual cart state management
   const [cartItems, setCartItems] = useState<CartItem[]>([
@@ -64,7 +70,7 @@ export const CartPopup = ({ children }: CartPopupProps) => {
   const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isOpen} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
