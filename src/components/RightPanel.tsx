@@ -259,11 +259,14 @@ and return a high-quality transparent PNG suitable for print.
 
   const updateTextProperty = (property: string, value: any) => {
     console.log('[RightPanel] updateTextProperty called:', property, value);
+    console.log('[RightPanel] Current selectedObject:', selectedObject);
+    
     if ((window as any).designCanvas?.updateSelectedTextProperty) {
       console.log('[RightPanel] Calling updateSelectedTextProperty');
       (window as any).designCanvas.updateSelectedTextProperty(property, value);
     } else {
       console.log('[RightPanel] updateSelectedTextProperty method not found');
+      console.log('[RightPanel] Available methods:', Object.keys((window as any).designCanvas || {}));
     }
   };
 
@@ -1106,14 +1109,16 @@ and return a high-quality transparent PNG suitable for print.
                     {/* Color */}
                     <div>
                       <Label className="text-xs">Color</Label>
-                      <Input
+                      <input
                         type="color"
                         value={textColor}
                         onChange={e => {
+                          console.log('[RightPanel] Color picker changed to:', e.target.value);
                           setTextColor(e.target.value);
                           updateTextProperty('fill', e.target.value);
                         }}
-                        className="w-12 h-8 p-0 border-0"
+                        className="w-12 h-8 border rounded cursor-pointer"
+                        style={{ padding: 0 }}
                       />
                     </div>
 
