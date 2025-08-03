@@ -127,13 +127,15 @@ export const TopControls = ({
           <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
           <Select value={selectedColor} onValueChange={onColorChange}>
             <SelectTrigger className="w-36 lg:w-48 min-w-0">
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-4 h-4 rounded border border-border" 
-                  style={{ backgroundColor: currentColor?.value }}
-                />
-                <span>{currentColor?.label}</span>
-              </div>
+              <SelectValue placeholder="Change Color">
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-4 h-4 rounded border border-border" 
+                    style={{ backgroundColor: currentColor?.value }}
+                  />
+                  <span>{currentColor?.label}</span>
+                </div>
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="bg-background border border-border shadow-lg z-[120] max-h-80 overflow-y-auto">
               {getAllCurrentColors().map((color) => (
