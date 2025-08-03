@@ -246,7 +246,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
           {/* Product Display */}
           <div className="flex items-center gap-2 lg:gap-4 p-1.5 lg:p-4 bg-muted/30 rounded-lg mb-2 lg:mb-6">
             <img 
-              src="/lovable-uploads/adad2959-903a-4b3a-864e-6bc78cf5bfa1.png" 
+              src={getProductImage(selectedProduct, selectedColor)} 
               alt="T-shirt" 
               className="w-8 h-8 lg:w-16 lg:h-16 object-contain"
             />
