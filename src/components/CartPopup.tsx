@@ -174,22 +174,13 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                     Checkout
                   </Button>
                   
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Go to Cart
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="flex-1"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Keep Designing
-                    </Button>
-                  </div>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full"
+                    onClick={() => handleOpenChange(false)}
+                  >
+                    Keep Designing
+                  </Button>
                 </div>
               </div>
             </>
