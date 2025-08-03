@@ -72,7 +72,7 @@ export const BottomBar = ({
   const currentColor = getCurrentColors().find(c => c.name === selectedColor);
 
   return (
-    <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-3 shadow-glass backdrop-blur-sm z-40">
+    <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-6 shadow-glass backdrop-blur-sm z-40">
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between gap-4 lg:gap-6">
         {/* Left Side - Product and Color Selectors */}
@@ -161,7 +161,7 @@ export const BottomBar = ({
         </div>
 
         {/* Right Side - Action Buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           {/* Save Button */}
           <Button 
             variant="creative" 
@@ -179,21 +179,22 @@ export const BottomBar = ({
                 toast.error("Canvas not ready");
               }
             }}
+            className="text-base px-6 py-3 h-12"
           >
-            <Save className="w-4 h-4 mr-1 icon-hover" />
+            <Save className="w-5 h-5 mr-2 icon-hover" />
             Save Design
           </Button>
 
-          {/* Next Step Button */}
+          {/* Next Step Button - 1.5x larger */}
           <Button 
             size="lg"
             onClick={() => {
               console.log('Desktop Next Step button clicked');
               setIsQuantityModalOpen(true);
             }}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-lg px-8 py-4 h-16 min-w-[200px]"
           >
-            <ArrowRight className="w-4 h-4 mr-1" strokeWidth={2.5} />
+            <ArrowRight className="w-6 h-6 mr-3" strokeWidth={2.5} />
             Next Step
           </Button>
         </div>
@@ -281,7 +282,7 @@ export const BottomBar = ({
         </div>
 
         {/* Mobile Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {/* Save Button */}
           <Button 
             variant="creative" 
@@ -299,22 +300,22 @@ export const BottomBar = ({
                 toast.error("Canvas not ready");
               }
             }}
-            className="flex-1"
+            className="flex-1 text-sm px-4 py-3 h-12"
           >
-            <Save className="w-4 h-4 mr-1" />
+            <Save className="w-4 h-4 mr-2" />
             Save
           </Button>
 
-          {/* Next Step Button */}
+          {/* Next Step Button - 1.5x larger on mobile */}
           <Button 
             size="sm"
             onClick={() => {
               console.log('Mobile Next Step button clicked');
               setIsQuantityModalOpen(true);
             }}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex-1"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 flex-[1.5] text-sm px-6 py-3 h-12 min-w-[120px]"
           >
-            <ArrowRight className="w-4 h-4 mr-1" strokeWidth={2.5} />
+            <ArrowRight className="w-5 h-5 mr-2" strokeWidth={2.5} />
             Next
           </Button>
         </div>
