@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface AuthModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { theme } = useTheme();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -258,7 +260,14 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
               onClick={() => handleSocialAuth('apple')}
             >
               <div className="w-5 h-5 flex items-center justify-center">
-                <img src="/lovable-uploads/20987df2-74e1-4dc3-af61-a729a615d183.png" alt="Apple logo" className="w-5 h-5 object-contain" />
+                <img 
+                  src={theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) 
+                    ? "/lovable-uploads/0795ed3e-347a-489f-93c5-894f19bddf3f.png" 
+                    : "/lovable-uploads/20987df2-74e1-4dc3-af61-a729a615d183.png"
+                  } 
+                  alt="Apple logo" 
+                  className="w-5 h-5 object-contain" 
+                />
               </div>
               Continue with Apple
             </Button>
