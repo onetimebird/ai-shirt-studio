@@ -255,7 +255,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-xs md:px-2 md:py-1"
             >
               Youth
             </div>
@@ -275,7 +275,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                 zIndex: 101,
                 pointerEvents: 'none'
               }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite]"
+              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:text-xs md:px-2 md:py-1"
             >
               Adult
             </div>

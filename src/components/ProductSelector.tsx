@@ -447,10 +447,10 @@ export function ProductSelector({
                         <div key={color} className="relative group">
                           <button
                             onClick={() => handleColorSelect(color)}
-                            className={`w-6 h-6 rounded-md transition-all duration-200 border cursor-pointer ${
+                            className={`w-6 h-6 rounded-md transition-all duration-200 border cursor-pointer shimmer-hover ${
                               color === selectedColor 
                                 ? 'border-green-500 shadow-lg scale-110' 
-                                : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                                : 'border-gray-300 hover:border-gray-400 hover:scale-105 hover:shadow-md'
                             }`}
                             style={{ backgroundColor: colorMap[color] || '#ccc' }}
                           >
