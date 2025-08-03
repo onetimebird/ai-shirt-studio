@@ -47,27 +47,72 @@ const FONTS = [
   { name: "Montserrat", value: "Montserrat" },
   { name: "Poppins", value: "Poppins" },
   { name: "Roboto", value: "Roboto" },
+  { name: "Open Sans", value: "Open Sans" },
+  { name: "Lato", value: "Lato" },
+  { name: "Inter", value: "Inter" },
   
   // Collegiate & Athletic
   { name: "Graduate", value: "Graduate" },
   { name: "Alfa Slab One", value: "Alfa Slab One" },
   { name: "Black Ops One", value: "Black Ops One" },
   { name: "Staatliches", value: "Staatliches" },
+  { name: "Squada One", value: "Squada One" },
   
   // Bold & Strong
   { name: "Russo One", value: "Russo One" },
   { name: "Righteous", value: "Righteous" },
   { name: "Archivo Black", value: "Archivo Black" },
   { name: "Fjalla One", value: "Fjalla One" },
+  { name: "Fugaz One", value: "Fugaz One" },
+  { name: "Titan One", value: "Titan One" },
+  { name: "Bowlby One", value: "Bowlby One" },
   
   // Fun & Decorative
   { name: "Bangers", value: "Bangers" },
   { name: "Fredoka One", value: "Fredoka One" },
   { name: "Permanent Marker", value: "Permanent Marker" },
+  { name: "Creepster", value: "Creepster" },
+  { name: "Bungee", value: "Bungee" },
+  { name: "Passion One", value: "Passion One" },
+  { name: "Acme", value: "Acme" },
   
-  // Script
+  // Script & Elegant
   { name: "Pacifico", value: "Pacifico" },
   { name: "Dancing Script", value: "Dancing Script" },
+  { name: "Lobster", value: "Lobster" },
+  { name: "Satisfy", value: "Satisfy" },
+  { name: "Playfair Display", value: "Playfair Display" },
+  
+  // Modern & Tech
+  { name: "Orbitron", value: "Orbitron" },
+  { name: "Audiowide", value: "Audiowide" },
+  { name: "Exo", value: "Exo" },
+  { name: "Teko", value: "Teko" },
+  
+  // Clean & Professional
+  { name: "Nunito", value: "Nunito" },
+  { name: "Source Sans Pro", value: "Source Sans Pro" },
+  { name: "Ubuntu", value: "Ubuntu" },
+  { name: "Raleway", value: "Raleway" },
+  { name: "Work Sans", value: "Work Sans" },
+  { name: "Rubik", value: "Rubik" },
+  { name: "Barlow", value: "Barlow" },
+  { name: "Kanit", value: "Kanit" },
+  { name: "Saira", value: "Saira" },
+  { name: "Changa", value: "Changa" },
+  { name: "Roboto Condensed", value: "Roboto Condensed" },
+  
+  // Serif & Classic
+  { name: "Merriweather", value: "Merriweather" },
+  { name: "PT Sans", value: "PT Sans" },
+  { name: "Crimson Text", value: "Crimson Text" },
+  { name: "Abril Fatface", value: "Abril Fatface" },
+  
+  // Rounded & Friendly
+  { name: "Comfortaa", value: "Comfortaa" },
+  { name: "Quicksand", value: "Quicksand" },
+  { name: "Josefin Sans", value: "Josefin Sans" },
+  { name: "Kalam", value: "Kalam" },
 ];
 
 export const DesignToolbar = ({
