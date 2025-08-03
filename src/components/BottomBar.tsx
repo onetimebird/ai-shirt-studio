@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Palette, ShirtIcon, Save, ArrowRight } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Palette, ShirtIcon, Save, ArrowRight, FolderOpen } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QuantityModal } from "@/components/QuantityModal";
+import { SaveDesignModal } from "@/components/SaveDesignModal";
+import { SavedDesignsPanel } from "@/components/SavedDesignsPanel";
+import { supabase } from "@/integrations/supabase/client";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
 import { BELLA_3001C_COLORS, getAllColors as getAllColorsBella } from "@/data/bellaColors";
@@ -30,6 +34,26 @@ export const BottomBar = ({
   onDecorationChange,
 }: BottomBarProps) => {
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isLoadPanelOpen, setIsLoadPanelOpen] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsUserLoggedIn(!!user);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsUserLoggedIn(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   // Get current color based on selected product
   const getCurrentColors = () => {
     switch (selectedProduct) {
@@ -70,6 +94,70 @@ export const BottomBar = ({
   };
 
   const currentColor = getCurrentColors().find(c => c.name === selectedColor);
+
+  // Helper functions for design operations
+  const getDesignData = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return null;
+    
+    return {
+      canvasData: canvas.toJSON(),
+      currentSide: (window as any).designCanvas?.currentSide || 'front',
+      objects: canvas.getObjects().filter((obj: any) => obj.type !== 'image' || !obj.isBackground),
+      productType: selectedProduct,
+      productColor: selectedColor
+    };
+  };
+
+  const loadDesignData = (designData: any) => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas || !designData) return;
+
+    // Clear current objects except background
+    const objects = canvas.getObjects();
+    objects.forEach((obj: any) => {
+      if (!obj.isBackground) {
+        canvas.remove(obj);
+      }
+    });
+
+    // Load the saved design
+    if (designData.canvasData) {
+      canvas.loadFromJSON(designData.canvasData, () => {
+        canvas.renderAll();
+      });
+    }
+  };
+
+  const generatePreviewImage = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return undefined;
+    return canvas.toDataURL({ format: 'png', quality: 0.8 });
+  };
+
+  const handleSaveDesign = () => {
+    if (!isUserLoggedIn) {
+      toast.error("Please log in to save designs");
+      return;
+    }
+    
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) {
+      toast.error("Canvas not ready");
+      return;
+    }
+    
+    const hasObjects = canvas.getObjects().some((obj: any) => 
+      obj.type !== 'image' || !obj.isBackground
+    );
+    
+    if (!hasObjects) {
+      toast.error("No design to save");
+      return;
+    }
+    
+    setIsSaveModalOpen(true);
+  };
 
   return (
     <div className="sticky bottom-0 bg-gradient-card border-t border-border px-4 py-4 shadow-glass backdrop-blur-sm z-40">
@@ -163,29 +251,42 @@ export const BottomBar = ({
         </div>
 
         {/* Right Side - Action Buttons */}
-        <div className="flex items-center gap-6">
-          {/* Save Button */}
+        <div className="flex items-center gap-4">
+          {/* Save Design Button */}
           <Button 
             variant="creative" 
             size="lg"
-            onClick={() => {
-              const canvas = (window as any).designCanvas?.canvas;
-              if (canvas) {
-                const hasObjects = canvas.getObjects().length > 0;
-                if (hasObjects) {
-                  toast.success("Design saved to browser memory");
-                } else {
-                  toast.error("No design to save");
-                }
-              } else {
-                toast.error("Canvas not ready");
-              }
-            }}
+            onClick={handleSaveDesign}
             className="text-base px-6 py-3 h-12"
           >
             <Save className="w-5 h-5 mr-2 icon-hover" />
             Save Design
           </Button>
+
+          {/* Load Design Button - Only shown when logged in */}
+          {isUserLoggedIn && (
+            <Sheet open={isLoadPanelOpen} onOpenChange={setIsLoadPanelOpen}>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="text-base px-6 py-3 h-12"
+                >
+                  <FolderOpen className="w-5 h-5 mr-2" />
+                  Load Design
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:w-[400px]">
+                <SheetHeader>
+                  <SheetTitle>Load Design</SheetTitle>
+                </SheetHeader>
+                <SavedDesignsPanel 
+                  onLoadDesign={loadDesignData}
+                  onClose={() => setIsLoadPanelOpen(false)}
+                />
+              </SheetContent>
+            </Sheet>
+          )}
 
           {/* Next Step Button - 1.5x larger */}
           <Button 
@@ -284,29 +385,42 @@ export const BottomBar = ({
         </div>
 
         {/* Mobile Action Buttons with dividers */}
-        <div className="flex items-center gap-3">
-          {/* Save Button */}
+        <div className="flex items-center gap-2">
+          {/* Save Design Button */}
           <Button 
             variant="creative" 
             size="sm"
-            onClick={() => {
-              const canvas = (window as any).designCanvas?.canvas;
-              if (canvas) {
-                const hasObjects = canvas.getObjects().length > 0;
-                if (hasObjects) {
-                  toast.success("Design saved to browser memory");
-                } else {
-                  toast.error("No design to save");
-                }
-              } else {
-                toast.error("Canvas not ready");
-              }
-            }}
+            onClick={handleSaveDesign}
             className="flex-1 text-sm px-4 py-3 h-12"
           >
             <Save className="w-4 h-4 mr-2" />
             Save
           </Button>
+
+          {/* Load Design Button - Only shown when logged in */}
+          {isUserLoggedIn && (
+            <Sheet open={isLoadPanelOpen} onOpenChange={setIsLoadPanelOpen}>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex-1 text-sm px-4 py-3 h-12"
+                >
+                  <FolderOpen className="w-4 h-4 mr-2" />
+                  Load
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:w-[400px]">
+                <SheetHeader>
+                  <SheetTitle>Load Design</SheetTitle>
+                </SheetHeader>
+                <SavedDesignsPanel 
+                  onLoadDesign={loadDesignData}
+                  onClose={() => setIsLoadPanelOpen(false)}
+                />
+              </SheetContent>
+            </Sheet>
+          )}
 
           {/* Next Step Button - 1.5x larger on mobile */}
           <Button 
@@ -329,6 +443,16 @@ export const BottomBar = ({
         onClose={() => setIsQuantityModalOpen(false)}
         selectedProduct={selectedProduct}
         selectedColor={selectedColor}
+      />
+
+      {/* Save Design Modal */}
+      <SaveDesignModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        designData={getDesignData()}
+        productType={selectedProduct}
+        productColor={selectedColor}
+        previewImage={generatePreviewImage()}
       />
     </div>
   );
