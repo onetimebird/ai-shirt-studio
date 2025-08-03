@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const TopControls = () => {
 
   return (
-    <div className="bg-gradient-card border-b border-border px-4 py-4 shadow-glass backdrop-blur-sm">
+    <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
       {/* Desktop Layout */}
       <div className="hidden md:flex items-center justify-between gap-4">
         {/* Logo */}
