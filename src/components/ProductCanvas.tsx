@@ -167,9 +167,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '10%' : '15%',
+                top: `${(tshirtDimensions.top / (fabricCanvas?.height || 1)) * 100}%`,
                 width: window.innerWidth >= 768 ? '3px' : '1px',
-                height: '70%',
+                height: `${((tshirtDimensions.height * tshirtDimensions.scale * 0.85) / (fabricCanvas?.height || 1)) * 100}%`,
                 backgroundColor: '#22c55e',
                 transform: 'translateX(-50%)',
                 zIndex: 100,
