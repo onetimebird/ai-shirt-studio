@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, X, Check, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useCart } from "@/contexts/CartContext";
 
 // Import the products data for pricing
 const products = [
@@ -64,6 +65,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
   const [hasCalculated, setHasCalculated] = useState(false);
   const [hasFrontDesign, setHasFrontDesign] = useState(false);
   const [hasBackDesign, setHasBackDesign] = useState(false);
+  const { addToCart } = useCart();
 
   const adultSizes = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
   const youthSizes = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
@@ -159,8 +161,34 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
   };
 
   const handleAddToCart = () => {
-    // Future cart functionality
-    toast.success("Added to cart!");
+    if (getTotalQuantity() === 0) {
+      toast.error("Please select at least one item");
+      return;
+    }
+
+    const productData = getProductData();
+    const unitPrice = (hasFrontDesign && hasBackDesign) ? productData.frontBackPrice : productData.frontOnlyPrice;
+    const upchargeSizes = ['2XL', '3XL', '4XL', '5XL'];
+    const sizeUpcharge = 3.00;
+
+    // Convert quantities to cart items
+    const cartItems = Object.entries(quantities)
+      .filter(([size, qty]) => qty > 0)
+      .map(([size, quantity]) => {
+        const finalPrice = upchargeSizes.includes(size) ? unitPrice + sizeUpcharge : unitPrice;
+        return {
+          productId: selectedProduct,
+          name: productData.name,
+          color: selectedColor.replace(/-/g, ' '),
+          size,
+          quantity,
+          price: finalPrice,
+          image: "/lovable-uploads/adad2959-903a-4b3a-864e-6bc78cf5bfa1.png"
+        };
+      });
+
+    addToCart(cartItems);
+    toast.success(`Added ${getTotalQuantity()} items to cart!`);
     onClose();
   };
 

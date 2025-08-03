@@ -4,16 +4,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { X, ShoppingCart, Trash2 } from "lucide-react";
-
-interface CartItem {
-  id: string;
-  name: string;
-  color: string;
-  size: string;
-  quantity: number;
-  price: number;
-  image: string;
-}
+import { useCart } from "@/contexts/CartContext";
 
 interface CartPopupProps {
   children: React.ReactNode;
@@ -22,97 +13,15 @@ interface CartPopupProps {
 
 export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { cartItems, removeItem, updateQuantity, getTotalItems, getTotalPrice } = useCart();
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     onOpenChange?.(open);
   };
-  
-  // Mock cart items - replace with actual cart state management
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: "1",
-      name: "Premium T-Shirt",
-      color: "Navy Blue",
-      size: "M",
-      quantity: 2,
-      price: 24.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    },
-    {
-      id: "2", 
-      name: "Classic Hoodie",
-      color: "Black",
-      size: "L",
-      quantity: 1,
-      price: 49.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    },
-    {
-      id: "3",
-      name: "Vintage Tank Top",
-      color: "White",
-      size: "S",
-      quantity: 3,
-      price: 19.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    },
-    {
-      id: "4",
-      name: "Designer Sweatshirt",
-      color: "Gray",
-      size: "XL",
-      quantity: 1,
-      price: 59.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    },
-    {
-      id: "5",
-      name: "Sport Jersey",
-      color: "Red",
-      size: "L",
-      quantity: 2,
-      price: 34.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    },
-    {
-      id: "6",
-      name: "Polo Shirt",
-      color: "Green",
-      size: "M",
-      quantity: 1,
-      price: 29.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    },
-    {
-      id: "7",
-      name: "Long Sleeve Tee",
-      color: "Purple",
-      size: "S",
-      quantity: 4,
-      price: 27.99,
-      image: "/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png"
-    }
-  ]);
 
-  const removeItem = (id: string) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
-  const updateQuantity = (id: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    setCartItems(items => 
-      items.map(item => 
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const totalItems = getTotalItems();
+  const totalPrice = getTotalPrice();
 
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
