@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, User } from "lucide-react";
+import { ShoppingBag, User } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AuthModal } from "@/components/AuthModal";
 import { CartPopup } from "@/components/CartPopup";
@@ -71,18 +71,21 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
             <Button 
               variant="glass" 
               size="default" 
-              className={`relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-all duration-300 ${totalItems > 0 ? 'shadow-[0_0_20px_rgba(168,85,247,0.4)] border-purple-400/50' : ''}`}
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${totalItems > 0 ? 'text-purple-500' : ''}`} />
+                  <ShoppingBag className="w-5 h-5" />
                   {totalItems > 0 && (
-                    <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-purple-600 pointer-events-none">
-                      {totalItems > 99 ? '99+' : totalItems}
-                    </span>
+                    <>
+                      <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-foreground pointer-events-none">
+                        {totalItems > 99 ? '99+' : totalItems}
+                      </span>
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+                    </>
                   )}
                 </div>
-                <span className={`transition-colors duration-300 ${totalItems > 0 ? 'text-purple-600' : ''}`}>Cart</span>
+                <span>Cart</span>
               </div>
             </Button>
           </CartPopup>
@@ -129,14 +132,17 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
             <Button 
               variant="glass" 
               size="default"
-              className={`relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-all duration-300 ${totalItems > 0 ? 'shadow-[0_0_20px_rgba(168,85,247,0.4)] border-purple-400/50' : ''}`}
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
               <div className="relative">
-                <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${totalItems > 0 ? 'text-purple-500' : ''}`} />
+                <ShoppingBag className="w-5 h-5" />
                 {totalItems > 0 && (
-                  <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-purple-600 pointer-events-none">
-                    {totalItems > 99 ? '99+' : totalItems}
-                  </span>
+                  <>
+                    <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-foreground pointer-events-none">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
+                  </>
                 )}
               </div>
             </Button>
