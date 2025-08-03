@@ -71,16 +71,18 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
             <Button 
               variant="glass" 
               size="default" 
-              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+              className={`relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-all duration-300 ${totalItems > 0 ? 'shadow-[0_0_20px_rgba(168,85,247,0.4)] border-purple-400/50' : ''}`}
             >
               <div className="flex items-center gap-2">
-                {totalItems > 0 && (
-                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                    {totalItems > 99 ? '99+' : totalItems}
-                  </span>
-                )}
-                <ShoppingCart className="w-5 h-5" />
-                <span>Cart</span>
+                <div className="relative">
+                  <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${totalItems > 0 ? 'text-purple-500' : ''}`} />
+                  {totalItems > 0 && (
+                    <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-purple-600 pointer-events-none">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                  )}
+                </div>
+                <span className={`transition-colors duration-300 ${totalItems > 0 ? 'text-purple-600' : ''}`}>Cart</span>
               </div>
             </Button>
           </CartPopup>
@@ -127,15 +129,15 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange }: TopControl
             <Button 
               variant="glass" 
               size="default"
-              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+              className={`relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-all duration-300 ${totalItems > 0 ? 'shadow-[0_0_20px_rgba(168,85,247,0.4)] border-purple-400/50' : ''}`}
             >
-              <div className="flex items-center gap-1">
+              <div className="relative">
+                <ShoppingCart className={`w-5 h-5 transition-colors duration-300 ${totalItems > 0 ? 'text-purple-500' : ''}`} />
                 {totalItems > 0 && (
-                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-purple-600 pointer-events-none">
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
-                <ShoppingCart className="w-5 h-5" />
               </div>
             </Button>
           </CartPopup>
