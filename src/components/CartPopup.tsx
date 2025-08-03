@@ -57,7 +57,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
             </div>
           ) : (
             <>
-              <ScrollArea className="flex-1 py-4 [&>[data-radix-scroll-area-viewport]]:max-h-96 scrollbar-hide">
+              <ScrollArea className="flex-1 py-4 scrollbar-hide">
                 <div className="space-y-3 pr-2">
                   {cartItems.map((item) => (
                     <div key={item.id} className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border/50 hover:bg-primary/10 hover:border-primary/30 dark:hover:bg-primary/20 dark:hover:border-primary/40 transition-all duration-200 cursor-pointer">
