@@ -11,21 +11,27 @@ export const ColorPickerTest = () => {
         type="color"
         value={testColor}
         onChange={(e) => {
-          console.log('Test color picker changed to:', e.target.value);
+          console.log('Test onChange triggered:', e.target.value);
+          setTestColor(e.target.value);
+        }}
+        onInput={(e) => {
+          console.log('Test onInput triggered:', (e.target as HTMLInputElement).value);
+          setTestColor((e.target as HTMLInputElement).value);
+        }}
+        onBlur={(e) => {
+          console.log('Test onBlur triggered:', e.target.value);
           setTestColor(e.target.value);
         }}
         className="w-12 h-8 border rounded cursor-pointer"
         style={{ 
           padding: 0,
-          WebkitAppearance: 'none',
-          appearance: 'none',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
+          minWidth: '48px',
+          minHeight: '32px'
         }}
         title="Click to select color"
       />
-      <p>Safari fix applied - should work now!</p>
+      <p>Safari fix with multiple event handlers - test this first!</p>
+      <div className="w-8 h-8 border rounded" style={{ backgroundColor: testColor }}></div>
     </div>
   );
 };

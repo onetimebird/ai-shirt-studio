@@ -749,21 +749,34 @@ and return a high-quality transparent PNG suitable for print.
                          type="color"
                          value={selectedObject ? (selectedObject.fill || "#000000") : textColor}
                          onChange={e => {
-                           console.log('[RightPanel] Color picker onChange triggered');
-                           console.log('[RightPanel] New color value:', e.target.value);
-                           setTextColor(e.target.value);
+                           console.log('[RightPanel] onChange triggered with:', e.target.value);
+                           const newColor = e.target.value;
+                           setTextColor(newColor);
                            if (selectedObject) {
-                             updateTextProperty('fill', e.target.value);
+                             updateTextProperty('fill', newColor);
+                           }
+                         }}
+                         onInput={e => {
+                           console.log('[RightPanel] onInput triggered with:', (e.target as HTMLInputElement).value);
+                           const newColor = (e.target as HTMLInputElement).value;
+                           setTextColor(newColor);
+                           if (selectedObject) {
+                             updateTextProperty('fill', newColor);
+                           }
+                         }}
+                         onBlur={e => {
+                           console.log('[RightPanel] onBlur triggered with:', e.target.value);
+                           const newColor = e.target.value;
+                           setTextColor(newColor);
+                           if (selectedObject) {
+                             updateTextProperty('fill', newColor);
                            }
                          }}
                          className="w-10 h-8 border rounded cursor-pointer"
                          style={{ 
                            padding: 0,
-                           WebkitAppearance: 'none',
-                           appearance: 'none',
-                           border: 'none',
-                           borderRadius: '4px',
-                           cursor: 'pointer'
+                           minWidth: '40px',
+                           minHeight: '32px'
                          }}
                          title="Click to select color"
                        />
