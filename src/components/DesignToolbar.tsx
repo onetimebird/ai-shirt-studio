@@ -402,7 +402,13 @@ export const DesignToolbar = ({
                   <Input
                     type="color"
                     value={textColor}
-                    onChange={(e) => setTextColor(e.target.value)}
+                    onChange={(e) => {
+                      console.log('[DesignToolbar] Color changed to:', e.target.value);
+                      setTextColor(e.target.value);
+                      if (selectedObject) {
+                        onUpdateTextProperties({ fill: e.target.value });
+                      }
+                    }}
                     className="w-12 h-8 p-0 border-0"
                   />
                 </div>
