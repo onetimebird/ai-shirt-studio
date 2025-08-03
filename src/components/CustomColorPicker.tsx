@@ -61,42 +61,73 @@ export const CustomColorPicker = ({ value, onChange, className = "" }: CustomCol
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const hueRef = useRef<HTMLCanvasElement>(null);
 
+  // Draw canvases when component mounts and when hue changes
   useEffect(() => {
-    // Draw color spectrum
-    const canvas = canvasRef.current;
-    const hueCanvas = hueRef.current;
-    if (canvas && hueCanvas) {
-      const ctx = canvas.getContext('2d');
-      const hueCtx = hueCanvas.getContext('2d');
+    const drawCanvases = () => {
+      const canvas = canvasRef.current;
+      const hueCanvas = hueRef.current;
       
-      if (ctx && hueCtx) {
-        // Draw main color area
-        const width = canvas.width;
-        const height = canvas.height;
+      if (canvas && hueCanvas) {
+        const ctx = canvas.getContext('2d');
+        const hueCtx = hueCanvas.getContext('2d');
         
-        for (let y = 0; y < height; y++) {
-          for (let x = 0; x < width; x++) {
-            const s = x / width;
-            const v = 1 - (y / height);
-            const [r, g, b] = hsvToRgb(hue, s, v);
-            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-            ctx.fillRect(x, y, 1, 1);
+        if (ctx && hueCtx) {
+          // Draw main color area
+          const width = canvas.width;
+          const height = canvas.height;
+          
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              const s = x / width;
+              const v = 1 - (y / height);
+              const [r, g, b] = hsvToRgb(hue, s, v);
+              ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+              ctx.fillRect(x, y, 1, 1);
+            }
+          }
+
+          // Draw hue bar - ensure this is always drawn
+          const hueWidth = hueCanvas.width;
+          const hueHeight = hueCanvas.height;
+          
+          for (let x = 0; x < hueWidth; x++) {
+            const h = (x / hueWidth) * 360;
+            const [r, g, b] = hsvToRgb(h, 1, 1);
+            hueCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            hueCtx.fillRect(x, 0, 1, hueHeight);
           }
         }
+      }
+    };
 
-        // Draw hue bar
-        const hueWidth = hueCanvas.width;
-        const hueHeight = hueCanvas.height;
-        
-        for (let x = 0; x < hueWidth; x++) {
-          const h = (x / hueWidth) * 360;
-          const [r, g, b] = hsvToRgb(h, 1, 1);
-          hueCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-          hueCtx.fillRect(x, 0, 1, hueHeight);
+    // Small delay to ensure canvases are ready
+    const timer = setTimeout(drawCanvases, 10);
+    return () => clearTimeout(timer);
+  }, [hue]);
+
+  // Initial draw on mount
+  useEffect(() => {
+    const drawInitialHueBar = () => {
+      const hueCanvas = hueRef.current;
+      if (hueCanvas) {
+        const hueCtx = hueCanvas.getContext('2d');
+        if (hueCtx) {
+          const hueWidth = hueCanvas.width;
+          const hueHeight = hueCanvas.height;
+          
+          for (let x = 0; x < hueWidth; x++) {
+            const h = (x / hueWidth) * 360;
+            const [r, g, b] = hsvToRgb(h, 1, 1);
+            hueCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            hueCtx.fillRect(x, 0, 1, hueHeight);
+          }
         }
       }
-    }
-  }, [hue]);
+    };
+
+    const timer = setTimeout(drawInitialHueBar, 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -149,44 +180,50 @@ export const CustomColorPicker = ({ value, onChange, className = "" }: CustomCol
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`w-10 h-8 p-0 border rounded ${className}`}
+          className={`w-10 h-8 p-0 border-border rounded-md shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 ${className}`}
           style={{ backgroundColor: value }}
           title="Click to select color"
         >
           <span className="sr-only">Color picker</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4">
-        <div className="space-y-4">
+      <PopoverContent className="w-80 p-6 bg-card border-border shadow-lg">
+        <div className="space-y-6">
           {/* Full Color Picker */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">Custom Color Picker</label>
-            <div className="space-y-2">
-              <canvas
-                ref={canvasRef}
-                width={256}
-                height={256}
-                className="border cursor-crosshair"
-                onClick={handleCanvasClick}
-              />
-              <canvas
-                ref={hueRef}
-                width={256}
-                height={20}
-                className="border cursor-pointer"
-                onClick={handleHueClick}
-              />
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-foreground block">Custom Color Picker</label>
+            <div className="space-y-3">
+              <div className="relative">
+                <canvas
+                  ref={canvasRef}
+                  width={256}
+                  height={256}
+                  className="border-border border rounded-lg cursor-crosshair shadow-sm hover:shadow-md transition-shadow duration-200"
+                  onClick={handleCanvasClick}
+                />
+                <div className="absolute inset-0 rounded-lg pointer-events-none bg-gradient-to-br from-transparent via-transparent to-background/5"></div>
+              </div>
+              <div className="relative">
+                <canvas
+                  ref={hueRef}
+                  width={256}
+                  height={20}
+                  className="border-border border rounded-md cursor-pointer shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                  onClick={handleHueClick}
+                />
+                <div className="absolute inset-0 rounded-md pointer-events-none bg-gradient-to-r from-transparent via-transparent to-background/5"></div>
+              </div>
             </div>
           </div>
 
           {/* Preset Colors */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">Preset Colors</label>
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-foreground block">Preset Colors</label>
             <div className="grid grid-cols-6 gap-2">
               {PRESET_COLORS.map((color) => (
                 <button
                   key={color}
-                  className="w-8 h-8 rounded border border-gray-300 cursor-pointer hover:scale-110 transition-transform"
+                  className="w-8 h-8 rounded-md border border-border cursor-pointer transition-all duration-200 hover:scale-110 hover:shadow-lg hover:ring-2 hover:ring-primary/20 shimmer-hover"
                   style={{ backgroundColor: color }}
                   onClick={() => handlePresetClick(color)}
                   title={color}
@@ -196,11 +233,11 @@ export const CustomColorPicker = ({ value, onChange, className = "" }: CustomCol
           </div>
           
           {/* Hex Input */}
-          <div>
-            <label className="text-sm font-medium mb-2 block">Hex Color</label>
-            <div className="flex gap-2 items-center">
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-foreground block">Hex Color</label>
+            <div className="flex gap-3 items-center">
               <div 
-                className="w-12 h-8 border rounded flex-shrink-0"
+                className="w-12 h-8 border border-border rounded-md flex-shrink-0 shadow-sm"
                 style={{ backgroundColor: value }}
                 title={`Current color: ${value}`}
               />
@@ -208,7 +245,7 @@ export const CustomColorPicker = ({ value, onChange, className = "" }: CustomCol
                 type="text"
                 value={value}
                 onChange={(e) => handleHexInput(e.target.value)}
-                className="flex-1 px-2 py-1 border rounded text-sm font-mono"
+                className="flex-1 px-3 py-2 border border-border rounded-md text-sm font-mono bg-background text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
                 placeholder="#000000"
                 maxLength={7}
               />
