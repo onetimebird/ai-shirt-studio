@@ -158,7 +158,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '15%',
+                top: window.innerWidth >= 768 ? '10%' : '15%',
                 width: window.innerWidth >= 768 ? '3px' : '1px',
                 height: '70%',
                 backgroundColor: '#22c55e',
@@ -174,7 +174,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '18%',
+                top: window.innerWidth >= 768 ? '13%' : '18%',
                 width: '55%',
                 height: '67%',
                 border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
@@ -191,7 +191,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: '22%',
+                top: window.innerWidth >= 768 ? '17%' : '22%',
                 width: '18%',
                 height: '15%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -208,7 +208,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: '22%',
+                top: window.innerWidth >= 768 ? '17%' : '22%',
                 width: '45%',
                 height: '45%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -224,7 +224,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: '18%',
+                top: window.innerWidth >= 768 ? '13%' : '18%',
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
