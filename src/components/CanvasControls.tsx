@@ -8,7 +8,12 @@ interface CanvasControlsProps {
 }
 
 export const CanvasControls = ({ currentSide, onSideChange, isAuthModalOpen }: CanvasControlsProps) => {
-  if (isAuthModalOpen) return null;
+  console.log("CanvasControls render - isAuthModalOpen:", isAuthModalOpen);
+  
+  if (isAuthModalOpen) {
+    console.log("Hiding canvas controls because auth modal is open");
+    return null;
+  }
   
   return (
     <>
