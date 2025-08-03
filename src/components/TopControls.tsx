@@ -23,7 +23,7 @@ export const TopControls = () => {
           <Button 
             variant="glass" 
             size="default" 
-            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out] hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
             <ShoppingCart className="w-5 h-5 mr-2" />
             Cart
@@ -31,7 +31,7 @@ export const TopControls = () => {
           <Button 
             variant="glass" 
             size="default"
-            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out] hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
             <User className="w-5 h-5 mr-2" />
             Sign In
@@ -57,14 +57,14 @@ export const TopControls = () => {
           <Button 
             variant="glass" 
             size="default"
-            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out] hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
             <ShoppingCart className="w-5 h-5" />
           </Button>
           <Button 
             variant="glass" 
             size="default"
-            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out] hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300"
           >
             <User className="w-5 h-5" />
           </Button>
