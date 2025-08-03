@@ -200,7 +200,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.12)) / (fabricCanvas?.height || 1)) * 100}%`,
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
                 width: '18%',
                 height: '15%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -233,7 +233,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.08)) / (fabricCanvas?.height || 1)) * 100}%`,
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
@@ -258,7 +258,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '51%' : '56%',
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.52)) / (fabricCanvas?.height || 1)) * 100}%`,
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
@@ -283,7 +283,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '63%' : '68%',
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.65)) / (fabricCanvas?.height || 1)) * 100}%`,
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
