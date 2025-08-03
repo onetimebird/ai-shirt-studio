@@ -18,6 +18,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [showCenterGuide, setShowCenterGuide] = useState(false);
+  const [tshirtDimensions, setTshirtDimensions] = useState({ top: 0, scale: 1, height: 0 });
 
   // Initialize Fabric.js canvas ONLY ONCE
   useEffect(() => {
@@ -112,6 +113,13 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         evented: false,
       });
       
+      // Store t-shirt dimensions for bounding box positioning
+      setTshirtDimensions({
+        top: topPosition - (img.height * scale / 2),
+        scale: scale,
+        height: img.height
+      });
+      
       fabricCanvas.backgroundImage = img;
       fabricCanvas.renderAll();
       
@@ -175,7 +183,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '16%' : '21%',
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
                 width: '55%',
                 height: '50%',
                 border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
@@ -192,7 +200,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: window.innerWidth >= 768 ? '20%' : '25%',
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.12)) / (fabricCanvas?.height || 1)) * 100}%`,
                 width: '18%',
                 height: '15%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -209,7 +217,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: window.innerWidth >= 768 ? '20%' : '25%',
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.18)) / (fabricCanvas?.height || 1)) * 100}%`,
                 width: '45%',
                 height: '34%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
@@ -225,7 +233,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '62.5%',
-                top: window.innerWidth >= 768 ? '16%' : '21%',
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.08)) / (fabricCanvas?.height || 1)) * 100}%`,
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                 color: 'white',
