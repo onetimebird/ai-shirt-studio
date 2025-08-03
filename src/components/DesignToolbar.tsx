@@ -203,7 +203,15 @@ export const DesignToolbar = ({
   };
 
   const handleDeleteSelected = () => {
-    (window as any).designCanvas?.deleteSelected();
+    console.log('[DesignToolbar] Delete button clicked');
+    const designCanvas = (window as any).designCanvas;
+    console.log('[DesignToolbar] DesignCanvas exists:', !!designCanvas);
+    if (designCanvas?.deleteSelected) {
+      console.log('[DesignToolbar] Calling deleteSelected');
+      designCanvas.deleteSelected();
+    } else {
+      console.log('[DesignToolbar] deleteSelected method not found');
+    }
   };
 
   const handleDuplicateSelected = () => {
