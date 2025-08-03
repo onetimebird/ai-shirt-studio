@@ -151,7 +151,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
               <ScrollArea className="flex-1 py-4 [&>[data-radix-scroll-area-viewport]]:max-h-96 scrollbar-hide">
                 <div className="space-y-3 pr-2">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border/50">
+                    <div key={item.id} className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border/50 hover:bg-card/80 hover:border-border transition-all duration-200 cursor-pointer">
                       <div className="w-12 h-12 rounded-md overflow-hidden bg-muted flex-shrink-0">
                         <img 
                           src={item.image} 
@@ -265,12 +265,12 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                     </div>
                   </div>
                   
-                  <div className="relative">
+                  <div className="relative my-4">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t border-border/50" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or</span>
+                      <span className="px-2 text-muted-foreground">Or</span>
                     </div>
                   </div>
 
