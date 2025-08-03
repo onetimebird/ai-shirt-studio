@@ -74,8 +74,8 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
       <SheetTrigger asChild>
         {children}
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-[400px] bg-background/95 backdrop-blur-md border-border/50">
-        <SheetHeader className="space-y-4">
+      <SheetContent side="right" className="w-full sm:w-[400px] bg-background/95 backdrop-blur-md border-border/50 flex flex-col h-full">
+        <SheetHeader className="space-y-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-xl font-semibold">Your Bag</SheetTitle>
             <div className="flex items-center gap-2">
@@ -87,7 +87,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
           <Separator />
         </SheetHeader>
 
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-1 min-h-0">
           {cartItems.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
               <ShoppingCart className="w-16 h-16 text-muted-foreground mb-4" />
@@ -160,7 +160,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                 </div>
               </ScrollArea>
 
-              <div className="border-t border-border/50 pt-4 space-y-4">
+              <div className="border-t border-border/50 pt-4 space-y-4 flex-shrink-0 pb-4">
                 <div className="flex justify-between items-center text-lg font-semibold">
                   <span>Total</span>
                   <span>${totalPrice.toFixed(2)}</span>
