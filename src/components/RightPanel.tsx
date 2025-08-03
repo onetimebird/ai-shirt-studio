@@ -234,7 +234,9 @@ and return a high-quality transparent PNG suitable for print.
 
   // Sync with selectedObject 
   useEffect(() => {
+    console.log('[RightPanel] selectedObject changed:', selectedObject?.type, selectedObject);
     if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
+      console.log('[RightPanel] Syncing text properties from selected object');
       setTextContent(selectedObject.text || "");
       setFontFamily(selectedObject.fontFamily || "Arial");
       setFontSize(selectedObject.fontSize || 24);
@@ -249,6 +251,9 @@ and return a high-quality transparent PNG suitable for print.
       setStrokeColor(selectedObject.stroke || "#000000");
       setStrokeWidth(selectedObject.strokeWidth || 0);
       setLetterSpacing(selectedObject.charSpacing || 0);
+      console.log('[RightPanel] Text properties synced, color is:', selectedObject.fill);
+    } else {
+      console.log('[RightPanel] No text object selected or wrong type');
     }
   }, [selectedObject]);
 
