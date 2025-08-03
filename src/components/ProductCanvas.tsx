@@ -199,9 +199,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             <div
               style={{
                 position: 'absolute',
-                left: '62.5%',
+                left: '60%',
                 top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: '11%',
+                width: '14%',
                 height: '12%',
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
                 transform: 'translateX(-50%)',
@@ -232,7 +232,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             <div
               style={{
                 position: 'absolute',
-                left: '62.5%',
+                left: '60%',
                 top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
                 transform: 'translateX(-50%)',
                 background: 'linear-gradient(to right, #3b82f6, #2563eb)',
