@@ -27,6 +27,10 @@ export const CanvasControls = ({ currentSide, onSideChange }: CanvasControlsProp
           >
             Front
           </Button>
+          
+          {/* Subtle divider line */}
+          <div className="h-px bg-border/50 mx-2"></div>
+          
           <Button
             variant={currentSide === "back" ? "default" : "ghost"}
             size="sm"

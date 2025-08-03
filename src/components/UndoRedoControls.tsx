@@ -35,8 +35,8 @@ export const UndoRedoControls = () => {
   }, [isDesignCanvasReady]);
 
   return (
-    <div className="flex flex-col gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg">
-      <div className="relative group flex justify-center">
+    <div className="flex flex-col gap-1 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-2 shadow-lg">
+      <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
@@ -72,9 +72,13 @@ export const UndoRedoControls = () => {
         >
           <Undo className="w-4 h-4" />
         </Button>
+        <span className="text-xs text-muted-foreground mt-1">Undo</span>
       </div>
 
-      <div className="relative group flex justify-center">
+      {/* Subtle divider line */}
+      <div className="h-px bg-border/50 mx-2"></div>
+
+      <div className="relative group flex flex-col items-center">
         <Button
           variant="ghost"
           size="sm"
@@ -110,6 +114,7 @@ export const UndoRedoControls = () => {
         >
           <Redo className="w-4 h-4" />
         </Button>
+        <span className="text-xs text-muted-foreground mt-1">Redo</span>
       </div>
     </div>
   );
