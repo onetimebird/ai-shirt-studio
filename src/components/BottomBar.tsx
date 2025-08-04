@@ -25,6 +25,7 @@ interface BottomBarProps {
   onColorChange: (color: string) => void;
   onDecorationChange: (method: string) => void;
   onSaveModalChange?: (isOpen: boolean) => void;
+  onLoadPanelChange?: (isOpen: boolean) => void;
 }
 
 export const BottomBar = ({
@@ -35,6 +36,7 @@ export const BottomBar = ({
   onColorChange,
   onDecorationChange,
   onSaveModalChange,
+  onLoadPanelChange,
 }: BottomBarProps) => {
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -294,7 +296,10 @@ export const BottomBar = ({
 
           {/* Load Design Button - Only shown when logged in */}
           {isUserLoggedIn && (
-            <Sheet open={isLoadPanelOpen} onOpenChange={setIsLoadPanelOpen}>
+            <Sheet open={isLoadPanelOpen} onOpenChange={(open) => {
+              setIsLoadPanelOpen(open);
+              onLoadPanelChange?.(open);
+            }}>
               <SheetTrigger asChild>
                 <Button 
                   variant="outline" 
@@ -425,7 +430,10 @@ export const BottomBar = ({
 
           {/* Load Design Button - Only shown when logged in */}
           {isUserLoggedIn && (
-            <Sheet open={isLoadPanelOpen} onOpenChange={setIsLoadPanelOpen}>
+            <Sheet open={isLoadPanelOpen} onOpenChange={(open) => {
+              setIsLoadPanelOpen(open);
+              onLoadPanelChange?.(open);
+            }}>
               <SheetTrigger asChild>
                 <Button 
                   variant="outline" 
