@@ -63,7 +63,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                     <div key={item.id} className="flex gap-3 p-3 rounded-lg bg-card/50 border border-border/50 hover:bg-primary/10 hover:border-primary/30 dark:hover:bg-primary/20 dark:hover:border-primary/40 transition-all duration-200 cursor-pointer">
                       <div className="w-12 h-12 rounded-md overflow-hidden bg-muted flex-shrink-0">
                         <img 
-                          src={item.image} 
+                          src={item.designData?.previewImage || item.image} 
                           alt={item.name}
                           className="w-full h-full object-cover"
                         />
@@ -72,7 +72,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                       <div className="flex-1 space-y-1 min-w-0">
                         <h4 className="font-medium leading-tight text-sm truncate">{item.name}</h4>
                         <p className="text-xs text-muted-foreground">
-                          {item.color} • Size {item.size}
+                          {item.designName && `${item.designName} • `}{item.color} • Size {item.size}
                         </p>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
