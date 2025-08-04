@@ -6,6 +6,7 @@ import { ArrowLeft, X, Check, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
+import { useDesign } from "@/contexts/DesignContext";
 import { getProductImage } from '@/lib/productImages';
 
 // Import the products data for pricing
@@ -68,6 +69,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
   const [hasFrontDesign, setHasFrontDesign] = useState(false);
   const [hasBackDesign, setHasBackDesign] = useState(false);
   const { addToCart } = useCart();
+  const { currentDesignData } = useDesign();
 
   const adultSizes = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
   const youthSizes = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
@@ -173,6 +175,23 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
     const upchargeSizes = ['2XL', '3XL', '4XL', '5XL'];
     const sizeUpcharge = 3.00;
 
+    // Generate preview image from current canvas
+    const generatePreviewImage = () => {
+      const canvas = (window as any).designCanvas?.canvas;
+      if (!canvas) return undefined;
+      
+      try {
+        return canvas.toDataURL({ 
+          format: 'png', 
+          quality: 0.8,
+          multiplier: 0.5 // Smaller image for cart display
+        });
+      } catch (error) {
+        console.warn('Failed to generate preview image:', error);
+        return undefined;
+      }
+    };
+
     // Get current design data from canvas
     const getDesignData = () => {
       const canvas = (window as any).designCanvas?.canvas;
@@ -183,11 +202,26 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
         currentSide: (window as any).designCanvas?.currentSide || 'front',
         objects: canvas.getObjects().filter((obj: any) => obj.type !== 'image' || !obj.isBackground),
         productType: selectedProduct,
-        productColor: selectedColor
+        productColor: selectedColor,
+        previewImage: generatePreviewImage()
       };
     };
 
     const designData = getDesignData();
+    
+    // Determine design name - use current design name if available, otherwise create a descriptive name
+    const getDesignName = () => {
+      if (currentDesignData?.name) {
+        return currentDesignData.name;
+      }
+      
+      // Create a descriptive name based on design content
+      const designType = (hasFrontDesign && hasBackDesign) ? 'Front + Back Design' : 
+                        hasFrontDesign ? 'Front Design' : 
+                        hasBackDesign ? 'Back Design' : 'Custom Design';
+      
+      return `${designType} on ${productData.name}`;
+    };
 
     // Convert quantities to cart items
     const cartItems = Object.entries(quantities)
@@ -203,7 +237,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
           price: finalPrice,
           image: getProductImage(selectedProduct, selectedColor),
           designData: designData,
-          designName: `${productData.name} - ${selectedColor.replace(/-/g, ' ')}`
+          designName: getDesignName()
         };
       });
 
