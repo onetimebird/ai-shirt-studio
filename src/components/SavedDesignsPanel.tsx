@@ -30,8 +30,11 @@ export const SavedDesignsPanel = ({ onLoadDesign, onClose }: SavedDesignsPanelPr
   }, []);
 
   const handleLoadDesign = async (designId: string) => {
+    console.log('[SavedDesignsPanel] Loading design:', designId);
     const design = await loadDesign(designId);
+    console.log('[SavedDesignsPanel] Loaded design data:', design);
     if (design) {
+      console.log('[SavedDesignsPanel] Calling onLoadDesign with:', design.design_data);
       onLoadDesign(design.design_data);
       onClose();
     }

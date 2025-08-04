@@ -116,11 +116,14 @@ export const BottomBar = ({
   };
 
   const loadDesignData = (designData: any) => {
+    console.log('[BottomBar] loadDesignData called with:', designData);
     const canvas = (window as any).designCanvas?.canvas;
+    console.log('[BottomBar] Canvas exists:', !!canvas);
     if (!canvas || !designData) return;
 
     // Clear current objects except background
     const objects = canvas.getObjects();
+    console.log('[BottomBar] Current canvas objects before clear:', objects.length);
     objects.forEach((obj: any) => {
       if (!obj.isBackground) {
         canvas.remove(obj);
@@ -129,9 +132,14 @@ export const BottomBar = ({
 
     // Load the saved design
     if (designData.canvasData) {
+      console.log('[BottomBar] Loading canvas data:', designData.canvasData);
       canvas.loadFromJSON(designData.canvasData, () => {
+        console.log('[BottomBar] Canvas loaded from JSON, rendering...');
         canvas.renderAll();
+        console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
       });
+    } else {
+      console.log('[BottomBar] No canvasData found in design data');
     }
   };
 
