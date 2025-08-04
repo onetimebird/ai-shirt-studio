@@ -211,6 +211,12 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
     
     // Determine design name - use current design name if available, otherwise create a descriptive name
     const getDesignName = () => {
+      console.log('[QuantityModal] Getting design name:', {
+        currentDesignData,
+        hasCurrentDesignName: !!currentDesignData?.name,
+        currentDesignName: currentDesignData?.name
+      });
+      
       if (currentDesignData?.name) {
         return currentDesignData.name;
       }

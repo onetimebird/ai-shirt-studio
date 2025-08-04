@@ -25,6 +25,7 @@ export const TShirtDesigner = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -118,6 +119,7 @@ export const TShirtDesigner = () => {
           onSideChange={setCurrentSide}
           isAuthModalOpen={isAuthModalOpen}
           isCartModalOpen={isCartModalOpen}
+          isSaveModalOpen={isSaveModalOpen}
         />
             
             <div className="w-full max-w-4xl flex items-center justify-center">
@@ -363,6 +365,7 @@ export const TShirtDesigner = () => {
           onProductChange={setSelectedProduct}
           onColorChange={setSelectedColor}
           onDecorationChange={setDecorationMethod}
+          onSaveModalChange={setIsSaveModalOpen}
         />
       </div>
     </div>

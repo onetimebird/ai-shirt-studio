@@ -129,11 +129,19 @@ export const DesignProvider = ({ children }: DesignProviderProps) => {
         preview_image: data.preview_image
       };
       
+      console.log('[DesignContext] Loading design:', {
+        designId,
+        designName: data.name,
+        previewImage: data.preview_image,
+        hasDesignData: !!data.design_data
+      });
+      
       // Merge with existing design data if it's an object
       if (data.design_data && typeof data.design_data === 'object') {
         Object.assign(enrichedDesignData, data.design_data);
       }
       
+      console.log('[DesignContext] Final enriched design data:', enrichedDesignData);
       setCurrentDesignData(enrichedDesignData);
       return data;
     } catch (error) {

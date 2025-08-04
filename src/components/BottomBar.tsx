@@ -23,6 +23,7 @@ interface BottomBarProps {
   onProductChange: (product: string) => void;
   onColorChange: (color: string) => void;
   onDecorationChange: (method: string) => void;
+  onSaveModalChange?: (isOpen: boolean) => void;
 }
 
 export const BottomBar = ({
@@ -32,6 +33,7 @@ export const BottomBar = ({
   onProductChange,
   onColorChange,
   onDecorationChange,
+  onSaveModalChange,
 }: BottomBarProps) => {
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -157,6 +159,7 @@ export const BottomBar = ({
     }
     
     setIsSaveModalOpen(true);
+    onSaveModalChange?.(true);
   };
 
   return (
@@ -448,7 +451,10 @@ export const BottomBar = ({
       {/* Save Design Modal */}
       <SaveDesignModal
         isOpen={isSaveModalOpen}
-        onClose={() => setIsSaveModalOpen(false)}
+        onClose={() => {
+          setIsSaveModalOpen(false);
+          onSaveModalChange?.(false);
+        }}
         designData={getDesignData()}
         productType={selectedProduct}
         productColor={selectedColor}
