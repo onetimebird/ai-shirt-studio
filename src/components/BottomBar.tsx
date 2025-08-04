@@ -8,6 +8,7 @@ import { QuantityModal } from "@/components/QuantityModal";
 import { SaveDesignModal } from "@/components/SaveDesignModal";
 import { SavedDesignsPanel } from "@/components/SavedDesignsPanel";
 import { supabase } from "@/integrations/supabase/client";
+import { useDesign } from "@/contexts/DesignContext";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
 import { BELLA_3001C_COLORS, getAllColors as getAllColorsBella } from "@/data/bellaColors";
@@ -39,6 +40,7 @@ export const BottomBar = ({
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadPanelOpen, setIsLoadPanelOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const { currentDesignData } = useDesign();
 
   // Check authentication status
   useEffect(() => {
@@ -160,6 +162,30 @@ export const BottomBar = ({
     
     setIsSaveModalOpen(true);
     onSaveModalChange?.(true);
+  };
+
+  const handleNextStep = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please log in to continue");
+      return;
+    }
+    
+    // Check if current design has objects that could be saved
+    const canvas = (window as any).designCanvas?.canvas;
+    const hasDesignObjects = canvas && canvas.getObjects().some((obj: any) => 
+      obj.type !== 'image' || !obj.isBackground
+    );
+    
+    // If there's a design but it's not saved (no currentDesignData.id), prompt to save first
+    if (hasDesignObjects && !currentDesignData?.id) {
+      toast.error("Please save your design before proceeding to checkout");
+      setIsSaveModalOpen(true);
+      onSaveModalChange?.(true);
+      return;
+    }
+    
+    setIsQuantityModalOpen(true);
   };
 
   return (
@@ -294,10 +320,7 @@ export const BottomBar = ({
           {/* Next Step Button - 1.5x larger */}
           <Button 
             size="lg"
-            onClick={() => {
-              console.log('Desktop Next Step button clicked');
-              setIsQuantityModalOpen(true);
-            }}
+            onClick={handleNextStep}
             className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-lg px-8 py-4 h-16 min-w-[200px]"
           >
             <ArrowRight className="w-6 h-6 mr-3" strokeWidth={2.5} />
@@ -428,10 +451,7 @@ export const BottomBar = ({
           {/* Next Step Button - 1.5x larger on mobile */}
           <Button 
             size="sm"
-            onClick={() => {
-              console.log('Mobile Next Step button clicked');
-              setIsQuantityModalOpen(true);
-            }}
+            onClick={handleNextStep}
             className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 flex-[1.5] text-sm px-6 py-3 h-12 min-w-[120px]"
           >
             <ArrowRight className="w-5 h-5 mr-2" strokeWidth={2.5} />
