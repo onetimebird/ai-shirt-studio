@@ -65,7 +65,7 @@ export const SavedDesignsPanel = ({ onLoadDesign, onClose }: SavedDesignsPanelPr
         ) : (
           <div className="space-y-3">
             {savedDesigns.map((design) => (
-              <Card key={design.id} className="group hover:shadow-md transition-shadow">
+              <Card key={design.id} className="group hover:shadow-md transition-shadow cursor-pointer" onClick={() => handleLoadDesign(design.id)}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
@@ -81,12 +81,16 @@ export const SavedDesignsPanel = ({ onLoadDesign, onClose }: SavedDesignsPanelPr
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleLoadDesign(design.id)}
-                        className="h-8 w-8 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLoadDesign(design.id);
+                        }}
+                        className="h-8 w-8 p-0 bg-primary/10 hover:bg-primary/20"
+                        title="Load Design"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -96,7 +100,9 @@ export const SavedDesignsPanel = ({ onLoadDesign, onClose }: SavedDesignsPanelPr
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                            onClick={(e) => e.stopPropagation()}
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            title="Delete Design"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
