@@ -121,6 +121,10 @@ export const BottomBar = ({
     console.log('[BottomBar] Canvas exists:', !!canvas);
     if (!canvas || !designData) return;
 
+    // Store background objects before loading
+    const backgroundObjects = canvas.getObjects().filter((obj: any) => obj.isBackground);
+    console.log('[BottomBar] Background objects found:', backgroundObjects.length);
+
     // Clear current objects except background
     const objects = canvas.getObjects();
     console.log('[BottomBar] Current canvas objects before clear:', objects.length);
@@ -133,11 +137,32 @@ export const BottomBar = ({
     // Load the saved design
     if (designData.canvasData) {
       console.log('[BottomBar] Loading canvas data:', designData.canvasData);
-      canvas.loadFromJSON(designData.canvasData, () => {
-        console.log('[BottomBar] Canvas loaded from JSON, rendering...');
+      
+      // Create a temporary canvas data that includes only non-background objects
+      const filteredCanvasData = {
+        ...designData.canvasData,
+        objects: designData.canvasData.objects ? designData.canvasData.objects.filter((objData: any) => !objData.isBackground) : []
+      };
+      
+      console.log('[BottomBar] Filtered objects to load:', filteredCanvasData.objects.length);
+      
+      if (filteredCanvasData.objects.length > 0) {
+        // Load only the non-background objects
+        canvas.loadFromJSON(filteredCanvasData, () => {
+          // Ensure background objects are still there after loading
+          backgroundObjects.forEach(bgObj => {
+            if (!canvas.getObjects().find((obj: any) => obj === bgObj)) {
+              canvas.add(bgObj);
+              canvas.sendToBack(bgObj);
+            }
+          });
+          canvas.renderAll();
+          console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
+        });
+      } else {
+        console.log('[BottomBar] No objects to load');
         canvas.renderAll();
-        console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
-      });
+      }
     } else {
       console.log('[BottomBar] No canvasData found in design data');
     }
