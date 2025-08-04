@@ -123,7 +123,18 @@ export const DesignProvider = ({ children }: DesignProviderProps) => {
 
       if (error) throw error;
 
-      setCurrentDesignData(data.design_data);
+      const enrichedDesignData = {
+        name: data.name,
+        id: data.id,
+        preview_image: data.preview_image
+      };
+      
+      // Merge with existing design data if it's an object
+      if (data.design_data && typeof data.design_data === 'object') {
+        Object.assign(enrichedDesignData, data.design_data);
+      }
+      
+      setCurrentDesignData(enrichedDesignData);
       return data;
     } catch (error) {
       console.error('Error loading design:', error);
