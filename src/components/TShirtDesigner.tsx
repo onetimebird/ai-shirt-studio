@@ -28,6 +28,7 @@ export const TShirtDesigner = () => {
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadPanelOpen, setIsLoadPanelOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
   const loadDesignData = (designData: any) => {
@@ -170,6 +171,7 @@ export const TShirtDesigner = () => {
           designData={{ textObjects, imageObjects }}
           productType={selectedProduct}
           productColor={selectedColor}
+          onShareModalChange={setIsShareModalOpen}
         />
           </div>
         </div>
@@ -186,6 +188,7 @@ export const TShirtDesigner = () => {
                 isCartModalOpen={isCartModalOpen}
                 isSaveModalOpen={isSaveModalOpen}
                 isLoadPanelOpen={isLoadPanelOpen}
+                isShareModalOpen={isShareModalOpen}
               />
             )}
             

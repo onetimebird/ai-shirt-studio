@@ -25,6 +25,7 @@ interface LeftToolbarProps {
   productType?: string;
   productColor?: string;
   previewImage?: string;
+  onShareModalChange?: (isOpen: boolean) => void;
 }
 
 const tools = [
@@ -41,7 +42,8 @@ export const LeftToolbar = ({
   designData, 
   productType = "t-shirt", 
   productColor = "white",
-  previewImage 
+  previewImage,
+  onShareModalChange 
 }: LeftToolbarProps) => {
   const [isHelpChatOpen, setIsHelpChatOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -68,6 +70,7 @@ export const LeftToolbar = ({
     // For now, we'll open the share modal directly
     // In a real app, you'd check if design is saved and prompt to save/email first
     setIsShareModalOpen(true);
+    onShareModalChange?.(true);
   };
   return (
     <TooltipProvider>
@@ -158,7 +161,10 @@ export const LeftToolbar = ({
         
         <ShareDesignModal
           isOpen={isShareModalOpen}
-          onClose={() => setIsShareModalOpen(false)}
+          onClose={() => {
+            setIsShareModalOpen(false);
+            onShareModalChange?.(false);
+          }}
           designName="My Design"
           designUrl={`${window.location.origin}?design=shared`}
         />

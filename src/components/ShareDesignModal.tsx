@@ -133,7 +133,7 @@ export const ShareDesignModal = ({
                 className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
                 onClick={handleEmailShare}
               >
-                <Mail size={48} />
+                <Mail size={64} />
               </Button>
               <span className="text-sm text-muted-foreground">Email</span>
             </div>
@@ -145,7 +145,7 @@ export const ShareDesignModal = ({
                 className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
                 onClick={handleFacebookShare}
               >
-                <Facebook size={48} />
+                <Facebook size={64} />
               </Button>
               <span className="text-sm text-muted-foreground">Share</span>
             </div>
@@ -157,7 +157,7 @@ export const ShareDesignModal = ({
                 className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
                 onClick={handleTwitterShare}
               >
-                <Twitter size={48} />
+                <Twitter size={64} />
               </Button>
               <span className="text-sm text-muted-foreground">Tweet</span>
             </div>
@@ -169,7 +169,7 @@ export const ShareDesignModal = ({
                 className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
                 onClick={handleInstagramShare}
               >
-                <Instagram size={48} />
+                <Instagram size={64} />
               </Button>
               <span className="text-sm text-muted-foreground">Pin</span>
             </div>

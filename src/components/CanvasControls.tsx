@@ -8,6 +8,7 @@ interface CanvasControlsProps {
   isCartModalOpen?: boolean;
   isSaveModalOpen?: boolean;
   isLoadPanelOpen?: boolean;
+  isShareModalOpen?: boolean;
 }
 
 export const CanvasControls = ({ 
@@ -16,10 +17,11 @@ export const CanvasControls = ({
   isAuthModalOpen, 
   isCartModalOpen,
   isSaveModalOpen,
-  isLoadPanelOpen
+  isLoadPanelOpen,
+  isShareModalOpen
 }: CanvasControlsProps) => {
   // Hide controls when any modal or panel is open
-  if (isAuthModalOpen || isCartModalOpen || isSaveModalOpen || isLoadPanelOpen) return null;
+  if (isAuthModalOpen || isCartModalOpen || isSaveModalOpen || isLoadPanelOpen || isShareModalOpen) return null;
   
   return (
     <>
