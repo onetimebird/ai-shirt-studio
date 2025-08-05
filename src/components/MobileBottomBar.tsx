@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShirtIcon, Palette, MonitorSpeaker, Scissors } from "lucide-react";
+import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X } from "lucide-react";
 import { useState } from "react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
@@ -10,6 +10,8 @@ import { BELLA_6400_COLORS, getAllColors as getAllColorsBella6400 } from "@/data
 import { GILDAN_18000_COLORS, getAllColors as getAllColors18000 } from "@/data/gildan18000Colors";
 import { GILDAN_18500_COLORS, getAllColors as getAllColors18500 } from "@/data/gildan18500Colors";
 import { BELLA_3719_COLORS, getAllColors as getAllColors3719 } from "@/data/bella3719Colors";
+import { AIWandIcon } from "@/components/AIWandIcon";
+import { RightPanel } from "@/components/RightPanel";
 
 interface MobileBottomBarProps {
   selectedProduct: string;
@@ -18,6 +20,15 @@ interface MobileBottomBarProps {
   onProductChange: (product: string) => void;
   onColorChange: (color: string) => void;
   onDecorationChange: (method: string) => void;
+  activeTool: string;
+  onToolChange: (tool: string) => void;
+  selectedObject: any;
+  onTextPropertiesChange: (properties: any) => void;
+  onImageUpload: (file: File) => void;
+  onProductColorChange: (color: string) => void;
+  textObjects: any[];
+  imageObjects: any[];
+  uploadedFile: File | null;
 }
 
 export const MobileBottomBar = ({
@@ -27,6 +38,15 @@ export const MobileBottomBar = ({
   onProductChange,
   onColorChange,
   onDecorationChange,
+  activeTool,
+  onToolChange,
+  selectedObject,
+  onTextPropertiesChange,
+  onImageUpload,
+  onProductColorChange,
+  textObjects,
+  imageObjects,
+  uploadedFile,
 }: MobileBottomBarProps) => {
   const [productSheetOpen, setProductSheetOpen] = useState(false);
   const [colorSheetOpen, setColorSheetOpen] = useState(false);
@@ -161,6 +181,123 @@ export const MobileBottomBar = ({
             </SheetContent>
           </Sheet>
 
+          {/* Add Text */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "text" ? "default" : "glass"}
+                size="sm"
+                onClick={() => onToolChange("text")}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+              >
+                <Type className="w-4 h-4" />
+                <span className="text-[10px] leading-tight">Text</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
+                <SheetTitle className="text-lg">Text Editor</SheetTitle>
+                <p className="text-sm text-muted-foreground">Add and customize text for your design</p>
+              </SheetHeader>
+              <div className="overflow-y-auto h-full pb-20 px-4">
+                <RightPanel
+                  activeTool="text"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={onTextPropertiesChange}
+                  onImageUpload={onImageUpload}
+                  onProductColorChange={onProductColorChange}
+                  textObjects={textObjects}
+                  imageObjects={imageObjects}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={onProductChange}
+                  uploadedFile={uploadedFile}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* Upload Art */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "upload" ? "default" : "glass"}
+                size="sm"
+                onClick={() => onToolChange("upload")}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+              >
+                <Upload className="w-4 h-4" />
+                <span className="text-[10px] leading-tight">Upload</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
+                <SheetTitle className="text-lg">Upload Your Own Image</SheetTitle>
+                <p className="text-sm text-muted-foreground">Add your custom artwork to the design</p>
+              </SheetHeader>
+              <div className="overflow-y-auto h-full pb-20 px-4">
+                <RightPanel
+                  activeTool="upload"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={onTextPropertiesChange}
+                  onImageUpload={onImageUpload}
+                  onProductColorChange={onProductColorChange}
+                  textObjects={textObjects}
+                  imageObjects={imageObjects}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={onProductChange}
+                  uploadedFile={uploadedFile}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* AI Art */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant={activeTool === "ai" ? "default" : "glass"}
+                size="sm"
+                onClick={() => onToolChange("ai")}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+              >
+                <AIWandIcon size={16} />
+                <span className="text-[10px] leading-tight">AI Art</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
+                <SheetTitle className="text-lg">Add Art <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded ml-2">AI</span></SheetTitle>
+                <p className="text-sm text-muted-foreground">Generate custom artwork with AI</p>
+              </SheetHeader>
+              <div className="overflow-y-auto h-full pb-20 px-4">
+                <RightPanel
+                  activeTool="ai"
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={onTextPropertiesChange}
+                  onImageUpload={onImageUpload}
+                  onProductColorChange={onProductColorChange}
+                  textObjects={textObjects}
+                  imageObjects={imageObjects}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={onProductChange}
+                  uploadedFile={uploadedFile}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+
           {/* Digital Print Button */}
           <Button 
             variant={decorationMethod === "screen-print" ? "default" : "glass"}
@@ -182,6 +319,44 @@ export const MobileBottomBar = ({
             <Scissors className="w-4 h-4" />
             <span className="text-[10px] leading-tight">Embroider</span>
           </Button>
+
+          {/* Properties */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button 
+                variant="glass"
+                size="sm"
+                className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-[10px] leading-tight">Settings</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+              <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                  <X className="h-4 w-4" />
+                </SheetClose>
+                <SheetTitle className="text-lg">Properties</SheetTitle>
+                <p className="text-sm text-muted-foreground">Customize selected elements</p>
+              </SheetHeader>
+              <div className="overflow-y-auto h-full pb-20 px-4">
+                <RightPanel
+                  activeTool={activeTool}
+                  selectedObject={selectedObject}
+                  onTextPropertiesChange={onTextPropertiesChange}
+                  onImageUpload={onImageUpload}
+                  onProductColorChange={onProductColorChange}
+                  textObjects={textObjects}
+                  imageObjects={imageObjects}
+                  selectedProduct={selectedProduct}
+                  selectedColor={selectedColor}
+                  onProductChange={onProductChange}
+                  uploadedFile={uploadedFile}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
 
           {/* Spacer for scrolling */}
           <div className="w-4 flex-shrink-0" />
