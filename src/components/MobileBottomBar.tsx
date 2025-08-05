@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X, FolderOpen } from "lucide-react";
+import { MobileThemeToggle } from "@/components/ThemeToggle";
 import { useState, useEffect } from "react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
@@ -380,6 +381,12 @@ export const MobileBottomBar = ({
             <Scissors className="w-4 h-4" />
             <span className="text-[10px] leading-tight">Embroider</span>
           </Button>
+
+          {/* Theme Toggle */}
+          <div className="flex flex-col items-center gap-1 min-w-[60px]">
+            <MobileThemeToggle />
+            <span className="text-[10px] leading-tight">Theme</span>
+          </div>
 
           {/* Spacer for scrolling */}
           <div className="w-4 flex-shrink-0" />
