@@ -129,7 +129,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   }) => (
     <Button
       variant="outline"
-      className="w-full justify-start gap-3 h-12 text-foreground border-border hover:bg-accent/50"
+      className="w-full justify-start gap-3 h-10 md:h-12 text-foreground border-border hover:bg-accent/50"
       onClick={() => handleSocialAuth(provider)}
     >
       <div className="w-5 h-5 flex items-center justify-center">
@@ -141,15 +141,15 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-sm border-border/50">
-        <div className="space-y-3">
+      <DialogContent className="w-[95vw] max-w-md mx-auto bg-background/95 backdrop-blur-sm border-border/50 max-h-[90vh] overflow-y-auto">
+        <div className="space-y-2 md:space-y-3 p-1">
           {/* Company Logo */}
-          <div className="flex justify-center">
-            <img 
-              src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
-              alt="CoolShirt.Ai Logo" 
-              className="h-12 w-auto object-contain"
-            />
+           <div className="flex justify-center py-2">
+             <img 
+               src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
+               alt="CoolShirt.Ai Logo" 
+               className="h-8 md:h-12 w-auto object-contain"
+             />
           </div>
           
           <div className="text-center">
@@ -159,9 +159,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           </div>
 
           {/* Email Form */}
-          <form onSubmit={handleEmailAuth} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+          <form onSubmit={handleEmailAuth} className="space-y-3 md:space-y-4">
+            <div className="space-y-1 md:space-y-2">
+              <Label htmlFor="email" className="text-sm">Email Address</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
@@ -170,15 +170,15 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12"
+                  className="pl-10 h-10 md:h-12"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1 md:space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm">Password</Label>
                 {!isSignUp && (
                   <Button
                     type="button"
@@ -197,7 +197,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10 h-12"
+                  className="pr-10 h-10 md:h-12"
                   required
                 />
                 <Button
@@ -231,7 +231,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+              className="w-full h-10 md:h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               disabled={loading}
             >
               {loading ? "Please wait..." : (isSignUp ? "Create Account" : "Sign In")}
@@ -256,7 +256,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             />
             <Button
               variant="outline"
-              className="w-full justify-start gap-3 h-12 text-foreground border-border hover:bg-accent/50"
+              className="w-full justify-start gap-3 h-10 md:h-12 text-foreground border-border hover:bg-accent/50"
               onClick={() => handleSocialAuth('apple')}
             >
               <div className="w-5 h-5 flex items-center justify-center">
