@@ -383,7 +383,7 @@ export const MobileBottomBar = ({
           </Button>
 
           {/* Theme Toggle */}
-          <div className="flex flex-col items-center gap-1 min-w-[60px]">
+          <div className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden">
             <MobileThemeToggle />
             <span className="text-[10px] leading-tight">Theme</span>
           </div>
