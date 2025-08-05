@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
 import { BELLA_3001C_COLORS, getAllColors as getAllColorsBella } from "@/data/bellaColors";
@@ -30,6 +30,7 @@ interface MobileBottomBarProps {
   textObjects: any[];
   imageObjects: any[];
   uploadedFile: File | null;
+  onSheetOpenChange?: (isOpen: boolean) => void;
 }
 
 export const MobileBottomBar = ({
@@ -48,9 +49,16 @@ export const MobileBottomBar = ({
   textObjects,
   imageObjects,
   uploadedFile,
+  onSheetOpenChange,
 }: MobileBottomBarProps) => {
   const [productSheetOpen, setProductSheetOpen] = useState(false);
   const [colorSheetOpen, setColorSheetOpen] = useState(false);
+  const [textSheetOpen, setTextSheetOpen] = useState(false);
+  const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
+  const [aiSheetOpen, setAiSheetOpen] = useState(false);
+  const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
+
+  const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen;
 
   // Get current color based on selected product
   const getCurrentColors = () => {
@@ -92,6 +100,10 @@ export const MobileBottomBar = ({
   };
 
   const currentColor = getCurrentColors().find(c => c.name === selectedColor);
+
+  useEffect(() => {
+    onSheetOpenChange?.(isAnySheetOpen);
+  }, [isAnySheetOpen, onSheetOpenChange]);
 
   return (
     <div className="md:hidden bg-gradient-card border-t border-border backdrop-blur-sm shadow-glass">
@@ -136,7 +148,7 @@ export const MobileBottomBar = ({
           </Sheet>
 
           {/* Add Text */}
-          <Sheet>
+          <Sheet open={textSheetOpen} onOpenChange={setTextSheetOpen}>
             <SheetTrigger asChild>
               <Button 
                 variant={activeTool === "text" ? "default" : "glass"}
@@ -175,7 +187,7 @@ export const MobileBottomBar = ({
           </Sheet>
 
           {/* Upload Art */}
-          <Sheet>
+          <Sheet open={uploadSheetOpen} onOpenChange={setUploadSheetOpen}>
             <SheetTrigger asChild>
               <Button 
                 variant={activeTool === "upload" ? "default" : "glass"}
@@ -214,7 +226,7 @@ export const MobileBottomBar = ({
           </Sheet>
 
           {/* AI Art */}
-          <Sheet>
+          <Sheet open={aiSheetOpen} onOpenChange={setAiSheetOpen}>
             <SheetTrigger asChild>
               <Button 
                 variant={activeTool === "ai" ? "default" : "glass"}
@@ -252,30 +264,8 @@ export const MobileBottomBar = ({
             </SheetContent>
           </Sheet>
 
-          {/* Digital Print Button */}
-          <Button 
-            variant={decorationMethod === "screen-print" ? "default" : "glass"}
-            size="sm"
-            onClick={() => onDecorationChange("screen-print")}
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
-          >
-            <MonitorSpeaker className="w-4 h-4" />
-            <span className="text-[10px] leading-tight">Digital</span>
-          </Button>
-
-          {/* Embroidery Button */}
-          <Button 
-            variant={decorationMethod === "embroidery" ? "default" : "glass"}
-            size="sm"
-            onClick={() => onDecorationChange("embroidery")}
-            className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
-          >
-            <Scissors className="w-4 h-4" />
-            <span className="text-[10px] leading-tight">Embroider</span>
-          </Button>
-
           {/* Properties */}
-          <Sheet>
+          <Sheet open={settingsSheetOpen} onOpenChange={setSettingsSheetOpen}>
             <SheetTrigger asChild>
               <Button 
                 variant="glass"
@@ -311,6 +301,28 @@ export const MobileBottomBar = ({
               </div>
             </SheetContent>
           </Sheet>
+
+          {/* Digital Print Button */}
+          <Button 
+            variant={decorationMethod === "screen-print" ? "default" : "glass"}
+            size="sm"
+            onClick={() => onDecorationChange("screen-print")}
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+          >
+            <MonitorSpeaker className="w-4 h-4" />
+            <span className="text-[10px] leading-tight">Digital</span>
+          </Button>
+
+          {/* Embroidery Button */}
+          <Button 
+            variant={decorationMethod === "embroidery" ? "default" : "glass"}
+            size="sm"
+            onClick={() => onDecorationChange("embroidery")}
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+          >
+            <Scissors className="w-4 h-4" />
+            <span className="text-[10px] leading-tight">Embroider</span>
+          </Button>
 
           {/* Spacer for scrolling */}
           <div className="w-4 flex-shrink-0" />

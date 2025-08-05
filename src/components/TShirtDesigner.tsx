@@ -28,6 +28,7 @@ export const TShirtDesigner = () => {
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadPanelOpen, setIsLoadPanelOpen] = useState(false);
+  const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
@@ -120,15 +121,17 @@ export const TShirtDesigner = () => {
         {/* Central Canvas - Fixed height, no scrolling */}
         <div className="flex-1 relative min-w-0 flex items-center justify-center">
           <div className="w-full h-full flex items-center justify-center p-2 md:p-4 relative">
-            {/* Canvas Controls - positioned over canvas */}
-        <CanvasControls
-          currentSide={currentSide}
-          onSideChange={setCurrentSide}
-          isAuthModalOpen={isAuthModalOpen}
-          isCartModalOpen={isCartModalOpen}
-          isSaveModalOpen={isSaveModalOpen}
-          isLoadPanelOpen={isLoadPanelOpen}
-        />
+            {/* Canvas Controls - positioned over canvas, hidden on mobile when sheets are open */}
+            {(!isMobileSheetOpen || window.innerWidth >= 768) && (
+              <CanvasControls
+                currentSide={currentSide}
+                onSideChange={setCurrentSide}
+                isAuthModalOpen={isAuthModalOpen}
+                isCartModalOpen={isCartModalOpen}
+                isSaveModalOpen={isSaveModalOpen}
+                isLoadPanelOpen={isLoadPanelOpen}
+              />
+            )}
             
             <div className="w-full max-w-4xl flex items-center justify-center">
               <DesignCanvas
@@ -197,6 +200,7 @@ export const TShirtDesigner = () => {
           textObjects={textObjects}
           imageObjects={imageObjects}
           uploadedFile={uploadedFile}
+          onSheetOpenChange={setIsMobileSheetOpen}
         />
       </div>
     </div>
