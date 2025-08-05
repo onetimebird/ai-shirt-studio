@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X, FolderOpen } from "lucide-react";
-import { MobileThemeToggle } from "@/components/ThemeToggle";
+import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X, FolderOpen, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
 import { useState, useEffect } from "react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
@@ -64,6 +64,7 @@ export const MobileBottomBar = ({
   const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
   const [loadSheetOpen, setLoadSheetOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen || loadSheetOpen;
 
@@ -124,6 +125,27 @@ export const MobileBottomBar = ({
   };
 
   const currentColor = getCurrentColors().find(c => c.name === selectedColor);
+
+  const handleThemeToggle = () => {
+    if (theme === "light") {
+      setTheme("dark");
+    } else if (theme === "dark") {
+      setTheme("system");
+    } else {
+      setTheme("light");
+    }
+  };
+
+  const getThemeIcon = () => {
+    if (theme === "dark") {
+      return <Moon className="w-4 h-4" />;
+    } else if (theme === "light") {
+      return <Sun className="w-4 h-4" />;
+    } else {
+      const isDark = document.documentElement.classList.contains("dark");
+      return isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />;
+    }
+  };
 
   useEffect(() => {
     onSheetOpenChange?.(isAnySheetOpen);
@@ -383,10 +405,15 @@ export const MobileBottomBar = ({
           </Button>
 
           {/* Theme Toggle */}
-          <div className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden">
-            <MobileThemeToggle />
+          <Button 
+            variant="glass"
+            size="sm"
+            onClick={handleThemeToggle}
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+          >
+            {getThemeIcon()}
             <span className="text-[10px] leading-tight">Theme</span>
-          </div>
+          </Button>
 
           {/* Spacer for scrolling */}
           <div className="w-4 flex-shrink-0" />
