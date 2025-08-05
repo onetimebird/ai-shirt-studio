@@ -91,8 +91,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       
       // Keep t-shirt at reasonable size within the larger canvas
       const isMobile = canvasWidth < 500;
-      // Keep mobile unchanged at 1.05, make desktop 25% smaller than previous size
-      const scaleFactor = isMobile ? 1.05 : 0.79;
+      // Keep mobile unchanged at 1.05, desktop at 0.79
+      let scaleFactor = isMobile ? 1.05 : 0.79;
+      // Scale down back images by 10% on desktop only
+      if (!isMobile && currentSide === "back") {
+        scaleFactor *= 0.9;
+      }
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
