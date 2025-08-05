@@ -74,6 +74,13 @@ export const DesignProvider = ({ children }: DesignProviderProps) => {
 
       if (error) throw error;
 
+      // Update current design data with the saved design ID
+      setCurrentDesignData(prev => ({
+        ...prev,
+        id: data.id,
+        name: data.name
+      }));
+
       setSavedDesigns(prev => [data, ...prev]);
       toast.success('Design saved successfully!');
     } catch (error) {
