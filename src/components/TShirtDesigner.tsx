@@ -164,10 +164,13 @@ export const TShirtDesigner = () => {
         {/* Left Toolbar - Sticky sidebar */}
         <div className="hidden md:block flex-shrink-0 sticky top-0 h-screen">
           <div className="h-full overflow-y-auto">
-            <LeftToolbar 
-              activeTool={activeTool} 
-              onToolChange={handleToolChange} 
-            />
+        <LeftToolbar 
+          activeTool={activeTool} 
+          onToolChange={handleToolChange}
+          designData={{ textObjects, imageObjects }}
+          productType={selectedProduct}
+          productColor={selectedColor}
+        />
           </div>
         </div>
 
