@@ -142,24 +142,24 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto bg-background/95 backdrop-blur-sm border-border/50 max-h-[90vh] overflow-y-auto">
-        <div className="space-y-2 md:space-y-3 p-1">
+        <div className="space-y-1.5 md:space-y-3 p-1">
           {/* Company Logo */}
-           <div className="flex justify-center py-1">
+           <div className="flex justify-center">
              <img 
                src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
                alt="CoolShirt.Ai Logo" 
-               className="h-6 md:h-12 w-auto object-contain"
+               className="h-10 md:h-12 w-auto object-contain"
              />
           </div>
           
-          <div className="text-center -mt-1">
-            <h2 className="text-base md:text-lg font-semibold text-foreground">
+          <div className="text-center">
+            <h2 className="text-sm md:text-lg font-semibold text-foreground">
               {isSignUp ? "Create Account" : "Welcome back"}
             </h2>
           </div>
 
           {/* Email Form */}
-          <form onSubmit={handleEmailAuth} className="space-y-3 md:space-y-4">
+          <form onSubmit={handleEmailAuth} className="space-y-2 md:space-y-4">
             <div className="space-y-1 md:space-y-2">
               <Label htmlFor="email" className="text-sm">Email Address</Label>
               <div className="relative">
@@ -238,12 +238,12 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             </Button>
           </form>
 
-          <div className="text-center py-4">
+          <div className="text-center py-2">
             <span className="text-sm text-muted-foreground">or continue with</span>
           </div>
 
           {/* Social Login Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             <SocialButton
               provider="google"
               logoSrc="/lovable-uploads/4ba5e67d-f81c-403f-9053-5f21f4555c31.png"
