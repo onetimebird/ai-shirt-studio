@@ -74,9 +74,9 @@ export const MobileBottomBar = ({
 
   return (
     <div className="md:hidden bg-gradient-card border-t border-border backdrop-blur-sm shadow-glass">
-      {/* Horizontal Scrollable Bar */}
+      {/* Single Horizontal Scrollable Bar with All Icons */}
       <div className="overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-2 px-4 py-2 min-w-max">
+        <div className="flex items-center gap-3 px-4 py-3 min-w-max">
           {/* Product Selector */}
           <Sheet open={productSheetOpen} onOpenChange={setProductSheetOpen}>
             <SheetTrigger asChild>
