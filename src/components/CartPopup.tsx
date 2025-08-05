@@ -29,11 +29,11 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
         {children}
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:w-[400px] bg-background/95 backdrop-blur-md border-border/50 flex flex-col h-full pr-12">
-        <SheetHeader className="space-y-4 flex-shrink-0">
+        <SheetHeader className="space-y-3 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <SheetTitle className="text-xl font-semibold">Your Bag</SheetTitle>
+            <SheetTitle className="text-base md:text-lg font-semibold">Your Bag</SheetTitle>
             <div className="flex items-center gap-2">
-              <div className="bg-primary/10 text-primary text-sm px-2 py-1 rounded-full">
+              <div className="bg-primary/10 text-primary text-xs md:text-sm px-2 py-1 rounded-full">
                 {totalItems} {totalItems === 1 ? 'item' : 'items'}
               </div>
             </div>
