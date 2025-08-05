@@ -37,7 +37,7 @@ export const CanvasControls = ({
             variant={currentSide === "front" ? "default" : "ghost"}
             size="sm"
             onClick={() => onSideChange("front")}
-            className="w-full text-xs md:text-sm h-6 md:h-8 px-2 md:px-3"
+            className="w-full text-xs md:text-sm h-5 md:h-8 px-1.5 md:px-3"
           >
             Front
           </Button>
@@ -51,7 +51,7 @@ export const CanvasControls = ({
             variant={currentSide === "back" ? "default" : "ghost"}
             size="sm"
             onClick={() => onSideChange("back")}
-            className="w-full text-xs md:text-sm h-6 md:h-8 px-2 md:px-3"
+            className="w-full text-xs md:text-sm h-5 md:h-8 px-1.5 md:px-3"
           >
             Back
           </Button>
