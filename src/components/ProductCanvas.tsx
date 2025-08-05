@@ -26,8 +26,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
 
     // Calculate larger canvas dimensions to accommodate full t-shirt
     const isMobile = window.innerWidth < 768;
-    const canvasWidth = isMobile ? Math.min(400, window.innerWidth - 20) : 1012; // Reduced by 12% from 1150
-    const canvasHeight = isMobile ? Math.min(500, (window.innerHeight - 200)) : 1113; // Reduced by 12% from 1265
+    const canvasWidth = isMobile ? Math.min(420, window.innerWidth - 10) : 1012; // Increased mobile width slightly
+    const canvasHeight = isMobile ? Math.min(600, (window.innerHeight - 150)) : 1113; // Increased mobile height to prevent cutoff
 
     const canvas = new FabricCanvas(canvasRef.current, {
       width: canvasWidth,
@@ -91,8 +91,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       
       // Keep t-shirt at reasonable size within the larger canvas
       const isMobile = canvasWidth < 500;
-      // Make mobile t-shirt much larger to almost fill the canvas - increased from 0.99 to 1.2
-      const scaleFactor = isMobile ? 1.2 : 0.7;
+      // Reduce mobile t-shirt size slightly to prevent cutoff - down from 1.2 to 1.05
+      const scaleFactor = isMobile ? 1.05 : 0.7;
       
       const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
       const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
