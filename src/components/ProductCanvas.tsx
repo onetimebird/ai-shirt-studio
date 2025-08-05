@@ -178,14 +178,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Main Adult printable area bounding box - extended from collar to bottom */}
+            {/* Main Adult printable area bounding box - scales with t-shirt size */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: '36%',
-                height: '50%',
+                width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.36) / (fabricCanvas?.width || 1) * 100}%`,
+                height: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.50) / (fabricCanvas?.height || 1) * 100}%`,
                 border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
                 transform: 'translateX(-50%)',
                 zIndex: 99,
@@ -195,14 +195,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Left Chest area box - positioned on wearer's left (viewer's right) */}
+            {/* Left Chest area box - positioned on wearer's left (viewer's right) - scales with t-shirt */}
             <div
               style={{
                 position: 'absolute',
                 left: '60%',
                 top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.15)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: '14%',
-                height: '12%',
+                width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.14) / (fabricCanvas?.width || 1) * 100}%`,
+                height: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.12) / (fabricCanvas?.height || 1) * 100}%`,
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
                 transform: 'translateX(-50%)',
                 zIndex: 100,
@@ -212,14 +212,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Youth size area indicator - larger and starting near collar */}
+            {/* Youth size area indicator - scales with t-shirt */}
             <div
               style={{
                 position: 'absolute',
                 left: '50%',
                 top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.18)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: '32%',
-                height: '34%',
+                width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.32) / (fabricCanvas?.width || 1) * 100}%`,
+                height: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.34) / (fabricCanvas?.height || 1) * 100}%`,
                 border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
                 transform: 'translateX(-50%)',
                 zIndex: 98,
