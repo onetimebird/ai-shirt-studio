@@ -23,21 +23,21 @@ export const CanvasControls = ({
   
   return (
     <>
-      {/* Undo/Redo Controls - positioned on the left, stacked vertically */}
-      <div className="absolute top-4 left-4 z-[100]">
+      {/* Undo/Redo Controls - positioned on the left, smaller on mobile */}
+      <div className="absolute top-2 md:top-4 left-2 md:left-4 z-[100]">
         <div className="flex flex-col gap-2">
           <UndoRedoControls />
         </div>
       </div>
       
-      {/* Front/Back Toggle - positioned on the right, stacked vertically */}
-      <div className="absolute top-4 right-4 z-[100]">
+      {/* Front/Back Toggle - positioned on the right, smaller on mobile */}
+      <div className="absolute top-2 md:top-4 right-2 md:right-4 z-[100]">
         <div className="flex flex-col gap-1 bg-background/95 backdrop-blur-sm shadow-sm rounded-md border border-border p-1">
           <Button
             variant={currentSide === "front" ? "default" : "ghost"}
             size="sm"
             onClick={() => onSideChange("front")}
-            className="w-full"
+            className="w-full text-xs md:text-sm h-6 md:h-8 px-2 md:px-3"
           >
             Front
           </Button>
@@ -51,7 +51,7 @@ export const CanvasControls = ({
             variant={currentSide === "back" ? "default" : "ghost"}
             size="sm"
             onClick={() => onSideChange("back")}
-            className="w-full"
+            className="w-full text-xs md:text-sm h-6 md:h-8 px-2 md:px-3"
           >
             Back
           </Button>

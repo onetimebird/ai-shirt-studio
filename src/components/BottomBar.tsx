@@ -355,7 +355,7 @@ export const BottomBar = ({
             </Sheet>
           )}
 
-          {/* Next Step Button - 1.5x larger */}
+          {/* Next Step Button - 1.5x larger (Desktop Only) */}
           <Button 
             size="lg"
             onClick={handleNextStep}
@@ -489,15 +489,6 @@ export const BottomBar = ({
             </Sheet>
           )}
 
-          {/* Next Step Button - 1.5x larger on mobile */}
-          <Button 
-            size="sm"
-            onClick={handleNextStep}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 flex-[1.5] text-sm px-6 py-3 h-12 min-w-[120px]"
-          >
-            <ArrowRight className="w-5 h-5 mr-2" strokeWidth={2.5} />
-            Next
-          </Button>
         </div>
       </div>
 

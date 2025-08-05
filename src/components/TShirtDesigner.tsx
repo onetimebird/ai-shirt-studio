@@ -3,6 +3,7 @@ import { useState } from "react";
 import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
 import { BottomBar } from "@/components/BottomBar";
+import { MobileBottomBar } from "@/components/MobileBottomBar";
 import { CanvasControls } from "@/components/CanvasControls";
 import { DesignCanvas } from "@/components/DesignCanvas";
 import { RightPanel } from "@/components/RightPanel";
@@ -96,7 +97,12 @@ export const TShirtDesigner = () => {
       
       {/* Top Controls Bar - Sticky */}
       <div className="sticky top-0 z-50 flex-shrink-0">
-        <TopControls onAuthModalChange={setIsAuthModalOpen} onCartModalChange={setIsCartModalOpen} />
+        <TopControls 
+          onAuthModalChange={setIsAuthModalOpen} 
+          onCartModalChange={setIsCartModalOpen}
+          selectedProduct={selectedProduct}
+          selectedColor={selectedColor}
+        />
       </div>
 
       {/* Main Content Area */}
@@ -358,8 +364,8 @@ export const TShirtDesigner = () => {
         </div>
       </div>
 
-      {/* Bottom Bar - Sticky */}
-      <div className="flex-shrink-0">
+      {/* Desktop Bottom Bar */}
+      <div className="hidden md:block flex-shrink-0">
         <BottomBar
           selectedProduct={selectedProduct}
           selectedColor={selectedColor}
@@ -369,6 +375,18 @@ export const TShirtDesigner = () => {
           onDecorationChange={setDecorationMethod}
           onSaveModalChange={setIsSaveModalOpen}
           onLoadPanelChange={setIsLoadPanelOpen}
+        />
+      </div>
+
+      {/* Mobile Bottom Bar */}
+      <div className="md:hidden flex-shrink-0">
+        <MobileBottomBar
+          selectedProduct={selectedProduct}
+          selectedColor={selectedColor}
+          decorationMethod={decorationMethod}
+          onProductChange={setSelectedProduct}
+          onColorChange={setSelectedColor}
+          onDecorationChange={setDecorationMethod}
         />
       </div>
     </div>

@@ -35,7 +35,7 @@ export const UndoRedoControls = () => {
   }, [isDesignCanvasReady]);
 
   return (
-    <div className="flex flex-col gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg w-16">
+    <div className="flex flex-col gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg w-12 md:w-16">
       <div className="relative group flex flex-col items-center py-0.5">
         <Button
           variant="ghost"
@@ -68,14 +68,13 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
             }
           }}
-          className="h-6 w-6 p-0 touch-manipulation select-none"
+          className="h-5 w-5 md:h-6 md:w-6 p-0 touch-manipulation select-none"
         >
-          <Undo className="w-3.5 h-3.5" />
+          <Undo className="w-3 h-3 md:w-3.5 md:h-3.5" />
         </Button>
-        <span className="text-xs text-muted-foreground">Undo</span>
+        <span className="text-[10px] md:text-xs text-muted-foreground">Undo</span>
       </div>
 
-      {/* Subtle divider line */}
       {/* Embossed divider line */}
       <div className="relative mx-1 my-0.5">
         <div className="h-0.5 bg-border/30 border-t border-border/60 border-b border-background/60 shadow-inner"></div>
@@ -113,11 +112,11 @@ export const UndoRedoControls = () => {
               console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
             }
           }}
-          className="h-6 w-6 p-0 touch-manipulation select-none"
+          className="h-5 w-5 md:h-6 md:w-6 p-0 touch-manipulation select-none"
         >
-          <Redo className="w-3.5 h-3.5" />
+          <Redo className="w-3 h-3 md:w-3.5 md:h-3.5" />
         </Button>
-        <span className="text-xs text-muted-foreground">Redo</span>
+        <span className="text-[10px] md:text-xs text-muted-foreground">Redo</span>
       </div>
     </div>
   );
