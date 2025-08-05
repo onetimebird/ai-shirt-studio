@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X } from "lucide-react";
+import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X, FolderOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
 import { GILDAN_64000_COLORS, getAllColors as getAllColors64000 } from "@/data/gildan64000Colors";
@@ -13,6 +13,8 @@ import { BELLA_3719_COLORS, getAllColors as getAllColors3719 } from "@/data/bell
 import { AIWandIcon } from "@/components/AIWandIcon";
 import { RightPanel } from "@/components/RightPanel";
 import { ProductSelector } from "@/components/ProductSelector";
+import { SavedDesignsPanel } from "@/components/SavedDesignsPanel";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MobileBottomBarProps {
   selectedProduct: string;
@@ -31,6 +33,7 @@ interface MobileBottomBarProps {
   imageObjects: any[];
   uploadedFile: File | null;
   onSheetOpenChange?: (isOpen: boolean) => void;
+  onLoadDesign?: (designData: any) => void;
 }
 
 export const MobileBottomBar = ({
@@ -50,6 +53,7 @@ export const MobileBottomBar = ({
   imageObjects,
   uploadedFile,
   onSheetOpenChange,
+  onLoadDesign,
 }: MobileBottomBarProps) => {
   const [productSheetOpen, setProductSheetOpen] = useState(false);
   const [colorSheetOpen, setColorSheetOpen] = useState(false);
@@ -57,8 +61,27 @@ export const MobileBottomBar = ({
   const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
   const [aiSheetOpen, setAiSheetOpen] = useState(false);
   const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
+  const [loadSheetOpen, setLoadSheetOpen] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
-  const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen;
+  const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen || loadSheetOpen;
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsUserLoggedIn(!!user);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsUserLoggedIn(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Get current color based on selected product
   const getCurrentColors = () => {
@@ -263,6 +286,40 @@ export const MobileBottomBar = ({
               </div>
             </SheetContent>
           </Sheet>
+
+          {/* Load Saved Design - Only show when logged in */}
+          {isUserLoggedIn && (
+            <Sheet open={loadSheetOpen} onOpenChange={setLoadSheetOpen}>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="glass"
+                  size="sm"
+                  className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+                >
+                  <FolderOpen className="w-4 h-4" />
+                  <span className="text-[10px] leading-tight">Load</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[95vh] p-0 rounded-t-xl">
+                <SheetHeader className="p-4 pb-2 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10 relative">
+                  <SheetClose className="absolute right-4 top-4 p-1 hover:bg-muted rounded-sm">
+                    <X className="h-4 w-4" />
+                  </SheetClose>
+                  <SheetTitle className="text-lg">Load Saved Design</SheetTitle>
+                  <p className="text-sm text-muted-foreground">Choose from your saved designs</p>
+                </SheetHeader>
+                <div className="overflow-y-auto h-full pb-20">
+                  <SavedDesignsPanel
+                    onLoadDesign={(designData) => {
+                      onLoadDesign?.(designData);
+                      setLoadSheetOpen(false);
+                    }}
+                    onClose={() => setLoadSheetOpen(false)}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
 
           {/* Properties */}
           <Sheet open={settingsSheetOpen} onOpenChange={setSettingsSheetOpen}>

@@ -30,6 +30,59 @@ export const TShirtDesigner = () => {
   const [isLoadPanelOpen, setIsLoadPanelOpen] = useState(false);
   const [isMobileSheetOpen, setIsMobileSheetOpen] = useState(false);
 
+  const loadDesignData = (designData: any) => {
+    console.log('[TShirtDesigner] loadDesignData called with:', designData);
+    const canvas = (window as any).designCanvas?.canvas;
+    console.log('[TShirtDesigner] Canvas exists:', !!canvas);
+    if (!canvas || !designData) return;
+
+    // Store background objects before loading
+    const backgroundObjects = canvas.getObjects().filter((obj: any) => obj.isBackground);
+    console.log('[TShirtDesigner] Background objects found:', backgroundObjects.length);
+
+    // Clear canvas except for background objects
+    const objects = canvas.getObjects();
+    console.log('[TShirtDesigner] Current canvas objects before clear:', objects.length);
+    objects.forEach((obj: any) => {
+      if (!obj.isBackground) {
+        canvas.remove(obj);
+      }
+    });
+
+    // Load the saved design
+    if (designData.canvasData) {
+      console.log('[TShirtDesigner] Loading canvas data:', designData.canvasData);
+      
+      // Create a temporary canvas data that includes only non-background objects
+      const filteredCanvasData = {
+        ...designData.canvasData,
+        objects: designData.canvasData.objects ? designData.canvasData.objects.filter((objData: any) => !objData.isBackground) : []
+      };
+      
+      console.log('[TShirtDesigner] Filtered objects to load:', filteredCanvasData.objects.length);
+      
+      if (filteredCanvasData.objects.length > 0) {
+        // Load only the non-background objects
+        canvas.loadFromJSON(filteredCanvasData, () => {
+          // Ensure background objects are still there after loading
+          backgroundObjects.forEach(bgObj => {
+            if (!canvas.getObjects().find((obj: any) => obj === bgObj)) {
+              canvas.add(bgObj);
+              canvas.sendToBack(bgObj);
+            }
+          });
+          canvas.renderAll();
+          console.log('[TShirtDesigner] Canvas objects after load:', canvas.getObjects().length);
+        });
+      } else {
+        console.log('[TShirtDesigner] No objects to load');
+        canvas.renderAll();
+      }
+    } else {
+      console.log('[TShirtDesigner] No canvasData found in design data');
+    }
+  };
+
   const handleToolChange = (tool: string) => {
     // Handle reset tool separately - don't change activeTool
     if (tool === "reset") {
@@ -201,6 +254,7 @@ export const TShirtDesigner = () => {
           imageObjects={imageObjects}
           uploadedFile={uploadedFile}
           onSheetOpenChange={setIsMobileSheetOpen}
+          onLoadDesign={loadDesignData}
         />
       </div>
     </div>
