@@ -144,16 +144,16 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
       <DialogContent className="w-[95vw] max-w-md mx-auto bg-background/95 backdrop-blur-sm border-border/50 max-h-[90vh] overflow-y-auto">
         <div className="space-y-2 md:space-y-3 p-1">
           {/* Company Logo */}
-           <div className="flex justify-center py-2">
+           <div className="flex justify-center py-1">
              <img 
                src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
                alt="CoolShirt.Ai Logo" 
-               className="h-8 md:h-12 w-auto object-contain"
+               className="h-6 md:h-12 w-auto object-contain"
              />
           </div>
           
-          <div className="text-center">
-            <h2 className="text-lg font-semibold text-foreground">
+          <div className="text-center -mt-1">
+            <h2 className="text-base md:text-lg font-semibold text-foreground">
               {isSignUp ? "Create Account" : "Welcome back"}
             </h2>
           </div>
