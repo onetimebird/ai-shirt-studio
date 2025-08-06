@@ -10,6 +10,7 @@ interface CanvasControlsProps {
   isLoadPanelOpen?: boolean;
   isShareModalOpen?: boolean;
   hideControls?: boolean;
+  decorationMethod?: "screen-print" | "embroidery";
 }
 
 export const CanvasControls = ({ 
@@ -20,7 +21,8 @@ export const CanvasControls = ({
   isSaveModalOpen,
   isLoadPanelOpen,
   isShareModalOpen,
-  hideControls
+  hideControls,
+  decorationMethod
 }: CanvasControlsProps) => {
   console.log('[CanvasControls] hideControls:', hideControls);
   
@@ -60,7 +62,10 @@ export const CanvasControls = ({
             variant={currentSide === "back" ? "default" : "ghost"}
             size="sm"
             onClick={() => onSideChange("back")}
-            className="w-full text-xs md:text-sm h-5 md:h-8 px-1.5 md:px-3"
+            disabled={decorationMethod === "embroidery"}
+            className={`w-full text-xs md:text-sm h-5 md:h-8 px-1.5 md:px-3 ${
+              decorationMethod === "embroidery" ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             Back
           </Button>

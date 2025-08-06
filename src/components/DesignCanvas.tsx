@@ -11,6 +11,7 @@ interface DesignCanvasProps {
   onToolChange: (tool: string) => void;
   onTextObjectsUpdate?: (objects: any[]) => void;
   onImageObjectsUpdate?: (objects: any[]) => void;
+  decorationMethod?: "screen-print" | "embroidery";
 }
 
 export const DesignCanvas = ({
@@ -21,7 +22,8 @@ export const DesignCanvas = ({
   onSelectedObjectChange,
   onToolChange,
   onTextObjectsUpdate,
-  onImageObjectsUpdate
+  onImageObjectsUpdate,
+  decorationMethod,
 }: DesignCanvasProps) => {
   console.log('[DesignCanvas] Component rendering');
   
@@ -37,6 +39,7 @@ export const DesignCanvas = ({
       selectedColor={selectedColor}
       currentSide={currentSide}
       selectedProduct={selectedProduct}
+      decorationMethod={decorationMethod}
       onCanvasReady={(canvas) => {
         console.log('[DesignCanvas] onCanvasReady callback triggered');
         console.log("Canvas ready, setting up global designCanvas object");

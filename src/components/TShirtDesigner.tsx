@@ -194,6 +194,7 @@ export const TShirtDesigner = () => {
                 isLoadPanelOpen={isLoadPanelOpen}
                 isShareModalOpen={isShareModalOpen}
                 hideControls={isEmbroideryModalOpen}
+                decorationMethod={decorationMethod}
               />
             )}
             
