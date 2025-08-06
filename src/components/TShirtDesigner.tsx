@@ -20,6 +20,8 @@ export const TShirtDesigner = () => {
   const [selectedColor, setSelectedColor] = useState("cherry-red");
   const [decorationMethod, setDecorationMethod] = useState<"screen-print" | "embroidery">("screen-print");
   const [isEmbroideryModalOpen, setIsEmbroideryModalOpen] = useState(false);
+  
+  console.log('[TShirtDesigner] isEmbroideryModalOpen:', isEmbroideryModalOpen);
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);
   const [textObjects, setTextObjects] = useState<any[]>([]);
@@ -191,6 +193,7 @@ export const TShirtDesigner = () => {
                 isSaveModalOpen={isSaveModalOpen}
                 isLoadPanelOpen={isLoadPanelOpen}
                 isShareModalOpen={isShareModalOpen}
+                hideControls={isEmbroideryModalOpen}
               />
             )}
             

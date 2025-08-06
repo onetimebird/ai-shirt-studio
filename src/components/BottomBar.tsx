@@ -448,6 +448,7 @@ export const BottomBar = ({
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
             size="lg"
             onClick={() => {
+              console.log('[BottomBar] Opening embroidery guidelines modal');
               setShowEmbroideryGuidelines(true);
               onEmbroideryModalChange?.(true);
               onDecorationChange("embroidery");

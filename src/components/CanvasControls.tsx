@@ -22,8 +22,13 @@ export const CanvasControls = ({
   isShareModalOpen,
   hideControls
 }: CanvasControlsProps) => {
+  console.log('[CanvasControls] hideControls:', hideControls);
+  
   // Hide controls when any modal or panel is open
-  if (isAuthModalOpen || isCartModalOpen || isSaveModalOpen || isLoadPanelOpen || isShareModalOpen || hideControls) return null;
+  if (isAuthModalOpen || isCartModalOpen || isSaveModalOpen || isLoadPanelOpen || isShareModalOpen || hideControls) {
+    console.log('[CanvasControls] Hiding controls - hideControls:', hideControls);
+    return null;
+  }
   
   return (
     <>
