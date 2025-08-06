@@ -139,20 +139,30 @@ export const BottomBar = ({
       console.log('[BottomBar] Filtered objects to load:', objectsToLoad.length);
       
       if (objectsToLoad.length > 0) {
-        // Add each object individually to preserve the background
-        objectsToLoad.forEach((objData: any) => {
-          // Use fabric's util to create objects from JSON
-          const fabricUtil = (window as any).fabric?.util;
-          if (fabricUtil && fabricUtil.enlivenObjects) {
-            fabricUtil.enlivenObjects([objData], (enlivenedObjects: any[]) => {
-              if (enlivenedObjects.length > 0) {
-                canvas.add(enlivenedObjects[0]);
-                canvas.renderAll();
-              }
+        // Load objects using canvas.loadFromJSON with callback to restore background
+        const tempCanvasData = {
+          version: designData.canvasData.version,
+          objects: objectsToLoad
+        };
+        
+        // Store background objects before loading
+        const backgroundObjects = canvas.getObjects().filter((obj: any) => obj.isBackground);
+        
+        canvas.loadFromJSON(tempCanvasData, () => {
+          // Re-add background objects if they were removed
+          const currentObjects = canvas.getObjects();
+          const hasBackground = currentObjects.some((obj: any) => obj.isBackground);
+          
+          if (!hasBackground && backgroundObjects.length > 0) {
+            backgroundObjects.forEach(bgObj => {
+              canvas.add(bgObj);
+              canvas.sendToBack(bgObj);
             });
           }
+          
+          canvas.renderAll();
+          console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
         });
-        console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
       } else {
         console.log('[BottomBar] No objects to load');
         canvas.renderAll();
