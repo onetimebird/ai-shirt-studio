@@ -16,6 +16,7 @@ import { BELLA_6400_COLORS, getAllColors as getAllColorsBella6400 } from "@/data
 import { GILDAN_18000_COLORS, getAllColors as getAllColors18000 } from "@/data/gildan18000Colors";
 import { GILDAN_18500_COLORS, getAllColors as getAllColors18500 } from "@/data/gildan18500Colors";
 import { BELLA_3719_COLORS, getAllColors as getAllColors3719 } from "@/data/bella3719Colors";
+import { EmbroideryGuidelinesModal } from './EmbroideryGuidelinesModal';
 
 interface BottomBarProps {
   selectedProduct: string;
@@ -42,6 +43,7 @@ export const BottomBar = ({
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadPanelOpen, setIsLoadPanelOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [showEmbroideryGuidelines, setShowEmbroideryGuidelines] = useState(false);
   const { currentDesignData } = useDesign();
 
   // Check authentication status
@@ -443,7 +445,10 @@ export const BottomBar = ({
           <Button
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
             size="lg"
-            onClick={() => onDecorationChange("embroidery")}
+            onClick={() => {
+              setShowEmbroideryGuidelines(true);
+              onDecorationChange("embroidery");
+            }}
             className="h-14 px-6 text-base"
           >
             Embroidery
@@ -577,7 +582,10 @@ export const BottomBar = ({
           <Button
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
             size="sm"
-            onClick={() => onDecorationChange("embroidery")}
+            onClick={() => {
+              setShowEmbroideryGuidelines(true);
+              onDecorationChange("embroidery");
+            }}
             className="flex-1 h-12 text-sm"
           >
             Embroidery
@@ -647,6 +655,11 @@ export const BottomBar = ({
         productType={selectedProduct}
         productColor={selectedColor}
         previewImage={generatePreviewImage()}
+      />
+
+      <EmbroideryGuidelinesModal
+        isOpen={showEmbroideryGuidelines}
+        onClose={() => setShowEmbroideryGuidelines(false)}
       />
     </div>
   );

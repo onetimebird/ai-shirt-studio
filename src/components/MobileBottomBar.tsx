@@ -17,6 +17,7 @@ import { ProductSelector } from "@/components/ProductSelector";
 import { SavedDesignsPanel } from "@/components/SavedDesignsPanel";
 import { ShareDesignModal } from "@/components/ShareDesignModal";
 import { supabase } from "@/integrations/supabase/client";
+import { EmbroideryGuidelinesModal } from './EmbroideryGuidelinesModal';
 
 interface MobileBottomBarProps {
   selectedProduct: string;
@@ -68,6 +69,7 @@ export const MobileBottomBar = ({
   const [loadSheetOpen, setLoadSheetOpen] = useState(false);
   const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [showEmbroideryGuidelines, setShowEmbroideryGuidelines] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen || loadSheetOpen || shareSheetOpen;
@@ -413,7 +415,10 @@ export const MobileBottomBar = ({
           <Button 
             variant={decorationMethod === "embroidery" ? "default" : "glass"}
             size="sm"
-            onClick={() => onDecorationChange("embroidery")}
+            onClick={() => {
+              setShowEmbroideryGuidelines(true);
+              onDecorationChange("embroidery");
+            }}
             className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
           >
             <Scissors className="w-4 h-4" />
@@ -456,6 +461,11 @@ export const MobileBottomBar = ({
         }}
         designName="My Design"
         designUrl={`${window.location.origin}?design=shared`}
+      />
+
+      <EmbroideryGuidelinesModal
+        isOpen={showEmbroideryGuidelines}
+        onClose={() => setShowEmbroideryGuidelines(false)}
       />
     </div>
   );
