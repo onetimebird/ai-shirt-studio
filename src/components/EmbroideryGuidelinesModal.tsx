@@ -80,9 +80,9 @@ export const EmbroideryGuidelinesModal = ({ isOpen, onClose }: EmbroideryGuideli
           </div>
 
           {/* Alternative Recommendation */}
-          <div className="bg-muted/50 p-4 rounded-lg border">
-            <p className="text-sm text-muted-foreground">
-              <strong>For larger or more complex designs:</strong> Consider screen printing or DTF (Direct-to-Film) which can handle detailed artwork, full-color designs, and larger placement areas.
+          <div className="bg-accent/10 p-4 rounded-lg border border-accent/20">
+            <p className="text-sm">
+              <strong>For larger or more complex designs:</strong> Choose our Digital Print option.
             </p>
           </div>
         </div>

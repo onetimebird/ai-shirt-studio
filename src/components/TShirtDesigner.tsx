@@ -18,7 +18,8 @@ export const TShirtDesigner = () => {
   const [activeTool, setActiveTool] = useState("products");
   const [selectedProduct, setSelectedProduct] = useState("gildan-64000");
   const [selectedColor, setSelectedColor] = useState("cherry-red");
-  const [decorationMethod, setDecorationMethod] = useState("screen-print");
+  const [decorationMethod, setDecorationMethod] = useState<"screen-print" | "embroidery">("screen-print");
+  const [isEmbroideryModalOpen, setIsEmbroideryModalOpen] = useState(false);
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);
   const [textObjects, setTextObjects] = useState<any[]>([]);
@@ -157,6 +158,7 @@ export const TShirtDesigner = () => {
           onCartModalChange={setIsCartModalOpen}
           selectedProduct={selectedProduct}
           selectedColor={selectedColor}
+          hideControls={isEmbroideryModalOpen}
         />
       </div>
 
@@ -238,6 +240,7 @@ export const TShirtDesigner = () => {
           onDecorationChange={setDecorationMethod}
           onSaveModalChange={setIsSaveModalOpen}
           onLoadPanelChange={setIsLoadPanelOpen}
+          onEmbroideryModalChange={setIsEmbroideryModalOpen}
         />
       </div>
 

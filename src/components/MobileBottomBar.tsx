@@ -22,10 +22,10 @@ import { EmbroideryGuidelinesModal } from './EmbroideryGuidelinesModal';
 interface MobileBottomBarProps {
   selectedProduct: string;
   selectedColor: string;
-  decorationMethod: string;
+  decorationMethod: "screen-print" | "embroidery";
   onProductChange: (product: string) => void;
   onColorChange: (color: string) => void;
-  onDecorationChange: (method: string) => void;
+  onDecorationChange: (method: "screen-print" | "embroidery") => void;
   activeTool: string;
   onToolChange: (tool: string) => void;
   selectedObject: any;

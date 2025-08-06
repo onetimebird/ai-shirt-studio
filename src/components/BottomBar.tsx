@@ -21,12 +21,13 @@ import { EmbroideryGuidelinesModal } from './EmbroideryGuidelinesModal';
 interface BottomBarProps {
   selectedProduct: string;
   selectedColor: string;
-  decorationMethod: string;
+  decorationMethod: "screen-print" | "embroidery";
   onProductChange: (product: string) => void;
   onColorChange: (color: string) => void;
-  onDecorationChange: (method: string) => void;
+  onDecorationChange: (method: "screen-print" | "embroidery") => void;
   onSaveModalChange?: (isOpen: boolean) => void;
   onLoadPanelChange?: (isOpen: boolean) => void;
+  onEmbroideryModalChange?: (isOpen: boolean) => void;
 }
 
 export const BottomBar = ({
@@ -38,6 +39,7 @@ export const BottomBar = ({
   onDecorationChange,
   onSaveModalChange,
   onLoadPanelChange,
+  onEmbroideryModalChange,
 }: BottomBarProps) => {
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -447,6 +449,7 @@ export const BottomBar = ({
             size="lg"
             onClick={() => {
               setShowEmbroideryGuidelines(true);
+              onEmbroideryModalChange?.(true);
               onDecorationChange("embroidery");
             }}
             className="h-14 px-6 text-base"
@@ -584,6 +587,7 @@ export const BottomBar = ({
             size="sm"
             onClick={() => {
               setShowEmbroideryGuidelines(true);
+              onEmbroideryModalChange?.(true);
               onDecorationChange("embroidery");
             }}
             className="flex-1 h-12 text-sm"
@@ -659,7 +663,10 @@ export const BottomBar = ({
 
       <EmbroideryGuidelinesModal
         isOpen={showEmbroideryGuidelines}
-        onClose={() => setShowEmbroideryGuidelines(false)}
+        onClose={() => {
+          setShowEmbroideryGuidelines(false);
+          onEmbroideryModalChange?.(false);
+        }}
       />
     </div>
   );

@@ -17,9 +17,10 @@ interface TopControlsProps {
   onCartModalChange?: (isOpen: boolean) => void;
   selectedProduct?: string;
   selectedColor?: string;
+  hideControls?: boolean;
 }
 
-export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProduct, selectedColor }: TopControlsProps = {}) => {
+export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProduct, selectedColor, hideControls }: TopControlsProps = {}) => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [cartModalOpen, setCartModalOpen] = useState(false);
