@@ -303,14 +303,67 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
         <div className="flex-1 overflow-y-auto p-2 lg:p-8 pt-1 lg:pt-2 overscroll-contain" style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}>
           {/* Product Display */}
           <div className="flex items-center gap-2 lg:gap-4 p-1.5 lg:p-4 bg-muted/30 rounded-lg mb-2 lg:mb-6">
-            <img 
-              src={getProductImage(selectedProduct, selectedColor)} 
-              alt="T-shirt" 
-              className="w-8 h-8 lg:w-16 lg:h-16 object-contain"
-            />
+            <div className="w-8 h-8 lg:w-16 lg:h-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+              {(() => {
+                // Try to get the design preview image first
+                const canvas = (window as any).designCanvas?.canvas;
+                let previewImage = null;
+                
+                if (canvas) {
+                  try {
+                    previewImage = canvas.toDataURL({ 
+                      format: 'png', 
+                      quality: 0.8,
+                      multiplier: 0.5
+                    });
+                  } catch (error) {
+                    console.warn('Failed to generate preview image:', error);
+                  }
+                }
+
+                // If we have a design preview, show it; otherwise show product image
+                if (previewImage && (hasFrontDesign || hasBackDesign)) {
+                  return (
+                    <img 
+                      src={previewImage} 
+                      alt="Design Preview" 
+                      className="w-full h-full object-cover"
+                    />
+                  );
+                } else {
+                  return (
+                    <img 
+                      src={getProductImage(selectedProduct, selectedColor)} 
+                      alt="Product" 
+                      className="w-full h-full object-contain"
+                    />
+                  );
+                }
+              })()}
+            </div>
             <div className="flex-1">
               <h3 className="text-[11px] lg:text-xl font-medium">{productData.name}</h3>
               <p className="text-[9px] lg:text-base text-muted-foreground capitalize">{selectedColor?.replace(/-/g, ' ')}</p>
+              {(() => {
+                // Get the design name
+                const getDesignName = () => {
+                  if (currentDesignData?.name) {
+                    return currentDesignData.name;
+                  }
+                  
+                  // Create a descriptive name based on design content
+                  const designType = (hasFrontDesign && hasBackDesign) ? 'Front + Back Design' : 
+                                    hasFrontDesign ? 'Front Design' : 
+                                    hasBackDesign ? 'Back Design' : null;
+                  
+                  return designType ? `${designType}` : null;
+                };
+
+                const designName = getDesignName();
+                return designName ? (
+                  <p className="text-[8px] lg:text-sm text-primary font-medium">{designName}</p>
+                ) : null;
+              })()}
               <div className="flex items-center gap-2 mt-0.5 lg:mt-2">
                 <Badge variant="secondary" className="text-[9px] lg:text-sm px-1 lg:px-3 py-0 lg:py-1">
                   {getTotalQuantity()} Items
