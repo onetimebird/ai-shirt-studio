@@ -151,14 +151,11 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                       }}
                       aria-label="Pay with Apple Pay"
                     >
-                      <svg className="h-6 w-auto" viewBox="0 0 165 35" fill="none">
-                        <rect width="165" height="35" rx="4" fill="black"/>
-                        <g transform="translate(20, 7)">
-                          <path d="M8.9 5.7c-.1-1.4 1.1-2.3 1.1-2.3-.6-.9-1.6-1-1.9-1-.8-.1-1.6.5-2 .5s-.8-.5-1.4-.5c-.9 0-1.8.5-2.3 1.4-.9 1.5-.2 3.7.7 4.9.4.6.9 1.2 1.6 1.2.6 0 .8-.4 1.5-.4s.9.4 1.5.4c.6 0 1.1-.6 1.5-1.2.5-.7.7-1.4.7-1.4s-1.5-.6-1.5-2.3z" fill="white"/>
-                          <path d="M7.4 3.6c.4-.5.7-1.2.6-1.9-.6 0-1.3.4-1.7.9-.4.4-.7 1.1-.6 1.7.7.1 1.3-.4 1.7-.7z" fill="white"/>
-                        </g>
-                        <text x="50" y="23" fill="white" fontSize="17" fontFamily="-apple-system, BlinkMacSystemFont, system-ui, sans-serif" fontWeight="400">Pay</text>
-                      </svg>
+                      <img 
+                        src="/lovable-uploads/874ee8ca-08a3-4fa5-bd7a-10fb110f4bcf.png" 
+                        alt="Apple Pay" 
+                        className="h-5 w-auto"
+                      />
                     </button>
 
                     {/* Google Pay Button */}
