@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X, FolderOpen, Moon, Sun } from "lucide-react";
+import { ShirtIcon, Palette, MonitorSpeaker, Scissors, Package, Type, Upload, Settings, X, FolderOpen, Moon, Sun, Share2 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { useState, useEffect } from "react";
 import { GILDAN_2000_COLORS, getAllColors } from "@/data/gildan2000Colors";
@@ -15,6 +15,7 @@ import { AIWandIcon } from "@/components/AIWandIcon";
 import { RightPanel } from "@/components/RightPanel";
 import { ProductSelector } from "@/components/ProductSelector";
 import { SavedDesignsPanel } from "@/components/SavedDesignsPanel";
+import { ShareDesignModal } from "@/components/ShareDesignModal";
 import { supabase } from "@/integrations/supabase/client";
 
 interface MobileBottomBarProps {
@@ -35,6 +36,7 @@ interface MobileBottomBarProps {
   uploadedFile: File | null;
   onSheetOpenChange?: (isOpen: boolean) => void;
   onLoadDesign?: (designData: any) => void;
+  onShareModalChange?: (isOpen: boolean) => void;
 }
 
 export const MobileBottomBar = ({
@@ -55,6 +57,7 @@ export const MobileBottomBar = ({
   uploadedFile,
   onSheetOpenChange,
   onLoadDesign,
+  onShareModalChange,
 }: MobileBottomBarProps) => {
   const [productSheetOpen, setProductSheetOpen] = useState(false);
   const [colorSheetOpen, setColorSheetOpen] = useState(false);
@@ -63,10 +66,11 @@ export const MobileBottomBar = ({
   const [aiSheetOpen, setAiSheetOpen] = useState(false);
   const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
   const [loadSheetOpen, setLoadSheetOpen] = useState(false);
+  const [shareSheetOpen, setShareSheetOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen || loadSheetOpen;
+  const isAnySheetOpen = productSheetOpen || colorSheetOpen || textSheetOpen || uploadSheetOpen || aiSheetOpen || settingsSheetOpen || loadSheetOpen || shareSheetOpen;
 
   // Check authentication status
   useEffect(() => {
@@ -145,6 +149,18 @@ export const MobileBottomBar = ({
       const isDark = document.documentElement.classList.contains("dark");
       return isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />;
     }
+  };
+
+  const handleShareDesign = () => {
+    // Check if design has content
+    const hasContent = (textObjects && textObjects.length > 0) || (imageObjects && imageObjects.length > 0);
+    
+    if (!hasContent) {
+      return; // Could show a toast here
+    }
+
+    setShareSheetOpen(true);
+    onShareModalChange?.(true);
   };
 
   useEffect(() => {
@@ -401,7 +417,18 @@ export const MobileBottomBar = ({
             className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
           >
             <Scissors className="w-4 h-4" />
-            <span className="text-[10px] leading-tight">Embroider</span>
+            <span className="text-[10px] leading-tight">Embroidery</span>
+          </Button>
+
+          {/* Share Design */}
+          <Button 
+            variant="glass"
+            size="sm"
+            onClick={handleShareDesign}
+            className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
+          >
+            <Share2 className="w-4 h-4" />
+            <span className="text-[10px] leading-tight">Share</span>
           </Button>
 
           {/* Theme Toggle */}
@@ -419,6 +446,17 @@ export const MobileBottomBar = ({
           <div className="w-4 flex-shrink-0" />
         </div>
       </div>
+
+      {/* Share Design Modal */}
+      <ShareDesignModal
+        isOpen={shareSheetOpen}
+        onClose={() => {
+          setShareSheetOpen(false);
+          onShareModalChange?.(false);
+        }}
+        designName="My Design"
+        designUrl={`${window.location.origin}?design=shared`}
+      />
     </div>
   );
 };

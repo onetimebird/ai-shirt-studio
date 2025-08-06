@@ -261,6 +261,7 @@ export const TShirtDesigner = () => {
           uploadedFile={uploadedFile}
           onSheetOpenChange={setIsMobileSheetOpen}
           onLoadDesign={loadDesignData}
+          onShareModalChange={setIsShareModalOpen}
         />
       </div>
     </div>
