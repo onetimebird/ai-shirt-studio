@@ -8,6 +8,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { 
   Mail, 
   Facebook, 
@@ -18,6 +25,7 @@ import {
   X
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ShareDesignModalProps {
   isOpen: boolean;
@@ -33,6 +41,7 @@ export const ShareDesignModal = ({
   designUrl
 }: ShareDesignModalProps) => {
   const [copied, setCopied] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleCopyLink = async () => {
     try {
@@ -86,6 +95,108 @@ export const ShareDesignModal = ({
     });
   };
 
+  const shareContent = (
+    <div className="space-y-6 py-4">
+      {/* Copy Link Section */}
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Input
+            value={designUrl}
+            readOnly
+            className="flex-1 bg-muted/50 border-primary/20"
+          />
+          <Button 
+            onClick={handleCopyLink}
+            className="bg-gradient-primary hover:bg-gradient-primary/90 text-primary-foreground px-6"
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </Button>
+        </div>
+      </div>
+
+      {/* Social Share Buttons */}
+      <div className="grid grid-cols-4 gap-3 md:gap-4">
+        <div className="flex flex-col items-center space-y-2">
+          <Button
+            variant="glass"
+            size="lg"
+            className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
+            onClick={handleEmailShare}
+          >
+            <Mail size={isMobile ? 24 : 32} />
+          </Button>
+          <span className="text-xs md:text-sm text-muted-foreground">Email</span>
+        </div>
+
+        <div className="flex flex-col items-center space-y-2">
+          <Button
+            variant="glass"
+            size="lg"
+            className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
+            onClick={handleFacebookShare}
+          >
+            <Facebook size={isMobile ? 24 : 32} />
+          </Button>
+          <span className="text-xs md:text-sm text-muted-foreground">Share</span>
+        </div>
+
+        <div className="flex flex-col items-center space-y-2">
+          <Button
+            variant="glass"
+            size="lg"
+            className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
+            onClick={handleTwitterShare}
+          >
+            <Twitter size={isMobile ? 24 : 32} />
+          </Button>
+          <span className="text-xs md:text-sm text-muted-foreground">Tweet</span>
+        </div>
+
+        <div className="flex flex-col items-center space-y-2">
+          <Button
+            variant="glass"
+            size="lg"
+            className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
+            onClick={handleInstagramShare}
+          >
+            <Instagram size={isMobile ? 24 : 32} />
+          </Button>
+          <span className="text-xs md:text-sm text-muted-foreground">Pin</span>
+        </div>
+      </div>
+
+      {/* Continue to Pricing Button */}
+      <Button 
+        onClick={handleContinueToPricing}
+        className="w-full bg-gradient-primary hover:bg-gradient-primary/90 text-primary-foreground py-4 md:py-6 text-base md:text-lg font-semibold rounded-xl"
+      >
+        Continue to Pricing
+      </Button>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent 
+          side="bottom" 
+          className="h-auto max-h-[90vh] rounded-t-xl bg-gradient-to-br from-background via-background to-background/95 border-primary/20"
+        >
+          <SheetHeader className="space-y-4 text-center">
+            <SheetTitle className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Share your design
+            </SheetTitle>
+            <SheetDescription className="text-sm">
+              Your design "{designName}" has been saved and emailed to you.{' '}
+              Copy your design link below and share with others.
+            </SheetDescription>
+          </SheetHeader>
+          {shareContent}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-background via-background to-background/95 border-primary/20">
@@ -105,84 +216,7 @@ export const ShareDesignModal = ({
             <br />Copy your design link below and share with others.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="space-y-6 py-4">
-          {/* Copy Link Section */}
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <Input
-                value={designUrl}
-                readOnly
-                className="flex-1 bg-muted/50 border-primary/20"
-              />
-              <Button 
-                onClick={handleCopyLink}
-                className="bg-gradient-primary hover:bg-gradient-primary/90 text-primary-foreground px-6"
-              >
-                {copied ? 'Copied!' : 'Copy'}
-              </Button>
-            </div>
-          </div>
-
-          {/* Social Share Buttons */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="flex flex-col items-center space-y-2">
-              <Button
-                variant="glass"
-                size="lg"
-                className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
-                onClick={handleEmailShare}
-              >
-                <Mail size={64} />
-              </Button>
-              <span className="text-sm text-muted-foreground">Email</span>
-            </div>
-
-            <div className="flex flex-col items-center space-y-2">
-              <Button
-                variant="glass"
-                size="lg"
-                className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
-                onClick={handleFacebookShare}
-              >
-                <Facebook size={64} />
-              </Button>
-              <span className="text-sm text-muted-foreground">Share</span>
-            </div>
-
-            <div className="flex flex-col items-center space-y-2">
-              <Button
-                variant="glass"
-                size="lg"
-                className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
-                onClick={handleTwitterShare}
-              >
-                <Twitter size={64} />
-              </Button>
-              <span className="text-sm text-muted-foreground">Tweet</span>
-            </div>
-
-            <div className="flex flex-col items-center space-y-2">
-              <Button
-                variant="glass"
-                size="lg"
-                className="w-16 h-16 rounded-xl bg-muted/50 hover:bg-muted border-primary/20"
-                onClick={handleInstagramShare}
-              >
-                <Instagram size={64} />
-              </Button>
-              <span className="text-sm text-muted-foreground">Pin</span>
-            </div>
-          </div>
-
-          {/* Continue to Pricing Button */}
-          <Button 
-            onClick={handleContinueToPricing}
-            className="w-full bg-gradient-primary hover:bg-gradient-primary/90 text-primary-foreground py-6 text-lg font-semibold rounded-xl"
-          >
-            Continue to Pricing
-          </Button>
-        </div>
+        {shareContent}
       </DialogContent>
     </Dialog>
   );
