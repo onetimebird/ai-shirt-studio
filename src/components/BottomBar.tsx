@@ -163,47 +163,125 @@ export const BottomBar = ({
       console.log('[BottomBar] Objects to load details:', objectsToLoad.map(o => ({ type: o.type, text: o.text, src: o.src })));
       
       if (objectsToLoad.length > 0) {
-        // Use Fabric's util.enlivenObjects to properly restore objects
-        const util = (window as any).fabric?.util;
-        console.log('[BottomBar] Fabric util available:', !!util);
+        console.log('[BottomBar] Using Fabric v6 object creation approach');
         
-        if (util && util.enlivenObjects) {
-          console.log('[BottomBar] Using enlivenObjects to restore', objectsToLoad.length, 'objects');
-          
-          util.enlivenObjects(objectsToLoad).then((enlivenedObjects: any[]) => {
-            console.log('[BottomBar] Successfully enlivened', enlivenedObjects.length, 'objects');
+        // In Fabric.js v6, we need to create objects manually from the JSON data
+        const loadObjectsSequentially = async () => {
+          for (const objData of objectsToLoad) {
+            console.log('[BottomBar] Creating object from data:', objData.type, objData);
             
-            enlivenedObjects.forEach((obj, index) => {
-              console.log(`[BottomBar] Adding object ${index + 1}:`, { type: obj.type, left: obj.left, top: obj.top });
-              canvas.add(obj);
+            try {
+              let fabricObject;
               
-              // Apply custom controls if needed
-              if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
-                import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
-                  applyCustomControlsToObject(obj);
+              if (objData.type === 'Text') {
+                const { Text } = await import('fabric');
+                fabricObject = new Text(objData.text || '', {
+                  left: objData.left,
+                  top: objData.top,
+                  fill: objData.fill,
+                  fontSize: objData.fontSize,
+                  fontFamily: objData.fontFamily,
+                  fontWeight: objData.fontWeight,
+                  fontStyle: objData.fontStyle,
+                  textAlign: objData.textAlign,
+                  angle: objData.angle,
+                  scaleX: objData.scaleX,
+                  scaleY: objData.scaleY,
+                  originX: objData.originX,
+                  originY: objData.originY,
+                  opacity: objData.opacity,
+                  visible: objData.visible
                 });
+              } else if (objData.type === 'Image') {
+                const { FabricImage } = await import('fabric');
+                // For images, we need to load the image first
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                await new Promise((resolve, reject) => {
+                  img.onload = resolve;
+                  img.onerror = reject;
+                  img.src = objData.src;
+                });
+                
+                fabricObject = new FabricImage(img, {
+                  left: objData.left,
+                  top: objData.top,
+                  angle: objData.angle,
+                  scaleX: objData.scaleX,
+                  scaleY: objData.scaleY,
+                  originX: objData.originX,
+                  originY: objData.originY,
+                  opacity: objData.opacity,
+                  visible: objData.visible
+                });
+              } else if (objData.type === 'Rect') {
+                const { Rect } = await import('fabric');
+                fabricObject = new Rect({
+                  left: objData.left,
+                  top: objData.top,
+                  width: objData.width,
+                  height: objData.height,
+                  fill: objData.fill,
+                  angle: objData.angle,
+                  scaleX: objData.scaleX,
+                  scaleY: objData.scaleY,
+                  originX: objData.originX,
+                  originY: objData.originY,
+                  opacity: objData.opacity,
+                  visible: objData.visible
+                });
+              } else if (objData.type === 'Circle') {
+                const { Circle } = await import('fabric');
+                fabricObject = new Circle({
+                  left: objData.left,
+                  top: objData.top,
+                  radius: objData.radius,
+                  fill: objData.fill,
+                  angle: objData.angle,
+                  scaleX: objData.scaleX,
+                  scaleY: objData.scaleY,
+                  originX: objData.originX,
+                  originY: objData.originY,
+                  opacity: objData.opacity,
+                  visible: objData.visible
+                });
+              } else {
+                console.warn('[BottomBar] Unknown object type:', objData.type);
+                continue;
               }
-            });
-            
-            canvas.renderAll();
-            console.log('[BottomBar] Final canvas objects after load:', canvas.getObjects().length);
-            console.log('[BottomBar] Final object types:', canvas.getObjects().map(o => ({ type: o.type, isBackground: o.isBackground })));
-            
-            // Update object lists
-            setTimeout(() => {
-              if ((window as any).designCanvas?.updateTextObjects) {
-                (window as any).designCanvas.updateTextObjects();
+              
+              if (fabricObject) {
+                console.log('[BottomBar] Adding object to canvas:', objData.type);
+                canvas.add(fabricObject);
+                
+                // Apply custom controls if needed
+                if (objData.type === 'Text' || objData.type === 'Image') {
+                  import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                    applyCustomControlsToObject(fabricObject);
+                  });
+                }
               }
-              if ((window as any).designCanvas?.updateImageObjects) {
-                (window as any).designCanvas.updateImageObjects();
-              }
-            }, 100);
-          }).catch((error: any) => {
-            console.error('[BottomBar] Error enlivening objects:', error);
-          });
-        } else {
-          console.error('[BottomBar] Fabric util.enlivenObjects not available');
-        }
+            } catch (error) {
+              console.error('[BottomBar] Error creating object:', error, objData);
+            }
+          }
+          
+          canvas.renderAll();
+          console.log('[BottomBar] Final canvas objects after load:', canvas.getObjects().length);
+          console.log('[BottomBar] Final object types:', canvas.getObjects().map(o => ({ type: o.type, isBackground: o.isBackground })));
+          
+          // Update object lists
+          setTimeout(() => {
+            if ((window as any).designCanvas?.updateTextObjects) {
+              (window as any).designCanvas.updateTextObjects();
+            }
+            if ((window as any).designCanvas?.updateImageObjects) {
+              (window as any).designCanvas.updateImageObjects();
+            }
+          }, 100);
+        };
+        
+        loadObjectsSequentially();
       } else {
         console.log('[BottomBar] No objects to load');
         canvas.renderAll();
