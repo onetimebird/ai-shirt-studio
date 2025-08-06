@@ -279,7 +279,7 @@ All colors MUST be HSL.
   .subtle-glow {
     position: relative;
     overflow: hidden;
-    animation: subtle-pulse 3.4s ease-in-out infinite;
+    animation: subtle-pulse 2.55s ease-in-out infinite;
   }
   
   .subtle-glow::before {
@@ -289,8 +289,8 @@ All colors MUST be HSL.
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.125), transparent);
-    animation: subtle-shimmer 3.4s ease-in-out infinite;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.156), transparent);
+    animation: subtle-shimmer 2.55s ease-in-out infinite;
   }
   
   @keyframes subtle-shimmer {
@@ -300,16 +300,16 @@ All colors MUST be HSL.
     }
     50% {
       left: 100%;
-      opacity: 0.31;
+      opacity: 0.39;
     }
   }
   
   @keyframes subtle-pulse {
     0%, 100% {
-      box-shadow: 0 0 8px hsl(220 100% 70% / 0.125);
+      box-shadow: 0 0 8px hsl(220 100% 70% / 0.156);
     }
     50% {
-      box-shadow: 0 0 12px hsl(220 100% 70% / 0.19);
+      box-shadow: 0 0 12px hsl(220 100% 70% / 0.24);
     }
   }
   
