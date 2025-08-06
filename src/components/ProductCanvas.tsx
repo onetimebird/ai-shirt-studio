@@ -242,8 +242,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                   style={{
                     position: 'absolute',
                     left: '50%',
-                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.25)) / (fabricCanvas?.height || 1)) * 100}%`,
-                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.65) / (fabricCanvas?.width || 1) * 100}%`,
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.18)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.45) / (fabricCanvas?.width || 1) * 100}%`,
                     height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.70 * 1.15 : 0.70)) / (fabricCanvas?.height || 1) * 100}%`,
                     border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
                     transform: 'translateX(-50%)',
@@ -259,8 +259,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                   style={{
                     position: 'absolute',
                     left: '50%',
-                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.35)) / (fabricCanvas?.height || 1)) * 100}%`,
-                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.55) / (fabricCanvas?.width || 1) * 100}%`,
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.28)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.38) / (fabricCanvas?.width || 1) * 100}%`,
                     height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.55 * 1.15 : 0.55)) / (fabricCanvas?.height || 1) * 100}%`,
                     border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
                     transform: 'translateX(-50%)',
