@@ -1031,7 +1031,7 @@ and return a high-quality transparent PNG suitable for print.
                                 }
                               }}
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="w-6 h-6" />
                             </Button>
                           </div>
                         </div>
@@ -1695,7 +1695,7 @@ and return a high-quality transparent PNG suitable for print.
                                 }
                               }}
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="w-6 h-6" />
                             </Button>
                           </div>
                         </div>
