@@ -183,14 +183,11 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
                       }}
                       aria-label="Pay with Shop Pay"
                     >
-                      <div className="flex items-center justify-center">
-                        <svg className="h-5 w-auto mr-1" viewBox="0 0 40 40" fill="none">
-                          <circle cx="20" cy="20" r="20" fill="white"/>
-                          <path d="M20 8l6 6-6 6-6-6z" fill="#5a31f4"/>
-                        </svg>
-                        <span className="text-white font-semibold text-sm">Shop</span>
-                        <span className="text-white/80 font-normal text-sm ml-1">Pay</span>
-                      </div>
+                      <img 
+                        src="/lovable-uploads/954df7f1-c280-432e-809b-875050deb7a1.png" 
+                        alt="Shop Pay" 
+                        className="h-5 w-auto"
+                      />
                     </button>
                   </div>
                   
