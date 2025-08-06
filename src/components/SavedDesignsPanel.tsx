@@ -33,10 +33,20 @@ export const SavedDesignsPanel = ({ onLoadDesign, onClose }: SavedDesignsPanelPr
     console.log('[SavedDesignsPanel] Loading design:', designId);
     const design = await loadDesign(designId);
     console.log('[SavedDesignsPanel] Loaded design data:', design);
-    if (design) {
-      console.log('[SavedDesignsPanel] Calling onLoadDesign with:', design.design_data);
+    console.log('[SavedDesignsPanel] Design structure:', {
+      hasDesign: !!design,
+      designKeys: design ? Object.keys(design) : [],
+      hasDesignData: !!design?.design_data,
+      designDataType: typeof design?.design_data,
+      designDataKeys: design?.design_data ? Object.keys(design.design_data) : []
+    });
+    
+    if (design && design.design_data) {
+      console.log('[SavedDesignsPanel] Calling onLoadDesign with design_data:', design.design_data);
       onLoadDesign(design.design_data);
       onClose();
+    } else {
+      console.error('[SavedDesignsPanel] No design data found to load');
     }
   };
 

@@ -117,58 +117,104 @@ export const BottomBar = ({
 
   const loadDesignData = (designData: any) => {
     console.log('[BottomBar] loadDesignData called with:', designData);
+    console.log('[BottomBar] Design data structure:', {
+      hasCanvasData: !!designData?.canvasData,
+      canvasDataKeys: designData?.canvasData ? Object.keys(designData.canvasData) : [],
+      designDataKeys: Object.keys(designData || {})
+    });
+    
     const canvas = (window as any).designCanvas?.canvas;
     console.log('[BottomBar] Canvas exists:', !!canvas);
-    if (!canvas || !designData) return;
+    console.log('[BottomBar] Canvas dimensions:', canvas ? { width: canvas.width, height: canvas.height } : 'N/A');
+    
+    if (!canvas) {
+      console.error('[BottomBar] Canvas not available');
+      return;
+    }
+    
+    if (!designData) {
+      console.error('[BottomBar] No design data provided');
+      return;
+    }
 
     // Clear only non-background objects
     const objects = canvas.getObjects();
     console.log('[BottomBar] Current canvas objects before clear:', objects.length);
-    objects.forEach((obj: any) => {
-      if (!obj.isBackground) {
-        canvas.remove(obj);
-      }
+    console.log('[BottomBar] Object types:', objects.map(o => ({ type: o.type, isBackground: o.isBackground })));
+    
+    const objectsToRemove = objects.filter((obj: any) => !obj.isBackground);
+    console.log('[BottomBar] Removing', objectsToRemove.length, 'non-background objects');
+    
+    objectsToRemove.forEach((obj: any) => {
+      canvas.remove(obj);
     });
 
     // Load the saved design objects
     if (designData.canvasData && designData.canvasData.objects) {
-      console.log('[BottomBar] Loading canvas data:', designData.canvasData);
+      console.log('[BottomBar] Loading canvas data with', designData.canvasData.objects.length, 'total objects');
+      console.log('[BottomBar] Full canvas data:', designData.canvasData);
       
       // Filter only non-background objects from the saved design
-      const objectsToLoad = designData.canvasData.objects.filter((objData: any) => !objData.isBackground);
+      const objectsToLoad = designData.canvasData.objects.filter((objData: any) => {
+        console.log('[BottomBar] Checking object:', { type: objData.type, isBackground: objData.isBackground });
+        return !objData.isBackground;
+      });
       console.log('[BottomBar] Filtered objects to load:', objectsToLoad.length);
+      console.log('[BottomBar] Objects to load details:', objectsToLoad.map(o => ({ type: o.type, text: o.text, src: o.src })));
       
       if (objectsToLoad.length > 0) {
-        // Load objects using canvas.loadFromJSON with callback to restore background
-        const tempCanvasData = {
-          version: designData.canvasData.version,
-          objects: objectsToLoad
-        };
+        // Use Fabric's util.enlivenObjects to properly restore objects
+        const util = (window as any).fabric?.util;
+        console.log('[BottomBar] Fabric util available:', !!util);
         
-        // Store background objects before loading
-        const backgroundObjects = canvas.getObjects().filter((obj: any) => obj.isBackground);
-        
-        canvas.loadFromJSON(tempCanvasData, () => {
-          // Re-add background objects if they were removed
-          const currentObjects = canvas.getObjects();
-          const hasBackground = currentObjects.some((obj: any) => obj.isBackground);
+        if (util && util.enlivenObjects) {
+          console.log('[BottomBar] Using enlivenObjects to restore', objectsToLoad.length, 'objects');
           
-          if (!hasBackground && backgroundObjects.length > 0) {
-            backgroundObjects.forEach(bgObj => {
-              canvas.add(bgObj);
-              canvas.sendToBack(bgObj);
+          util.enlivenObjects(objectsToLoad).then((enlivenedObjects: any[]) => {
+            console.log('[BottomBar] Successfully enlivened', enlivenedObjects.length, 'objects');
+            
+            enlivenedObjects.forEach((obj, index) => {
+              console.log(`[BottomBar] Adding object ${index + 1}:`, { type: obj.type, left: obj.left, top: obj.top });
+              canvas.add(obj);
+              
+              // Apply custom controls if needed
+              if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                  applyCustomControlsToObject(obj);
+                });
+              }
             });
-          }
-          
-          canvas.renderAll();
-          console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
-        });
+            
+            canvas.renderAll();
+            console.log('[BottomBar] Final canvas objects after load:', canvas.getObjects().length);
+            console.log('[BottomBar] Final object types:', canvas.getObjects().map(o => ({ type: o.type, isBackground: o.isBackground })));
+            
+            // Update object lists
+            setTimeout(() => {
+              if ((window as any).designCanvas?.updateTextObjects) {
+                (window as any).designCanvas.updateTextObjects();
+              }
+              if ((window as any).designCanvas?.updateImageObjects) {
+                (window as any).designCanvas.updateImageObjects();
+              }
+            }, 100);
+          }).catch((error: any) => {
+            console.error('[BottomBar] Error enlivening objects:', error);
+          });
+        } else {
+          console.error('[BottomBar] Fabric util.enlivenObjects not available');
+        }
       } else {
         console.log('[BottomBar] No objects to load');
         canvas.renderAll();
       }
     } else {
       console.log('[BottomBar] No canvasData found in design data');
+      console.log('[BottomBar] Design data structure check:', {
+        hasCanvasData: !!designData.canvasData,
+        canvasDataType: typeof designData.canvasData,
+        designDataKeys: Object.keys(designData)
+      });
     }
   };
 
