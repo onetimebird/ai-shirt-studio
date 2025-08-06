@@ -160,22 +160,18 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
 
                     {/* Google Pay Button */}
                     <button
-                      className="w-full h-10 md:h-12 bg-white hover:bg-gray-50 border border-gray-200 hover:shadow-sm rounded-lg transition-all duration-200 flex items-center justify-center"
+                      className="w-full h-10 md:h-12 bg-black hover:bg-gray-800 border border-gray-600 hover:border-gray-500 rounded-lg transition-all duration-200 flex items-center justify-center"
                       onClick={() => {
                         console.log('Google Pay checkout initiated');
                         // Google Pay API integration would go here
                       }}
                       aria-label="Pay with Google Pay"
                     >
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 rounded-full bg-[#4285f4] mr-0.5"></div>
-                          <div className="w-3 h-3 rounded-full bg-[#ea4335] mr-0.5"></div>
-                          <div className="w-3 h-3 rounded-full bg-[#fbbc04] mr-0.5"></div>
-                          <div className="w-3 h-3 rounded-full bg-[#34a853]"></div>
-                        </div>
-                        <span className="text-gray-700 font-medium text-sm ml-1">Pay</span>
-                      </div>
+                      <img 
+                        src="/lovable-uploads/e4a53d90-7cc0-4f5e-a40b-d2eadf224294.png" 
+                        alt="Google Pay" 
+                        className="h-5 w-auto"
+                      />
                     </button>
 
                     {/* Shop Pay Button */}
