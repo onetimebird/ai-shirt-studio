@@ -182,131 +182,233 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               }}
             />
             
-            {/* Main Adult printable area bounding box - scales with t-shirt size */}
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.20)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.42) / (fabricCanvas?.width || 1) * 100}%`,
-                height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.55 * 1.15 : 0.55)) / (fabricCanvas?.height || 1) * 100}%`,
-                border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
-                transform: 'translateX(-50%)',
-                zIndex: 99,
-                pointerEvents: 'none',
-                opacity: 0.8,
-                borderRadius: '4px'
-              }}
-            />
+            {currentSide === "front" ? (
+              <>
+                {/* FRONT - Main Adult printable area bounding box - scales with t-shirt size */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.20)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.42) / (fabricCanvas?.width || 1) * 100}%`,
+                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.55 * 1.15 : 0.55)) / (fabricCanvas?.height || 1) * 100}%`,
+                    border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
+                    transform: 'translateX(-50%)',
+                    zIndex: 99,
+                    pointerEvents: 'none',
+                    opacity: 0.8,
+                    borderRadius: '4px'
+                  }}
+                />
+                
+                {/* FRONT - Left Chest area box - positioned on wearer's left (viewer's right) - scales with t-shirt */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '60%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.20)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.16) / (fabricCanvas?.width || 1) * 100}%`,
+                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.14 * 1.15 : 0.14)) / (fabricCanvas?.height || 1) * 100}%`,
+                    border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
+                    transform: 'translateX(-50%)',
+                    zIndex: 100,
+                    pointerEvents: 'none',
+                    opacity: 0.8,
+                    borderRadius: '3px'
+                  }}
+                />
+                
+                {/* FRONT - Youth size area indicator - scales with t-shirt */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.23)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.38) / (fabricCanvas?.width || 1) * 100}%`,
+                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.40 * 1.15 : 0.40)) / (fabricCanvas?.height || 1) * 100}%`,
+                    border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
+                    transform: 'translateX(-50%)',
+                    zIndex: 98,
+                    pointerEvents: 'none',
+                    opacity: 0.7,
+                    borderRadius: '4px'
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                {/* BACK - Main Adult printable area - full width, starts lower, extends below shirt */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.30)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.85) / (fabricCanvas?.width || 1) * 100}%`,
+                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.95 * 1.15 : 0.95)) / (fabricCanvas?.height || 1) * 100}%`,
+                    border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
+                    transform: 'translateX(-50%)',
+                    zIndex: 99,
+                    pointerEvents: 'none',
+                    opacity: 0.8,
+                    borderRadius: '4px'
+                  }}
+                />
+                
+                {/* BACK - Youth size area indicator - full width, starts lower */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.35)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.75) / (fabricCanvas?.width || 1) * 100}%`,
+                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.70 * 1.15 : 0.70)) / (fabricCanvas?.height || 1) * 100}%`,
+                    border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
+                    transform: 'translateX(-50%)',
+                    zIndex: 98,
+                    pointerEvents: 'none',
+                    opacity: 0.7,
+                    borderRadius: '4px'
+                  }}
+                />
+              </>
+            )}
             
-            {/* Left Chest area box - positioned on wearer's left (viewer's right) - scales with t-shirt */}
-            <div
-              style={{
-                position: 'absolute',
-                left: '60%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.20)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.16) / (fabricCanvas?.width || 1) * 100}%`,
-                height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.14 * 1.15 : 0.14)) / (fabricCanvas?.height || 1) * 100}%`,
-                border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
-                transform: 'translateX(-50%)',
-                zIndex: 100,
-                pointerEvents: 'none',
-                opacity: 0.8,
-                borderRadius: '3px'
-              }}
-            />
-            
-            {/* Youth size area indicator - scales with t-shirt */}
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.23)) / (fabricCanvas?.height || 1)) * 100}%`,
-                width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.38) / (fabricCanvas?.width || 1) * 100}%`,
-                height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.40 * 1.15 : 0.40)) / (fabricCanvas?.height || 1) * 100}%`,
-                border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
-                transform: 'translateX(-50%)',
-                zIndex: 98,
-                pointerEvents: 'none',
-                opacity: 0.7,
-                borderRadius: '4px'
-              }}
-            />
-            
-            <div
-              style={{
-                position: 'absolute',
-                left: '60%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.18)) / (fabricCanvas?.height || 1)) * 100}%`,
-                transform: 'translateX(-50%)',
-                background: 'linear-gradient(to right, #3b82f6, #2563eb)',
-                color: 'white',
-                padding: '1px 4px',
-                borderRadius: '8px',
-                fontSize: window.innerWidth >= 768 ? '18px' : '7px',
-                fontWeight: window.innerWidth >= 768 ? '600' : '400',
-                zIndex: 101,
-                pointerEvents: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-              }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
-            >
-              Left Chest
-            </div>
-            
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.65)) / (fabricCanvas?.height || 1)) * 100}%`,
-                transform: 'translateX(-50%)',
-                background: 'linear-gradient(to right, #3b82f6, #2563eb)',
-                color: 'white',
-                padding: '1px 4px',
-                borderRadius: '8px',
-                fontSize: window.innerWidth >= 768 ? '18px' : '7px',
-                fontWeight: window.innerWidth >= 768 ? '600' : '400',
-                zIndex: 101,
-                pointerEvents: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-              }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
-            >
-              Youth
-            </div>
-            
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.72)) / (fabricCanvas?.height || 1)) * 100}%`,
-                transform: 'translateX(-50%)',
-                background: 'linear-gradient(to right, #3b82f6, #2563eb)',
-                color: 'white',
-                padding: '1px 4px',
-                borderRadius: '8px',
-                fontSize: window.innerWidth >= 768 ? '18px' : '7px',
-                fontWeight: window.innerWidth >= 768 ? '600' : '400',
-                zIndex: 101,
-                pointerEvents: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-              }}
-              className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
-            >
-              Adult
-            </div>
+            {/* Labels - conditional based on side */}
+            {currentSide === "front" ? (
+              <>
+                {/* FRONT - Left Chest label */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '60%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.18)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                    color: 'white',
+                    padding: '1px 4px',
+                    borderRadius: '8px',
+                    fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                    fontWeight: window.innerWidth >= 768 ? '600' : '400',
+                    zIndex: 101,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
+                >
+                  Left Chest
+                </div>
+                
+                {/* FRONT - Youth label */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.65)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                    color: 'white',
+                    padding: '1px 4px',
+                    borderRadius: '8px',
+                    fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                    fontWeight: window.innerWidth >= 768 ? '600' : '400',
+                    zIndex: 101,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
+                >
+                  Youth
+                </div>
+                
+                {/* FRONT - Adult label */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.72)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                    color: 'white',
+                    padding: '1px 4px',
+                    borderRadius: '8px',
+                    fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                    fontWeight: window.innerWidth >= 768 ? '600' : '400',
+                    zIndex: 101,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
+                >
+                  Adult
+                </div>
+              </>
+            ) : (
+              <>
+                {/* BACK - Youth label positioned for back layout */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 1.08)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                    color: 'white',
+                    padding: '1px 4px',
+                    borderRadius: '8px',
+                    fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                    fontWeight: window.innerWidth >= 768 ? '600' : '400',
+                    zIndex: 101,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
+                >
+                  Youth
+                </div>
+                
+                {/* BACK - Adult label positioned for back layout */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 1.18)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                    color: 'white',
+                    padding: '1px 4px',
+                    borderRadius: '8px',
+                    fontSize: window.innerWidth >= 768 ? '18px' : '7px',
+                    fontWeight: window.innerWidth >= 768 ? '600' : '400',
+                    zIndex: 101,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  className="relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] md:px-3 md:py-1 md:min-w-[75px]"
+                >
+                  Adult
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
