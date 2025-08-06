@@ -171,9 +171,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               style={{
                 position: 'absolute',
                 left: '50%',
-                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.08)) / (fabricCanvas?.height || 1)) * 100}%`,
+                top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.06)) / (fabricCanvas?.height || 1)) * 100}%`,
                 width: window.innerWidth >= 768 ? '3px' : '1px',
-                height: `${((tshirtDimensions.height * tshirtDimensions.scale * 0.85) / (fabricCanvas?.height || 1)) * 100}%`,
+                height: `${((tshirtDimensions.height * tshirtDimensions.scale * 0.90) / (fabricCanvas?.height || 1)) * 100}%`,
                 backgroundColor: '#22c55e',
                 transform: 'translateX(-50%)',
                 zIndex: 100,
@@ -242,7 +242,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                   style={{
                     position: 'absolute',
                     left: '50%',
-                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.18)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.06)) / (fabricCanvas?.height || 1)) * 100}%`,
                     width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.45) / (fabricCanvas?.width || 1) * 100}%`,
                     height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.70 * 1.15 : 0.70)) / (fabricCanvas?.height || 1) * 100}%`,
                     border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
@@ -259,9 +259,9 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                   style={{
                     position: 'absolute',
                     left: '50%',
-                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.28)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.16)) / (fabricCanvas?.height || 1)) * 100}%`,
                     width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.38) / (fabricCanvas?.width || 1) * 100}%`,
-                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.55 * 1.15 : 0.55)) / (fabricCanvas?.height || 1) * 100}%`,
+                    height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.35 * 1.15 : 0.35)) / (fabricCanvas?.height || 1) * 100}%`,
                     border: window.innerWidth >= 768 ? '2px dashed #60a5fa' : '1px dashed #60a5fa',
                     transform: 'translateX(-50%)',
                     zIndex: 98,
@@ -356,12 +356,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
               </>
             ) : (
               <>
-                {/* BACK - Youth label positioned for back layout */}
+                {/* BACK - Youth label positioned at bottom of youth box */}
                 <div
                   style={{
                     position: 'absolute',
                     left: '50%',
-                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 1.08)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * (0.16 + (window.innerWidth < 768 ? 0.35 * 1.15 : 0.35)))) / (fabricCanvas?.height || 1)) * 100}%`,
                     transform: 'translateX(-50%)',
                     background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                     color: 'white',
@@ -382,12 +382,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
                   Youth
                 </div>
                 
-                {/* BACK - Adult label positioned for back layout */}
+                {/* BACK - Adult label positioned at bottom of adult box */}
                 <div
                   style={{
                     position: 'absolute',
                     left: '50%',
-                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 1.18)) / (fabricCanvas?.height || 1)) * 100}%`,
+                    top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * (0.06 + (window.innerWidth < 768 ? 0.70 * 1.15 : 0.70)))) / (fabricCanvas?.height || 1)) * 100}%`,
                     transform: 'translateX(-50%)',
                     background: 'linear-gradient(to right, #3b82f6, #2563eb)',
                     color: 'white',
