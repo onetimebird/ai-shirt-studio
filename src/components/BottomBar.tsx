@@ -199,6 +199,14 @@ export const BottomBar = ({
     onSaveModalChange?.(true);
   };
 
+  // Check if there's a design on canvas
+  const hasDesignOnCanvas = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    return canvas && canvas.getObjects().some((obj: any) => 
+      obj.type !== 'image' || !obj.isBackground
+    );
+  };
+
   const handleNextStep = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -359,7 +367,7 @@ export const BottomBar = ({
           <Button 
             size="lg"
             onClick={handleNextStep}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-lg px-8 py-4 h-16 min-w-[200px]"
+            className={`bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-lg px-8 py-4 h-16 min-w-[200px] ${hasDesignOnCanvas() ? 'animate-pulse' : ''}`}
           >
             <ArrowRight className="w-6 h-6 mr-3" strokeWidth={2.5} />
             Next Step

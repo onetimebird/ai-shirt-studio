@@ -60,6 +60,14 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
     onCartModalChange?.(isOpen);
   };
 
+  // Check if there's a design on canvas
+  const hasDesignOnCanvas = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    return canvas && canvas.getObjects().some((obj: any) => 
+      obj.type !== 'image' || !obj.isBackground
+    );
+  };
+
   const handleNextStep = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -176,7 +184,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
           <Button 
             size="sm"
             onClick={handleNextStep}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-xs px-4 py-2 h-8"
+            className={`bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-xs px-4 py-2 h-8 ${hasDesignOnCanvas() ? 'animate-pulse' : ''}`}
           >
             <ArrowRight className="w-3 h-3 mr-1" strokeWidth={2.5} />
             Next Step
