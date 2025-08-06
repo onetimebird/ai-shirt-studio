@@ -121,11 +121,7 @@ export const BottomBar = ({
     console.log('[BottomBar] Canvas exists:', !!canvas);
     if (!canvas || !designData) return;
 
-    // Store background objects before loading
-    const backgroundObjects = canvas.getObjects().filter((obj: any) => obj.isBackground);
-    console.log('[BottomBar] Background objects found:', backgroundObjects.length);
-
-    // Clear current objects except background
+    // Clear only non-background objects
     const objects = canvas.getObjects();
     console.log('[BottomBar] Current canvas objects before clear:', objects.length);
     objects.forEach((obj: any) => {
@@ -134,31 +130,29 @@ export const BottomBar = ({
       }
     });
 
-    // Load the saved design
-    if (designData.canvasData) {
+    // Load the saved design objects
+    if (designData.canvasData && designData.canvasData.objects) {
       console.log('[BottomBar] Loading canvas data:', designData.canvasData);
       
-      // Create a temporary canvas data that includes only non-background objects
-      const filteredCanvasData = {
-        ...designData.canvasData,
-        objects: designData.canvasData.objects ? designData.canvasData.objects.filter((objData: any) => !objData.isBackground) : []
-      };
+      // Filter only non-background objects from the saved design
+      const objectsToLoad = designData.canvasData.objects.filter((objData: any) => !objData.isBackground);
+      console.log('[BottomBar] Filtered objects to load:', objectsToLoad.length);
       
-      console.log('[BottomBar] Filtered objects to load:', filteredCanvasData.objects.length);
-      
-      if (filteredCanvasData.objects.length > 0) {
-        // Load only the non-background objects
-        canvas.loadFromJSON(filteredCanvasData, () => {
-          // Ensure background objects are still there after loading
-          backgroundObjects.forEach(bgObj => {
-            if (!canvas.getObjects().find((obj: any) => obj === bgObj)) {
-              canvas.add(bgObj);
-              canvas.sendToBack(bgObj);
-            }
-          });
-          canvas.renderAll();
-          console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
+      if (objectsToLoad.length > 0) {
+        // Add each object individually to preserve the background
+        objectsToLoad.forEach((objData: any) => {
+          // Use fabric's util to create objects from JSON
+          const fabricUtil = (window as any).fabric?.util;
+          if (fabricUtil && fabricUtil.enlivenObjects) {
+            fabricUtil.enlivenObjects([objData], (enlivenedObjects: any[]) => {
+              if (enlivenedObjects.length > 0) {
+                canvas.add(enlivenedObjects[0]);
+                canvas.renderAll();
+              }
+            });
+          }
         });
+        console.log('[BottomBar] Canvas objects after load:', canvas.getObjects().length);
       } else {
         console.log('[BottomBar] No objects to load');
         canvas.renderAll();
