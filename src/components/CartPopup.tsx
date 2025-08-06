@@ -160,7 +160,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
 
                     {/* Google Pay Button */}
                     <button
-                      className="w-full h-10 md:h-12 bg-black hover:bg-gray-800 border border-gray-600 hover:border-gray-500 rounded-lg transition-all duration-200 flex items-center justify-center"
+                      className="w-full h-10 md:h-12 bg-black hover:bg-gray-800 rounded-lg transition-colors duration-200 flex items-center justify-center border-0"
                       onClick={() => {
                         console.log('Google Pay checkout initiated');
                         // Google Pay API integration would go here
