@@ -1001,7 +1001,7 @@ and return a high-quality transparent PNG suitable for print.
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0"
+                              className="h-8 w-8 p-1 hover:bg-accent transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if ((window as any).designCanvas?.canvas) {
@@ -1010,12 +1010,12 @@ and return a high-quality transparent PNG suitable for print.
                                 }
                               }}
                             >
-                              <Copy className="w-3 h-3" />
+                              <Copy className="w-4 h-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0 text-destructive"
+                              className="h-8 w-8 p-1 text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if ((window as any).designCanvas?.canvas) {
@@ -1031,7 +1031,7 @@ and return a high-quality transparent PNG suitable for print.
                                 }
                               }}
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
@@ -1665,7 +1665,7 @@ and return a high-quality transparent PNG suitable for print.
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0"
+                              className="h-8 w-8 p-1 hover:bg-accent transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if ((window as any).designCanvas?.canvas) {
@@ -1674,12 +1674,12 @@ and return a high-quality transparent PNG suitable for print.
                                 }
                               }}
                             >
-                              <Copy className="w-3 h-3" />
+                              <Copy className="w-4 h-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0 text-destructive"
+                              className="h-8 w-8 p-1 text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if ((window as any).designCanvas?.canvas) {
@@ -1695,7 +1695,7 @@ and return a high-quality transparent PNG suitable for print.
                                 }
                               }}
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
                         </div>
