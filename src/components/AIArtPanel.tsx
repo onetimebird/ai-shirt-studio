@@ -9,6 +9,7 @@ import { Expand, Info, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 import { supabase } from '@/integrations/supabase/client';
+import { removeBackground, loadImageFromUrl } from '@/lib/backgroundRemoval';
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1Y2dnemFnYmN1bnluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4MzY0MzYsImV4cCI6MjA2OTQxMjQzNn0.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU";
 const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image";
@@ -101,12 +102,42 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       }
 
       if (data?.url) {
-        // Function now returns base64 data URL that works with canvas
-        const newImage = { url: data.url, prompt: prompt.trim() };
-        setGeneratedImages(prev => [newImage, ...prev]);
-        savePrompt(prompt.trim());
-        onImageGenerated?.(data.url);
-        toast.success("Image generated successfully!");
+        // Apply automatic background removal
+        try {
+          toast("Removing background...", { duration: 2000 });
+          
+          // Load the generated image
+          const imageElement = await loadImageFromUrl(data.url);
+          
+          // Remove the background
+          const backgroundRemovedBlob = await removeBackground(imageElement);
+          
+          // Convert blob to data URL
+          const backgroundRemovedUrl = URL.createObjectURL(backgroundRemovedBlob);
+          const reader = new FileReader();
+          
+          reader.onload = () => {
+            const backgroundRemovedDataUrl = reader.result as string;
+            
+            // Store the background-removed image
+            const newImage = { url: backgroundRemovedDataUrl, prompt: prompt.trim() };
+            setGeneratedImages(prev => [newImage, ...prev]);
+            savePrompt(prompt.trim());
+            onImageGenerated?.(backgroundRemovedDataUrl);
+            toast.success("Image generated with background removed!");
+          };
+          
+          reader.readAsDataURL(backgroundRemovedBlob);
+          
+        } catch (bgError) {
+          console.error("Background removal failed:", bgError);
+          // Fallback to original image if background removal fails
+          const newImage = { url: data.url, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          savePrompt(prompt.trim());
+          onImageGenerated?.(data.url);
+          toast.success("Image generated successfully! (Background removal failed)");
+        }
       } else {
         throw new Error('No image URL received from Supabase function');
       }

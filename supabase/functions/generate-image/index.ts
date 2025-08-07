@@ -36,7 +36,10 @@ serve(async (req) => {
       throw new Error("Valid prompt is required")
     }
 
-    console.log("Generating image with original prompt:", prompt)
+    // Minimal enhancement for t-shirt designs
+    const enhancedPrompt = `${prompt}, isolated on white background, no borders, one subject`
+
+    console.log("Generating image with enhanced prompt:", enhancedPrompt)
 
     const response = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
@@ -46,7 +49,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "dall-e-3",
-        prompt: prompt,
+        prompt: enhancedPrompt,
         n: 1,
         size: `${width}x${height}`,
         quality: "standard",
