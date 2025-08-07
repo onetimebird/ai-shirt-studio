@@ -40,7 +40,7 @@ export const EmbroideryBoundingBox = ({
           position: 'absolute',
           left: '60%',
           top: `${((tshirtDimensions.top + (tshirtDimensions.height * tshirtDimensions.scale * 0.20)) / canvasHeight) * 100}%`,
-          width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.16) / canvasWidth * 100}%`,
+          width: `${(tshirtDimensions.height * tshirtDimensions.scale * 0.20) / canvasWidth * 100}%`,
           height: `${(tshirtDimensions.height * tshirtDimensions.scale * (window.innerWidth < 768 ? 0.14 * 1.15 : 0.14)) / canvasHeight * 100}%`,
           border: window.innerWidth >= 768 ? '3px solid #60a5fa' : '1px solid #60a5fa',
           transform: 'translateX(-50%)',
