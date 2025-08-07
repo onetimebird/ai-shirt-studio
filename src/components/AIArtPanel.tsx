@@ -9,60 +9,90 @@ import { Expand, Info, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1dWNnZ3phZ2JjdW55biIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzUzODM2NDM2LCJleHAiOjIwNjk0MTI0MzZ9.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU";
-const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image";
-
-interface GeneratedImage {
-  url: string;
-  prompt: string;
-}
+const exampleImages = [
+  {
+    url: '/lovable-uploads/1e61cc5e-ffd2-4396-91c9-be996d67de2d.png',
+    title: 'Glow like the Galaxy',
+    type: 'galaxy'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop',
+    title: 'Matrix Style',
+    type: 'tech'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=400&fit=crop',
+    title: 'Starry Night',
+    type: 'space'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop',
+    title: 'Ocean Wave',
+    type: 'nature'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=400&h=400&fit=crop',
+    title: 'Forest Light',
+    type: 'nature'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=400&fit=crop',
+    title: 'Yellow Lights',
+    type: 'abstract'
+  },
+];
 
 interface AIArtPanelProps {
-  onImageGenerated?: (url: string) => void;
+  onImageGenerated?: (imageUrl: string) => void;
 }
 
-export function AIArtPanel({ onImageGenerated }: AIArtPanelProps = {}) {
-  const [prompt, setPrompt] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
-  const [recentPrompts, setRecentPrompts] = useState<string[]>([]);
-  const [selectedStyle, setSelectedStyle] = useState("vivid");
-  const [selectedSize, setSelectedSize] = useState("1024x1024");
+export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
+  const [prompt, setPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [hoveredImage, setHoveredImage] = useState<number | null>(null);
+  const [promptHistory, setPromptHistory] = useState<string[]>([]);
+  const [generatedImages, setGeneratedImages] = useState<Array<{url: string, prompt: string}>>([]);
+  const [showTips, setShowTips] = useState(false);
 
-  // Load saved prompts from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('ai_art_prompts');
-    if (saved) {
+    const stored = localStorage.getItem("ai-prompts");
+    if (stored) {
       try {
-        setRecentPrompts(JSON.parse(saved));
+        setPromptHistory(JSON.parse(stored));
       } catch (e) {
-        console.error('Failed to load saved prompts:', e);
+        console.error("Error parsing stored prompts:", e);
       }
     }
   }, []);
 
-  const savePrompt = (prompt: string) => {
-    const updated = [prompt, ...recentPrompts.filter(p => p !== prompt)].slice(0, 10);
-    setRecentPrompts(updated);
-    localStorage.setItem('ai_art_prompts', JSON.stringify(updated));
+  const savePrompt = (p: string) => {
+    const trimmedPrompt = p.trim();
+    if (!trimmedPrompt) return;
+    
+    const next = [trimmedPrompt, ...promptHistory.filter(h => h !== trimmedPrompt)].slice(0, 10);
+    setPromptHistory(next);
+    localStorage.setItem("ai-prompts", JSON.stringify(next));
   };
 
-  const generate = async () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast.error("Please enter a prompt");
       return;
     }
-    
-    setLoading(true);
+
+    setIsGenerating(true);
     try {
       // First try using the Supabase edge function
-      const response = await fetch(FUNCTION_URL, {
+      const response = await fetch('/functions/v1/generate-image', {
         method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: prompt.trim(), width: 512, height: 512 }),
+        body: JSON.stringify({ 
+          prompt: prompt.trim(),
+          width: 1024,
+          height: 1024 
+        })
       });
 
       if (response.status === 404) {
@@ -74,9 +104,9 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps = {}) {
         
         const result = await openAIService.generateImage({
           prompt: prompt.trim(),
-          size: selectedSize as "1024x1024" | "1024x1792" | "1792x1024",
+          size: "1024x1024",
           quality: "standard",
-          style: selectedStyle as "vivid" | "natural"
+          style: "vivid"
         });
 
         if (result.url) {
@@ -87,149 +117,273 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps = {}) {
           toast.success("Image generated successfully!");
         }
       } else {
-        const text = await response.text();
-        let json;
-        try { 
-          json = JSON.parse(text); 
-        } catch { 
-          throw new Error(`Non-JSON response: ${text}`); 
-        }
+        const data = await response.json();
         
         if (!response.ok) {
-          const msg = json.error?.message || JSON.stringify(json);
-          throw new Error(`Error ${response.status}: ${msg}`);
+          throw new Error(data.error || 'Failed to generate image');
         }
 
-        const url = json.data?.[0]?.url;
-        if (!url) throw new Error(`No URL in response: ${text}`);
-        
-        const newImage = { url, prompt: prompt.trim() };
-        setGeneratedImages(prev => [newImage, ...prev]);
-        savePrompt(prompt.trim());
-        onImageGenerated?.(url);
-        toast.success("Image generated successfully!");
+        if (data.url) {
+          const newImage = { url: data.url, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          savePrompt(prompt.trim());
+          onImageGenerated?.(data.url);
+          toast.success("Image generated successfully!");
+        } else {
+          throw new Error('No image URL received');
+        }
       }
       
-      setPrompt(""); // Clear prompt after successful generation
     } catch (error) {
       console.error("AI generation error:", error);
-      toast.error(`Failed to generate image: ${(error as Error).message}`);
+      toast.error(`Failed to generate image: ${error.message}`);
     } finally {
-      setLoading(false);
+      setIsGenerating(false);
+    }
+  };
+
+  const handleExampleImageClick = (imageUrl: string) => {
+    // Add the example image to canvas
+    if ((window as any).designCanvas?.addImageFromUrl) {
+      (window as any).designCanvas.addImageFromUrl(imageUrl);
+      toast.success("Example image added to design!");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleGenerate();
     }
   };
 
   return (
-    <Card className="w-full">
-      <CardContent className="p-6">
-        <Tabs defaultValue="generate" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="generate">Generate</TabsTrigger>
-            <TabsTrigger value="gallery">Gallery ({generatedImages.length})</TabsTrigger>
+    <Card className="h-full flex flex-col">
+      <CardContent className="p-6 flex-1 flex flex-col">
+        <h3 className="text-xl font-semibold mb-4">
+          Add Art{' '}
+          <span className="ml-1 px-2 py-0.5 text-xs font-normal bg-gradient-to-r from-blue-300 to-purple-300 text-white rounded">
+            AI
+          </span>
+        </h3>
+
+        <Tabs defaultValue="generative" className="mb-6 flex-1 flex flex-col">
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted p-1 rounded-lg">
+            <TabsTrigger 
+              value="generative" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold"
+            >
+              Generative AI
+            </TabsTrigger>
+            <TabsTrigger 
+              value="clipart"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold"
+            >
+              Clipart
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="generate" className="space-y-4">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Prompt</label>
-                <Textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe the image you want to generate..."
-                  rows={3}
-                  className="resize-none"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Style</label>
-                  <select
-                    value={selectedStyle}
-                    onChange={(e) => setSelectedStyle(e.target.value)}
-                    className="w-full p-2 border rounded"
-                  >
-                    <option value="vivid">Vivid</option>
-                    <option value="natural">Natural</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Size</label>
-                  <select
-                    value={selectedSize}
-                    onChange={(e) => setSelectedSize(e.target.value)}
-                    className="w-full p-2 border rounded"
-                  >
-                    <option value="1024x1024">Square (1024x1024)</option>
-                    <option value="1024x1792">Portrait (1024x1792)</option>
-                    <option value="1792x1024">Landscape (1792x1024)</option>
-                  </select>
-                </div>
-              </div>
 
-              <Button
-                onClick={generate}
-                disabled={loading || !prompt.trim()}
-                className="w-full"
-                size="lg"
+          <TabsContent value="generative" className="flex flex-col flex-1 space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Use our AI image generator to create stunning logos and designs. Short or long prompts, just try it.
+            </p>
+            
+            <Textarea
+              placeholder="Describe what you want to create"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="w-full min-h-[80px] resize-none"
+              rows={3}
+            />
+            
+            <div className="flex justify-between items-center text-sm py-2">
+              {promptHistory.length > 0 && (
+                <select
+                  className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setPrompt(e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Previous Prompts</option>
+                  {promptHistory.map((h, i) => (
+                    <option key={i} value={h} className="bg-background text-foreground">
+                      {h.length > 50 ? h.substring(0, 50) + "..." : h}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <button 
+                className="text-primary hover:underline flex items-center gap-1 font-medium"
+                onClick={() => setShowTips(true)}
               >
-                {loading ? "Generating..." : "Generate Image"}
-              </Button>
+                AI prompt guide <Info className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="w-full bg-gradient-to-r from-blue-300 to-purple-300 hover:from-blue-400 hover:to-purple-400 text-white"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Generating...
+                </>
+              ) : (
+                <>✨ Generate</>
+              )}
+            </Button>
 
-              {/* Recent Prompts */}
-              {recentPrompts.length > 0 && (
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Recent Prompts</label>
-                  <div className="space-y-1">
-                    {recentPrompts.slice(0, 5).map((recentPrompt, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setPrompt(recentPrompt)}
-                        className="text-left w-full p-2 text-xs bg-muted hover:bg-muted/80 rounded truncate"
-                        title={recentPrompt}
+            <div className="flex-1 flex flex-col">
+              {generatedImages.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-sm font-semibold">Your Generated Images</h4>
+                    <button
+                      onClick={() => setGeneratedImages([])}
+                      className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      Clear all
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                    {generatedImages.map((image, index) => (
+                      <div 
+                        key={index} 
+                        className="relative group cursor-pointer overflow-hidden rounded-md"
+                        onClick={() => handleExampleImageClick(image.url)}
                       >
-                        {recentPrompt}
-                      </button>
+                        <img 
+                          src={image.url} 
+                          alt={image.prompt}
+                          className="w-full h-24 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-end justify-end p-2 rounded-md transition-all duration-200">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button 
+                                className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Expand className="w-4 h-4" />
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl p-0 bg-transparent border-0">
+                              <div className="relative">
+                                <img 
+                                  src={image.url} 
+                                  alt={image.prompt}
+                                  className="w-full h-auto rounded-lg shadow-2xl animate-scale-in"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg">
+                                  <h3 className="text-white font-semibold text-lg">Generated Image</h3>
+                                  <p className="text-white/80 text-sm">{image.prompt}</p>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
               )}
+
+              <h4 className="text-sm font-semibold mb-3">Example AI Image Creations</h4>
+              <div className="grid grid-cols-2 gap-2 flex-1 overflow-y-auto">
+                {exampleImages.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="relative group cursor-pointer overflow-hidden rounded-md"
+                    onMouseEnter={() => setHoveredImage(index)}
+                    onMouseLeave={() => setHoveredImage(null)}
+                    onClick={() => handleExampleImageClick(image.url)}
+                  >
+                    <img 
+                      src={image.url} 
+                      alt={image.title}
+                      className="w-full h-24 object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+                    />
+                    
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-end justify-end p-2 rounded-md transition-all duration-200">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <button 
+                            className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Expand className="w-4 h-4" />
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl p-0 bg-transparent border-0">
+                          <div className="relative">
+                            <img 
+                              src={image.url} 
+                              alt={image.title}
+                              className="w-full h-auto rounded-lg shadow-2xl animate-scale-in"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg">
+                              <h3 className="text-white font-semibold text-lg">{image.title}</h3>
+                              <p className="text-white/80 text-sm capitalize">{image.type}</p>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </TabsContent>
-          
-          <TabsContent value="gallery" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              {generatedImages.map((image, index) => (
-                <div key={index} className="group relative">
-                  <img
-                    src={image.url}
-                    alt={image.prompt}
-                    className="w-full h-32 object-cover rounded border cursor-pointer hover:opacity-80"
-                    onClick={() => onImageGenerated?.(image.url)}
-                  />
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => setGeneratedImages(prev => prev.filter((_, i) => i !== index))}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                  <p className="text-xs mt-1 truncate" title={image.prompt}>
-                    {image.prompt}
-                  </p>
-                </div>
-              ))}
-              {generatedImages.length === 0 && (
-                <div className="col-span-2 text-center text-muted-foreground py-8">
-                  <p>No images generated yet</p>
-                </div>
-              )}
+
+          <TabsContent value="clipart" className="flex-1 flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
+              <p>Clipart library coming soon...</p>
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* AI Prompt Tips Modal */}
+        {showTips && (
+          <Dialog open={showTips} onOpenChange={setShowTips}>
+            <DialogContent className="max-w-md">
+              <div className="p-4">
+                <h2 className="text-xl font-semibold mb-4">AI Prompt Tips</h2>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <h3 className="font-medium mb-1">Be Specific:</h3>
+                    <p className="text-muted-foreground">"Retro 70s typography with bold orange letters"</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Include Style:</h3>
+                    <p className="text-muted-foreground">"Flat vector illustration, minimalist design"</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Mention Colors/Mood:</h3>
+                    <p className="text-muted-foreground">"Pastel colors, dreamy atmosphere, soft lighting"</p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-1">Add Context:</h3>
+                    <p className="text-muted-foreground">"Logo for a coffee shop, modern and friendly"</p>
+                  </div>
+                </div>
+                <Button 
+                  className="w-full mt-4" 
+                  onClick={() => setShowTips(false)}
+                >
+                  Got it!
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </CardContent>
     </Card>
   );
