@@ -191,16 +191,27 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor,
     // Generate preview image from current canvas
     const generatePreviewImage = () => {
       const canvas = (window as any).designCanvas?.canvas;
-      if (!canvas) return undefined;
+      console.log('[QuantityModal] Generating preview image:', {
+        hasCanvas: !!canvas,
+        canvasObjects: canvas?.getObjects()?.length || 0,
+        decorationMethod: decorationMethod
+      });
+      
+      if (!canvas) {
+        console.warn('[QuantityModal] No canvas found for preview generation');
+        return undefined;
+      }
       
       try {
-        return canvas.toDataURL({ 
+        const dataURL = canvas.toDataURL({ 
           format: 'png', 
           quality: 0.8,
           multiplier: 0.5 // Smaller image for cart display
         });
+        console.log('[QuantityModal] Successfully generated preview image');
+        return dataURL;
       } catch (error) {
-        console.warn('Failed to generate preview image:', error);
+        console.error('[QuantityModal] Failed to generate preview image:', error);
         return undefined;
       }
     };
@@ -327,6 +338,13 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor,
                 const canvas = (window as any).designCanvas?.canvas;
                 let previewImage = null;
                 
+                console.log('[QuantityModal] Product display image generation:', {
+                  hasCanvas: !!canvas,
+                  hasFrontDesign,
+                  hasBackDesign,
+                  decorationMethod
+                });
+                
                 if (canvas) {
                   try {
                     previewImage = canvas.toDataURL({ 
@@ -334,13 +352,15 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor,
                       quality: 0.8,
                       multiplier: 0.5
                     });
+                    console.log('[QuantityModal] Generated preview image for product display');
                   } catch (error) {
-                    console.warn('Failed to generate preview image:', error);
+                    console.error('[QuantityModal] Failed to generate preview image for display:', error);
                   }
                 }
 
                 // If we have a design preview, show it; otherwise show product image
                 if (previewImage && (hasFrontDesign || hasBackDesign)) {
+                  console.log('[QuantityModal] Showing design preview image');
                   return (
                     <img 
                       src={previewImage} 
@@ -349,6 +369,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor,
                     />
                   );
                 } else {
+                  console.log('[QuantityModal] Showing product image fallback');
                   return (
                     <img 
                       src={getProductImage(selectedProduct, selectedColor)} 
