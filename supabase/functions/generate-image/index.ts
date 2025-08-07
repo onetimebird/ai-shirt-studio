@@ -13,6 +13,17 @@ serve(async (req) => {
   }
 
   try {
+    // Get auth header (required by Supabase Edge Functions)
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Missing Authorization header' }), 
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401 
+        }
+      )
+    }
     const OPENAI_KEY = Deno.env.get("OPENAI_KEY")
     if (!OPENAI_KEY) {
       throw new Error("OPENAI_KEY not found in environment variables")
