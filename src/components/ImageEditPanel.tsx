@@ -64,18 +64,28 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
     const { canvas, activeObject } = result;
     
-    // Clear existing filters
-    activeObject.filters = [];
-    
-    // Apply new filter based on selection
-    if (filter === 'grayscale') {
-      activeObject.filters.push(new (window as any).fabric.Image.filters.Grayscale());
-    } else if (filter === 'high-contrast') {
-      activeObject.filters.push(new (window as any).fabric.Image.filters.Contrast({ contrast: 0.5 }));
+    // Check if fabric is available and has filters
+    if (typeof window !== 'undefined' && (window as any).fabric?.Image?.filters) {
+      const fabricFilters = (window as any).fabric.Image.filters;
+      
+      // Clear existing filters
+      activeObject.filters = [];
+      
+      // Apply new filter based on selection
+      if (filter === 'grayscale') {
+        activeObject.filters.push(new fabricFilters.Grayscale());
+      } else if (filter === 'high-contrast') {
+        activeObject.filters.push(new fabricFilters.Contrast({ contrast: 0.4 }));
+        activeObject.filters.push(new fabricFilters.Brightness({ brightness: 0.1 }));
+      }
+      
+      activeObject.applyFilters();
+      canvas.renderAll();
+      toast.success(`${filter === 'normal' ? 'Original' : filter === 'grayscale' ? 'Grayscale' : 'High Contrast'} filter applied`);
+    } else {
+      console.warn('Fabric.js filters not available');
+      toast.error('Filter functionality not available');
     }
-    
-    activeObject.applyFilters();
-    canvas.renderAll();
   }, [getActiveImageObject]);
 
   // Center the image on canvas
@@ -204,8 +214,10 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       flipX: false,
       flipY: false
     });
-    activeObject.filters = [];
-    activeObject.applyFilters();
+    if (typeof window !== 'undefined' && (window as any).fabric?.Image?.filters) {
+      activeObject.filters = [];
+      activeObject.applyFilters();
+    }
     canvas.renderAll();
     toast.success("Reset to defaults");
   }, [getActiveImageObject]);
@@ -300,36 +312,56 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         </div>
 
         {/* Filters */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           <h4 className="font-medium text-sm">Filters</h4>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             {[
               { key: 'normal', label: 'Normal' },
               { key: 'grayscale', label: 'Grayscale' },
               { key: 'high-contrast', label: 'High Contrast' }
             ].map((filter) => (
-              <button
+              <div
                 key={filter.key}
-                className={`p-3 rounded-lg border-2 transition-all hover:border-primary/50 ${
+                className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer group hover:scale-105 hover:shadow-lg ${
                   selectedFilter === filter.key 
-                    ? 'border-primary bg-primary/10' 
-                    : 'border-border'
+                    ? 'border-primary bg-primary/10 shadow-md shadow-primary/20' 
+                    : 'border-border hover:border-primary/50 hover:bg-muted/50'
                 }`}
                 onClick={() => handleFilterChange(filter.key as any)}
               >
-                <div className="w-full h-12 bg-muted rounded mb-2 overflow-hidden">
+                {/* Selected indicator */}
+                {selectedFilter === filter.key && (
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center z-10 animate-scale-in">
+                    <svg className="w-3 h-3 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+                
+                {/* Image preview */}
+                <div className="w-full h-20 bg-muted overflow-hidden">
                   <img 
                     src={imageUrl} 
                     alt={filter.label}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                     style={{
                       filter: filter.key === 'grayscale' ? 'grayscale(100%)' : 
-                             filter.key === 'high-contrast' ? 'contrast(150%)' : 'none'
+                             filter.key === 'high-contrast' ? 'contrast(150%) brightness(110%)' : 'none'
                     }}
                   />
                 </div>
-                <span className="text-xs font-medium">{filter.label}</span>
-              </button>
+                
+                {/* Label */}
+                <div className="p-3 text-center">
+                  <span className={`text-xs font-medium transition-colors duration-200 ${
+                    selectedFilter === filter.key 
+                      ? 'text-primary' 
+                      : 'text-foreground group-hover:text-primary'
+                  }`}>
+                    {filter.label}
+                  </span>
+                </div>
+              </div>
             ))}
           </div>
         </div>
