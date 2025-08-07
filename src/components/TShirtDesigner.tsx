@@ -209,6 +209,7 @@ export const TShirtDesigner = () => {
                 onToolChange={setActiveTool}
                 onTextObjectsUpdate={handleTextObjectsUpdate}
                 onImageObjectsUpdate={handleImageObjectsUpdate}
+                decorationMethod={decorationMethod}
               />
             </div>
           </div>
@@ -242,7 +243,12 @@ export const TShirtDesigner = () => {
           decorationMethod={decorationMethod}
           onProductChange={setSelectedProduct}
           onColorChange={setSelectedColor}
-          onDecorationChange={setDecorationMethod}
+          onDecorationChange={(method) => {
+            console.log('[TShirtDesigner] onDecorationChange called with:', method);
+            console.log('[TShirtDesigner] Previous decoration method:', decorationMethod);
+            setDecorationMethod(method);
+            console.log('[TShirtDesigner] New decoration method set to:', method);
+          }}
           onSaveModalChange={setIsSaveModalOpen}
           onLoadPanelChange={setIsLoadPanelOpen}
           onEmbroideryModalChange={setIsEmbroideryModalOpen}
@@ -257,7 +263,12 @@ export const TShirtDesigner = () => {
           decorationMethod={decorationMethod}
           onProductChange={setSelectedProduct}
           onColorChange={setSelectedColor}
-          onDecorationChange={setDecorationMethod}
+          onDecorationChange={(method) => {
+            console.log('[TShirtDesigner Mobile] onDecorationChange called with:', method);
+            console.log('[TShirtDesigner Mobile] Previous decoration method:', decorationMethod);
+            setDecorationMethod(method);
+            console.log('[TShirtDesigner Mobile] New decoration method set to:', method);
+          }}
           activeTool={activeTool}
           onToolChange={handleToolChange}
           selectedObject={selectedObject}

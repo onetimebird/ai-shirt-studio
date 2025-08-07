@@ -13,7 +13,7 @@ export const EmbroideryBoundingBox = ({
   canvasHeight, 
   canvasWidth 
 }: EmbroideryBoundingBoxProps) => {
-  console.log('[EmbroideryBoundingBox] Rendering embroidery bounding box');
+  console.log('[EmbroideryBoundingBox] RENDERING EMBROIDERY BOUNDING BOX');
   console.log('[EmbroideryBoundingBox] T-shirt dimensions:', tshirtDimensions);
   
   return (

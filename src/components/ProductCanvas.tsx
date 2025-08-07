@@ -169,19 +169,26 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         {/* Center guideline and bounding box */}
         {showCenterGuide && fabricCanvas && (
           <>
+            {console.log('[ProductCanvas] showCenterGuide is true, decorationMethod:', decorationMethod)}
             {decorationMethod === "embroidery" ? (
-              <EmbroideryBoundingBox 
-                tshirtDimensions={tshirtDimensions}
-                canvasHeight={fabricCanvas.height || 1}
-                canvasWidth={fabricCanvas.width || 1}
-              />
+              <>
+                {console.log('[ProductCanvas] RENDERING EMBROIDERY BOUNDING BOX')}
+                <EmbroideryBoundingBox 
+                  tshirtDimensions={tshirtDimensions}
+                  canvasHeight={fabricCanvas.height || 1}
+                  canvasWidth={fabricCanvas.width || 1}
+                />
+              </>
             ) : (
-              <ScreenPrintBoundingBox 
-                tshirtDimensions={tshirtDimensions}
-                canvasHeight={fabricCanvas.height || 1}
-                canvasWidth={fabricCanvas.width || 1}
-                currentSide={currentSide}
-              />
+              <>
+                {console.log('[ProductCanvas] RENDERING SCREEN PRINT BOUNDING BOX')}
+                <ScreenPrintBoundingBox 
+                  tshirtDimensions={tshirtDimensions}
+                  canvasHeight={fabricCanvas.height || 1}
+                  canvasWidth={fabricCanvas.width || 1}
+                  currentSide={currentSide}
+                />
+              </>
             )}
           </>
         )}
