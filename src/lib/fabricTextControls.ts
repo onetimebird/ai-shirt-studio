@@ -60,26 +60,28 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Solid dark purple background
-        const fillColor = hoveredControl === 'delete' ? '#3c1265' : '#4c1d95';
+        // White background with purple on hover
+        const isHovered = hoveredControl === 'delete';
+        const fillColor = isHovered ? '#8138ff' : 'white';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
         ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
-        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowColor = 'rgba(129, 56, 255, 0.4)';
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 4;
         
-        // Add subtle border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
+        // Add border
+        ctx.strokeStyle = '#8138ff';
+        ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Draw white trash icon
-        ctx.strokeStyle = 'white';
-        ctx.fillStyle = 'white';
+        // Draw trash icon with color based on hover state
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
+        ctx.fillStyle = iconColor;
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -127,30 +129,32 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Solid dark purple background
-        const fillColor = hoveredControl === 'rotate' ? '#3c1265' : '#4c1d95';
+        // White background with purple on hover
+        const isHovered = hoveredControl === 'rotate';
+        const fillColor = isHovered ? '#8138ff' : 'white';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
         ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
-        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowColor = 'rgba(129, 56, 255, 0.4)';
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 4;
         
-        // Add subtle border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
+        // Add border
+        ctx.strokeStyle = '#8138ff';
+        ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Draw the uploaded rotate icon
-        ctx.fillStyle = 'white';
+        // Draw the rotate icon
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.fillStyle = iconColor;
         ctx.shadowColor = 'transparent';
         
         // Create a circular arrow icon similar to the uploaded image
         ctx.lineWidth = 2;
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = iconColor;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
@@ -165,7 +169,7 @@ export function initializeTextControls() {
         ctx.lineTo(-1, -3.5);
         ctx.lineTo(-2.5, -2);
         ctx.closePath();
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = iconColor;
         ctx.fill();
         
         ctx.restore();
@@ -187,25 +191,27 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Solid dark purple background
-        const fillColor = hoveredControl === 'scale' ? '#3c1265' : '#4c1d95';
+        // White background with purple on hover
+        const isHovered = hoveredControl === 'scale';
+        const fillColor = isHovered ? '#8138ff' : 'white';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
         ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
-        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowColor = 'rgba(129, 56, 255, 0.4)';
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 4;
         
-        // Add subtle border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
+        // Add border
+        ctx.strokeStyle = '#8138ff';
+        ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Draw white diagonal double arrow
-        ctx.strokeStyle = 'white';
+        // Draw diagonal double arrow
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -251,25 +257,27 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Solid dark purple background
-        const fillColor = hoveredControl === 'stretchH' ? '#3c1265' : '#4c1d95';
+        // White background with purple on hover
+        const isHovered = hoveredControl === 'stretchH';
+        const fillColor = isHovered ? '#8138ff' : 'white';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
         ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
-        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowColor = 'rgba(129, 56, 255, 0.4)';
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 4;
         
-        // Add subtle border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
+        // Add border
+        ctx.strokeStyle = '#8138ff';
+        ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Draw white horizontal double arrow
-        ctx.strokeStyle = 'white';
+        // Draw horizontal double arrow
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -315,25 +323,27 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Solid dark purple background
-        const fillColor = hoveredControl === 'stretchV' ? '#3c1265' : '#4c1d95';
+        // White background with purple on hover
+        const isHovered = hoveredControl === 'stretchV';
+        const fillColor = isHovered ? '#8138ff' : 'white';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
         ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
-        ctx.shadowColor = 'hsl(262, 100%, 65%, 0.4)';
+        ctx.shadowColor = 'rgba(129, 56, 255, 0.4)';
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 4;
         
-        // Add subtle border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 1;
+        // Add border
+        ctx.strokeStyle = '#8138ff';
+        ctx.lineWidth = 2;
         ctx.stroke();
         
-        // Draw white vertical double arrow
-        ctx.strokeStyle = 'white';
+        // Draw vertical double arrow
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
         ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -412,8 +422,8 @@ export function applyCustomControlsToObject(obj: fabric.Object) {
     obj.set('centeredRotation', true);
     
     // Apply dotted border styling
-    obj.borderColor = 'hsl(262, 100%, 65%)'; // Primary color
-    obj.borderDashArray = [5, 5]; // Dotted line pattern
+    obj.borderColor = '#8138ff'; // Purple color to match icons
+    obj.borderDashArray = [3, 3]; // Finer dotted line pattern
     obj.borderScaleFactor = 2; // Make border slightly thicker
     obj.cornerColor = 'transparent'; // Hide corner squares
     obj.cornerSize = 0; // Remove corner size

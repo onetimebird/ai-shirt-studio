@@ -9,25 +9,26 @@
   position: absolute;
   width: 36px;
   height: 36px;
-  background: #4c1d95;
-  border: 2px solid #3c1265;
+  background: white;
+  border: 2px solid #8138ff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 4px 12px rgba(76, 29, 149, 0.3);
-  color: white;
+  box-shadow: 0 4px 12px rgba(129, 56, 255, 0.3);
+  color: #8138ff;
   transition: all 0.2s ease;
   z-index: 1000;
 }
 
 .overlay-btn:hover,
 .overlay-handle:hover {
-  background: #3c1265;
-  border-color: #2d0a4e;
-  box-shadow: 0 6px 20px rgba(76, 29, 149, 0.4);
+  background: #8138ff;
+  border-color: #8138ff;
+  box-shadow: 0 6px 20px rgba(129, 56, 255, 0.4);
+  color: white;
   transform: scale(1.05);
 }
 
