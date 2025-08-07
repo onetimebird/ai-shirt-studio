@@ -83,10 +83,11 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
     setIsGenerating(true);
     try {
       // First try using the Supabase edge function
-      const response = await fetch('/functions/v1/generate-image', {
+      const response = await fetch('https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1dWNnZ3phZ2JjdW55biIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzUzODM2NDM2LCJleHAiOjIwNjk0MTI0MzZ9.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU'
         },
         body: JSON.stringify({ 
           prompt: prompt.trim(),
