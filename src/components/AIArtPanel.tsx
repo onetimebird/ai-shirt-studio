@@ -101,13 +101,26 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       }
 
       if (data?.url) {
-        // Use image proxy to avoid CORS issues
-        const proxyUrl = `https://rdrkdxvucggzagbcunyn.functions.supabase.co/image-proxy?url=${encodeURIComponent(data.url)}`;
-        const newImage = { url: proxyUrl, prompt: prompt.trim() };
-        setGeneratedImages(prev => [newImage, ...prev]);
-        savePrompt(prompt.trim());
-        onImageGenerated?.(proxyUrl);
-        toast.success("Image generated successfully!");
+        // Convert to blob URL to avoid CORS issues
+        try {
+          const imageResponse = await fetch(data.url);
+          const imageBlob = await imageResponse.blob();
+          const blobUrl = URL.createObjectURL(imageBlob);
+          
+          const newImage = { url: blobUrl, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          savePrompt(prompt.trim());
+          onImageGenerated?.(blobUrl);
+          toast.success("Image generated successfully!");
+        } catch (error) {
+          console.error("Error converting to blob:", error);
+          // Fallback to original URL
+          const newImage = { url: data.url, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          savePrompt(prompt.trim());
+          onImageGenerated?.(data.url);
+          toast.success("Image generated successfully!");
+        }
       } else {
         throw new Error('No image URL received from Supabase function');
       }
