@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { X, RotateCcw, Wand2, Loader2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { removeBackground, loadImage } from '@/lib/backgroundRemoval';
 
 interface ImageEditPanelProps {
   imageUrl: string;
@@ -13,223 +13,239 @@ interface ImageEditPanelProps {
 }
 
 export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProps) {
-  const [selectedFilter, setSelectedFilter] = useState<'normal' | 'single-color' | 'black-white'>('normal');
-  const [selectedColor, setSelectedColor] = useState('#4285f4');
-  const [size, setSize] = useState([1.0]);
+  const [selectedFilter, setSelectedFilter] = useState<'normal' | 'grayscale' | 'high-contrast'>('normal');
+  const [size, setSize] = useState([100]);
   const [rotation, setRotation] = useState([0]);
-  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [backgroundRemoved, setBackgroundRemoved] = useState(false);
-  const [extractedColors, setExtractedColors] = useState<string[]>([]);
+  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
-  const defaultColors = [
-    '#4285f4', '#000000', '#1a365d', '#d69e2e', '#ffffff',
-    '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'
-  ];
+  // Get the active canvas object
+  const getActiveImageObject = useCallback(() => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return null;
+    
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject || activeObject.type !== 'image') return null;
+    
+    return { canvas, activeObject };
+  }, []);
 
-  useEffect(() => {
-    // Extract colors from image
-    extractColorsFromImage(imageUrl);
-  }, [imageUrl]);
+  // Apply size changes to canvas
+  const handleSizeChange = useCallback((newSize: number[]) => {
+    setSize(newSize);
+    const result = getActiveImageObject();
+    if (!result) return;
 
-  const extractColorsFromImage = async (url: string) => {
-    try {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+    const { canvas, activeObject } = result;
+    const scale = newSize[0] / 100; // Convert percentage to decimal
+    activeObject.set({
+      scaleX: scale,
+      scaleY: scale
+    });
+    canvas.renderAll();
+  }, [getActiveImageObject]);
 
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+  // Apply rotation changes to canvas
+  const handleRotationChange = useCallback((newRotation: number[]) => {
+    setRotation(newRotation);
+    const result = getActiveImageObject();
+    if (!result) return;
 
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const colors = new Set<string>();
-        
-        // Sample colors from the image
-        for (let i = 0; i < imageData.data.length; i += 16) { // Sample every 4th pixel
-          const r = imageData.data[i];
-          const g = imageData.data[i + 1];
-          const b = imageData.data[i + 2];
-          const alpha = imageData.data[i + 3];
-          
-          if (alpha > 128) { // Only consider non-transparent pixels
-            const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-            colors.add(hex);
-            if (colors.size >= 8) break;
-          }
-        }
-        
-        setExtractedColors(Array.from(colors).slice(0, 8));
-      };
-      img.src = url;
-    } catch (error) {
-      console.error('Error extracting colors:', error);
-      setExtractedColors(defaultColors);
+    const { canvas, activeObject } = result;
+    activeObject.set({ angle: newRotation[0] });
+    canvas.renderAll();
+  }, [getActiveImageObject]);
+
+  // Apply filter changes to canvas
+  const handleFilterChange = useCallback((filter: 'normal' | 'grayscale' | 'high-contrast') => {
+    setSelectedFilter(filter);
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    
+    // Clear existing filters
+    activeObject.filters = [];
+    
+    // Apply new filter based on selection
+    if (filter === 'grayscale') {
+      activeObject.filters.push(new (window as any).fabric.Image.filters.Grayscale());
+    } else if (filter === 'high-contrast') {
+      activeObject.filters.push(new (window as any).fabric.Image.filters.Contrast({ contrast: 0.5 }));
     }
-  };
+    
+    activeObject.applyFilters();
+    canvas.renderAll();
+  }, [getActiveImageObject]);
 
-  const handleRemoveBackground = async () => {
+  // Center the image on canvas
+  const handleCenter = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    activeObject.center();
+    canvas.renderAll();
+    toast.success("Image centered");
+  }, [getActiveImageObject]);
+
+  // Send image to back layer
+  const handleSendToBack = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    canvas.sendToBack(activeObject);
+    canvas.renderAll();
+    toast.success("Image sent to back layer");
+  }, [getActiveImageObject]);
+
+  // Flip image horizontally
+  const handleFlip = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    activeObject.set('flipX', !activeObject.flipX);
+    canvas.renderAll();
+    toast.success("Image flipped");
+  }, [getActiveImageObject]);
+
+  // Duplicate the image
+  const handleDuplicate = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    activeObject.clone((cloned: any) => {
+      cloned.set({
+        left: activeObject.left + 20,
+        top: activeObject.top + 20,
+      });
+      canvas.add(cloned);
+      canvas.setActiveObject(cloned);
+      canvas.renderAll();
+      toast.success("Image duplicated");
+    });
+  }, [getActiveImageObject]);
+
+  // Delete the image
+  const handleDelete = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    canvas.remove(activeObject);
+    canvas.renderAll();
+    onClose(); // Close the panel since the object is deleted
+    toast.success("Image deleted");
+  }, [getActiveImageObject, onClose]);
+
+  // Remove background using AI
+  const handleRemoveBackground = useCallback(async () => {
     setIsRemovingBackground(true);
     try {
+      // Import background removal function
+      const { removeBackground } = await import('@/lib/backgroundRemoval');
+      
       const img = new Image();
       img.crossOrigin = 'anonymous';
+      
       img.onload = async () => {
         try {
           const backgroundRemovedBlob = await removeBackground(img);
           const backgroundRemovedDataUrl = URL.createObjectURL(backgroundRemovedBlob);
           
-          // Update the canvas object with the new image
-          const canvas = (window as any).designCanvas?.canvas;
-          if (canvas) {
-            const activeObject = canvas.getActiveObject();
-            if (activeObject && activeObject.type === 'image') {
-              const newImg = new Image();
-              newImg.onload = () => {
-                activeObject.setSrc(backgroundRemovedDataUrl, () => {
-                  canvas.renderAll();
-                });
-              };
-              newImg.src = backgroundRemovedDataUrl;
-            }
+          const result = getActiveImageObject();
+          if (result) {
+            const { canvas, activeObject } = result;
+            
+            // Update the image source
+            activeObject.setSrc(backgroundRemovedDataUrl, () => {
+              canvas.renderAll();
+              setBackgroundRemoved(true);
+              toast.success("Background removed successfully!");
+            });
           }
-          
-          setBackgroundRemoved(true);
-          toast.success("Background removed successfully!");
         } catch (error) {
           console.error('Background removal error:', error);
-          toast.error("Failed to remove background. Please try again.");
+          toast.error("Failed to remove background");
         }
       };
+      
+      img.onerror = () => {
+        toast.error("Failed to load image");
+      };
+      
       img.src = imageUrl;
     } catch (error) {
-      console.error('Error:', error);
-      toast.error("Failed to remove background. Please try again.");
+      console.error('Import error:', error);
+      toast.error("Background removal feature not available");
     } finally {
       setIsRemovingBackground(false);
     }
-  };
+  }, [imageUrl, getActiveImageObject]);
 
-  const applyChangesToCanvas = () => {
-    const canvas = (window as any).designCanvas?.canvas;
-    if (!canvas) {
-      console.log('Canvas not available');
-      return;
-    }
-
-    const activeObject = canvas.getActiveObject();
-    if (!activeObject || activeObject.type !== 'image') {
-      console.log('No active image object');
-      return;
-    }
-
-    // Apply size
-    const currentScale = activeObject.scaleX || 1;
-    const newScale = currentScale * size[0];
-    activeObject.set({
-      scaleX: newScale,
-      scaleY: newScale
-    });
-
-    // Apply rotation
-    activeObject.set({
-      angle: rotation[0]
-    });
-
-    // Apply filters - check if fabric is available
-    if (typeof window !== 'undefined' && (window as any).fabric) {
-      const fabricFilters = (window as any).fabric.Image?.filters;
-      if (fabricFilters) {
-        const filters = [];
-        if (selectedFilter === 'black-white') {
-          filters.push(new fabricFilters.Grayscale());
-          filters.push(new fabricFilters.Contrast({ contrast: 0.3 }));
-        } else if (selectedFilter === 'single-color') {
-          filters.push(new fabricFilters.Grayscale());
-          // You could add color overlay here if needed
-        }
-        
-        activeObject.filters = filters;
-        activeObject.applyFilters();
-      }
-    } else {
-      console.log('Fabric.js not available for filters');
-    }
-    
-    canvas.renderAll();
-  };
-
-  useEffect(() => {
-    // Add a small delay to ensure fabric is loaded
-    const timer = setTimeout(() => {
-      applyChangesToCanvas();
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [size, rotation, selectedFilter]);
-
-  const handleSave = () => {
-    applyChangesToCanvas();
-    onSave?.(imageUrl);
-    onClose();
-    toast.success("Changes applied successfully!");
-  };
-
-  const handleResetToDefaults = () => {
-    setSelectedFilter('normal');
-    setSelectedColor(extractedColors[0] || '#4285f4');
-    setSize([1.0]);
+  // Reset all values to defaults
+  const handleReset = useCallback(() => {
+    setSize([100]);
     setRotation([0]);
+    setSelectedFilter('normal');
     setBackgroundRemoved(false);
     
-    // Reset canvas object
-    const canvas = (window as any).designCanvas?.canvas;
-    if (canvas) {
-      const activeObject = canvas.getActiveObject();
-      if (activeObject && activeObject.type === 'image') {
-        activeObject.set({
-          scaleX: 1,
-          scaleY: 1,
-          angle: 0
-        });
-        if (typeof window !== 'undefined' && (window as any).fabric) {
-          activeObject.filters = [];
-          activeObject.applyFilters();
-        }
-        canvas.renderAll();
-      }
-    }
-  };
+    const result = getActiveImageObject();
+    if (!result) return;
 
-  const colorsToShow = extractedColors.length > 0 ? extractedColors : defaultColors;
+    const { canvas, activeObject } = result;
+    activeObject.set({
+      scaleX: 1,
+      scaleY: 1,
+      angle: 0,
+      flipX: false,
+      flipY: false
+    });
+    activeObject.filters = [];
+    activeObject.applyFilters();
+    canvas.renderAll();
+    toast.success("Reset to defaults");
+  }, [getActiveImageObject]);
+
+  // Save changes
+  const handleSave = useCallback(() => {
+    onSave?.(imageUrl);
+    toast.success("Changes saved!");
+    onClose();
+  }, [imageUrl, onSave, onClose]);
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold">Edit Your Artwork</CardTitle>
+          <CardTitle className="text-lg font-semibold flex items-center gap-2">
+            <Palette className="w-5 h-5" />
+            Edit Your Artwork
+          </CardTitle>
           <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
-          Our design professionals will select ink colors for you or tell us your preferred colors at checkout.
+          Customize your image with filters, transformations, and AI-powered tools.
         </p>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col space-y-6">
+      <CardContent className="flex-1 space-y-6 overflow-y-auto">
         {/* Image Preview */}
         <div className="flex justify-center">
-          <div className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden border">
+          <div className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden border-2 border-border">
             <img 
               src={imageUrl} 
               alt="Preview" 
               className="w-full h-full object-contain"
               style={{
-                transform: `scale(${size[0]}) rotate(${rotation[0]}deg)`,
-                filter: selectedFilter === 'single-color' ? 'grayscale(1)' : 
-                       selectedFilter === 'black-white' ? 'grayscale(1) contrast(2)' : 'none'
+                transform: `scale(${size[0] / 100}) rotate(${rotation[0]}deg)`,
+                filter: selectedFilter === 'grayscale' ? 'grayscale(100%)' : 
+                       selectedFilter === 'high-contrast' ? 'contrast(150%)' : 'none'
               }}
             />
           </div>
@@ -238,28 +254,31 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         {/* AI Background Removal */}
         <Card>
           <CardContent className="p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="text-sm font-medium">AI Background Removal</span>
-                <p className="text-xs text-muted-foreground">Remove background automatically</p>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="font-medium text-sm">AI Background Removal</div>
+                <div className="text-xs text-muted-foreground">
+                  Remove background automatically using AI
+                </div>
               </div>
               <Button 
-                variant="outline" 
+                variant={backgroundRemoved ? "secondary" : "default"}
                 size="sm"
                 onClick={handleRemoveBackground}
                 disabled={isRemovingBackground || backgroundRemoved}
+                className="ml-4"
               >
                 {isRemovingBackground ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-3 h-3 mr-2 animate-spin" />
                     Processing...
                   </>
                 ) : backgroundRemoved ? (
                   'Background Removed'
                 ) : (
                   <>
-                    <Wand2 className="w-4 h-4 mr-2" />
-                    Remove Background
+                    <Wand2 className="w-3 h-3 mr-2" />
+                    Remove BG
                   </>
                 )}
               </Button>
@@ -268,85 +287,69 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         </Card>
 
         {/* Filters */}
-        <div>
-          <h4 className="text-sm font-semibold mb-3">Filters</h4>
+        <div className="space-y-3">
+          <h4 className="font-medium text-sm">Filters</h4>
           <div className="grid grid-cols-3 gap-2">
             {[
               { key: 'normal', label: 'Normal' },
-              { key: 'single-color', label: 'Single Color' },
-              { key: 'black-white', label: 'Black/White' }
+              { key: 'grayscale', label: 'Grayscale' },
+              { key: 'high-contrast', label: 'High Contrast' }
             ].map((filter) => (
-              <div
+              <button
                 key={filter.key}
-                className={`cursor-pointer p-2 rounded-lg border-2 transition-colors ${
-                  selectedFilter === filter.key ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                className={`p-3 rounded-lg border-2 transition-all hover:border-primary/50 ${
+                  selectedFilter === filter.key 
+                    ? 'border-primary bg-primary/10' 
+                    : 'border-border'
                 }`}
-                onClick={() => setSelectedFilter(filter.key as any)}
+                onClick={() => handleFilterChange(filter.key as any)}
               >
-                <div className="w-full h-16 bg-muted rounded mb-2 overflow-hidden">
+                <div className="w-full h-12 bg-muted rounded mb-2 overflow-hidden">
                   <img 
                     src={imageUrl} 
                     alt={filter.label}
                     className="w-full h-full object-contain"
                     style={{
-                      filter: filter.key === 'single-color' ? 'grayscale(1)' : 
-                             filter.key === 'black-white' ? 'grayscale(1) contrast(2)' : 'none'
+                      filter: filter.key === 'grayscale' ? 'grayscale(100%)' : 
+                             filter.key === 'high-contrast' ? 'contrast(150%)' : 'none'
                     }}
                   />
                 </div>
-                <span className="text-xs text-center block">{filter.label}</span>
-              </div>
+                <span className="text-xs font-medium">{filter.label}</span>
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Edit Colors */}
-        {selectedFilter === 'single-color' && (
-          <div>
-            <h4 className="text-sm font-semibold mb-3">Edit Colors</h4>
-            <p className="text-xs text-muted-foreground mb-3">
-              {extractedColors.length > 0 ? 'Colors extracted from your image:' : 'Default color palette:'}
-            </p>
-            <div className="grid grid-cols-5 gap-2">
-              {colorsToShow.map((color, index) => (
-                <button
-                  key={index}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${
-                    selectedColor === color ? 'border-primary scale-110' : 'border-border hover:border-primary/50'
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onClick={() => setSelectedColor(color)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Sliders */}
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium">Size</span>
-              <span className="text-sm text-muted-foreground">{size[0].toFixed(1)}x</span>
+        {/* Transform Controls */}
+        <div className="space-y-4">
+          <h4 className="font-medium text-sm">Transform</h4>
+          
+          {/* Size Slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Size</span>
+              <span className="text-sm text-muted-foreground">{size[0]}%</span>
             </div>
             <Slider
               value={size}
-              onValueChange={setSize}
-              max={3}
-              min={0.1}
-              step={0.1}
+              onValueChange={handleSizeChange}
+              max={300}
+              min={10}
+              step={10}
               className="w-full"
             />
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium">Rotate</span>
+          {/* Rotation Slider */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Rotation</span>
               <span className="text-sm text-muted-foreground">{rotation[0]}°</span>
             </div>
             <Slider
               value={rotation}
-              onValueChange={setRotation}
+              onValueChange={handleRotationChange}
               max={360}
               min={-360}
               step={15}
@@ -355,67 +358,53 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           </div>
         </div>
 
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-sm">Actions</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" size="sm" onClick={handleCenter}>
+              <Move className="w-3 h-3 mr-2" />
+              Center
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSendToBack}>
+              <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+              </svg>
+              Layer
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleFlip}>
+              <RotateCw className="w-3 h-3 mr-2" />
+              Flip
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleDuplicate}>
+              <Copy className="w-3 h-3 mr-2" />
+              Duplicate
+            </Button>
+          </div>
+          
+          {/* Delete Button - Full Width */}
+          <Button variant="destructive" size="sm" onClick={handleDelete} className="w-full">
+            <Trash2 className="w-3 h-3 mr-2" />
+            Delete Image
+          </Button>
+        </div>
+
         {/* Reset Button */}
         <Button 
           variant="outline" 
-          onClick={handleResetToDefaults}
+          onClick={handleReset}
           className="w-full"
         >
           <RotateCcw className="w-4 h-4 mr-2" />
           Reset to Defaults
         </Button>
 
-        {/* Action Buttons */}
-        <div className="grid grid-cols-5 gap-2">
-          <div className="text-center">
-            <Button variant="outline" size="icon" className="mb-1">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 6V18M6 12H18" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-            </Button>
-            <span className="text-xs">Center</span>
-          </div>
-          <div className="text-center">
-            <Button variant="outline" size="icon" className="mb-1">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-            </Button>
-            <span className="text-xs">Layering</span>
-          </div>
-          <div className="text-center">
-            <Button variant="outline" size="icon" className="mb-1">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-            </Button>
-            <span className="text-xs">Flip</span>
-          </div>
-          <div className="text-center">
-            <Button variant="outline" size="icon" className="mb-1">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-            </Button>
-            <span className="text-xs">Lock</span>
-          </div>
-          <div className="text-center">
-            <Button variant="outline" size="icon" className="mb-1">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-            </Button>
-            <span className="text-xs">Duplicate</span>
-          </div>
-        </div>
-
         {/* Save Button */}
         <Button 
           onClick={handleSave}
           className="w-full"
+          size="lg"
         >
           Save Changes
         </Button>
