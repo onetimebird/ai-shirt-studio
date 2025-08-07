@@ -41,49 +41,71 @@ serve(async (req) => {
 
     console.log("Generating image with enhanced prompt:", enhancedPrompt)
 
-    const response = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENAI_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
-        prompt: enhancedPrompt,
-        n: 1,
-        size: `${width}x${height}`,
-        quality: "standard",
-        style: "vivid"
+    // Generate 3 different images by making 3 separate API calls
+    const generateImage = async (promptVariation: string) => {
+      const response = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENAI_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: promptVariation,
+          n: 1,
+          size: `${width}x${height}`,
+          quality: "standard",
+          style: "vivid"
+        })
       })
-    })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("OpenAI API error:", errorText)
-      throw new Error(`OpenAI API error: ${response.status} ${errorText}`)
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("OpenAI API error:", errorText)
+        throw new Error(`OpenAI API error: ${response.status} ${errorText}`)
+      }
+
+      const data = await response.json()
+      const imageUrl = data.data[0].url
+
+      // Fetch the image and convert to base64 to avoid CORS issues
+      const imageResponse = await fetch(imageUrl)
+      
+      if (!imageResponse.ok) {
+        throw new Error(`Failed to fetch generated image: ${imageResponse.status}`)
+      }
+
+      const imageArrayBuffer = await imageResponse.arrayBuffer()
+      const uint8Array = new Uint8Array(imageArrayBuffer)
+      const base64String = encode(uint8Array)
+      const dataUrl = `data:image/png;base64,${base64String}`
+
+      return {
+        url: dataUrl,
+        original_url: imageUrl,
+        revised_prompt: data.data[0].revised_prompt
+      }
     }
 
-    const data = await response.json()
-    console.log("Successfully generated image")
+    // Create 3 prompt variations for variety
+    const prompts = [
+      enhancedPrompt,
+      `${enhancedPrompt}, variant 1`,
+      `${enhancedPrompt}, variant 2`
+    ]
 
-    // Fetch the image and convert to base64 to avoid CORS issues
-    const imageUrl = data.data[0].url
-    const imageResponse = await fetch(imageUrl)
-    
-    if (!imageResponse.ok) {
-      throw new Error(`Failed to fetch generated image: ${imageResponse.status}`)
-    }
+    console.log("Generating 3 image variations...")
 
-    const imageArrayBuffer = await imageResponse.arrayBuffer()
-    const uint8Array = new Uint8Array(imageArrayBuffer)
-    const base64String = encode(uint8Array)
-    const dataUrl = `data:image/png;base64,${base64String}`
+    // Generate all 3 images in parallel
+    const imagePromises = prompts.map(promptVar => generateImage(promptVar))
+    const images = await Promise.all(imagePromises)
+
+    console.log("Successfully generated 3 images")
 
     return new Response(
       JSON.stringify({ 
-        url: dataUrl,
-        original_url: imageUrl,
-        revised_prompt: data.data[0].revised_prompt 
+        images: images,
+        count: 3
       }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

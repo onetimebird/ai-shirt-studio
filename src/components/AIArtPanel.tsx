@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 import { supabase } from '@/integrations/supabase/client';
 import { removeBackground, loadImageFromUrl } from '@/lib/backgroundRemoval';
+import { ImageEditPanel } from './ImageEditPanel';
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1Y2dnemFnYmN1bnluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4MzY0MzYsImV4cCI6MjA2OTQxMjQzNn0.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU";
 const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image";
@@ -58,6 +59,12 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
   const [promptHistory, setPromptHistory] = useState<string[]>([]);
   const [generatedImages, setGeneratedImages] = useState<Array<{url: string, prompt: string}>>([]);
   const [showTips, setShowTips] = useState(false);
+  const [showImageOptions, setShowImageOptions] = useState(false);
+  const [imageOptions, setImageOptions] = useState<Array<{url: string, original_url: string, revised_prompt: string}>>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [isProcessingSelection, setIsProcessingSelection] = useState(false);
+  const [showEditPanel, setShowEditPanel] = useState(false);
+  const [currentEditingImage, setCurrentEditingImage] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("ai-prompts");
@@ -101,52 +108,88 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         throw new Error(error.message || 'Failed to generate image');
       }
 
-      if (data?.url) {
-        // Apply automatic background removal
-        try {
-          toast("Removing background...", { duration: 2000 });
-          
-          // Load the generated image
-          const imageElement = await loadImageFromUrl(data.url);
-          
-          // Remove the background
-          const backgroundRemovedBlob = await removeBackground(imageElement);
-          
-          // Convert blob to data URL
-          const backgroundRemovedUrl = URL.createObjectURL(backgroundRemovedBlob);
-          const reader = new FileReader();
-          
-          reader.onload = () => {
-            const backgroundRemovedDataUrl = reader.result as string;
-            
-            // Store the background-removed image
-            const newImage = { url: backgroundRemovedDataUrl, prompt: prompt.trim() };
-            setGeneratedImages(prev => [newImage, ...prev]);
-            savePrompt(prompt.trim());
-            onImageGenerated?.(backgroundRemovedDataUrl);
-            toast.success("Image generated with background removed!");
-          };
-          
-          reader.readAsDataURL(backgroundRemovedBlob);
-          
-        } catch (bgError) {
-          console.error("Background removal failed:", bgError);
-          // Fallback to original image if background removal fails
-          const newImage = { url: data.url, prompt: prompt.trim() };
-          setGeneratedImages(prev => [newImage, ...prev]);
-          savePrompt(prompt.trim());
-          onImageGenerated?.(data.url);
-          toast.success("Image generated successfully! (Background removal failed)");
-        }
+      if (data?.images && data.images.length === 3) {
+        // Show the 3 generated options for user to choose from
+        setImageOptions(data.images);
+        setShowImageOptions(true);
+        savePrompt(prompt.trim());
+        toast.success("3 image options generated! Choose your favorite.");
       } else {
-        throw new Error('No image URL received from Supabase function');
+        throw new Error('Expected 3 images but received different count');
       }
       
     } catch (error) {
       console.error("AI generation error:", error);
-      toast.error(`Failed to generate image: ${error.message}`);
+      toast.error(`Failed to generate images: ${error.message}`);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleImageSelection = async (selectedIndex: number) => {
+    if (selectedIndex < 0 || selectedIndex >= imageOptions.length) return;
+
+    setIsProcessingSelection(true);
+    setSelectedImageIndex(selectedIndex);
+
+    try {
+      const selectedImage = imageOptions[selectedIndex];
+      toast("Processing selected image...", { duration: 2000 });
+
+      // Apply automatic background removal to selected image
+      try {
+        toast("Removing background...", { duration: 2000 });
+        
+        // Load the selected image
+        const imageElement = await loadImageFromUrl(selectedImage.url);
+        
+        // Remove the background
+        const backgroundRemovedBlob = await removeBackground(imageElement);
+        
+        // Convert blob to data URL
+        const backgroundRemovedUrl = URL.createObjectURL(backgroundRemovedBlob);
+        const reader = new FileReader();
+        
+        reader.onload = () => {
+          const backgroundRemovedDataUrl = reader.result as string;
+          
+          // Store the background-removed image
+          const newImage = { url: backgroundRemovedDataUrl, prompt: prompt.trim() };
+          setGeneratedImages(prev => [newImage, ...prev]);
+          
+          // Hide selection UI and show editing panel
+          setShowImageOptions(false);
+          setImageOptions([]);
+          setSelectedImageIndex(null);
+          setCurrentEditingImage(backgroundRemovedDataUrl);
+          setShowEditPanel(true);
+          
+          toast.success("Image uploaded with background removed! Now you can edit it.");
+        };
+        
+        reader.readAsDataURL(backgroundRemovedBlob);
+        
+      } catch (bgError) {
+        console.error("Background removal failed:", bgError);
+        // Fallback to original image if background removal fails
+        const newImage = { url: selectedImage.url, prompt: prompt.trim() };
+        setGeneratedImages(prev => [newImage, ...prev]);
+        
+        // Hide selection UI and show editing panel
+        setShowImageOptions(false);
+        setImageOptions([]);
+        setSelectedImageIndex(null);
+        setCurrentEditingImage(selectedImage.url);
+        setShowEditPanel(true);
+        
+        toast.success("Image uploaded! Now you can edit it. (Background removal failed)");
+      }
+      
+    } catch (error) {
+      console.error("Image selection error:", error);
+      toast.error(`Failed to process selected image: ${error.message}`);
+    } finally {
+      setIsProcessingSelection(false);
     }
   };
 
@@ -164,6 +207,30 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       handleGenerate();
     }
   };
+
+  const handleEditPanelClose = () => {
+    setShowEditPanel(false);
+    setCurrentEditingImage(null);
+  };
+
+  const handleEditPanelSave = (editedImageUrl: string) => {
+    // Final save to canvas
+    onImageGenerated?.(editedImageUrl);
+    setShowEditPanel(false);
+    setCurrentEditingImage(null);
+    toast.success("Image added to canvas!");
+  };
+
+  // Show edit panel if editing
+  if (showEditPanel && currentEditingImage) {
+    return (
+      <ImageEditPanel 
+        imageUrl={currentEditingImage}
+        onClose={handleEditPanelClose}
+        onSave={handleEditPanelSave}
+      />
+    );
+  }
 
   return (
     <Card className="h-full flex flex-col">
@@ -244,9 +311,57 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                   Generating...
                 </>
               ) : (
-                <>✨ Generate</>
+                <>✨ Generate 3 Options</>
               )}
             </Button>
+
+            {/* Image Selection UI */}
+            {showImageOptions && imageOptions.length === 3 && (
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold mb-3 text-center">Choose Your Favorite (1 of 3)</h4>
+                <div className="grid grid-cols-1 gap-3">
+                  {imageOptions.map((image, index) => (
+                    <div 
+                      key={index} 
+                      className={`relative group cursor-pointer overflow-hidden rounded-md border-2 transition-all duration-200 ${
+                        selectedImageIndex === index 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200 hover:border-blue-300'
+                      }`}
+                      onClick={() => handleImageSelection(index)}
+                    >
+                      <img 
+                        src={image.url} 
+                        alt={`Option ${index + 1}`}
+                        className="w-full h-32 object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 flex items-center justify-center rounded-md transition-all duration-200">
+                        {isProcessingSelection && selectedImageIndex === index ? (
+                          <div className="bg-white/90 rounded-full p-2">
+                            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        ) : (
+                          <div className="opacity-0 group-hover:opacity-100 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium transition-all duration-200">
+                            Select #{index + 1}
+                          </div>
+                        )}
+                      </div>
+                      <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                        Option {index + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center mt-3">
+                  <button
+                    onClick={() => {setShowImageOptions(false); setImageOptions([]);}}
+                    className="text-sm text-gray-500 hover:text-gray-700 underline"
+                  >
+                    Cancel Selection
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="flex-1 flex flex-col">
               {generatedImages.length > 0 && (
