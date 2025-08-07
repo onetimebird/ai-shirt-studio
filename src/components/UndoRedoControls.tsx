@@ -4,29 +4,36 @@ import { useState, useEffect } from "react";
 
 
 export const UndoRedoControls = () => {
-
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
-  const [isDesignCanvasReady, setIsDesignCanvasReady] = useState(false);
+
   const updateUndoRedoState = () => {
     const designCanvas = (window as any).designCanvas;
     if (designCanvas && designCanvas.canUndo && designCanvas.canRedo) {
-      if (!isDesignCanvasReady) {
-        setIsDesignCanvasReady(true);
-        console.log('[UndoRedoControls] DesignCanvas is now ready!');
-      }
-      const undoState = designCanvas.canUndo();
-      const redoState = designCanvas.canRedo();
-      setCanUndo(undoState);
-      setCanRedo(redoState);
+      setCanUndo(designCanvas.canUndo());
+      setCanRedo(designCanvas.canRedo());
     }
   };
 
-  // Poll for undo/redo state changes and wait for designCanvas to be ready
+  // Check state periodically only until canvas is ready
   useEffect(() => {
-    const interval = setInterval(updateUndoRedoState, 100);
+    const checkCanvas = () => {
+      const designCanvas = (window as any).designCanvas;
+      if (designCanvas && designCanvas.canUndo && designCanvas.canRedo) {
+        updateUndoRedoState();
+        return true; // Canvas is ready
+      }
+      return false; // Canvas not ready yet
+    };
+
+    const interval = setInterval(() => {
+      if (checkCanvas()) {
+        clearInterval(interval);
+      }
+    }, 1000); // Check every second instead of every 100ms
+
     return () => clearInterval(interval);
-  }, [isDesignCanvasReady]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-0.5 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-1 shadow-lg w-10 md:w-16">
