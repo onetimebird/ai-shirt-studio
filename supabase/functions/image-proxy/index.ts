@@ -12,6 +12,7 @@ serve(async (req) => {
   }
 
   try {
+    // This endpoint doesn't require authentication for image proxying
     const url = new URL(req.url)
     const imageUrl = url.searchParams.get('url')
     
