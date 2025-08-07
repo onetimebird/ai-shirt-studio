@@ -37,7 +37,7 @@ serve(async (req) => {
     }
 
     // Enhance prompt for t-shirt design suitability
-    const enhancedPrompt = `${prompt}, isolated on solid white background OR solid black background, no text unless specifically requested, no words, no letters, centered composition`
+    const enhancedPrompt = `Create a high-quality, centered design suitable for t-shirt printing. ${prompt}. Use a solid, single-color background (white or light grey preferred) for easy background removal. Do not include any text, letters, or words, unless explicitly requested. Ensure the subject is centered and clearly framed, with no elements cut off. Only one image or scene — do not combine multiple images or concepts into one design. Allow for complex, detailed, and creative artistic freedom in the subject and style. The image should be bold, clean, and visually striking, optimized for printing on apparel.`
 
     console.log("Generating image with enhanced prompt:", enhancedPrompt)
 
