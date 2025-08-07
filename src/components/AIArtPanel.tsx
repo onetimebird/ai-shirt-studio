@@ -173,14 +173,15 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
           const newImage = { url: backgroundRemovedDataUrl, prompt: prompt.trim() };
           setGeneratedImages(prev => [newImage, ...prev]);
           
-          // Hide selection UI and show editing panel
+          // Directly upload to canvas (no edit panel shown here)
+          onImageGenerated?.(backgroundRemovedDataUrl);
+          
+          // Hide selection UI
           setShowImageOptions(false);
           setImageOptions([]);
           setSelectedImageIndex(null);
-          setCurrentEditingImage(backgroundRemovedDataUrl);
-          setShowEditPanel(true);
           
-          toast.success("Image uploaded with background removed! Now you can edit it.");
+          toast.success("Image added to canvas with background removed!");
         };
         
         reader.readAsDataURL(backgroundRemovedBlob);
@@ -191,14 +192,15 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         const newImage = { url: selectedImage.url, prompt: prompt.trim() };
         setGeneratedImages(prev => [newImage, ...prev]);
         
-        // Hide selection UI and show editing panel
+        // Directly upload to canvas (no edit panel shown here)
+        onImageGenerated?.(selectedImage.url);
+        
+        // Hide selection UI
         setShowImageOptions(false);
         setImageOptions([]);
         setSelectedImageIndex(null);
-        setCurrentEditingImage(selectedImage.url);
-        setShowEditPanel(true);
         
-        toast.success("Image uploaded! Now you can edit it. (Background removal failed)");
+        toast.success("Image added to canvas! (Background removal failed)");
       }
       
     } catch (error) {
