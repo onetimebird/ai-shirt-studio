@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 // import SmokeTest from "@/components/SmokeTest"; // Uncomment to test
 import { LeftToolbar } from "@/components/LeftToolbar";
 import { TopControls } from "@/components/TopControls";
@@ -15,6 +16,7 @@ import { AIWandIcon } from "@/components/AIWandIcon";
 import { toast } from "sonner";
 
 export const TShirtDesigner = () => {
+  const isMobile = useIsMobile();
   const [activeTool, setActiveTool] = useState("products");
   const [selectedProduct, setSelectedProduct] = useState("gildan-64000");
   const [selectedColor, setSelectedColor] = useState("cherry-red");
@@ -110,7 +112,7 @@ export const TShirtDesigner = () => {
     setActiveTool(tool);
     
     // Only show toast messages on desktop (when right panel is visible)
-    if (window.innerWidth >= 1024) {
+    if (!isMobile) {
       // Handle tool-specific actions
       if (tool === "text") {
         toast.info("Use the right panel to add and customize text");
@@ -184,8 +186,8 @@ export const TShirtDesigner = () => {
         {/* Central Canvas - Fixed height, no scrolling */}
         <div className="flex-1 relative min-w-0 flex items-center justify-center">
           <div className="w-full h-full flex items-center justify-center p-2 md:p-4 relative">
-            {/* Canvas Controls - positioned over canvas, hidden on mobile when sheets are open */}
-            {(!isMobileSheetOpen || window.innerWidth >= 768) && (
+            {/* Canvas Controls - hidden on mobile, only show on desktop */}
+            {!isMobile && (
               <CanvasControls
                 currentSide={currentSide}
                 onSideChange={setCurrentSide}

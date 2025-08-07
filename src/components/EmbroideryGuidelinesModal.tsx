@@ -15,7 +15,7 @@ interface EmbroideryGuidelinesModalProps {
 export const EmbroideryGuidelinesModal = ({ isOpen, onClose }: EmbroideryGuidelinesModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto mx-4 sm:mx-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <AlertTriangle className="w-6 h-6 text-warning" />
