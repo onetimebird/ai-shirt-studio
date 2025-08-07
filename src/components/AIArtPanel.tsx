@@ -101,10 +101,12 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       }
 
       if (data?.url) {
-        const newImage = { url: data.url, prompt: prompt.trim() };
+        // Use image proxy to avoid CORS issues
+        const proxyUrl = `https://rdrkdxvucggzagbcunyn.functions.supabase.co/image-proxy?url=${encodeURIComponent(data.url)}`;
+        const newImage = { url: proxyUrl, prompt: prompt.trim() };
         setGeneratedImages(prev => [newImage, ...prev]);
         savePrompt(prompt.trim());
-        onImageGenerated?.(data.url);
+        onImageGenerated?.(proxyUrl);
         toast.success("Image generated successfully!");
       } else {
         throw new Error('No image URL received from Supabase function');

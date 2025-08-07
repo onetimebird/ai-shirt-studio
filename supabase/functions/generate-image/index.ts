@@ -62,17 +62,9 @@ serve(async (req) => {
     const data = await response.json()
     console.log("Successfully generated image")
 
-    // Fetch the image and convert to base64 to avoid CORS issues
-    const imageUrl = data.data[0].url
-    const imageResponse = await fetch(imageUrl)
-    const imageArrayBuffer = await imageResponse.arrayBuffer()
-    const imageBase64 = btoa(String.fromCharCode(...new Uint8Array(imageArrayBuffer)))
-    const dataUrl = `data:image/png;base64,${imageBase64}`
-
     return new Response(
       JSON.stringify({ 
-        url: dataUrl,
-        original_url: imageUrl,
+        url: data.data[0].url,
         revised_prompt: data.data[0].revised_prompt 
       }), 
       { 
