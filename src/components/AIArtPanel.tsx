@@ -9,6 +9,9 @@ import { Expand, Info, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1Y2dnemFnYmN1bnluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4MzY0MzYsImV4cCI6MjA2OTQxMjQzNn0.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU";
+const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image";
+
 const exampleImages = [
   {
     url: '/lovable-uploads/1e61cc5e-ffd2-4396-91c9-be996d67de2d.png',
@@ -82,8 +85,8 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
 
     setIsGenerating(true);
     try {
-      // First try using the Supabase edge function
-      const response = await fetch('https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image', {
+      // Try using the Supabase edge function first
+      const response = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
