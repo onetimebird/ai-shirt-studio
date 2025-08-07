@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { encode } from "https://deno.land/std@0.168.0/encoding/base64.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -74,7 +75,8 @@ serve(async (req) => {
     }
 
     const imageArrayBuffer = await imageResponse.arrayBuffer()
-    const base64String = btoa(String.fromCharCode(...new Uint8Array(imageArrayBuffer)))
+    const uint8Array = new Uint8Array(imageArrayBuffer)
+    const base64String = encode(uint8Array)
     const dataUrl = `data:image/png;base64,${base64String}`
 
     return new Response(
