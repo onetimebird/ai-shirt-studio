@@ -7,26 +7,28 @@
 .overlay-btn,
 .overlay-handle {
   position: absolute;
-  width: 28px;
-  height: 28px;
-  background: white;
-  border: 1px solid #e5e7eb;
+  width: 36px;
+  height: 36px;
+  background: #7c3aed;
+  border: 2px solid #6d28d9;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #374151;
-  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  color: white;
+  transition: all 0.2s ease;
+  z-index: 1000;
 }
 
 .overlay-btn:hover,
 .overlay-handle:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: #6d28d9;
+  border-color: #5b21b6;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  transform: scale(1.05);
 }
 
 .overlay-btn:active,
@@ -34,37 +36,37 @@
   transform: scale(0.95);
 }
 
-/* Positioning */
+/* Positioning - adjusted for larger buttons */
 .top-left {
-  top: -14px;
-  left: -14px;
+  top: -18px;
+  left: -18px;
 }
 
 .top-center {
-  top: -14px;
+  top: -18px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .top-right {
-  top: -14px;
-  right: -14px;
+  top: -18px;
+  right: -18px;
 }
 
 .mid-right {
   top: 50%;
-  right: -14px;
+  right: -18px;
   transform: translateY(-50%);
 }
 
 .bottom-right {
-  bottom: -14px;
-  right: -14px;
+  bottom: -18px;
+  right: -18px;
 }
 
 .bottom-left {
-  bottom: -14px;
-  left: -14px;
+  bottom: -18px;
+  left: -18px;
 }
 
 /* Cursor styles for different handles */
