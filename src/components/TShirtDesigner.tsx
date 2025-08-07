@@ -21,6 +21,7 @@ export const TShirtDesigner = () => {
   const [decorationMethod, setDecorationMethod] = useState<"screen-print" | "embroidery">("screen-print");
   const [isEmbroideryModalOpen, setIsEmbroideryModalOpen] = useState(false);
   
+  console.log('[TShirtDesigner] decorationMethod:', decorationMethod);
   console.log('[TShirtDesigner] isEmbroideryModalOpen:', isEmbroideryModalOpen);
   const [currentSide, setCurrentSide] = useState<"front" | "back">("front");
   const [selectedObject, setSelectedObject] = useState<any>(null);

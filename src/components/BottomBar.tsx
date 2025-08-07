@@ -448,10 +448,16 @@ export const BottomBar = ({
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
             size="lg"
             onClick={() => {
+              console.log('[BottomBar] Embroidery button clicked, current method:', decorationMethod);
               console.log('[BottomBar] Opening embroidery guidelines modal');
+              
+              // Set decoration method to embroidery FIRST
+              console.log('[BottomBar] Setting decoration method to embroidery');
+              onDecorationChange("embroidery");
+              
+              // Then open modal
               setShowEmbroideryGuidelines(true);
               onEmbroideryModalChange?.(true);
-              onDecorationChange("embroidery");
             }}
             className="h-14 px-6 text-base"
           >
@@ -587,9 +593,15 @@ export const BottomBar = ({
             variant={decorationMethod === "embroidery" ? "default" : "outline"}
             size="sm"
             onClick={() => {
+              console.log('[BottomBar Mobile] Embroidery button clicked, current method:', decorationMethod);
+              
+              // Set decoration method to embroidery FIRST
+              console.log('[BottomBar Mobile] Setting decoration method to embroidery');
+              onDecorationChange("embroidery");
+              
+              // Then open modal
               setShowEmbroideryGuidelines(true);
               onEmbroideryModalChange?.(true);
-              onDecorationChange("embroidery");
             }}
             className="flex-1 h-12 text-sm"
           >

@@ -184,6 +184,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             />
             
             {/* Front side bounding boxes */}
+            {console.log('[ProductCanvas] Decoration method:', decorationMethod, 'Current side:', currentSide)}
             {currentSide === "front" && decorationMethod === "embroidery" && (
               /* EMBROIDERY - Only Left Chest area box */
               <div
