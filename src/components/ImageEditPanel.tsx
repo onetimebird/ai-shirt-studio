@@ -320,30 +320,30 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               { key: 'grayscale', label: 'Grayscale' },
               { key: 'high-contrast', label: 'High Contrast' }
             ].map((filter) => (
-              <div
+              <button
                 key={filter.key}
-                className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer group hover:scale-105 hover:shadow-lg ${
+                className={`relative aspect-square rounded-xl border-2 transition-all duration-200 cursor-pointer group hover:scale-105 hover:shadow-lg flex flex-col items-center justify-center p-3 ${
                   selectedFilter === filter.key 
                     ? 'border-primary bg-primary/10 shadow-md shadow-primary/20' 
-                    : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                    : 'border-border hover:border-primary/50 hover:bg-muted/20'
                 }`}
                 onClick={() => handleFilterChange(filter.key as any)}
               >
                 {/* Selected indicator */}
                 {selectedFilter === filter.key && (
-                  <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center z-10 animate-scale-in">
-                    <svg className="w-3 h-3 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="absolute top-2 right-2 w-4 h-4 bg-primary rounded-full flex items-center justify-center z-10 animate-scale-in">
+                    <svg className="w-2.5 h-2.5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                 )}
                 
-                {/* Image preview */}
-                <div className="w-full h-20 bg-muted overflow-hidden">
+                {/* Image preview - square */}
+                <div className="w-12 h-12 bg-muted rounded-lg overflow-hidden mb-2 flex-shrink-0">
                   <img 
                     src={imageUrl} 
                     alt={filter.label}
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
                     style={{
                       filter: filter.key === 'grayscale' ? 'grayscale(100%)' : 
                              filter.key === 'high-contrast' ? 'contrast(150%) brightness(110%)' : 'none'
@@ -352,16 +352,14 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
                 </div>
                 
                 {/* Label */}
-                <div className="p-3 text-center">
-                  <span className={`text-xs font-medium transition-colors duration-200 ${
-                    selectedFilter === filter.key 
-                      ? 'text-primary' 
-                      : 'text-foreground group-hover:text-primary'
-                  }`}>
-                    {filter.label}
-                  </span>
-                </div>
-              </div>
+                <span className={`text-xs font-medium text-center leading-tight transition-colors duration-200 ${
+                  selectedFilter === filter.key 
+                    ? 'text-primary' 
+                    : 'text-foreground group-hover:text-primary'
+                }`}>
+                  {filter.label}
+                </span>
+              </button>
             ))}
           </div>
         </div>
