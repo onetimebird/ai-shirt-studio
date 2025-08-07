@@ -200,6 +200,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         onClose={() => setIsQuantityModalOpen(false)}
         selectedProduct={selectedProduct}
         selectedColor={selectedColor}
+        decorationMethod={decorationMethod}
       />
     </div>
   );

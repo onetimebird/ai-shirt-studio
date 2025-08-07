@@ -659,6 +659,7 @@ export const BottomBar = ({
         onClose={() => setIsQuantityModalOpen(false)}
         selectedProduct={selectedProduct}
         selectedColor={selectedColor}
+        decorationMethod={decorationMethod}
       />
 
       {/* Save Design Modal */}

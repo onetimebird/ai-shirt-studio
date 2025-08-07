@@ -241,6 +241,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
         onClose={() => setIsQuantityModalOpen(false)}
         selectedProduct={selectedProduct || 'gildan-64000'}
         selectedColor={selectedColor || 'cherry-red'}
+        decorationMethod="screen-print"
       />
 
       {/* Save Design Modal */}

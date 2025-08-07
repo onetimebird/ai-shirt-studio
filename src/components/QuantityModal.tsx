@@ -61,9 +61,10 @@ interface QuantityModalProps {
   onClose: () => void;
   selectedProduct: string;
   selectedColor: string;
+  decorationMethod?: "screen-print" | "embroidery";
 }
 
-export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor }: QuantityModalProps) => {
+export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor, decorationMethod = "screen-print" }: QuantityModalProps) => {
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [hasCalculated, setHasCalculated] = useState(false);
   const [hasFrontDesign, setHasFrontDesign] = useState(false);
@@ -74,6 +75,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
   const adultSizes = ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
   const youthSizes = ['YXS', 'YS', 'YM', 'YL', 'YXL'];
   const sizeUpcharge = 3.00; // Additional cost for 2XL and up
+  const embroideryUpcharge = 4.00; // Additional cost for embroidery
   const upchargeSizes = ['2XL', '3XL', '4XL', '5XL']; // Sizes that get the upcharge
 
   // Check for designs on front and back when modal opens
@@ -131,7 +133,12 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   const calculateTotalPrice = () => {
     const product = getProductData();
-    const baseUnitPrice = (hasFrontDesign && hasBackDesign) ? product.frontBackPrice : product.frontOnlyPrice;
+    let baseUnitPrice = (hasFrontDesign && hasBackDesign) ? product.frontBackPrice : product.frontOnlyPrice;
+    
+    // Add embroidery upcharge to base price
+    if (decorationMethod === "embroidery") {
+      baseUnitPrice += embroideryUpcharge;
+    }
     
     let totalPrice = 0;
     
@@ -171,7 +178,13 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
     }
 
     const productData = getProductData();
-    const unitPrice = (hasFrontDesign && hasBackDesign) ? productData.frontBackPrice : productData.frontOnlyPrice;
+    let unitPrice = (hasFrontDesign && hasBackDesign) ? productData.frontBackPrice : productData.frontOnlyPrice;
+    
+    // Add embroidery upcharge to unit price
+    if (decorationMethod === "embroidery") {
+      unitPrice += embroideryUpcharge;
+    }
+    
     const upchargeSizes = ['2XL', '3XL', '4XL', '5XL'];
     const sizeUpcharge = 3.00;
 
@@ -254,7 +267,12 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
 
   const productData = getProductData();
   const totalPrice = calculateTotalPrice();
-  const unitPrice = (hasFrontDesign && hasBackDesign) ? productData.frontBackPrice : productData.frontOnlyPrice;
+  let unitPrice = (hasFrontDesign && hasBackDesign) ? productData.frontBackPrice : productData.frontOnlyPrice;
+  
+  // Add embroidery upcharge to display unit price
+  if (decorationMethod === "embroidery") {
+    unitPrice += embroideryUpcharge;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -383,7 +401,12 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
             <div className="text-right">
               <p className="text-[9px] lg:text-base text-muted-foreground">Starting at</p>
               <p className="text-[11px] lg:text-xl font-bold text-primary">${unitPrice.toFixed(2)}</p>
-              <p className="text-[8px] lg:text-xs text-gray-400">Add $3.00 for 2XL+</p>
+              <div className="text-[8px] lg:text-xs text-gray-400">
+                <p>Add $3.00 for 2XL+</p>
+                {decorationMethod === "embroidery" && (
+                  <p className="text-orange-600 font-medium">+$4.00 Embroidery</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -452,9 +475,9 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor 
                     <span className="text-xs lg:text-base font-medium text-green-800 capitalize">{selectedColor?.replace(/-/g, ' ')}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-base text-green-700">Design Type:</span>
+                    <span className="text-xs lg:text-base text-green-700">Decoration Method:</span>
                     <span className="text-xs lg:text-base font-medium text-green-800">
-                      {(hasFrontDesign && hasBackDesign) ? 'Front + Back' : 'Front Only'}
+                      {decorationMethod === "embroidery" ? "Embroidery (+$4.00)" : "Digital Print"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
