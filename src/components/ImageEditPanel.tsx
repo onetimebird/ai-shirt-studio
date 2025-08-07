@@ -113,10 +113,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
   const applyChangesToCanvas = () => {
     const canvas = (window as any).designCanvas?.canvas;
-    if (!canvas) return;
+    if (!canvas) {
+      console.log('Canvas not available');
+      return;
+    }
 
     const activeObject = canvas.getActiveObject();
-    if (!activeObject || activeObject.type !== 'image') return;
+    if (!activeObject || activeObject.type !== 'image') {
+      console.log('No active image object');
+      return;
+    }
 
     // Apply size
     const currentScale = activeObject.scaleX || 1;
@@ -131,23 +137,36 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       angle: rotation[0]
     });
 
-    // Apply filters
-    const filters = [];
-    if (selectedFilter === 'black-white') {
-      filters.push(new (window as any).fabric.Image.filters.Grayscale());
-      filters.push(new (window as any).fabric.Image.filters.Contrast({ contrast: 0.3 }));
-    } else if (selectedFilter === 'single-color') {
-      filters.push(new (window as any).fabric.Image.filters.Grayscale());
-      // You could add color overlay here if needed
+    // Apply filters - check if fabric is available
+    if (typeof window !== 'undefined' && (window as any).fabric) {
+      const fabricFilters = (window as any).fabric.Image?.filters;
+      if (fabricFilters) {
+        const filters = [];
+        if (selectedFilter === 'black-white') {
+          filters.push(new fabricFilters.Grayscale());
+          filters.push(new fabricFilters.Contrast({ contrast: 0.3 }));
+        } else if (selectedFilter === 'single-color') {
+          filters.push(new fabricFilters.Grayscale());
+          // You could add color overlay here if needed
+        }
+        
+        activeObject.filters = filters;
+        activeObject.applyFilters();
+      }
+    } else {
+      console.log('Fabric.js not available for filters');
     }
     
-    activeObject.filters = filters;
-    activeObject.applyFilters();
     canvas.renderAll();
   };
 
   useEffect(() => {
-    applyChangesToCanvas();
+    // Add a small delay to ensure fabric is loaded
+    const timer = setTimeout(() => {
+      applyChangesToCanvas();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [size, rotation, selectedFilter]);
 
   const handleSave = () => {
@@ -174,8 +193,10 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           scaleY: 1,
           angle: 0
         });
-        activeObject.filters = [];
-        activeObject.applyFilters();
+        if (typeof window !== 'undefined' && (window as any).fabric) {
+          activeObject.filters = [];
+          activeObject.applyFilters();
+        }
         canvas.renderAll();
       }
     }
