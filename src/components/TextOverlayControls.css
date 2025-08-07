@@ -9,15 +9,15 @@
   position: absolute;
   width: 36px;
   height: 36px;
-  background: #7c3aed;
-  border: 2px solid #6d28d9;
+  background: #4c1d95;
+  border: 2px solid #3c1265;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(76, 29, 149, 0.3);
   color: white;
   transition: all 0.2s ease;
   z-index: 1000;
@@ -25,9 +25,9 @@
 
 .overlay-btn:hover,
 .overlay-handle:hover {
-  background: #6d28d9;
-  border-color: #5b21b6;
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  background: #3c1265;
+  border-color: #2d0a4e;
+  box-shadow: 0 6px 20px rgba(76, 29, 149, 0.4);
   transform: scale(1.05);
 }
 
