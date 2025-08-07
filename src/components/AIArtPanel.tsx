@@ -108,14 +108,30 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         throw new Error(error.message || 'Failed to generate image');
       }
 
-      if (data?.images && data.images.length === 3) {
-        // Show the 3 generated options for user to choose from
-        setImageOptions(data.images);
-        setShowImageOptions(true);
-        savePrompt(prompt.trim());
-        toast.success("3 image options generated! Choose your favorite.");
+      console.log("Received data from Supabase function:", data);
+      
+      if (data?.images && Array.isArray(data.images)) {
+        if (data.images.length === 3) {
+          // Show the 3 generated options for user to choose from
+          setImageOptions(data.images);
+          setShowImageOptions(true);
+          savePrompt(prompt.trim());
+          toast.success("3 image options generated! Choose your favorite.");
+        } else {
+          console.warn(`Expected 3 images but received ${data.images.length}`);
+          if (data.images.length > 0) {
+            // Use whatever images we got
+            setImageOptions(data.images);
+            setShowImageOptions(true);
+            savePrompt(prompt.trim());
+            toast.success(`${data.images.length} image options generated! Choose your favorite.`);
+          } else {
+            throw new Error('No images received from generation');
+          }
+        }
       } else {
-        throw new Error('Expected 3 images but received different count');
+        console.error("Invalid response format:", data);
+        throw new Error('Invalid response format - no images array found');
       }
       
     } catch (error) {

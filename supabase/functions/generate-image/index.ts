@@ -96,16 +96,33 @@ serve(async (req) => {
 
     console.log("Generating 3 image variations...")
 
-    // Generate all 3 images in parallel
-    const imagePromises = prompts.map(promptVar => generateImage(promptVar))
-    const images = await Promise.all(imagePromises)
-
-    console.log("Successfully generated 3 images")
+    // Generate all 3 images in parallel with graceful error handling
+    const imagePromises = prompts.map(async (promptVar, index) => {
+      try {
+        console.log(`Generating image ${index + 1} with prompt: ${promptVar}`)
+        const result = await generateImage(promptVar)
+        console.log(`Successfully generated image ${index + 1}`)
+        return result
+      } catch (error) {
+        console.error(`Failed to generate image ${index + 1}:`, error)
+        return null // Return null instead of throwing
+      }
+    })
+    
+    const results = await Promise.all(imagePromises)
+    const images = results.filter(img => img !== null) // Remove failed images
+    
+    console.log(`Successfully generated ${images.length} out of ${prompts.length} images`)
+    
+    if (images.length === 0) {
+      throw new Error("Failed to generate any images")
+    }
 
     return new Response(
       JSON.stringify({ 
         images: images,
-        count: 3
+        count: images.length,
+        requested: prompts.length
       }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
