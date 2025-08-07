@@ -318,7 +318,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
             {[
               { key: 'normal', label: 'Normal' },
               { key: 'grayscale', label: 'Grayscale' },
-              { key: 'high-contrast', label: 'High Contrast' }
+              { key: 'high-contrast', label: 'Contrast' }
             ].map((filter) => (
               <button
                 key={filter.key}
