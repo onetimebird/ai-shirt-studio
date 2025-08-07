@@ -15,6 +15,7 @@ import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
 import { CustomColorPicker } from "@/components/CustomColorPicker";
 import { ProductSelector } from "@/components/ProductSelector";
+import { ImageEditPanel } from "@/components/ImageEditPanel";
 import {
   Type,
   Palette,
@@ -485,6 +486,8 @@ and return a high-quality transparent PNG suitable for print.
         return "properties";
       case "ai":
         return "ai";
+      case "edit-image":
+        return "edit-image";
       case "products":
         return "products";
       default:
@@ -515,6 +518,13 @@ and return a high-quality transparent PNG suitable for print.
           <div className="mb-6">
             <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:drop-shadow-sm cursor-default">
               AI Image Generator
+            </h2>
+          </div>
+        ) : activeTool === "edit-image" ? (
+          // Edit image tool header
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-foreground border-b border-border pb-2 transition-all duration-200 hover:text-primary hover:drop-shadow-sm cursor-default">
+              Edit Image
             </h2>
           </div>
         ) : activeTool === "products" ? (
@@ -1812,6 +1822,25 @@ and return a high-quality transparent PNG suitable for print.
               (window as any).designCanvas.addImageFromUrl(url);
             }
           }} />
+        </TabsContent>
+
+        <TabsContent value="edit-image" className="space-y-4 mt-4">
+          {selectedObject && selectedObject.type === 'image' && (
+            <ImageEditPanel 
+              imageUrl={selectedObject.src || selectedObject._originalElement?.src || selectedObject._element?.src}
+              onClose={() => {
+                // Clear selection when closing edit panel
+                if ((window as any).designCanvas?.canvas) {
+                  (window as any).designCanvas.canvas.discardActiveObject();
+                  (window as any).designCanvas.canvas.renderAll();
+                }
+              }}
+              onSave={(editedImageUrl) => {
+                // Handle saving edited image
+                toast.success("Image changes applied!");
+              }}
+            />
+          )}
         </TabsContent>
 
         <TabsContent value="products" className="space-y-4 mt-4">

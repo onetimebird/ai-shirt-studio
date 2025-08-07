@@ -124,7 +124,17 @@ export const TShirtDesigner = () => {
         toast.info("Use the right panel to pick colors for your text");
       } else if (tool === "products") {
         toast.info("Change products using the top controls");
+      } else if (tool === "edit-image") {
+        toast.info("Use the right panel to edit the selected image");
       }
+    }
+  };
+
+  const handleObjectSelection = (object: any) => {
+    setSelectedObject(object);
+    // If an image is selected, switch to edit-image tool
+    if (object && object.type === 'image') {
+      setActiveTool('edit-image');
     }
   };
 
@@ -207,7 +217,7 @@ export const TShirtDesigner = () => {
                 currentSide={currentSide}
                 selectedProduct={selectedProduct}
                 activeTool={activeTool}
-                onSelectedObjectChange={setSelectedObject}
+                onSelectedObjectChange={handleObjectSelection}
                 onToolChange={setActiveTool}
                 onTextObjectsUpdate={handleTextObjectsUpdate}
                 onImageObjectsUpdate={handleImageObjectsUpdate}
