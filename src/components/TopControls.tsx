@@ -1,41 +1,120 @@
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Plus, FlipHorizontal, Palette, ShirtIcon, Save, ZoomIn, ZoomOut, HelpCircle, DollarSign } from "lucide-react";
-import { GILDAN_2000_COLORS, getAvailableColors } from "@/data/gildan2000Colors";
-import { ThemeToggle, MobileThemeToggle } from "@/components/ThemeToggle";
+import { ShoppingCart, User, ArrowRight } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { AuthModal } from "@/components/AuthModal";
+import { CartPopup } from "@/components/CartPopup";
 import { QuantityModal } from "@/components/QuantityModal";
+import { SaveDesignModal } from "@/components/SaveDesignModal";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
+import { useCart } from "@/contexts/CartContext";
+import { useDesign } from "@/contexts/DesignContext";
 import { toast } from "sonner";
-import { useState } from "react";
 
 interface TopControlsProps {
-  selectedProduct: string;
-  selectedColor: string;
-  decorationMethod: string;
-  currentSide: "front" | "back";
-  onProductChange: (product: string) => void;
-  onColorChange: (color: string) => void;
-  onDecorationChange: (method: string) => void;
-  onSideChange: (side: "front" | "back") => void;
+  onAuthModalChange?: (isOpen: boolean) => void;
+  onCartModalChange?: (isOpen: boolean) => void;
+  selectedProduct?: string;
+  selectedColor?: string;
+  hideControls?: boolean;
 }
 
-export const TopControls = ({
-  selectedProduct,
-  selectedColor,
-  decorationMethod,
-  currentSide,
-  onProductChange,
-  onColorChange,
-  onDecorationChange,
-  onSideChange,
-}: TopControlsProps) => {
-  const currentColor = GILDAN_2000_COLORS.find(c => c.name === selectedColor);
+export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProduct, selectedColor, hideControls }: TopControlsProps = {}) => {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const { getTotalItems } = useCart();
+  const { currentDesignData } = useDesign();
+
+  const totalItems = getTotalItems();
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  const handleAuthModalChange = (isOpen: boolean) => {
+    setAuthModalOpen(isOpen);
+    onAuthModalChange?.(isOpen);
+  };
+
+  const handleCartModalChange = (isOpen: boolean) => {
+    setCartModalOpen(isOpen);
+    onCartModalChange?.(isOpen);
+  };
+
+  // Check if there's a design on canvas
+  const hasDesignOnCanvas = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    return canvas && canvas.getObjects().some((obj: any) => 
+      obj.type !== 'image' || !obj.isBackground
+    );
+  };
+
+  const handleNextStep = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please log in to continue");
+      return;
+    }
+    
+    // Check if current design has objects that could be saved
+    const canvas = (window as any).designCanvas?.canvas;
+    const hasDesignObjects = canvas && canvas.getObjects().some((obj: any) => 
+      obj.type !== 'image' || !obj.isBackground
+    );
+    
+    // If there's a design but it's not saved (no currentDesignData.id), prompt to save first
+    if (hasDesignObjects && !currentDesignData?.id) {
+      toast.error("Please save your design before proceeding to checkout");
+      setIsSaveModalOpen(true);
+      return;
+    }
+    
+    setIsQuantityModalOpen(true);
+  };
+
+  const getDesignData = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return null;
+    
+    return {
+      canvasData: canvas.toJSON(),
+      currentSide: (window as any).designCanvas?.currentSide || 'front',
+      objects: canvas.getObjects().filter((obj: any) => obj.type !== 'image' || !obj.isBackground),
+      productType: selectedProduct || 'gildan-64000',
+      productColor: selectedColor || 'cherry-red'
+    };
+  };
+
+  const generatePreviewImage = () => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return undefined;
+    return canvas.toDataURL({ format: 'png', quality: 0.8 });
+  };
 
   return (
     <div className="bg-gradient-card border-b border-border px-4 py-3 shadow-glass backdrop-blur-sm">
-      {/* Desktop - Single Row Layout */}
-      <div className="hidden lg:flex items-center justify-between gap-4">
+      {/* Desktop Layout */}
+      <div className="hidden md:flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center">
           <img 
@@ -45,232 +124,134 @@ export const TopControls = ({
           />
         </div>
 
-        {/* Product Selector */}
-        <div className="flex items-center gap-2">
-          <ShirtIcon className="w-4 h-4 text-muted-foreground icon-hover" />
-          <Select value={selectedProduct} onValueChange={onProductChange}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Change Product" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
-              <SelectItem value="gildan-64000">Gildan 64000</SelectItem>
-              <SelectItem value="bella-3001c">Bella 3001C</SelectItem>
-              <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
-              <SelectItem value="bella-canvas-hoodie">Bella Canvas Hoodie</SelectItem>
-              <SelectItem value="bella-3480">Bella 3480 Tank Top</SelectItem>
-              <SelectItem value="bella-6004">Bella 6004 Women's T-Shirt</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
-        {/* Color Picker */}
-        <div className="flex items-center gap-2">
-          <Palette className="w-4 h-4 text-muted-foreground icon-hover" />
-          <Select value={selectedColor} onValueChange={onColorChange}>
-            <SelectTrigger className="w-32">
+        {/* Right Side - Cart, User, Theme */}
+        <div className="flex items-center gap-3">
+          <CartPopup onOpenChange={handleCartModalChange}>
+            <Button 
+              variant="glass" 
+              size="default" 
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+            >
               <div className="flex items-center gap-2">
-                <div 
-                  className="w-4 h-4 rounded border border-border" 
-                  style={{ backgroundColor: currentColor?.value }}
-                />
-                <SelectValue />
+                {totalItems > 0 && (
+                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium animate-pulse">
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
+                <ShoppingCart className="w-5 h-5" />
+                <span>Cart</span>
               </div>
-            </SelectTrigger>
-            <SelectContent className="bg-popover border border-border shadow-lg z-50">
-              {getAvailableColors().map((color) => (
-                <SelectItem key={color.name} value={color.name}>
-                  {color.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            </Button>
+          </CartPopup>
+          {user ? (
+            <Button 
+              variant="glass" 
+              size="default"
+              onClick={handleSignOut}
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+            >
+              <User className="w-5 h-5 mr-2" />
+              Sign Out
+            </Button>
+          ) : (
+            <Button 
+              variant="glass" 
+              size="default"
+              onClick={() => handleAuthModalChange(true)}
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
+            >
+              <User className="w-5 h-5 mr-2" />
+              Sign In
+            </Button>
+          )}
+          <ThemeToggle />
         </div>
-
-        {/* Save Button */}
-        <Button 
-          variant="creative" 
-          size="sm"
-          onClick={() => {
-            const canvas = (window as any).designCanvas?.canvas;
-            if (canvas) {
-              const hasObjects = canvas.getObjects().length > 0;
-              if (hasObjects) {
-                toast.success("Design saved to browser memory");
-              } else {
-                toast.error("No design to save");
-              }
-            } else {
-              toast.error("Canvas not ready");
-            }
-          }}
-        >
-          <Save className="w-4 h-4 mr-1 icon-hover" />
-          Save
-        </Button>
-
-        {/* Front/Back Toggle */}
-        <div className="flex items-center border border-border rounded-md">
-          <Button
-            variant={currentSide === "front" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onSideChange("front")}
-            className="rounded-r-none"
-          >
-            Front
-          </Button>
-          <Button
-            variant={currentSide === "back" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onSideChange("back")}
-            className="rounded-l-none border-l"
-          >
-            Back
-          </Button>
-        </div>
-
-        {/* Decoration Method */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant={decorationMethod === "screen-print" ? "default" : "outline"}
-            size="sm"
-            onClick={() => onDecorationChange("screen-print")}
-          >
-            Digital Print
-          </Button>
-          <Button
-            variant={decorationMethod === "embroidery" ? "default" : "outline"}
-            size="sm"
-            onClick={() => onDecorationChange("embroidery")}
-          >
-            Embroidery
-          </Button>
-        </div>
-
-        {/* Theme Toggle */}
-        <ThemeToggle />
       </div>
 
-      {/* Mobile - Two Row Layout */}
-      <div className="flex flex-col gap-3 lg:hidden">
-        {/* First Row - Logo, Product & Color Selectors */}
-        <div className="flex items-center justify-between gap-2">
-          {/* Logo */}
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
-              alt="CoolShirt.Ai Logo" 
-              className="h-12 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
-            />
-          </div>
-
-          {/* Product and Color Selectors */}
-          <div className="flex items-center gap-2">
-            {/* Product Selector */}
-            <Select value={selectedProduct} onValueChange={onProductChange}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Change Product" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="gildan-2000">Gildan 2000 Ultra Cotton</SelectItem>
-                <SelectItem value="gildan-64000">Gildan 64000</SelectItem>
-                <SelectItem value="bella-3001c">Bella 3001C</SelectItem>
-                <SelectItem value="gildan-18500">Gildan 18500 Hoodie</SelectItem>
-                <SelectItem value="bella-canvas-hoodie">Bella Canvas Hoodie</SelectItem>
-                <SelectItem value="bella-3480">Bella 3480 Tank Top</SelectItem>
-                <SelectItem value="bella-6004">Bella 6004 Women's T-Shirt</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Color Picker */}
-            <Select value={selectedColor} onValueChange={onColorChange}>
-              <SelectTrigger className="w-32">
-                <div className="flex items-center gap-2">
-                  <div 
-                    className="w-4 h-4 rounded border border-border" 
-                    style={{ backgroundColor: currentColor?.value }}
-                  />
-                  <SelectValue />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="bg-popover border border-border shadow-lg z-50">
-                {getAvailableColors().map((color) => (
-                  <SelectItem key={color.name} value={color.name}>
-                    {color.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Mobile Theme Toggle */}
-          <MobileThemeToggle />
+      {/* Mobile Layout */}
+      <div className="flex items-center justify-between gap-2 md:hidden">
+        {/* Logo */}
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/16ccf455-e917-4c90-a109-a200491db97c.png" 
+            alt="CoolShirt.Ai Logo" 
+            className="h-8 w-auto object-contain cursor-pointer transition-all duration-300 hover:scale-x-110 hover:scale-y-110"
+          />
         </div>
 
-        {/* Second Row - Controls evenly spaced */}
-        <div className="flex items-center justify-between gap-2">
-          {/* Save Button */}
+        {/* Center - Next Step Button (Mobile Only) */}
+        <div className="flex-1 flex justify-center px-2">
           <Button 
-            variant="creative" 
             size="sm"
-            onClick={() => {
-              const canvas = (window as any).designCanvas?.canvas;
-              if (canvas) {
-                const hasObjects = canvas.getObjects().length > 0;
-                if (hasObjects) {
-                  toast.success("Design saved to browser memory");
-                } else {
-                  toast.error("No design to save");
-                }
-              } else {
-                toast.error("Canvas not ready");
-              }
-            }}
-            className="flex-1"
+            onClick={handleNextStep}
+            className={`bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-xs px-4 py-2 h-8 ${hasDesignOnCanvas() ? 'subtle-glow' : ''}`}
           >
-            <Save className="w-4 h-4 mr-1 icon-hover" />
-            Save
+            <ArrowRight className="w-3 h-3 mr-1" strokeWidth={2.5} />
+            Next Step
           </Button>
+        </div>
 
-          {/* Front/Back Toggle */}
-          <div className="flex items-center border border-border rounded-md flex-1">
-            <Button
-              variant={currentSide === "front" ? "default" : "ghost"}
+        {/* Cart and User Actions */}
+        <div className="flex items-center gap-1">
+          {/* Cart and User Icons */}
+           <CartPopup onOpenChange={handleCartModalChange}>
+            <Button 
+              variant="glass" 
               size="sm"
-              onClick={() => onSideChange("front")}
-              className="rounded-r-none flex-1"
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300 p-2"
             >
-              Front
+              <div className="flex items-center gap-1">
+                {totalItems > 0 && (
+                  <span className="bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium animate-pulse text-[10px]">
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
+                <ShoppingCart className="w-4 h-4" />
+              </div>
             </Button>
-            <Button
-              variant={currentSide === "back" ? "default" : "ghost"}
+          </CartPopup>
+          {user ? (
+            <Button 
+              variant="glass" 
               size="sm"
-              onClick={() => onSideChange("back")}
-              className="rounded-l-none border-l flex-1"
+              onClick={handleSignOut}
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300 p-2"
             >
-              Back
+              <User className="w-4 h-4" />
             </Button>
-          </div>
-
-          {/* Next Step Button - Takes more space */}
-          <Button 
-            variant="default" 
-            size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white flex-2"
-            onClick={() => setIsQuantityModalOpen(true)}
-          >
-            <DollarSign className="w-4 h-4 mr-1" />
-            Next
-          </Button>
+          ) : (
+            <Button 
+              variant="glass" 
+              size="sm"
+              onClick={() => handleAuthModalChange(true)}
+              className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300 p-2"
+            >
+              <User className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
+
+      <AuthModal open={authModalOpen} onOpenChange={handleAuthModalChange} />
 
       {/* Quantity Modal */}
       <QuantityModal 
         isOpen={isQuantityModalOpen}
         onClose={() => setIsQuantityModalOpen(false)}
-        selectedProduct={selectedProduct}
-        selectedColor={selectedColor}
+        selectedProduct={selectedProduct || 'gildan-64000'}
+        selectedColor={selectedColor || 'cherry-red'}
+        decorationMethod="screen-print"
+      />
+
+      {/* Save Design Modal */}
+      <SaveDesignModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        designData={getDesignData()}
+        productType={selectedProduct || 'gildan-64000'}
+        productColor={selectedColor || 'cherry-red'}
+        previewImage={generatePreviewImage()}
       />
     </div>
   );

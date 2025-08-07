@@ -8,14 +8,24 @@ import {
   Palette,
   Wand2,
   RotateCcw,
-  HelpCircle
+  HelpCircle,
+  Share2
 } from "lucide-react";
 import { AIWandIcon } from "@/components/AIWandIcon";
 import { HelpChatbot } from "@/components/HelpChatbot";
+import { ShareDesignModal } from "@/components/ShareDesignModal";
+import { SaveDesignModal } from "@/components/SaveDesignModal";
+import { useDesign } from "@/contexts/DesignContext";
+import { toast } from "@/hooks/use-toast";
 
 interface LeftToolbarProps {
   activeTool: string;
   onToolChange: (tool: string) => void;
+  designData?: any;
+  productType?: string;
+  productColor?: string;
+  previewImage?: string;
+  onShareModalChange?: (isOpen: boolean) => void;
 }
 
 const tools = [
@@ -26,8 +36,42 @@ const tools = [
   { id: "reset", label: "Reset Design", icon: RotateCcw },
 ];
 
-export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
+export const LeftToolbar = ({ 
+  activeTool, 
+  onToolChange, 
+  designData, 
+  productType = "t-shirt", 
+  productColor = "white",
+  previewImage,
+  onShareModalChange 
+}: LeftToolbarProps) => {
   const [isHelpChatOpen, setIsHelpChatOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const { currentDesignData, isLoading } = useDesign();
+
+  const handleShareDesign = async () => {
+    // Check if design has content (either passed designData or from context)
+    const currentData = designData || currentDesignData;
+    const hasContent = currentData && (
+      (currentData.textObjects && currentData.textObjects.length > 0) ||
+      (currentData.imageObjects && currentData.imageObjects.length > 0)
+    );
+
+    if (!hasContent) {
+      toast({
+        title: "No design to share",
+        description: "Please add some text or images to your design first.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // For now, we'll open the share modal directly
+    // In a real app, you'd check if design is saved and prompt to save/email first
+    setIsShareModalOpen(true);
+    onShareModalChange?.(true);
+  };
   return (
     <TooltipProvider>
       <div className="w-16 lg:w-64 bg-gradient-sidebar border-r border-border flex flex-col shadow-glass backdrop-blur-sm">
@@ -70,8 +114,27 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
           </div>
         </div>
 
-        {/* Help Section */}
-        <div className="border-t border-border p-2">
+        {/* Share & Help Section */}
+        <div className="border-t border-border p-2 space-y-1">
+          {/* Share Design */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="glass" 
+                size="sm" 
+                className="w-full justify-start h-12 lg:h-10"
+                onClick={handleShareDesign}
+              >
+                <Share2 className="w-4 h-4 lg:mr-3 icon-hover" />
+                <span className="hidden lg:inline">Share Design</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="lg:hidden">
+              Share Design
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Help */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
@@ -90,10 +153,29 @@ export const LeftToolbar = ({ activeTool, onToolChange }: LeftToolbarProps) => {
           </Tooltip>
         </div>
 
-        {/* Help Chatbot */}
+        {/* Modals */}
         <HelpChatbot 
           isOpen={isHelpChatOpen} 
           onClose={() => setIsHelpChatOpen(false)} 
+        />
+        
+        <ShareDesignModal
+          isOpen={isShareModalOpen}
+          onClose={() => {
+            setIsShareModalOpen(false);
+            onShareModalChange?.(false);
+          }}
+          designName="My Design"
+          designUrl={`${window.location.origin}?design=shared`}
+        />
+
+        <SaveDesignModal
+          isOpen={isSaveModalOpen}
+          onClose={() => setIsSaveModalOpen(false)}
+          designData={designData}
+          productType={productType}
+          productColor={productColor}
+          previewImage={previewImage}
         />
       </div>
     </TooltipProvider>
