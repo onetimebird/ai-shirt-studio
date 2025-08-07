@@ -99,34 +99,9 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         })
       });
 
-      if (response.status === 404 || response.status === 401) {
-        // Edge function not available or unauthorized, use OpenAI service directly
-        if (!openAIService.getApiKey()) {
-          // Set the provided API key
-          openAIService.setApiKey('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');
-        }
-        
-        const result = await openAIService.generateImage({
-          prompt: prompt.trim(),
-          size: "1024x1024",
-          quality: "standard",
-          style: "vivid"
-        });
-
-        if (result.url) {
-          const newImage = { url: result.url, prompt: prompt.trim() };
-          setGeneratedImages(prev => [newImage, ...prev]);
-          savePrompt(prompt.trim());
-          onImageGenerated?.(result.url);
-          toast.success("Image generated successfully!");
-        }
-      } else {
+      if (response.ok) {
         const data = await response.json();
         
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to generate image');
-        }
-
         if (data.url) {
           const newImage = { url: data.url, prompt: prompt.trim() };
           setGeneratedImages(prev => [newImage, ...prev]);
@@ -136,6 +111,9 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         } else {
           throw new Error('No image URL received');
         }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to generate image`);
       }
       
     } catch (error) {
