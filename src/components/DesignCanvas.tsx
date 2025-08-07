@@ -1,0 +1,630 @@
+import { ProductCanvas } from "@/components/ProductCanvas";
+import { FabricImage, util } from "fabric";
+import "../lib/fabricTextControls";
+
+interface DesignCanvasProps {
+  selectedColor: string;
+  currentSide: "front" | "back";
+  selectedProduct: string;
+  activeTool: string;
+  onSelectedObjectChange: (object: any) => void;
+  onToolChange: (tool: string) => void;
+  onTextObjectsUpdate?: (objects: any[]) => void;
+  onImageObjectsUpdate?: (objects: any[]) => void;
+  decorationMethod?: "screen-print" | "embroidery";
+}
+
+export const DesignCanvas = ({
+  selectedColor,
+  currentSide,
+  selectedProduct,
+  activeTool,
+  onSelectedObjectChange,
+  onToolChange,
+  onTextObjectsUpdate,
+  onImageObjectsUpdate,
+  decorationMethod,
+}: DesignCanvasProps) => {
+  console.log('[DesignCanvas] Component rendering');
+  
+  // State for undo/redo functionality
+  const canvasHistory = {
+    states: [] as string[],
+    currentIndex: -1,
+    isRestoring: false  // Flag to prevent history saves during undo/redo
+  };
+  
+  return (
+    <ProductCanvas 
+      selectedColor={selectedColor}
+      currentSide={currentSide}
+      selectedProduct={selectedProduct}
+      decorationMethod={decorationMethod}
+      onCanvasReady={(canvas) => {
+        console.log('[DesignCanvas] onCanvasReady callback triggered');
+        console.log("Canvas ready, setting up global designCanvas object");
+        console.log("Canvas details:", { width: canvas.width, height: canvas.height });
+        
+        // Initialize history with user objects only (excluding product template)
+        const saveUserObjectsState = () => {
+          const allObjects = canvas.getObjects();
+          // Filter out the product template image - it's usually the first object or has specific properties
+          const userObjects = allObjects.filter(obj => {
+            // Skip objects that are part of the product template
+            // Template objects typically have selectable: false or evented: false
+            return obj.selectable !== false && obj.evented !== false;
+          });
+          
+          const userObjectsData = userObjects.map(obj => obj.toObject());
+          const currentState = JSON.stringify(userObjectsData);
+          
+          // Remove any states after current index (when user did undo and then new action)
+          canvasHistory.states = canvasHistory.states.slice(0, canvasHistory.currentIndex + 1);
+          canvasHistory.states.push(currentState);
+          canvasHistory.currentIndex = canvasHistory.states.length - 1;
+          
+          // Limit history to 20 states to prevent memory issues
+          if (canvasHistory.states.length > 20) {
+            canvasHistory.states.shift();
+            canvasHistory.currentIndex--;
+          }
+          
+          console.log('[History] Saved state:', {
+            totalStates: canvasHistory.states.length,
+            currentIndex: canvasHistory.currentIndex,
+            userObjectsCount: userObjects.length
+          });
+        };
+        
+        // Save initial empty state (no user objects)
+        console.log('[History] Initializing history system');
+        saveUserObjectsState();
+        console.log('[History] Initial state saved');
+        
+        // Save state after any user object modification
+        const setupHistoryListeners = () => {
+          console.log('[History] Setting up event listeners');
+          canvas.on('object:added', (e) => {
+            const obj = e.target;
+            // Only save state for user-added objects AND when not restoring from history
+            if (obj && obj.selectable !== false && obj.evented !== false && !canvasHistory.isRestoring) {
+              console.log('[History] Object added, saving state:', obj.type);
+              setTimeout(saveUserObjectsState, 100);
+            } else if (canvasHistory.isRestoring) {
+              console.log('[History] Object added during restore, skipping save');
+            }
+          });
+          canvas.on('object:removed', (e) => {
+            const obj = e.target;
+            if (obj && obj.selectable !== false && obj.evented !== false && !canvasHistory.isRestoring) {
+              console.log('[History] Object removed, saving state:', obj.type);
+              setTimeout(saveUserObjectsState, 100);
+            } else if (canvasHistory.isRestoring) {
+              console.log('[History] Object removed during restore, skipping save');
+            }
+          });
+          canvas.on('object:modified', (e) => {
+            const obj = e.target;
+            if (obj && obj.selectable !== false && obj.evented !== false && !canvasHistory.isRestoring) {
+              console.log('[History] Object modified, saving state:', obj.type);
+              setTimeout(saveUserObjectsState, 100);
+            } else if (canvasHistory.isRestoring) {
+              console.log('[History] Object modified during restore, skipping save');
+            }
+          });
+        };
+        
+        console.log('[History] Calling setupHistoryListeners');
+        setupHistoryListeners();
+        console.log('[History] Event listeners set up complete');
+        console.log('[History] Setting up global designCanvas object');
+        
+        // Make canvas available globally for design tools
+        (window as any).designCanvas = { 
+          canvas,
+          history: canvasHistory,  // Add reference to history object
+          frontState: null,   // Store front side designs
+          backState: null,    // Store back side designs
+          currentSide: 'front', // Track current side
+          switchToSide: (side: 'front' | 'back') => {
+            console.log(`[SideSwitch] Switching from ${(window as any).designCanvas.currentSide} to ${side}`);
+            
+            // Save current state before switching
+            const currentSide = (window as any).designCanvas.currentSide;
+            const allObjects = canvas.getObjects();
+            const userObjects = allObjects.filter(obj => obj.selectable !== false && obj.evented !== false);
+            const currentStateData = userObjects.map(obj => obj.toObject());
+            
+            if (currentSide === 'front') {
+              (window as any).designCanvas.frontState = currentStateData;
+              console.log(`[SideSwitch] Saved front state:`, currentStateData.length, 'objects');
+            } else {
+              (window as any).designCanvas.backState = currentStateData;
+              console.log(`[SideSwitch] Saved back state:`, currentStateData.length, 'objects');
+            }
+            
+            // Clear current user objects
+            userObjects.forEach(obj => canvas.remove(obj));
+            
+            // Load objects for the new side
+            const newStateData = side === 'front' ? (window as any).designCanvas.frontState : (window as any).designCanvas.backState;
+            
+            if (newStateData && newStateData.length > 0) {
+              console.log(`[SideSwitch] Loading ${side} state:`, newStateData.length, 'objects');
+              canvasHistory.isRestoring = true;
+              util.enlivenObjects(newStateData).then((objects: any[]) => {
+                objects.forEach(obj => {
+                  canvas.add(obj);
+                  // Reapply custom controls after side switch
+                  if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                    import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                      applyCustomControlsToObject(obj);
+                    });
+                  }
+                });
+                canvas.renderAll();
+                canvasHistory.isRestoring = false;
+                console.log(`[SideSwitch] Successfully loaded ${side} state with custom controls`);
+              });
+            } else {
+              console.log(`[SideSwitch] No saved state for ${side} side`);
+              canvas.renderAll();
+            }
+            
+            // Update current side
+            (window as any).designCanvas.currentSide = side;
+          },
+          addImage: (file: File) => {
+            console.log("addImage called with file:", file.name);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const result = e.target?.result as string;
+              FabricImage.fromURL(result, {
+                crossOrigin: "anonymous",
+              }).then((img) => {
+              // Scale and position for mobile/desktop
+              const canvasWidth = canvas.width || 600;
+              const canvasHeight = canvas.height || 700;
+              const isMobile = canvasWidth < 400;
+              
+              img.scale(isMobile ? 0.3 : 0.5);
+               img.set({
+                 left: canvasWidth / 2,
+                 top: canvasHeight / 2,
+                 originX: 'center',
+                 originY: 'center',
+               });
+                canvas.add(img);
+                canvas.bringObjectToFront(img); // Ensure image is on top
+                
+                // Apply custom controls to the image
+                import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                  applyCustomControlsToObject(img);
+                  canvas.setActiveObject(img);
+                  canvas.renderAll();
+                });
+                   canvas.renderAll();
+                   console.log("Image added to canvas successfully");
+                   // Update image objects list
+                   setTimeout(() => {
+                     if ((window as any).designCanvas?.updateImageObjects) {
+                       (window as any).designCanvas.updateImageObjects();
+                     }
+                   }, 100);
+              }).catch((error) => {
+                console.error("Error adding image:", error);
+              });
+            };
+            reader.readAsDataURL(file);
+          },
+          addImageFromUrl: (url: string) => {
+            console.log("addImageFromUrl called with url:", url);
+            FabricImage.fromURL(url, {
+              crossOrigin: "anonymous",
+            }).then((img) => {
+              // Scale and position for mobile/desktop
+              const canvasWidth = canvas.width || 600;
+              const canvasHeight = canvas.height || 700;
+              const isMobile = canvasWidth < 400;
+              
+              img.scale(isMobile ? 0.3 : 0.5);
+               img.set({
+                 left: canvasWidth / 2,
+                 top: canvasHeight / 2,
+                 originX: 'center',
+                 originY: 'center',
+               });
+                 canvas.add(img);
+                 canvas.bringObjectToFront(img); // Ensure image is on top
+                 
+                 // Apply custom controls to the image
+                 import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                   applyCustomControlsToObject(img);
+                   canvas.setActiveObject(img);
+                   canvas.renderAll();
+                 });
+                canvas.renderAll();
+               console.log("Image from URL added to canvas successfully");
+               // Update image objects list
+               setTimeout(() => {
+                 if ((window as any).designCanvas?.updateImageObjects) {
+                   (window as any).designCanvas.updateImageObjects();
+                 }
+               }, 100);
+            }).catch((error) => {
+              console.error("Error adding image from URL:", error);
+            });
+          },
+          deleteSelected: () => {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+              canvas.remove(activeObject);
+              canvas.renderAll();
+              console.log('Object deleted, updating objects list');
+              // Update both text and image objects list after a small delay to ensure canvas is updated
+              setTimeout(() => {
+                if ((window as any).designCanvas?.updateTextObjects) {
+                  (window as any).designCanvas.updateTextObjects();
+                }
+                if ((window as any).designCanvas?.updateImageObjects) {
+                  (window as any).designCanvas.updateImageObjects();
+                }
+              }, 100);
+            }
+          },
+          duplicateSelected: () => {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+              activeObject.clone().then((cloned: any) => {
+                cloned.set({
+                  left: (activeObject.left || 0) + 20,
+                  top: (activeObject.top || 0) + 20,
+                });
+                canvas.add(cloned);
+                canvas.setActiveObject(cloned);
+                canvas.renderAll();
+                // Update objects list based on type
+                if (cloned.type === 'textbox' || cloned.type === 'text') {
+                  if ((window as any).designCanvas?.updateTextObjects) {
+                    (window as any).designCanvas.updateTextObjects();
+                  }
+                } else if (cloned.type === 'image') {
+                  if ((window as any).designCanvas?.updateImageObjects) {
+                    (window as any).designCanvas.updateImageObjects();
+                  }
+                }
+              });
+            }
+          },
+          rotateSelected: () => {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+              activeObject.rotate((activeObject.angle || 0) + 45);
+              canvas.renderAll();
+            }
+          },
+          centerSelected: () => {
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+              activeObject.set({
+                left: (canvas.width || 0) / 2,
+                top: (canvas.height || 0) / 2,
+              });
+              canvas.renderAll();
+            }
+          },
+          clearSelection: () => {
+            canvas.discardActiveObject();
+            canvas.renderAll();
+          },
+          updateSelectedTextProperty: (property: string, value: any) => {
+            console.log(`[DesignCanvas] updateSelectedTextProperty called: ${property} = ${value}`);
+            const activeObject = canvas.getActiveObject();
+            console.log(`[DesignCanvas] Active object:`, activeObject);
+            console.log(`[DesignCanvas] Active object type:`, activeObject?.type);
+            
+            if (activeObject && (activeObject.type === 'textbox' || activeObject.type === 'text')) {
+              console.log(`[DesignCanvas] Found active text object, current fill:`, (activeObject as any).fill);
+              console.log(`[DesignCanvas] Setting ${property} to:`, value);
+              (activeObject as any).set(property, value);
+              canvas.renderAll();
+              console.log(`[DesignCanvas] After update, object fill:`, (activeObject as any).fill);
+              console.log(`[DesignCanvas] Property ${property} updated successfully`);
+            } else {
+              console.log(`[DesignCanvas] No active text object found or wrong type. Active object:`, activeObject);
+              console.log(`[DesignCanvas] Available objects:`, canvas.getObjects().map(o => ({ type: o.type, visible: o.visible })));
+            }
+          },
+          textObjects: [],
+          updateTextObjects: () => {
+            const allObjects = canvas.getObjects();
+            const textObjs = allObjects.filter(obj => obj.type === 'textbox' || obj.type === 'text');
+            (window as any).designCanvas.textObjects = textObjs;
+            console.log('Updated text objects:', textObjs.length);
+            // Notify parent component
+            if (onTextObjectsUpdate) {
+              onTextObjectsUpdate(textObjs);
+            }
+          },
+          imageObjects: [],
+          updateImageObjects: () => {
+            const allObjects = canvas.getObjects();
+            const imageObjs = allObjects.filter(obj => obj.type === 'image');
+            (window as any).designCanvas.imageObjects = imageObjs;
+            console.log('Updated image objects:', imageObjs.length);
+            // Notify parent component
+            if (onImageObjectsUpdate) {
+              onImageObjectsUpdate(imageObjs);
+            }
+          },
+          undo: () => {
+            console.log('[Undo] Attempting undo. Current state:', {
+              currentIndex: canvasHistory.currentIndex,
+              totalStates: canvasHistory.states.length,
+              canUndo: canvasHistory.currentIndex > 0
+            });
+            
+            if (canvasHistory.currentIndex > 0) {
+              console.log('[Undo] Setting isRestoring to true');
+              canvasHistory.isRestoring = true;
+              
+              canvasHistory.currentIndex--;
+              const previousState = canvasHistory.states[canvasHistory.currentIndex];
+              const userObjectsData = JSON.parse(previousState);
+              
+              console.log('[Undo] Restoring state:', {
+                newIndex: canvasHistory.currentIndex,
+                objectsToRestore: userObjectsData.length
+              });
+              
+              // Get all current objects
+              const allObjects = canvas.getObjects();
+              
+              // Remove only user objects (preserve product template)
+              const objectsToRemove = allObjects.filter(obj => {
+                return obj.selectable !== false && obj.evented !== false;
+              });
+              
+              console.log('[Undo] Removing', objectsToRemove.length, 'user objects');
+              objectsToRemove.forEach(obj => canvas.remove(obj));
+              
+              // Restore user objects from history
+              if (userObjectsData.length > 0) {
+                util.enlivenObjects(userObjectsData).then((objects: any[]) => {
+                  objects.forEach(obj => {
+                    canvas.add(obj);
+                    // Reapply custom controls after restoration
+                    if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                      import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                        applyCustomControlsToObject(obj);
+                      });
+                    }
+                  });
+                  canvas.renderAll();
+                  console.log('[Undo] Successfully restored', objects.length, 'user objects with custom controls');
+                  canvasHistory.isRestoring = false;
+                  console.log('[Undo] Setting isRestoring to false');
+                });
+              } else {
+                canvas.renderAll();
+                console.log('[Undo] No objects to restore');
+                canvasHistory.isRestoring = false;
+                console.log('[Undo] Setting isRestoring to false');
+              }
+              
+              onSelectedObjectChange(null);
+            } else {
+              console.log('[Undo] Cannot undo - at beginning of history');
+            }
+          },
+          redo: () => {
+            console.log('[Redo] Attempting redo. Current state:', {
+              currentIndex: canvasHistory.currentIndex,
+              totalStates: canvasHistory.states.length,
+              canRedo: canvasHistory.currentIndex < canvasHistory.states.length - 1
+            });
+            
+            if (canvasHistory.currentIndex < canvasHistory.states.length - 1) {
+              console.log('[Redo] Setting isRestoring to true');
+              canvasHistory.isRestoring = true;
+              
+              canvasHistory.currentIndex++;
+              const nextState = canvasHistory.states[canvasHistory.currentIndex];
+              const userObjectsData = JSON.parse(nextState);
+              
+              console.log('[Redo] Restoring state:', {
+                newIndex: canvasHistory.currentIndex,
+                objectsToRestore: userObjectsData.length
+              });
+              
+              // Get all current objects
+              const allObjects = canvas.getObjects();
+              
+              // Remove only user objects (preserve product template)
+              const objectsToRemove = allObjects.filter(obj => {
+                return obj.selectable !== false && obj.evented !== false;
+              });
+              
+              console.log('[Redo] Removing', objectsToRemove.length, 'user objects');
+              objectsToRemove.forEach(obj => canvas.remove(obj));
+              
+              // Restore user objects from history
+              if (userObjectsData.length > 0) {
+                util.enlivenObjects(userObjectsData).then((objects: any[]) => {
+                  objects.forEach(obj => {
+                    canvas.add(obj);
+                    // Reapply custom controls after restoration
+                    if (obj.type === 'text' || obj.type === 'i-text' || obj.type === 'textbox' || obj.type === 'image') {
+                      import('@/lib/fabricTextControls').then(({ applyCustomControlsToObject }) => {
+                        applyCustomControlsToObject(obj);
+                      });
+                    }
+                  });
+                  canvas.renderAll();
+                  console.log('[Redo] Successfully restored', objects.length, 'user objects with custom controls');
+                  canvasHistory.isRestoring = false;
+                  console.log('[Redo] Setting isRestoring to false');
+                });
+              } else {
+                canvas.renderAll();
+                console.log('[Redo] No objects to restore');
+                canvasHistory.isRestoring = false;
+                console.log('[Redo] Setting isRestoring to false');
+              }
+              
+              onSelectedObjectChange(null);
+            } else {
+              console.log('[Redo] Cannot redo - at end of history');
+            }
+          },
+          canUndo: () => canvasHistory.currentIndex > 0,
+          canRedo: () => canvasHistory.currentIndex < canvasHistory.states.length - 1
+        };
+        
+        console.log('[History] Global designCanvas object created with functions:', {
+          hasUndo: typeof (window as any).designCanvas.undo === 'function',
+          hasRedo: typeof (window as any).designCanvas.redo === 'function',
+          hasCanUndo: typeof (window as any).designCanvas.canUndo === 'function',
+          hasCanRedo: typeof (window as any).designCanvas.canRedo === 'function'
+        });
+        
+        // Handle object selection
+        canvas.on('selection:created', (e: any) => {
+          console.log('[DesignCanvas] Selection created:', e.selected?.[0]?.type, e.selected?.[0]);
+          onSelectedObjectChange(e.selected?.[0] || null);
+        });
+
+        canvas.on('selection:updated', (e: any) => {
+          console.log('[DesignCanvas] Selection updated:', e.selected?.[0]?.type, e.selected?.[0]);
+          onSelectedObjectChange(e.selected?.[0] || null);
+        });
+
+        canvas.on('selection:cleared', () => {
+          console.log('[DesignCanvas] Selection cleared');
+          onSelectedObjectChange(null);
+        });
+
+        // Enable double-click to edit text
+        canvas.on('mouse:dblclick', (e: any) => {
+          const target = e.target;
+          if (target && (target.type === 'textbox' || target.type === 'text')) {
+            target.enterEditing();
+            canvas.setActiveObject(target);
+            canvas.renderAll();
+          }
+        });
+
+        // Mobile long press for text editing - simpler approach
+        let pressTimer: NodeJS.Timeout | null = null;
+        let pressTarget: any = null;
+
+        canvas.on('mouse:down', (e: any) => {
+          const target = e.target;
+          pressTarget = target;
+          
+          if (target && (target.type === 'textbox' || target.type === 'text')) {
+            // Clear any existing timer
+            if (pressTimer) {
+              clearTimeout(pressTimer);
+            }
+            
+            // Set up long press timer (750ms)
+            pressTimer = setTimeout(() => {
+              if (pressTarget === target) {
+                console.log('Long press detected - entering text edit mode');
+                try {
+                  target.enterEditing();
+                  canvas.setActiveObject(target);
+                  canvas.renderAll();
+                } catch (error) {
+                  console.error('Error entering edit mode:', error);
+                }
+              }
+            }, 750);
+          }
+        });
+
+        canvas.on('mouse:up', () => {
+          // Clear the timer when mouse/touch is released
+          if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+          }
+          pressTarget = null;
+        });
+
+        canvas.on('mouse:move', () => {
+          // Cancel long press if mouse/finger moves
+          if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+          }
+        });
+
+        // Keyboard handlers - but only when NOT editing text
+        const handleKeyDown = (e: KeyboardEvent) => {
+          const activeObject = canvas.getActiveObject();
+          
+          // Don't interfere with text editing - check if we're in text editing mode
+          if (activeObject && (activeObject.type === 'textbox' || activeObject.type === 'text')) {
+            // Check if the text object is in editing mode
+            if ((activeObject as any).isEditing) {
+              console.log('Text is being edited, ignoring keyboard shortcuts');
+              return; // Don't handle delete/backspace when editing text content
+            }
+          }
+          
+          if (e.key === 'Delete' || e.key === 'Backspace') {
+            if (activeObject) {
+              canvas.remove(activeObject);
+              canvas.renderAll();
+              onSelectedObjectChange(null);
+              console.log('Object deleted via keyboard, updating objects list');
+              // Update both text and image objects list after a small delay
+              setTimeout(() => {
+                if ((window as any).designCanvas?.updateTextObjects) {
+                  (window as any).designCanvas.updateTextObjects();
+                }
+                if ((window as any).designCanvas?.updateImageObjects) {
+                  (window as any).designCanvas.updateImageObjects();
+                }
+              }, 100);
+            }
+          }
+
+          if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+              activeObject.clone().then((cloned: any) => {
+                cloned.set({
+                  left: (activeObject.left || 0) + 20,
+                  top: (activeObject.top || 0) + 20,
+                });
+                canvas.add(cloned);
+                canvas.setActiveObject(cloned);
+                canvas.renderAll();
+                // Update objects list based on type
+                if (cloned.type === 'textbox' || cloned.type === 'text') {
+                  if ((window as any).designCanvas?.updateTextObjects) {
+                    (window as any).designCanvas.updateTextObjects();
+                  }
+                } else if (cloned.type === 'image') {
+                  if ((window as any).designCanvas?.updateImageObjects) {
+                    (window as any).designCanvas.updateImageObjects();
+                  }
+                }
+              });
+            }
+          }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+          document.removeEventListener('keydown', handleKeyDown);
+        };
+      }}
+    />
+  );
+};

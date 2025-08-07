@@ -1,0 +1,315 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 250 100% 98%;
+    --foreground: 230 25% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 230 25% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 25% 10%;
+
+    --primary: 262 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 262 80% 75%;
+
+    --secondary: 220 100% 95%;
+    --secondary-foreground: 230 25% 10%;
+
+    --muted: 220 100% 96%;
+    --muted-foreground: 230 15% 45%;
+
+    --accent: 45 100% 60%;
+    --accent-foreground: 230 25% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 30% 90%;
+    --input: 220 30% 94%;
+    --ring: 262 100% 65%;
+
+    /* Refined gradients with warmer purple tones */
+    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(320 70% 80%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(260 30% 98%), hsl(280 20% 98%));
+    --gradient-shimmer: linear-gradient(45deg, transparent 30%, hsl(0 0% 100% / 0.5) 50%, transparent 70%);
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 85% 70%), hsl(295 80% 72%));
+    --gradient-sidebar: linear-gradient(145deg, hsl(260 30% 98%), hsl(280 25% 97%));
+    
+    /* Enhanced shadows */
+    --shadow-creative: 0 20px 60px -10px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.6);
+    --shadow-soft: 0 8px 30px -8px hsl(230 25% 10% / 0.15);
+    --shadow-elevated: 0 25px 80px -15px hsl(var(--primary) / 0.3);
+    --shadow-glass: 0 8px 32px 0 hsl(230 25% 10% / 0.1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 6%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 262 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 262 80% 75%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 45 100% 60%;
+    --accent-foreground: 222.2 84% 4.9%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 262 100% 65%;
+    
+    /* Dark mode gradients with warmer purples */
+    --gradient-primary: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(320 70% 80%));
+    --gradient-card: linear-gradient(145deg, hsl(222.2 84% 6%), hsl(260 40% 8%), hsl(280 30% 10%));
+    --gradient-shimmer: linear-gradient(45deg, transparent 30%, hsl(0 0% 100% / 0.1) 50%, transparent 70%);
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
+    --gradient-aurora: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 90% 70%), hsl(300 80% 75%));
+    --gradient-premium: linear-gradient(135deg, hsl(262 100% 65%), hsl(280 85% 70%), hsl(295 80% 72%));
+    --gradient-sidebar: linear-gradient(145deg, hsl(260 40% 8%), hsl(280 35% 10%));
+    
+    /* Enhanced dark shadows */
+    --shadow-creative: 0 20px 60px -10px hsl(var(--primary) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.6);
+    --shadow-soft: 0 8px 30px -8px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 25px 80px -15px hsl(var(--primary) / 0.3);
+    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.3);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  html {
+    /* Theme is now managed by ThemeProvider */
+  }
+}
+
+@layer components {
+  /* Shimmer animation - only on hover */
+  .shimmer-hover {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .shimmer-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-shimmer);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+  
+  .shimmer-hover:hover::before {
+    opacity: 1;
+    animation: shimmer 1.5s ease-out;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
+  /* Glass morphism effect */
+  .glass-effect {
+    backdrop-filter: blur(20px);
+    background: var(--gradient-glass);
+    border: 1px solid hsl(0 0% 100% / 0.1);
+  }
+  
+  /* Icon hover effects */
+  .icon-hover {
+    @apply transition-all duration-300 ease-out;
+    position: relative;
+  }
+  
+  .icon-hover::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: -1;
+  }
+  
+  .icon-hover:hover::before {
+    opacity: 0.15;
+    transform: scale(1.1);
+  }
+  
+  .icon-hover:hover {
+    transform: translateY(-2px) scale(1.05);
+    filter: drop-shadow(0 8px 16px hsl(var(--primary) / 0.3));
+  }
+  
+  /* Button glow effect */
+  .glow-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .glow-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsl(0 0% 100% / 0.3) 0%, transparent 70%);
+    transition: all 0.5s ease;
+    transform: translate(-50%, -50%);
+  }
+  
+  .glow-effect:hover::after {
+    width: 300%;
+    height: 300%;
+  }
+  
+  /* Gentle pulse animation for sidebar */
+  .gentle-pulse {
+    animation: gentle-pulse 4s ease-in-out infinite;
+  }
+  
+  @keyframes gentle-pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.02);
+      opacity: 0.95;
+    }
+  }
+  
+  /* Pulse glow animation */
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+    }
+  }
+  
+  /* Subtle shimmer glow animation */
+  .subtle-glow {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .subtle-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.5), transparent);
+    animation: subtle-shimmer 2.5s ease-in-out infinite;
+  }
+  
+  @keyframes subtle-shimmer {
+    0%, 100% {
+      left: -100%;
+      opacity: 0;
+    }
+    50% {
+      left: 100%;
+      opacity: 1;
+    }
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

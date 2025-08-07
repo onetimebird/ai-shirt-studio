@@ -1,0 +1,15 @@
+/* Ensure canvas is always on top with strong positioning */
+#design-canvas {
+  position: absolute !important;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+}
+
+/* Prevent any overlays from blocking the canvas */
+.product-canvas-container {
+  position: relative;
+}
+
+.product-canvas-container canvas {
+  z-index: 50 !important;
+}
