@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Expand, Info, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
+import { supabase } from '@/integrations/supabase/client';
 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1Y2dnemFnYmN1bnluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4MzY0MzYsImV4cCI6MjA2OTQxMjQzNn0.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU";
 const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generate-image";
@@ -85,35 +86,28 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
 
     setIsGenerating(true);
     try {
-      // Try using the Supabase edge function first
-      const response = await fetch(FUNCTION_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkcmtkeHZ1dWNnZ3phZ2JjdW55biIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzUzODM2NDM2LCJleHAiOjIwNjk0MTI0MzZ9.DNejRBaelUIeHR8YedekvpKV-faOfRjhyvU8zbiowuU'
-        },
-        body: JSON.stringify({ 
+      // Use Supabase client to invoke the edge function with proper authentication
+      const { data, error } = await supabase.functions.invoke('generate-image', {
+        body: { 
           prompt: prompt.trim(),
           width: 1024,
           height: 1024 
-        })
+        }
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data.url) {
-          const newImage = { url: data.url, prompt: prompt.trim() };
-          setGeneratedImages(prev => [newImage, ...prev]);
-          savePrompt(prompt.trim());
-          onImageGenerated?.(data.url);
-          toast.success("Image generated successfully!");
-        } else {
-          throw new Error('No image URL received');
-        }
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw new Error(error.message || 'Failed to generate image');
+      }
+
+      if (data?.url) {
+        const newImage = { url: data.url, prompt: prompt.trim() };
+        setGeneratedImages(prev => [newImage, ...prev]);
+        savePrompt(prompt.trim());
+        onImageGenerated?.(data.url);
+        toast.success("Image generated successfully!");
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: Failed to generate image`);
+        throw new Error('No image URL received from Supabase function');
       }
       
     } catch (error) {
