@@ -99,8 +99,8 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
         })
       });
 
-      if (response.status === 404) {
-        // Edge function not available, use OpenAI service directly
+      if (response.status === 404 || response.status === 401) {
+        // Edge function not available or unauthorized, use OpenAI service directly
         if (!openAIService.getApiKey()) {
           // Set the provided API key
           openAIService.setApiKey('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');
