@@ -2,8 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Undo, Redo } from "lucide-react";
 import { useState, useEffect } from "react";
 
-// CRITICAL TEST: This component IS loading (we see its logs) 
-console.log('🔥 UndoRedoControls.tsx loaded - CONFIRMING MAIN.TSX ISSUE');
 
 export const UndoRedoControls = () => {
 
@@ -12,7 +10,6 @@ export const UndoRedoControls = () => {
   const [isDesignCanvasReady, setIsDesignCanvasReady] = useState(false);
   const updateUndoRedoState = () => {
     const designCanvas = (window as any).designCanvas;
-    console.log('[UndoRedoControls] Checking undo/redo state, designCanvas exists:', !!designCanvas);
     if (designCanvas && designCanvas.canUndo && designCanvas.canRedo) {
       if (!isDesignCanvasReady) {
         setIsDesignCanvasReady(true);
@@ -20,11 +17,8 @@ export const UndoRedoControls = () => {
       }
       const undoState = designCanvas.canUndo();
       const redoState = designCanvas.canRedo();
-      console.log('[UndoRedoControls] undo:', undoState, 'redo:', redoState);
       setCanUndo(undoState);
       setCanRedo(redoState);
-    } else {
-      console.log('[UndoRedoControls] DesignCanvas not ready yet');
     }
   };
 
@@ -43,29 +37,21 @@ export const UndoRedoControls = () => {
           disabled={!canUndo}
           onTouchStart={(e) => {
             e.preventDefault();
-            console.log('[UndoRedoControls] Undo button touched (mobile)');
           }}
           onTouchEnd={(e) => {
             e.preventDefault();
-            console.log('[UndoRedoControls] Undo button touch end');
             const designCanvas = (window as any).designCanvas;
             if (designCanvas && designCanvas.undo) {
-              console.log('[UndoRedoControls] Calling undo function from touch');
               designCanvas.undo();
               updateUndoRedoState();
             }
           }}
           onClick={(e) => {
             e.preventDefault();
-            console.log('[UndoRedoControls] Undo button clicked');
             const designCanvas = (window as any).designCanvas;
-            console.log('[UndoRedoControls] Design canvas available:', !!designCanvas);
             if (designCanvas && designCanvas.undo) {
-              console.log('[UndoRedoControls] Calling undo function');
               designCanvas.undo();
               updateUndoRedoState();
-            } else {
-              console.log('[UndoRedoControls] ERROR: Design canvas or undo function not available');
             }
           }}
           className="h-3 w-4 md:h-6 md:w-6 p-0 touch-manipulation select-none"
@@ -87,29 +73,21 @@ export const UndoRedoControls = () => {
           disabled={!canRedo}
           onTouchStart={(e) => {
             e.preventDefault();
-            console.log('[UndoRedoControls] Redo button touched (mobile)');
           }}
           onTouchEnd={(e) => {
             e.preventDefault();
-            console.log('[UndoRedoControls] Redo button touch end');
             const designCanvas = (window as any).designCanvas;
             if (designCanvas && designCanvas.redo) {
-              console.log('[UndoRedoControls] Calling redo function from touch');
               designCanvas.redo();
               updateUndoRedoState();
             }
           }}
           onClick={(e) => {
             e.preventDefault();
-            console.log('[UndoRedoControls] Redo button clicked');
             const designCanvas = (window as any).designCanvas;
-            console.log('[UndoRedoControls] Design canvas available:', !!designCanvas);
             if (designCanvas && designCanvas.redo) {
-              console.log('[UndoRedoControls] Calling redo function');
               designCanvas.redo();
               updateUndoRedoState();
-            } else {
-              console.log('[UndoRedoControls] ERROR: Design canvas or redo function not available');
             }
           }}
           className="h-3 w-4 md:h-6 md:w-6 p-0 touch-manipulation select-none"
