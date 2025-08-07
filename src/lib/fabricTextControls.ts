@@ -60,23 +60,11 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background with shimmer effect when hovered
-        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        if (hoveredControl === 'delete') {
-          // Shimmer effect - brighter colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
-          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
-          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
-          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
-        } else {
-          // Normal colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        }
+        // Solid dark purple background
+        const fillColor = hoveredControl === 'delete' ? '#3c1265' : '#4c1d95';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
@@ -139,24 +127,11 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background with shimmer effect when hovered
-        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        if (hoveredControl === 'rotate') {
-          // Shimmer effect - brighter colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
-          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
-          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
-          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
-        } else {
-          // Normal colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        }
-        // Draw gradient circle background
+        // Solid dark purple background
+        const fillColor = hoveredControl === 'rotate' ? '#3c1265' : '#4c1d95';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
@@ -212,24 +187,11 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background with shimmer effect when hovered
-        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        if (hoveredControl === 'scale') {
-          // Shimmer effect - brighter colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
-          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
-          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
-          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
-        } else {
-          // Normal colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        }
-        // Draw gradient circle background
+        // Solid dark purple background
+        const fillColor = hoveredControl === 'scale' ? '#3c1265' : '#4c1d95';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
@@ -289,24 +251,11 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background with shimmer effect when hovered
-        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        if (hoveredControl === 'stretchH') {
-          // Shimmer effect - brighter colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
-          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
-          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
-          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
-        } else {
-          // Normal colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        }
-        // Draw gradient circle background
+        // Solid dark purple background
+        const fillColor = hoveredControl === 'stretchH' ? '#3c1265' : '#4c1d95';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
@@ -366,24 +315,11 @@ export function initializeTextControls() {
         ctx.save();
         ctx.translate(left, top);
         
-        // Create gradient background with shimmer effect when hovered
-        const gradient = ctx.createLinearGradient(-size/2, -size/2, size/2, size/2);
-        if (hoveredControl === 'stretchV') {
-          // Shimmer effect - brighter colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 75%)');
-          gradient.addColorStop(0.3, 'hsl(280, 100%, 85%)');
-          gradient.addColorStop(0.6, 'hsl(300, 100%, 85%)');
-          gradient.addColorStop(1, 'hsl(320, 100%, 80%)');
-        } else {
-          // Normal colors
-          gradient.addColorStop(0, 'hsl(262, 100%, 65%)');
-          gradient.addColorStop(0.5, 'hsl(280, 90%, 70%)');
-          gradient.addColorStop(1, 'hsl(300, 80%, 75%)');
-        }
-        // Draw gradient circle background
+        // Solid dark purple background
+        const fillColor = hoveredControl === 'stretchV' ? '#3c1265' : '#4c1d95';
         ctx.beginPath();
         ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = fillColor;
         ctx.fill();
         
         // Add elegant shadow
