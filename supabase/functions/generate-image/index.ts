@@ -36,10 +36,7 @@ serve(async (req) => {
       throw new Error("Valid prompt is required")
     }
 
-    // Enhance prompt for t-shirt design suitability
-    const enhancedPrompt = `Create a high-quality, centered design suitable for t-shirt printing. ${prompt}. Use a solid, single-color background (white or light grey preferred) for easy background removal. Do not include any text, letters, or words, unless explicitly requested. Ensure the subject is centered and clearly framed, with no elements cut off. Only one image or scene — do not combine multiple images or concepts into one design. Allow for complex, detailed, and creative artistic freedom in the subject and style. The image should be bold, clean, and visually striking, optimized for printing on apparel.`
-
-    console.log("Generating image with enhanced prompt:", enhancedPrompt)
+    console.log("Generating image with original prompt:", prompt)
 
     const response = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
@@ -49,7 +46,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "dall-e-3",
-        prompt: enhancedPrompt,
+        prompt: prompt,
         n: 1,
         size: `${width}x${height}`,
         quality: "standard",
