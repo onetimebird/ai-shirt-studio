@@ -36,8 +36,8 @@ serve(async (req) => {
       throw new Error("Valid prompt is required")
     }
 
-    // Minimal enhancement for t-shirt designs
-    const enhancedPrompt = `${prompt}, isolated on white background, no borders, one subject`
+    // Enhanced prompt for high-quality t-shirt designs
+    const enhancedPrompt = `${prompt}, 100% white background, no text, vector graphic style, single image, isolated on white background, no borders, one subject`
 
     console.log("Generating image with enhanced prompt:", enhancedPrompt)
 
