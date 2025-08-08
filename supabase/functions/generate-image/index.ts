@@ -37,7 +37,7 @@ serve(async (req) => {
     }
 
     // Enhanced prompt for high-quality t-shirt designs
-    const enhancedPrompt = `${prompt}, pure solid white background (#FFFFFF), no textures, no gradients, no shadows, no text, vector graphic style, single image, centered, cropped, cropped tightly to main image, nothing in background, ideal for screen print, isolated on plain white background, no borders, one subject, flat white backdrop`
+    const enhancedPrompt = `${prompt}, solid white background (#FFFFFF), no text, vector, single image, centered, cropped, no borders, one subject`
 
     console.log("Generating image with enhanced prompt:", enhancedPrompt)
 
