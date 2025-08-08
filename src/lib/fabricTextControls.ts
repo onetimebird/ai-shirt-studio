@@ -53,8 +53,9 @@ async function renderSVGIcon(ctx: CanvasRenderingContext2D, svgPath: string, col
 // Track hover states for controls
 let hoveredControl: string | null = null;
 
-// Add mouse event listeners for hover effects
+// Add mouse event listeners for hover effects (instant like RushOrderTees)
 function addHoverListeners(canvas: any) {
+  // More frequent updates for instant responsiveness
   canvas.on('mouse:move', (options: any) => {
     const pointer = canvas.getPointer(options.e);
     const activeObject = canvas.getActiveObject();
@@ -65,18 +66,10 @@ function addHoverListeners(canvas: any) {
       // Check each control position manually for more reliable hover detection
       const controls = activeObject.controls;
       const objectBounds = activeObject.getBoundingRect();
-      const zoom = canvas.getZoom();
       
-      // Get object transform matrix for accurate control positioning
-      const transform = activeObject.calcTransformMatrix();
-      const objectCenter = { 
-        x: objectBounds.left + objectBounds.width / 2, 
-        y: objectBounds.top + objectBounds.height / 2 
-      };
-      
-      // Define control positions relative to object bounds (more accurate)
-      const controlRadius = 20; // Half the visual size (40px controls = 20px radius) 
-      const offset = 24; // Distance from object edge
+      // Define control positions relative to object bounds (smaller, more accurate)
+      const controlRadius = 12; // Half the visual size (24px controls = 12px radius) 
+      const offset = 14; // Smaller distance from object edge for tighter layout
       
       const controlPositions = {
         'tl': { 
@@ -111,7 +104,7 @@ function addHoverListeners(canvas: any) {
         }
       };
       
-      // Check if pointer is within any control circle (entire white circle is clickable)
+      // Check if pointer is within any control circle - instant detection
       for (const [controlKey, position] of Object.entries(controlPositions)) {
         if (controls[controlKey] && controls[controlKey].visible !== false) {
           const distance = Math.sqrt(
@@ -119,7 +112,7 @@ function addHoverListeners(canvas: any) {
             Math.pow(pointer.y - position.y, 2)
           );
           
-          // Make entire control circle responsive (16px radius)
+          // Entire control circle responsive - instant like RushOrderTees
           if (distance <= position.radius) {
             newHoveredControl = controlKey;
             break;
@@ -127,11 +120,24 @@ function addHoverListeners(canvas: any) {
         }
       }
       
+      // Immediate update on hover change - no delay
       if (newHoveredControl !== hoveredControl) {
         hoveredControl = newHoveredControl;
         canvas.renderAll();
       }
     } else if (hoveredControl) {
+      hoveredControl = null;
+      canvas.renderAll();
+    }
+  });
+  
+  // Also listen to mouse enter/leave for extra responsiveness
+  canvas.on('mouse:over', () => {
+    canvas.renderAll();
+  });
+  
+  canvas.on('mouse:out', () => {
+    if (hoveredControl) {
       hoveredControl = null;
       canvas.renderAll();
     }
@@ -160,7 +166,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 32; // Larger for easier clicking
+        const size = 20; // Match RushOrderTees size
         ctx.save();
         ctx.translate(left, top);
         
@@ -173,7 +179,7 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'tl';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.stroke();
         
         // Purple background on hover
@@ -190,8 +196,8 @@ export function initializeTextControls() {
         
         ctx.restore();
       },
-      sizeX: 40,
-      sizeY: 40,
+      sizeX: 24,
+      sizeY: 24,
     });
 
     // Create rotation control - TOP RIGHT position like RushOrderTees
@@ -203,7 +209,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'crosshair',
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
-        const size = 32; // Larger for easier clicking
+        const size = 20; // Match RushOrderTees size
         ctx.save();
         ctx.translate(left, top);
         
@@ -216,7 +222,7 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'tr';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.stroke();
         
         // Purple background on hover
@@ -227,31 +233,31 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw cleaner rotate icon
+        // Draw clean rotate icon (circular arrows)
         const iconColor = isHovered ? 'white' : '#8138ff';
         ctx.strokeStyle = iconColor;
         ctx.fillStyle = iconColor;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Draw circular arrow (more complete circle)
+        // Main circular arrow
         ctx.beginPath();
-        ctx.arc(0, 0, 5, -Math.PI/4, Math.PI * 7/4, false);
+        ctx.arc(0, 0, 4, 0, Math.PI * 1.5, false);
         ctx.stroke();
         
-        // Draw clearer arrow head
+        // Arrow head
         ctx.beginPath();
-        ctx.moveTo(3.5, -3.5);
-        ctx.lineTo(6, -2);
-        ctx.lineTo(5, -5);
+        ctx.moveTo(-4, -1);
+        ctx.lineTo(-2, -3);
+        ctx.lineTo(-2, 1);
         ctx.closePath();
         ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 40,
-      sizeY: 40,
+      sizeX: 24,
+      sizeY: 24,
     });
 
     // Create uniform scale control - BOTTOM RIGHT position like RushOrderTees
@@ -263,7 +269,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'nw-resize',
       actionHandler: fabric.controlsUtils.scalingEqually,
       render: (ctx, left, top) => {
-        const size = 32; // Larger for easier clicking
+        const size = 20; // Match RushOrderTees size
         ctx.save();
         ctx.translate(left, top);
         
@@ -276,7 +282,7 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'br';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.stroke();
         
         // Purple background on hover
@@ -293,8 +299,8 @@ export function initializeTextControls() {
         
         ctx.restore();
       },
-      sizeX: 40,
-      sizeY: 40,
+      sizeX: 24,
+      sizeY: 24,
     });
 
     // Create horizontal stretch control - MIDDLE RIGHT position like RushOrderTees
@@ -306,7 +312,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const size = 32; // Larger for easier clicking
+        const size = 20; // Match RushOrderTees size
         ctx.save();
         ctx.translate(left, top);
         
@@ -319,7 +325,7 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'mr';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.stroke();
         
         // Purple background on hover
@@ -330,40 +336,40 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw cleaner horizontal stretch arrows
+        // Draw clean horizontal stretch arrows
         const iconColor = isHovered ? 'white' : '#8138ff';
         ctx.strokeStyle = iconColor;
         ctx.fillStyle = iconColor;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
         // Horizontal line
         ctx.beginPath();
-        ctx.moveTo(-4, 0);
-        ctx.lineTo(4, 0);
+        ctx.moveTo(-3, 0);
+        ctx.lineTo(3, 0);
         ctx.stroke();
         
         // Left arrow head
         ctx.beginPath();
-        ctx.moveTo(-6, 0);
-        ctx.lineTo(-3, -2.5);
-        ctx.lineTo(-3, 2.5);
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(-2, -2);
+        ctx.lineTo(-2, 2);
         ctx.closePath();
         ctx.fill();
         
         // Right arrow head
         ctx.beginPath();
-        ctx.moveTo(6, 0);
-        ctx.lineTo(3, -2.5);
-        ctx.lineTo(3, 2.5);
+        ctx.moveTo(5, 0);
+        ctx.lineTo(2, -2);
+        ctx.lineTo(2, 2);
         ctx.closePath();
         ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 40,
-      sizeY: 40,
+      sizeX: 24,
+      sizeY: 24,
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
@@ -375,7 +381,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: fabric.controlsUtils.scalingY,
       render: (ctx, left, top) => {
-        const size = 32; // Larger for easier clicking
+        const size = 20; // Match RushOrderTees size
         ctx.save();
         ctx.translate(left, top);
         
@@ -388,7 +394,7 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'mb';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.stroke();
         
         // Purple background on hover
@@ -399,40 +405,40 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw cleaner vertical stretch arrows
+        // Draw clean vertical stretch arrows
         const iconColor = isHovered ? 'white' : '#8138ff';
         ctx.strokeStyle = iconColor;
         ctx.fillStyle = iconColor;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 1.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
         // Vertical line
         ctx.beginPath();
-        ctx.moveTo(0, -4);
-        ctx.lineTo(0, 4);
+        ctx.moveTo(0, -3);
+        ctx.lineTo(0, 3);
         ctx.stroke();
         
         // Top arrow head
         ctx.beginPath();
-        ctx.moveTo(0, -6);
-        ctx.lineTo(-2.5, -3);
-        ctx.lineTo(2.5, -3);
+        ctx.moveTo(0, -5);
+        ctx.lineTo(-2, -2);
+        ctx.lineTo(2, -2);
         ctx.closePath();
         ctx.fill();
         
         // Bottom arrow head
         ctx.beginPath();
-        ctx.moveTo(0, 6);
-        ctx.lineTo(-2.5, 3);
-        ctx.lineTo(2.5, 3);
+        ctx.moveTo(0, 5);
+        ctx.lineTo(-2, 2);
+        ctx.lineTo(2, 2);
         ctx.closePath();
         ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 40,
-      sizeY: 40,
+      sizeX: 24,
+      sizeY: 24,
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
@@ -448,7 +454,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 32; // Larger for easier clicking
+        const size = 20; // Match RushOrderTees size
         ctx.save();
         ctx.translate(left, top);
         
@@ -461,7 +467,7 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'bl';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1;
         ctx.stroke();
         
         // Purple background on hover
@@ -478,8 +484,8 @@ export function initializeTextControls() {
         
         ctx.restore();
       },
-      sizeX: 40,
-      sizeY: 40,
+      sizeX: 24,
+      sizeY: 24,
     });
 
     // Apply controls to fabric objects - EXACT RushOrderTees positioning
