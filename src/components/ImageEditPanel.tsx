@@ -159,6 +159,8 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   // Remove background using Replicate AI
   const handleRemoveBackground = useCallback(async () => {
     setIsRemovingBackground(true);
+    const startTime = Date.now();
+    
     try {
       // Import supabase client
       const { supabase } = await import('@/integrations/supabase/client');
@@ -182,6 +184,15 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
       const backgroundRemovedDataUrl = data.output_url;
       
+      // Ensure minimum 8 seconds processing time for better UX
+      const elapsedTime = Date.now() - startTime;
+      const minimumProcessingTime = 8000; // 8 seconds
+      const remainingTime = Math.max(0, minimumProcessingTime - elapsedTime);
+      
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+      
       const result = getActiveImageObject();
       if (result) {
         const { canvas, activeObject } = result;
@@ -190,7 +201,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         activeObject.setSrc(backgroundRemovedDataUrl, () => {
           canvas.renderAll();
           setBackgroundRemoved(true);
-          toast.success(`Background removed in ${data.processing_time}s`);
+          toast.success(`Background removed successfully!`);
         });
       }
     } catch (error) {
