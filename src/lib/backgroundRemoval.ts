@@ -83,6 +83,33 @@ function createInitialMask(data: Uint8ClampedArray, width: number, height: numbe
   const visited = new Set<number>();
   const toRemove = new Set<number>();
   
+  // Sample background color from corners for more accurate detection
+  const getCornerColors = () => {
+    const corners = [
+      0, // top-left
+      (width - 1) * 4, // top-right
+      (height - 1) * width * 4, // bottom-left
+      ((height - 1) * width + width - 1) * 4 // bottom-right
+    ];
+    
+    const colors = corners.map(idx => ({
+      r: data[idx],
+      g: data[idx + 1],
+      b: data[idx + 2]
+    }));
+    
+    // Find the most common corner color (likely the background)
+    const avgColor = {
+      r: Math.round(colors.reduce((sum, c) => sum + c.r, 0) / 4),
+      g: Math.round(colors.reduce((sum, c) => sum + c.g, 0) / 4),
+      b: Math.round(colors.reduce((sum, c) => sum + c.b, 0) / 4)
+    };
+    
+    return avgColor;
+  };
+  
+  const backgroundColor = getCornerColors();
+  
   // Enhanced color distance calculation
   const colorDistance = (r1: number, g1: number, b1: number, r2: number, g2: number, b2: number) => {
     const dr = r1 - r2;
@@ -92,15 +119,24 @@ function createInitialMask(data: Uint8ClampedArray, width: number, height: numbe
   };
   
   const isBackgroundColor = (r: number, g: number, b: number) => {
-    const whiteDistance = colorDistance(r, g, b, 255, 255, 255);
-    return whiteDistance < 25; // More precise threshold
+    // Check if it matches the detected background color
+    const bgDistance = colorDistance(r, g, b, backgroundColor.r, backgroundColor.g, backgroundColor.b);
+    
+    // Very strict threshold - only exact or very close matches
+    return bgDistance < 15;
   };
   
   const getIndex = (x: number, y: number) => y * width + x;
   
-  // Flood fill from edges
+  // Flood fill from edges - only follows continuous background color
   const floodFill = (startX: number, startY: number) => {
     const stack = [{ x: startX, y: startY }];
+    
+    // Check if starting pixel is even background color
+    const startIdx = getIndex(startX, startY) * 4;
+    if (!isBackgroundColor(data[startIdx], data[startIdx + 1], data[startIdx + 2])) {
+      return; // Don't flood fill from non-background pixels
+    }
     
     while (stack.length > 0) {
       const { x, y } = stack.pop()!;
@@ -119,8 +155,11 @@ function createInitialMask(data: Uint8ClampedArray, width: number, height: numbe
       
       if (isBackgroundColor(r, g, b)) {
         toRemove.add(pixelIndex);
-        // Add neighboring pixels
-        stack.push({ x: x + 1, y }, { x: x - 1, y }, { x, y: y + 1 }, { x, y: y - 1 });
+        // Add neighboring pixels - only direct neighbors for stricter flood fill
+        stack.push({ x: x + 1, y });
+        stack.push({ x: x - 1, y });
+        stack.push({ x, y: y + 1 });
+        stack.push({ x, y: y - 1 });
       }
     }
   };
