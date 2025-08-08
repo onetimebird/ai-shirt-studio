@@ -1,5 +1,5 @@
 
-import { fabric, Control } from "fabric";
+import { Control, controlsUtils, Transform } from "fabric";
 
 console.log('🔧 fabricTextControls.ts loaded');
 
@@ -160,7 +160,7 @@ export function initializeTextControls() {
       offsetX: -8,
       offsetY: -8,
       cursorStyleHandler: () => 'pointer',
-      actionHandler: (eventData: MouseEvent, transform: fabric.Transform) => {
+      actionHandler: (eventData: MouseEvent, transform: Transform) => {
         const target = transform.target;
         const canvas = target.canvas;
         if (canvas && target) {
@@ -211,7 +211,7 @@ export function initializeTextControls() {
       offsetX: 8,
       offsetY: -8,
       cursorStyleHandler: () => 'crosshair',
-      actionHandler: fabric.controlsUtils.rotationWithSnapping,
+      actionHandler: controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
         const size = 20; // Match RushOrderTees size
         ctx.save();
@@ -254,7 +254,7 @@ export function initializeTextControls() {
       offsetX: 8,
       offsetY: 8,
       cursorStyleHandler: () => 'nw-resize',
-      actionHandler: fabric.controlsUtils.scalingEqually,
+      actionHandler: controlsUtils.scalingEqually,
       render: (ctx, left, top) => {
         const size = 20; // Match RushOrderTees size
         ctx.save();
@@ -297,7 +297,7 @@ export function initializeTextControls() {
       offsetX: 8,
       offsetY: 0,
       cursorStyleHandler: () => 'ew-resize',
-      actionHandler: fabric.controlsUtils.scalingX,
+      actionHandler: controlsUtils.scalingX,
       render: (ctx, left, top) => {
         const size = 20; // Match RushOrderTees size
         ctx.save();
@@ -340,7 +340,7 @@ export function initializeTextControls() {
       offsetX: 0,
       offsetY: 8, // Positive offset to move down from bottom
       cursorStyleHandler: () => 'ns-resize',
-      actionHandler: fabric.controlsUtils.scalingY,
+      actionHandler: controlsUtils.scalingY,
       render: (ctx, left, top) => {
         const size = 20; // Match RushOrderTees size
         ctx.save();

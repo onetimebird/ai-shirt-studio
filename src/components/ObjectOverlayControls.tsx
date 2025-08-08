@@ -22,16 +22,10 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     };
 
     // Listen to object transform events
-    const events = [
-      'object:moving',
-      'object:scaling',
-      'object:rotating', 
-      'object:skewing',
-      'object:modified'
-    ];
+    const events = ['object:moving', 'object:scaling', 'object:rotating', 'object:skewing', 'object:modified'] as const;
 
     events.forEach(event => {
-      canvas.on(event, (e) => {
+      canvas.on(event, (e: any) => {
         if (e.target === selectedObject) {
           triggerUpdate();
         }
@@ -157,9 +151,9 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       // Simple layer controls - bring to front or send to back
       const currentIndex = canvas.getObjects().indexOf(selectedObject);
       if (currentIndex < canvas.getObjects().length - 1) {
-        canvas.bringToFront(selectedObject);
+        canvas.bringObjectToFront(selectedObject);
       } else {
-        canvas.sendToBack(selectedObject);
+        canvas.sendObjectToBack(selectedObject);
       }
       canvas.requestRenderAll();
     }
