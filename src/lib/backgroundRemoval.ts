@@ -78,65 +78,38 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
   });
 };
 
-// Pass 1: Create initial mask using smart flood-fill
+// Pass 1: Create initial mask using conservative flood-fill for CSHRTX images
 function createInitialMask(data: Uint8ClampedArray, width: number, height: number): Float32Array {
   const mask = new Float32Array(width * height);
   const visited = new Set<number>();
   const toRemove = new Set<number>();
   
-  // Sample background color from corners for more accurate detection
-  const getCornerColors = () => {
-    const corners = [
-      0, // top-left
-      (width - 1) * 4, // top-right
-      (height - 1) * width * 4, // bottom-left
-      ((height - 1) * width + width - 1) * 4 // bottom-right
-    ];
-    
-    const colors = corners.map(idx => ({
-      r: data[idx],
-      g: data[idx + 1],
-      b: data[idx + 2]
-    }));
-    
-    // Find the most common corner color (likely the background)
-    const avgColor = {
-      r: Math.round(colors.reduce((sum, c) => sum + c.r, 0) / 4),
-      g: Math.round(colors.reduce((sum, c) => sum + c.g, 0) / 4),
-      b: Math.round(colors.reduce((sum, c) => sum + c.b, 0) / 4)
-    };
-    
-    return avgColor;
-  };
+  // For CSHRTX images, we expect a pure white background
+  const TARGET_WHITE = { r: 255, g: 255, b: 255 };
   
-  const backgroundColor = getCornerColors();
-  
-  // Enhanced color distance calculation
-  const colorDistance = (r1: number, g1: number, b1: number, r2: number, g2: number, b2: number) => {
-    const dr = r1 - r2;
-    const dg = g1 - g2; 
-    const db = b1 - b2;
-    return Math.sqrt(dr * dr + dg * dg + db * db);
-  };
-  
-  const isBackgroundColor = (r: number, g: number, b: number) => {
-    // Check if it matches the detected background color
-    const bgDistance = colorDistance(r, g, b, backgroundColor.r, backgroundColor.g, backgroundColor.b);
-    
-    // Very strict threshold - only exact or very close matches
-    return bgDistance < 15;
+  // Very strict color matching for white backgrounds
+  const isWhiteBackground = (r: number, g: number, b: number) => {
+    // Only remove very pure white pixels (tolerance of 5 for each channel)
+    const tolerance = 5;
+    return (
+      r >= TARGET_WHITE.r - tolerance &&
+      g >= TARGET_WHITE.g - tolerance &&
+      b >= TARGET_WHITE.b - tolerance &&
+      // Also check that it's not a light color (all channels should be high)
+      Math.min(r, g, b) >= 250
+    );
   };
   
   const getIndex = (x: number, y: number) => y * width + x;
   
-  // Flood fill from edges - only follows continuous background color
+  // Conservative flood fill - only removes continuous pure white areas
   const floodFill = (startX: number, startY: number) => {
     const stack = [{ x: startX, y: startY }];
     
-    // Check if starting pixel is even background color
+    // Check if starting pixel is pure white
     const startIdx = getIndex(startX, startY) * 4;
-    if (!isBackgroundColor(data[startIdx], data[startIdx + 1], data[startIdx + 2])) {
-      return; // Don't flood fill from non-background pixels
+    if (!isWhiteBackground(data[startIdx], data[startIdx + 1], data[startIdx + 2])) {
+      return; // Don't flood fill from non-white pixels
     }
     
     while (stack.length > 0) {
@@ -153,10 +126,12 @@ function createInitialMask(data: Uint8ClampedArray, width: number, height: numbe
       const r = data[dataIndex];
       const g = data[dataIndex + 1];
       const b = data[dataIndex + 2];
+      const a = data[dataIndex + 3];
       
-      if (isBackgroundColor(r, g, b)) {
+      // Only remove if it's pure white AND fully opaque
+      if (isWhiteBackground(r, g, b) && a > 250) {
         toRemove.add(pixelIndex);
-        // Add neighboring pixels - only direct neighbors for stricter flood fill
+        // Add neighboring pixels - only direct neighbors for strict flood fill
         stack.push({ x: x + 1, y });
         stack.push({ x: x - 1, y });
         stack.push({ x, y: y + 1 });
@@ -175,6 +150,38 @@ function createInitialMask(data: Uint8ClampedArray, width: number, height: numbe
     floodFill(width - 1, y);
   }
   
+  // Second pass: Clean up isolated white pixels that are completely surrounded by transparency
+  // This helps remove white spots trapped in transparent areas
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = getIndex(x, y);
+      
+      // Skip if already marked for removal
+      if (toRemove.has(idx)) continue;
+      
+      const dataIdx = idx * 4;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      
+      // Check if this is a white pixel
+      if (isWhiteBackground(r, g, b)) {
+        // Check if surrounded by removed pixels
+        const neighbors = [
+          getIndex(x - 1, y),
+          getIndex(x + 1, y),
+          getIndex(x, y - 1),
+          getIndex(x, y + 1)
+        ];
+        
+        const surroundedByRemoved = neighbors.every(nIdx => toRemove.has(nIdx));
+        if (surroundedByRemoved) {
+          toRemove.add(idx);
+        }
+      }
+    }
+  }
+  
   // Create mask (1 = keep, 0 = remove)
   mask.fill(1);
   for (const pixelIndex of toRemove) {
@@ -184,9 +191,14 @@ function createInitialMask(data: Uint8ClampedArray, width: number, height: numbe
   return mask;
 }
 
-// Pass 2: Edge-aware refinement using gradient information
+// Pass 2: Edge-aware refinement using gradient information (conservative)
 function refineEdges(mask: Float32Array, data: Uint8ClampedArray, width: number, height: number): Float32Array {
   const refined = new Float32Array(mask.length);
+  
+  // Copy original mask first
+  for (let i = 0; i < mask.length; i++) {
+    refined[i] = mask[i];
+  }
   
   // Sobel edge detection kernels
   const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
@@ -196,28 +208,44 @@ function refineEdges(mask: Float32Array, data: Uint8ClampedArray, width: number,
     for (let x = 1; x < width - 1; x++) {
       const centerIdx = y * width + x;
       
-      // Calculate gradient magnitude
-      let gx = 0, gy = 0;
-      for (let ky = -1; ky <= 1; ky++) {
-        for (let kx = -1; kx <= 1; kx++) {
-          const pixelIdx = (y + ky) * width + (x + kx);
-          const dataIdx = pixelIdx * 4;
-          const gray = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
-          
-          const kernelIdx = (ky + 1) * 3 + (kx + 1);
-          gx += gray * sobelX[kernelIdx];
-          gy += gray * sobelY[kernelIdx];
+      // Only refine edges at the boundary between mask and non-mask
+      if (mask[centerIdx] === 0 || mask[centerIdx] === 1) {
+        // Check if we're at a boundary
+        let isBoundary = false;
+        for (let ky = -1; ky <= 1; ky++) {
+          for (let kx = -1; kx <= 1; kx++) {
+            const neighborIdx = (y + ky) * width + (x + kx);
+            if (mask[neighborIdx] !== mask[centerIdx]) {
+              isBoundary = true;
+              break;
+            }
+          }
+          if (isBoundary) break;
         }
-      }
-      
-      const gradient = Math.sqrt(gx * gx + gy * gy);
-      
-      // If we're near an edge, use gradient to refine the mask
-      if (gradient > 30) {
-        // Edge pixel - use more sophisticated blending
-        refined[centerIdx] = mask[centerIdx] * (1 - gradient / 255);
-      } else {
-        refined[centerIdx] = mask[centerIdx];
+        
+        if (isBoundary) {
+          // Calculate gradient magnitude only at boundaries
+          let gx = 0, gy = 0;
+          for (let ky = -1; ky <= 1; ky++) {
+            for (let kx = -1; kx <= 1; kx++) {
+              const pixelIdx = (y + ky) * width + (x + kx);
+              const dataIdx = pixelIdx * 4;
+              const gray = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
+              
+              const kernelIdx = (ky + 1) * 3 + (kx + 1);
+              gx += gray * sobelX[kernelIdx];
+              gy += gray * sobelY[kernelIdx];
+            }
+          }
+          
+          const gradient = Math.sqrt(gx * gx + gy * gy);
+          
+          // Very conservative edge refinement - only blend slightly
+          if (gradient > 50) { // Higher threshold
+            const blendFactor = Math.min(0.3, gradient / 500); // Much less aggressive
+            refined[centerIdx] = mask[centerIdx] * (1 - blendFactor);
+          }
+        }
       }
     }
   }
