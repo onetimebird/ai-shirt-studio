@@ -65,6 +65,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
   const [isProcessingSelection, setIsProcessingSelection] = useState(false);
   const [showEditPanel, setShowEditPanel] = useState(false);
   const [currentEditingImage, setCurrentEditingImage] = useState<string | null>(null);
+  const [useReplicateRemoval, setUseReplicateRemoval] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("ai-prompts");
@@ -153,39 +154,66 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
       const selectedImage = imageOptions[selectedIndex];
       toast("Processing selected image...", { duration: 2000 });
 
-      // Apply automatic background removal to selected image
+      // Apply background removal to selected image
       try {
         toast("Removing background...", { duration: 2000 });
         
-        // Load the selected image
-        const imageElement = await loadImageFromUrl(selectedImage.url);
+        let backgroundRemovedDataUrl: string;
         
-        // Remove the background
-        const backgroundRemovedBlob = await removeBackground(imageElement);
+        if (useReplicateRemoval) {
+          // Use Replicate's professional background removal
+          toast("Using professional AI removal...", { duration: 3000 });
+          
+          const { data, error } = await supabase.functions.invoke('remove-background-replicate', {
+            body: { 
+              imageUrl: selectedImage.url,
+              model: 'u2net' // Best model for t-shirt graphics
+            }
+          });
+
+          if (error) {
+            console.error('Replicate removal error:', error);
+            throw new Error(error.message || 'Professional removal failed');
+          }
+
+          if (data?.success && data?.output_url) {
+            backgroundRemovedDataUrl = data.output_url;
+            toast.success(`Professional removal completed in ${data.processing_time}s`);
+          } else {
+            throw new Error('No output from professional removal');
+          }
+        } else {
+          // Use our local background removal algorithm
+          const imageElement = await loadImageFromUrl(selectedImage.url);
+          const backgroundRemovedBlob = await removeBackground(imageElement);
+          
+          // Convert blob to data URL
+          const backgroundRemovedUrl = URL.createObjectURL(backgroundRemovedBlob);
+          const reader = new FileReader();
+          
+          await new Promise((resolve) => {
+            reader.onload = () => {
+              backgroundRemovedDataUrl = reader.result as string;
+              resolve(void 0);
+            };
+            reader.readAsDataURL(backgroundRemovedBlob);
+          });
+        }
         
-        // Convert blob to data URL
-        const backgroundRemovedUrl = URL.createObjectURL(backgroundRemovedBlob);
-        const reader = new FileReader();
+        // Store the background-removed image
+        const newImage = { url: backgroundRemovedDataUrl, prompt: prompt.trim() };
+        setGeneratedImages(prev => [newImage, ...prev]);
         
-        reader.onload = () => {
-          const backgroundRemovedDataUrl = reader.result as string;
-          
-          // Store the background-removed image
-          const newImage = { url: backgroundRemovedDataUrl, prompt: prompt.trim() };
-          setGeneratedImages(prev => [newImage, ...prev]);
-          
-          // Directly upload to canvas (no edit panel shown here)
-          onImageGenerated?.(backgroundRemovedDataUrl);
-          
-          // Hide selection UI
-          setShowImageOptions(false);
-          setImageOptions([]);
-          setSelectedImageIndex(null);
-          
-          toast.success("Image added to canvas with background removed!");
-        };
+        // Directly upload to canvas (no edit panel shown here)
+        onImageGenerated?.(backgroundRemovedDataUrl);
         
-        reader.readAsDataURL(backgroundRemovedBlob);
+        // Hide selection UI
+        setShowImageOptions(false);
+        setImageOptions([]);
+        setSelectedImageIndex(null);
+        
+        const removalMethod = useReplicateRemoval ? "Professional AI" : "Local algorithm";
+        toast.success(`Image added to canvas! (${removalMethod})`);
         
       } catch (bgError) {
         console.error("Background removal failed:", bgError);
@@ -319,6 +347,25 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               </button>
             </div>
             
+            {/* Background Removal Toggle */}
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              <div>
+                <p className="text-sm font-medium">Background Removal</p>
+                <p className="text-xs text-muted-foreground">
+                  {useReplicateRemoval ? 'Professional AI (Replicate)' : 'Local Algorithm (Free)'}
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={useReplicateRemoval}
+                  onChange={(e) => setUseReplicateRemoval(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+
             <Button 
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
