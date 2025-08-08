@@ -52,83 +52,62 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       const canvasElement = canvas.getElement();
       const canvasRect = canvasElement.getBoundingClientRect();
       
-      // Get object's actual transform properties
-      const objLeft = selectedObject.left || 0;
-      const objTop = selectedObject.top || 0;
-      const objWidth = selectedObject.width || 0;
-      const objHeight = selectedObject.height || 0;
-      const objScaleX = selectedObject.scaleX || 1;
-      const objScaleY = selectedObject.scaleY || 1;
-      const objAngle = selectedObject.angle || 0;
+      // Use getBoundingRect() which gives us the actual rotated/scaled bounds
+      // This matches exactly what Fabric.js uses for the dotted border
+      const objectBounds = selectedObject.getBoundingRect();
       
-      // Calculate actual display dimensions
-      const scaledWidth = objWidth * objScaleX;
-      const scaledHeight = objHeight * objScaleY;
+      console.log('Object bounds:', objectBounds);
+      console.log('Object props:', {
+        left: selectedObject.left,
+        top: selectedObject.top, 
+        angle: selectedObject.angle,
+        scaleX: selectedObject.scaleX,
+        scaleY: selectedObject.scaleY
+      });
       
-      // Use Fabric.js coordinate transformation with zoom and viewport
+      // Use Fabric.js coordinate transformation
       const zoom = canvas.getZoom();
       const vpt = canvas.viewportTransform!;
       
-      // Transform object center to screen coordinates
-      const centerX = canvasRect.left + (objLeft * zoom + vpt[4]);
-      const centerY = canvasRect.top + (objTop * zoom + vpt[5]);
+      // Transform canvas coordinates to screen coordinates
+      const left = canvasRect.left + (objectBounds.left * zoom + vpt[4]);
+      const top = canvasRect.top + (objectBounds.top * zoom + vpt[5]);
+      const width = objectBounds.width * zoom;
+      const height = objectBounds.height * zoom;
       
-      // Calculate rotated corner positions
-      const angleRad = (objAngle * Math.PI) / 180;
-      const cos = Math.cos(angleRad);
-      const sin = Math.sin(angleRad);
+      console.log('Screen coords:', { left, top, width, height });
       
-      const halfWidth = (scaledWidth * zoom) / 2;
-      const halfHeight = (scaledHeight * zoom) / 2;
-      
-      // Calculate the four corners of the rotated bounding box
-      const corners = [
-        { x: -halfWidth, y: -halfHeight }, // top-left
-        { x: halfWidth, y: -halfHeight },  // top-right  
-        { x: halfWidth, y: halfHeight },   // bottom-right
-        { x: -halfWidth, y: halfHeight }   // bottom-left
-      ];
-      
-      // Rotate corners around center
-      const rotatedCorners = corners.map(corner => ({
-        x: centerX + (corner.x * cos - corner.y * sin),
-        y: centerY + (corner.x * sin + corner.y * cos)
-      }));
-      
-      const offset = 2; // Tighter to bounding box
-      
-      // Position controls relative to rotated corners
-      const [topLeft, topRight, bottomRight, bottomLeft] = rotatedCorners;
+      const offset = 2;
       
       setControlPositions({
         delete: { 
-          x: topLeft.x - offset, 
-          y: topLeft.y - offset, 
+          x: left - offset, 
+          y: top - offset, 
           visible: true 
         },
         rotate: { 
-          x: topRight.x + offset, 
-          y: topRight.y - offset, 
+          x: left + width + offset, 
+          y: top - offset, 
           visible: true 
         },
         layers: { 
-          x: bottomLeft.x - offset, 
-          y: bottomLeft.y + offset, 
+          x: left - offset, 
+          y: top + height + offset, 
           visible: true 
         },
         stretchH: { 
-          x: topRight.x + offset, 
-          y: (topRight.y + bottomRight.y) / 2, 
+          x: left + width + offset, 
+          y: top + height / 2, 
           visible: true 
         },
         scale: { 
-          x: bottomRight.x + offset, 
-          y: bottomRight.y + offset, 
+          x: left + width + offset, 
+          y: top + height + offset, 
           visible: true 
         },
         stretchV: { 
-          x: (bottomLeft.x + bottomRight.x) / 2, 
-          y: bottomLeft.y + offset, 
+          x: left + width / 2, 
+          y: top + height + offset, 
           visible: true 
         },
       });
@@ -149,9 +128,11 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       'object:moving',
       'object:scaling', 
       'object:rotating',
+      'object:skewing',
       'object:transforming', // This fires during active transforms
       'object:modified',
-      'canvas:viewportTransform'
+      'canvas:viewportTransform',
+      'after:render' // Update after canvas renders
     ];
 
     // Add event listeners
@@ -168,7 +149,38 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     selectedObject.on('moving', immediateUpdate);
     selectedObject.on('scaling', immediateUpdate);
     selectedObject.on('rotating', immediateUpdate);
+    selectedObject.on('skewing', immediateUpdate);
     selectedObject.on('modified', immediateUpdate);
+    
+    // High frequency polling during active interactions to ensure perfect tracking
+    let animationFrame: number | null = null;
+    let isInteracting = false;
+    
+    const startHighFrequencyUpdates = () => {
+      if (isInteracting) return;
+      isInteracting = true;
+      
+      const updateLoop = () => {
+        if (isInteracting) {
+          immediateUpdate();
+          animationFrame = requestAnimationFrame(updateLoop);
+        }
+      };
+      updateLoop();
+    };
+    
+    const stopHighFrequencyUpdates = () => {
+      isInteracting = false;
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
+    };
+    
+    // Start high-frequency updates during interactions
+    canvas.on('mouse:down', startHighFrequencyUpdates);
+    canvas.on('mouse:up', stopHighFrequencyUpdates);
+    canvas.on('selection:cleared', stopHighFrequencyUpdates);
 
     // Window events
     const handleWindowEvent = () => updatePositions();
@@ -176,16 +188,24 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     window.addEventListener('scroll', handleWindowEvent);
 
     return () => {
+      // Stop high frequency updates
+      stopHighFrequencyUpdates();
+      
       // Clean up canvas event listeners
       canvasEvents.forEach(event => {
         canvas.off(event);
       });
+      
+      canvas.off('mouse:down', startHighFrequencyUpdates);
+      canvas.off('mouse:up', stopHighFrequencyUpdates);
+      canvas.off('selection:cleared', stopHighFrequencyUpdates);
       
       // Clean up object-specific event listeners
       if (selectedObject) {
         selectedObject.off('moving');
         selectedObject.off('scaling');
         selectedObject.off('rotating');
+        selectedObject.off('skewing');
         selectedObject.off('modified');
       }
       
