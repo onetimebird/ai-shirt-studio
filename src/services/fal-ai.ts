@@ -52,9 +52,9 @@ export async function generateWithCustomModel(options: GenerateImageOptions) {
     });
 
     // Convert FAL response to our format
-    if (result.images && Array.isArray(result.images)) {
+    if ((result as any).images && Array.isArray((result as any).images)) {
       return {
-        images: result.images.map((img: any) => ({
+        images: (result as any).images.map((img: any) => ({
           url: img.url,
           content_type: img.content_type || "image/png",
           revised_prompt: enhancedPrompt
@@ -90,9 +90,9 @@ export async function generateWithBaseModel(prompt: string) {
       logs: true,
     });
 
-    if (result.images && Array.isArray(result.images)) {
+    if ((result as any).images && Array.isArray((result as any).images)) {
       return {
-        images: result.images.map((img: any) => ({
+        images: (result as any).images.map((img: any) => ({
           url: img.url,
           content_type: img.content_type || "image/png",
           revised_prompt: enhancedPrompt
@@ -125,7 +125,7 @@ export async function testFalConnection() {
       }
     });
 
-    if (result.images && result.images.length > 0) {
+    if ((result as any).images && (result as any).images.length > 0) {
       console.log("✅ FAL.ai connection successful!");
       return true;
     }
