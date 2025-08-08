@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,11 +6,8 @@ const corsHeaders = {
 }
 
 // FAL.ai configuration
-const FAL_KEY = Deno.env.get("FAL_KEY") || "55785b0e-56d0-4d11-ac38-eed91f9ba985:9ed9a9fbb96e824d1b9bc219d083e8cf"
-const FAL_API_URL = "https://queue.fal.run"
-
-// Your trained model URL
-const CUSTOM_MODEL_URL = Deno.env.get("FAL_MODEL_URL") || "https://v3.fal.media/files/monkey/aox58qTGIsbEkrCKFZdph_pytorch_lora_weights.safetensors"
+const FAL_KEY = "55785b0e-56d0-4d11-ac38-eed91f9ba985:9ed9a9fbb96e824d1b9bc219d083e8cf"
+const CUSTOM_MODEL_URL = "https://v3.fal.media/files/monkey/aox58qTGIsbEkrCKFZdph_pytorch_lora_weights.safetensors"
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -20,7 +16,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt, width = 1024, height = 1024, useCustomModel = true } = await req.json()
+    const { prompt, useCustomModel = true } = await req.json()
     
     if (!prompt || typeof prompt !== 'string') {
       throw new Error("Valid prompt is required")
@@ -30,15 +26,14 @@ serve(async (req) => {
     const enhancedPrompt = `CSHRTX style ${prompt}, solid white background (#FFFFFF), no text, vector, single image, centered, clean background`
 
     console.log("Generating with FAL.ai - Prompt:", enhancedPrompt)
-    console.log("Using custom model:", useCustomModel && CUSTOM_MODEL_URL ? "Yes" : "No")
+    console.log("Using custom model:", useCustomModel)
 
-    // Choose the appropriate FAL model
-    const modelEndpoint = useCustomModel && CUSTOM_MODEL_URL 
-      ? "fal-ai/flux-lora"  // Use LoRA with custom model
-      : "fal-ai/flux/schnell" // Use base Flux model
+    // Prepare request to FAL
+    const falEndpoint = useCustomModel 
+      ? "https://fal.run/fal-ai/flux-lora"
+      : "https://fal.run/fal-ai/flux/schnell"
 
-    // Prepare the request body based on model type
-    const requestBody = useCustomModel && CUSTOM_MODEL_URL ? {
+    const requestBody = useCustomModel ? {
       prompt: enhancedPrompt,
       lora_url: CUSTOM_MODEL_URL,
       num_images: 3,
@@ -56,8 +51,10 @@ serve(async (req) => {
       output_format: "png"
     }
 
-    // Submit to FAL queue
-    const submitResponse = await fetch(`${FAL_API_URL}/${modelEndpoint}`, {
+    console.log("Request body:", JSON.stringify(requestBody, null, 2))
+
+    // Make request to FAL
+    const response = await fetch(falEndpoint, {
       method: "POST",
       headers: {
         "Authorization": `Key ${FAL_KEY}`,
@@ -66,50 +63,23 @@ serve(async (req) => {
       body: JSON.stringify(requestBody)
     })
 
-    if (!submitResponse.ok) {
-      const errorText = await submitResponse.text()
-      console.error("FAL submission error:", errorText)
-      throw new Error(`FAL API error: ${submitResponse.status}`)
+    console.log("FAL response status:", response.status)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("FAL API error:", errorText)
+      throw new Error(`FAL API error: ${response.status} - ${errorText}`)
     }
 
-    const submission = await submitResponse.json()
-    const requestId = submission.request_id
+    const result = await response.json()
+    console.log("FAL result:", JSON.stringify(result, null, 2))
 
-    console.log("FAL request submitted:", requestId)
-
-    // Poll for results
-    let result = null
-    let attempts = 0
-    const maxAttempts = 60 // 30 seconds timeout
-
-    while (!result && attempts < maxAttempts) {
-      const statusResponse = await fetch(`${FAL_API_URL}/${modelEndpoint}/requests/${requestId}/status`, {
-        headers: {
-          "Authorization": `Key ${FAL_KEY}`
-        }
-      })
-
-      if (statusResponse.ok) {
-        const status = await statusResponse.json()
-        
-        if (status.status === "COMPLETED") {
-          result = status
-          break
-        } else if (status.status === "FAILED") {
-          throw new Error("Image generation failed")
-        }
-      }
-
-      // Wait 500ms before next poll
-      await new Promise(resolve => setTimeout(resolve, 500))
-      attempts++
+    // Check if we got images
+    if (!result.images || !Array.isArray(result.images)) {
+      throw new Error("No images received from FAL")
     }
 
-    if (!result) {
-      throw new Error("Generation timeout")
-    }
-
-    // Format the response
+    // Format the response to match existing format
     const images = result.images.map((img: any) => ({
       url: img.url,
       original_url: img.url,
@@ -122,7 +92,7 @@ serve(async (req) => {
       JSON.stringify({ 
         images: images,
         count: images.length,
-        model_used: useCustomModel && CUSTOM_MODEL_URL ? "custom-lora" : "flux-schnell"
+        model_used: useCustomModel ? "custom-cshrtx" : "flux-schnell"
       }), 
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
