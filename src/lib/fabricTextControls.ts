@@ -71,8 +71,8 @@ function addHoverListeners(canvas: any) {
       const controls = activeObject.controls;
       const objectBounds = activeObject.getBoundingRect();
       
-      // Define control positions relative to object bounds (smaller, more accurate)
-      const controlRadius = 12; // Half the visual size (24px controls = 12px radius) 
+      // Define control positions relative to object bounds (larger click area)
+      const controlRadius = 20; // Larger click area for easier interaction
       const offset = 14; // Smaller distance from object edge for tighter layout
       
       const controlPositions = {
@@ -160,7 +160,7 @@ export function initializeTextControls() {
       offsetX: -8,
       offsetY: -8,
       cursorStyleHandler: () => 'pointer',
-      actionHandler: (eventData: MouseEvent, transform: Transform) => {
+      mouseUpHandler: (eventData: MouseEvent, transform: Transform) => {
         const target = transform.target;
         const canvas = target.canvas;
         if (canvas && target) {
@@ -170,7 +170,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 20; // Match RushOrderTees size
+        const size = 24; // Larger click area
         ctx.save();
         ctx.translate(left, top);
         
@@ -183,28 +183,49 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'tl';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.stroke();
         
         // Purple background on hover
         if (isHovered) {
           ctx.beginPath();
-          ctx.arc(0, 0, size/2 - 1, 0, 2 * Math.PI);
+          ctx.arc(0, 0, size/2 - 2, 0, 2 * Math.PI);
           ctx.fillStyle = '#8138ff';
           ctx.fill();
         }
         
-        // Draw your clean SVG trash icon
+        // Draw simple trash can icon directly with canvas
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/TrashCan.svg', iconColor, 18).catch(console.warn);
+        ctx.fillStyle = iconColor;
+        ctx.strokeStyle = iconColor;
+        ctx.lineWidth = 1.5;
+        
+        // Trash can body
+        ctx.fillRect(-4, -2, 8, 6);
+        
+        // Trash can lid
+        ctx.fillRect(-5, -4, 10, 1);
+        
+        // Handle
+        ctx.strokeRect(-2, -6, 4, 2);
+        
+        // Vertical lines on trash can
+        ctx.beginPath();
+        ctx.moveTo(-2, -1);
+        ctx.lineTo(-2, 3);
+        ctx.moveTo(0, -1);
+        ctx.lineTo(0, 3);
+        ctx.moveTo(2, -1);
+        ctx.lineTo(2, 3);
+        ctx.stroke();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 30,
+      sizeY: 30,
     });
 
-    // Create rotation control - TOP RIGHT position like RushOrderTees
+    // Create rotation control - TOP RIGHT position like RushOrderTees  
     const rotateControl = new Control({
       x: 0.5,
       y: -0.5,
@@ -213,7 +234,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'crosshair',
       actionHandler: controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
-        const size = 20; // Match RushOrderTees size
+        const size = 24;
         ctx.save();
         ctx.translate(left, top);
         
@@ -226,25 +247,39 @@ export function initializeTextControls() {
         // Purple border with hover effect
         const isHovered = hoveredControl === 'tr';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 2;
         ctx.stroke();
         
         // Purple background on hover
         if (isHovered) {
           ctx.beginPath();
-          ctx.arc(0, 0, size/2 - 1, 0, 2 * Math.PI);
+          ctx.arc(0, 0, size/2 - 2, 0, 2 * Math.PI);
           ctx.fillStyle = '#8138ff';
           ctx.fill();
         }
         
-        // Draw your clean SVG rotate icon
+        // Draw rotation arrow icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/RotateIcon.svg', iconColor, 16).catch(console.warn);
+        ctx.strokeStyle = iconColor;
+        ctx.lineWidth = 2;
+        
+        // Curved arrow
+        ctx.beginPath();
+        ctx.arc(0, 0, 6, -Math.PI/4, Math.PI, false);
+        ctx.stroke();
+        
+        // Arrow head
+        ctx.fillStyle = iconColor;
+        ctx.beginPath();
+        ctx.moveTo(-6, 0);
+        ctx.lineTo(-8, -2);
+        ctx.lineTo(-8, 2);
+        ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 30,
+      sizeY: 30,
     });
 
     // Create uniform scale control - BOTTOM RIGHT position like RushOrderTees
@@ -299,38 +334,57 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const size = 20; // Match RushOrderTees size
+        const width = 24;
+        const height = 16;
         ctx.save();
         ctx.translate(left, top);
         
-        // White background circle
-        ctx.beginPath();
-        ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+        // White background rectangle
         ctx.fillStyle = 'white';
-        ctx.fill();
+        ctx.fillRect(-width/2, -height/2, width, height);
         
         // Purple border with hover effect
         const isHovered = hoveredControl === 'mr';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-width/2, -height/2, width, height);
         
         // Purple background on hover
         if (isHovered) {
-          ctx.beginPath();
-          ctx.arc(0, 0, size/2 - 1, 0, 2 * Math.PI);
           ctx.fillStyle = '#8138ff';
-          ctx.fill();
+          ctx.fillRect(-width/2 + 1, -height/2 + 1, width - 2, height - 2);
         }
         
-        // Draw your clean SVG horizontal stretch icon
+        // Draw horizontal arrows
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/StretchHorizontal.svg', iconColor, 16).catch(console.warn);
+        ctx.strokeStyle = iconColor;
+        ctx.fillStyle = iconColor;
+        ctx.lineWidth = 1.5;
+        
+        // Left and right arrows
+        ctx.beginPath();
+        ctx.moveTo(-6, 0);
+        ctx.lineTo(6, 0);
+        ctx.stroke();
+        
+        // Left arrow head
+        ctx.beginPath();
+        ctx.moveTo(-6, 0);
+        ctx.lineTo(-4, -2);
+        ctx.lineTo(-4, 2);
+        ctx.fill();
+        
+        // Right arrow head
+        ctx.beginPath();
+        ctx.moveTo(6, 0);
+        ctx.lineTo(4, -2);
+        ctx.lineTo(4, 2);
+        ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 30,
+      sizeY: 20,
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
@@ -342,38 +396,57 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: controlsUtils.scalingY,
       render: (ctx, left, top) => {
-        const size = 20; // Match RushOrderTees size
+        const width = 16;
+        const height = 24;
         ctx.save();
         ctx.translate(left, top);
         
-        // White background circle
-        ctx.beginPath();
-        ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+        // White background rectangle
         ctx.fillStyle = 'white';
-        ctx.fill();
+        ctx.fillRect(-width/2, -height/2, width, height);
         
         // Purple border with hover effect
         const isHovered = hoveredControl === 'mb';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-width/2, -height/2, width, height);
         
         // Purple background on hover
         if (isHovered) {
-          ctx.beginPath();
-          ctx.arc(0, 0, size/2 - 1, 0, 2 * Math.PI);
           ctx.fillStyle = '#8138ff';
-          ctx.fill();
+          ctx.fillRect(-width/2 + 1, -height/2 + 1, width - 2, height - 2);
         }
         
-        // Draw your clean SVG vertical stretch icon
+        // Draw vertical arrows
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/StrechVertical.svg', iconColor, 16).catch(console.warn);
+        ctx.strokeStyle = iconColor;
+        ctx.fillStyle = iconColor;
+        ctx.lineWidth = 1.5;
+        
+        // Up and down arrows
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(0, 6);
+        ctx.stroke();
+        
+        // Up arrow head
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(-2, -4);
+        ctx.lineTo(2, -4);
+        ctx.fill();
+        
+        // Down arrow head
+        ctx.beginPath();
+        ctx.moveTo(0, 6);
+        ctx.lineTo(-2, 4);
+        ctx.lineTo(2, 4);
+        ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 20,
+      sizeY: 30,
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
