@@ -211,7 +211,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor,
         console.log('[QuantityModal] Successfully generated preview image');
         return dataURL;
       } catch (error) {
-        console.error('[QuantityModal] Failed to generate preview image:', error);
+        console.error('[QuantityModal] Failed to generate preview image (tainted canvas):', error);
         return undefined;
       }
     };

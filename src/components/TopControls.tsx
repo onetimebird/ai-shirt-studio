@@ -108,7 +108,13 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
   const generatePreviewImage = () => {
     const canvas = (window as any).designCanvas?.canvas;
     if (!canvas) return undefined;
-    return canvas.toDataURL({ format: 'png', quality: 0.8 });
+    
+    try {
+      return canvas.toDataURL({ format: 'png', quality: 0.8 });
+    } catch (error) {
+      console.warn('[TopControls] Failed to generate preview image (tainted canvas):', error);
+      return undefined;
+    }
   };
 
   return (
