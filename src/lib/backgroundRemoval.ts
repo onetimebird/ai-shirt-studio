@@ -54,6 +54,7 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
     // Intelligent multi-pass processing
     let mask = createSmartMask(data, width, height);
     mask = expandMaskToWhiteAreas(mask, data, width, height);
+    mask = detectEnclosedSpaces(mask, data, width, height);
     mask = cleanupInternalWhite(mask, data, width, height);
     mask = smoothMaskEdges(mask, width, height);
     
@@ -224,6 +225,130 @@ function expandMaskToWhiteAreas(mask: Float32Array, data: Uint8ClampedArray, wid
   }
   
   return expanded;
+}
+
+// Pass 2.5: Detect and remove enclosed white spaces (like trigger guards)
+function detectEnclosedSpaces(mask: Float32Array, data: Uint8ClampedArray, width: number, height: number): Float32Array {
+  const enhanced = new Float32Array(mask);
+  
+  // Find white regions that are completely enclosed by design elements
+  const visited = new Set<number>();
+  
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      
+      // Skip if already processed or marked for removal
+      if (visited.has(idx) || mask[idx] === 0) continue;
+      
+      const dataIdx = idx * 4;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      const brightness = (r + g + b) / 3;
+      const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
+      
+      // Look for bright pixels that could be enclosed spaces
+      if (brightness > 235 && colorVariance < 25) {
+        const region = new Set<number>();
+        const stack = [idx];
+        let minX = width, maxX = 0, minY = height, maxY = 0;
+        let touchesEdges = false;
+        
+        // Region growing to find connected white area
+        while (stack.length > 0) {
+          const currentIdx = stack.pop()!;
+          if (visited.has(currentIdx)) continue;
+          
+          visited.add(currentIdx);
+          region.add(currentIdx);
+          
+          const cx = currentIdx % width;
+          const cy = Math.floor(currentIdx / width);
+          
+          // Track bounding box
+          minX = Math.min(minX, cx);
+          maxX = Math.max(maxX, cx);
+          minY = Math.min(minY, cy);
+          maxY = Math.max(maxY, cy);
+          
+          // Check if region touches image edges
+          if (cx === 0 || cx === width - 1 || cy === 0 || cy === height - 1) {
+            touchesEdges = true;
+          }
+          
+          // Expand to similar white pixels
+          const neighbors = [
+            currentIdx - 1, currentIdx + 1,
+            currentIdx - width, currentIdx + width
+          ];
+          
+          for (const nIdx of neighbors) {
+            if (nIdx < 0 || nIdx >= mask.length || visited.has(nIdx)) continue;
+            
+            const nDataIdx = nIdx * 4;
+            const nR = data[nDataIdx];
+            const nG = data[nDataIdx + 1];
+            const nB = data[nDataIdx + 2];
+            const nBrightness = (nR + nG + nB) / 3;
+            const nColorVariance = Math.abs(nR - nG) + Math.abs(nG - nB) + Math.abs(nR - nB);
+            
+            // Add to region if it's also bright and low variance
+            if (nBrightness > 230 && nColorVariance < 30 && mask[nIdx] > 0) {
+              stack.push(nIdx);
+            }
+          }
+        }
+        
+        // Check if this region is enclosed (small and doesn't touch edges)
+        const regionWidth = maxX - minX + 1;
+        const regionHeight = maxY - minY + 1;
+        const isSmallRegion = region.size < 2000;
+        const hasReasonableAspectRatio = (
+          regionWidth / regionHeight > 0.2 && regionWidth / regionHeight < 5
+        );
+        
+        if (!touchesEdges && isSmallRegion && hasReasonableAspectRatio) {
+          // Check if surrounded by design elements (non-white pixels)
+          let surroundingDesignPixels = 0;
+          let totalSurrounding = 0;
+          
+          // Check perimeter around the region
+          for (let ry = Math.max(0, minY - 2); ry <= Math.min(height - 1, maxY + 2); ry++) {
+            for (let rx = Math.max(0, minX - 2); rx <= Math.min(width - 1, maxX + 2); rx++) {
+              const checkIdx = ry * width + rx;
+              
+              // Skip if it's part of the region itself
+              if (region.has(checkIdx)) continue;
+              
+              totalSurrounding++;
+              const checkDataIdx = checkIdx * 4;
+              const checkBrightness = (
+                data[checkDataIdx] + data[checkDataIdx + 1] + data[checkDataIdx + 2]
+              ) / 3;
+              const checkVariance = Math.abs(data[checkDataIdx] - data[checkDataIdx + 1]) + 
+                                   Math.abs(data[checkDataIdx + 1] - data[checkDataIdx + 2]) + 
+                                   Math.abs(data[checkDataIdx] - data[checkDataIdx + 2]);
+              
+              // Count as design element if it's not white/gray
+              if (checkBrightness < 220 || checkVariance > 40) {
+                surroundingDesignPixels++;
+              }
+            }
+          }
+          
+          // If mostly surrounded by design elements, remove this enclosed space
+          if (surroundingDesignPixels > totalSurrounding * 0.4) {
+            for (const rIdx of region) {
+              enhanced[rIdx] = 0;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  return enhanced;
 }
 
 // Pass 3: Aggressively clean up internal white spaces and shadows
