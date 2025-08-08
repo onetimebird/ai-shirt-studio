@@ -3,113 +3,51 @@ import * as fabric from "fabric";
 
 console.log('🔧 fabricTextControls.ts loaded');
 
-// Clean vector-based icon rendering functions
-function drawTrashIcon(ctx: CanvasRenderingContext2D, color: string) {
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 1.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  
-  // Trash can lid
-  ctx.beginPath();
-  ctx.rect(-6, -7, 12, 1.5);
-  ctx.fill();
-  
-  // Lid handles
-  ctx.beginPath();
-  ctx.rect(-3, -8, 1, 2);
-  ctx.rect(2, -8, 1, 2);
-  ctx.fill();
-  
-  // Trash can body
-  ctx.beginPath();
-  ctx.moveTo(-5, -5);
-  ctx.lineTo(-4, 6);
-  ctx.lineTo(4, 6);
-  ctx.lineTo(5, -5);
-  ctx.closePath();
-  ctx.stroke();
-  
-  // Vertical lines inside
-  ctx.beginPath();
-  ctx.moveTo(-2, -3);
-  ctx.lineTo(-1.5, 4);
-  ctx.moveTo(0, -3);
-  ctx.lineTo(0, 4);
-  ctx.moveTo(2, -3);
-  ctx.lineTo(1.5, 4);
-  ctx.stroke();
-}
+// SVG icon cache for performance
+const svgIconCache = new Map<string, HTMLImageElement>();
 
-function drawScaleIcon(ctx: CanvasRenderingContext2D, color: string) {
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  
-  // Top-left arrow
-  ctx.beginPath();
-  ctx.moveTo(-6, -6);
-  ctx.lineTo(-3, -6);
-  ctx.moveTo(-6, -6);
-  ctx.lineTo(-6, -3);
-  ctx.stroke();
-  
-  // Diagonal line from top-left to bottom-right
-  ctx.beginPath();
-  ctx.moveTo(-4, -4);
-  ctx.lineTo(4, 4);
-  ctx.stroke();
-  
-  // Bottom-right arrow
-  ctx.beginPath();
-  ctx.moveTo(6, 6);
-  ctx.lineTo(3, 6);
-  ctx.moveTo(6, 6);
-  ctx.lineTo(6, 3);
-  ctx.stroke();
-}
+// Function to load and render SVG with color overlay
+async function renderSVGIcon(ctx: CanvasRenderingContext2D, svgPath: string, color: string, size: number = 16): Promise<void> {
+  return new Promise((resolve) => {
+    const cacheKey = `${svgPath}_${color}`;
+    
+    if (svgIconCache.has(cacheKey)) {
+      const img = svgIconCache.get(cacheKey)!;
+      ctx.drawImage(img, -size/2, -size/2, size, size);
+      resolve();
+      return;
+    }
 
-function drawLayersIcon(ctx: CanvasRenderingContext2D, color: string) {
-  ctx.fillStyle = color;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1;
-  
-  // Draw three stacked diamond/hexagon shapes
-  // Top layer
-  ctx.beginPath();
-  ctx.moveTo(0, -6);
-  ctx.lineTo(4, -4);
-  ctx.lineTo(4, -2);
-  ctx.lineTo(0, -4);
-  ctx.lineTo(-4, -2);
-  ctx.lineTo(-4, -4);
-  ctx.closePath();
-  ctx.fill();
-  
-  // Middle layer
-  ctx.beginPath();
-  ctx.moveTo(0, -2);
-  ctx.lineTo(5, 0);
-  ctx.lineTo(5, 2);
-  ctx.lineTo(0, 0);
-  ctx.lineTo(-5, 2);
-  ctx.lineTo(-5, 0);
-  ctx.closePath();
-  ctx.fill();
-  
-  // Bottom layer
-  ctx.beginPath();
-  ctx.moveTo(0, 2);
-  ctx.lineTo(6, 4);
-  ctx.lineTo(6, 6);
-  ctx.lineTo(0, 4);
-  ctx.lineTo(-6, 6);
-  ctx.lineTo(-6, 4);
-  ctx.closePath();
-  ctx.fill();
+    // Load SVG and create colored version
+    fetch(svgPath)
+      .then(response => response.text())
+      .then(svgText => {
+        // Replace stroke colors in SVG to match our theme
+        const coloredSvg = svgText
+          .replace(/stroke="#808080"/g, `stroke="${color}"`)
+          .replace(/fill="#000000"/g, `fill="${color}"`);
+        
+        const blob = new Blob([coloredSvg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        
+        const img = new Image();
+        img.onload = () => {
+          svgIconCache.set(cacheKey, img);
+          ctx.drawImage(img, -size/2, -size/2, size, size);
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn('Failed to load SVG:', svgPath);
+          resolve();
+        };
+        img.src = url;
+      })
+      .catch(() => {
+        console.warn('Failed to fetch SVG:', svgPath);
+        resolve();
+      });
+  });
 }
 
 // Track hover states for controls
@@ -129,17 +67,51 @@ function addHoverListeners(canvas: any) {
       const objectBounds = activeObject.getBoundingRect();
       const zoom = canvas.getZoom();
       
-      // Define control positions based on object bounds
-      const controlPositions = {
-        'tl': { x: objectBounds.left - 24, y: objectBounds.top - 24 },
-        'tr': { x: objectBounds.left + objectBounds.width + 24, y: objectBounds.top - 24 },
-        'br': { x: objectBounds.left + objectBounds.width + 24, y: objectBounds.top + objectBounds.height + 24 },
-        'bl': { x: objectBounds.left - 24, y: objectBounds.top + objectBounds.height + 24 },
-        'mr': { x: objectBounds.left + objectBounds.width + 24, y: objectBounds.top + objectBounds.height / 2 },
-        'mb': { x: objectBounds.left + objectBounds.width / 2, y: objectBounds.top + objectBounds.height + 24 }
+      // Get object transform matrix for accurate control positioning
+      const transform = activeObject.calcTransformMatrix();
+      const objectCenter = { 
+        x: objectBounds.left + objectBounds.width / 2, 
+        y: objectBounds.top + objectBounds.height / 2 
       };
       
-      // Check if pointer is within any control area (larger click area)
+      // Define control positions relative to object bounds (more accurate)
+      const controlRadius = 20; // Half the visual size (40px controls = 20px radius) 
+      const offset = 24; // Distance from object edge
+      
+      const controlPositions = {
+        'tl': { 
+          x: objectBounds.left - offset, 
+          y: objectBounds.top - offset,
+          radius: controlRadius 
+        },
+        'tr': { 
+          x: objectBounds.left + objectBounds.width + offset, 
+          y: objectBounds.top - offset,
+          radius: controlRadius
+        },
+        'br': { 
+          x: objectBounds.left + objectBounds.width + offset, 
+          y: objectBounds.top + objectBounds.height + offset,
+          radius: controlRadius
+        },
+        'bl': { 
+          x: objectBounds.left - offset, 
+          y: objectBounds.top + objectBounds.height + offset,
+          radius: controlRadius
+        },
+        'mr': { 
+          x: objectBounds.left + objectBounds.width + offset, 
+          y: objectBounds.top + objectBounds.height / 2,
+          radius: controlRadius
+        },
+        'mb': { 
+          x: objectBounds.left + objectBounds.width / 2, 
+          y: objectBounds.top + objectBounds.height + offset,
+          radius: controlRadius
+        }
+      };
+      
+      // Check if pointer is within any control circle (entire white circle is clickable)
       for (const [controlKey, position] of Object.entries(controlPositions)) {
         if (controls[controlKey] && controls[controlKey].visible !== false) {
           const distance = Math.sqrt(
@@ -147,8 +119,8 @@ function addHoverListeners(canvas: any) {
             Math.pow(pointer.y - position.y, 2)
           );
           
-          // Increase hit area to 20px radius for easier clicking
-          if (distance <= 20) {
+          // Make entire control circle responsive (16px radius)
+          if (distance <= position.radius) {
             newHoveredControl = controlKey;
             break;
           }
@@ -188,7 +160,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 28; // Larger for easier clicking
+        const size = 32; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -212,14 +184,14 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw clean trash icon using vector function
+        // Draw your clean SVG trash icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        drawTrashIcon(ctx, iconColor);
+        renderSVGIcon(ctx, '/src/assets/icons/TrashCan.svg', iconColor, 18).catch(console.warn);
         
         ctx.restore();
       },
-      sizeX: 32,
-      sizeY: 32,
+      sizeX: 40,
+      sizeY: 40,
     });
 
     // Create rotation control - TOP RIGHT position like RushOrderTees
@@ -231,7 +203,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'crosshair',
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
-        const size = 28; // Larger for easier clicking
+        const size = 32; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -278,8 +250,8 @@ export function initializeTextControls() {
         
         ctx.restore();
       },
-      sizeX: 32,
-      sizeY: 32,
+      sizeX: 40,
+      sizeY: 40,
     });
 
     // Create uniform scale control - BOTTOM RIGHT position like RushOrderTees
@@ -291,7 +263,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'nw-resize',
       actionHandler: fabric.controlsUtils.scalingEqually,
       render: (ctx, left, top) => {
-        const size = 28; // Larger for easier clicking
+        const size = 32; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -315,14 +287,14 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw clean scale icon using vector function
+        // Draw your clean SVG scale icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        drawScaleIcon(ctx, iconColor);
+        renderSVGIcon(ctx, '/src/assets/icons/ScaleIcon.svg', iconColor, 18).catch(console.warn);
         
         ctx.restore();
       },
-      sizeX: 32,
-      sizeY: 32,
+      sizeX: 40,
+      sizeY: 40,
     });
 
     // Create horizontal stretch control - MIDDLE RIGHT position like RushOrderTees
@@ -334,7 +306,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const size = 28; // Larger for easier clicking
+        const size = 32; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -390,8 +362,8 @@ export function initializeTextControls() {
         
         ctx.restore();
       },
-      sizeX: 32,
-      sizeY: 32,
+      sizeX: 40,
+      sizeY: 40,
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
@@ -403,7 +375,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: fabric.controlsUtils.scalingY,
       render: (ctx, left, top) => {
-        const size = 28; // Larger for easier clicking
+        const size = 32; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -459,8 +431,8 @@ export function initializeTextControls() {
         
         ctx.restore();
       },
-      sizeX: 32,
-      sizeY: 32,
+      sizeX: 40,
+      sizeY: 40,
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
@@ -476,7 +448,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 28; // Larger for easier clicking
+        const size = 32; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -500,14 +472,14 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw clean layers icon using vector function
+        // Draw your clean SVG layers icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        drawLayersIcon(ctx, iconColor);
+        renderSVGIcon(ctx, '/src/assets/icons/LayersIcon.svg', iconColor, 18).catch(console.warn);
         
         ctx.restore();
       },
-      sizeX: 32,
-      sizeY: 32,
+      sizeX: 40,
+      sizeY: 40,
     });
 
     // Apply controls to fabric objects - EXACT RushOrderTees positioning
