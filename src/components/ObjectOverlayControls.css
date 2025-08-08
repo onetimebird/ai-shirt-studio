@@ -68,17 +68,17 @@
 .overlay-control-stretch-h {
   /* Horizontal stretch control positioned at middle-right */
   cursor: ew-resize;
-  border-radius: 4px; /* Rectangular instead of circular */
-  width: 24px; /* Slightly wider for horizontal stretch */
-  height: 18px; /* Shorter height for rectangular look */
+  border-radius: 0; /* Square corners, no rounding */
+  width: 20px; /* Tighter square */
+  height: 16px; /* Tighter rectangular look */
 }
 
 .overlay-control-stretch-v {
   /* Vertical stretch control positioned at middle-bottom */
   cursor: ns-resize;
-  border-radius: 4px; /* Rectangular instead of circular */
-  width: 18px; /* Narrower width for vertical stretch */
-  height: 24px; /* Taller height for rectangular look */
+  border-radius: 0; /* Square corners, no rounding */
+  width: 16px; /* Tighter square */
+  height: 20px; /* Tighter rectangular look */
 }
 
 /* Mobile responsiveness */

@@ -62,7 +62,7 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       const width = objectBounds.width * zoom;
       const height = objectBounds.height * zoom;
       
-      const offset = 16; // Distance from object edge
+      const offset = 2; // Tighter to bounding box - almost touching
       
       setControlPositions({
         delete: { 
@@ -100,24 +100,40 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
 
     updatePositions();
 
-    // Listen for object transformations and canvas changes - more events for smoother tracking
+    // Ultra-frequent updates for real-time control tracking
     const events = [
       'object:moving', 
       'object:scaling', 
       'object:rotating', 
       'object:modified', 
       'object:transform',
+      'object:transforming', // During active transforms
       'canvas:viewportTransform',
+      'before:render',
       'after:render'
     ];
     events.forEach(event => canvas.on(event, updatePositions));
 
+    // Real-time animation frame updates during interactions
+    let rafId: number;
+    const continuousUpdate = () => {
+      updatePositions();
+      rafId = requestAnimationFrame(continuousUpdate);
+    };
+    
+    // Start continuous updates when object is selected
+    continuousUpdate();
+
     // Also update on window resize/scroll
-    const handleWindowEvent = () => setTimeout(updatePositions, 10);
+    const handleWindowEvent = () => updatePositions();
     window.addEventListener('resize', handleWindowEvent);
     window.addEventListener('scroll', handleWindowEvent);
 
     return () => {
+      // Cancel animation frame loop
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
       events.forEach(event => canvas.off(event, updatePositions));
       window.removeEventListener('resize', handleWindowEvent);
       window.removeEventListener('scroll', handleWindowEvent);
@@ -385,8 +401,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-stretch-h"
           style={{
-            left: controlPositions.stretchH.x - 12, // Center wider rectangular control (24px)
-            top: controlPositions.stretchH.y - 9,   // Center shorter rectangular control (18px)
+            left: controlPositions.stretchH.x - 10, // Center tighter rectangular control (20px)
+            top: controlPositions.stretchH.y - 8,   // Center tighter rectangular control (16px)
           }}
           onMouseDown={handleStretchH}
           title="Change Width"
@@ -402,8 +418,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-stretch-v"
           style={{
-            left: controlPositions.stretchV.x - 9,   // Center narrower rectangular control (18px)
-            top: controlPositions.stretchV.y - 12,   // Center taller rectangular control (24px)
+            left: controlPositions.stretchV.x - 8,   // Center tighter rectangular control (16px)
+            top: controlPositions.stretchV.y - 10,   // Center tighter rectangular control (20px)
           }}
           onMouseDown={handleStretchV}
           title="Change Height"
