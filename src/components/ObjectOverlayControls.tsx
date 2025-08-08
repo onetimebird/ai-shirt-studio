@@ -100,41 +100,56 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
 
     updatePositions();
 
-    // Ultra-frequent updates for real-time control tracking
-    const events = [
-      'object:moving', 
-      'object:scaling', 
-      'object:rotating', 
-      'object:modified', 
-      'object:transform',
-      'object:transforming', // During active transforms
-      'canvas:viewportTransform',
-      'before:render',
-      'after:render'
-    ];
-    events.forEach(event => canvas.on(event, updatePositions));
-
-    // Real-time animation frame updates during interactions
-    let rafId: number;
-    const continuousUpdate = () => {
-      updatePositions();
-      rafId = requestAnimationFrame(continuousUpdate);
+    // High-frequency polling during interactions for real-time tracking
+    let isTransforming = false;
+    let pollInterval: NodeJS.Timeout;
+    
+    const startPolling = () => {
+      if (!isTransforming) {
+        isTransforming = true;
+        // Poll every 16ms (~60fps) during active transforms
+        pollInterval = setInterval(updatePositions, 16);
+      }
     };
     
-    // Start continuous updates when object is selected
-    continuousUpdate();
+    const stopPolling = () => {
+      if (isTransforming) {
+        isTransforming = false;
+        clearInterval(pollInterval);
+      }
+    };
 
-    // Also update on window resize/scroll
+    // Canvas events with polling during transforms
+    const events = {
+      'mouse:down': startPolling,
+      'object:moving': updatePositions,
+      'object:scaling': updatePositions,
+      'object:rotating': updatePositions,
+      'object:modified': () => {
+        updatePositions();
+        stopPolling();
+      },
+      'mouse:up': stopPolling,
+      'selection:cleared': stopPolling,
+      'canvas:viewportTransform': updatePositions
+    };
+    
+    Object.entries(events).forEach(([event, handler]) => {
+      canvas.on(event, handler);
+    });
+
+    // Window events
     const handleWindowEvent = () => updatePositions();
     window.addEventListener('resize', handleWindowEvent);
     window.addEventListener('scroll', handleWindowEvent);
 
     return () => {
-      // Cancel animation frame loop
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-      events.forEach(event => canvas.off(event, updatePositions));
+      // Stop polling and clean up
+      stopPolling();
+      
+      Object.entries(events).forEach(([event, handler]) => {
+        canvas.off(event, handler);
+      });
       window.removeEventListener('resize', handleWindowEvent);
       window.removeEventListener('scroll', handleWindowEvent);
     };
