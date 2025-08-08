@@ -49,39 +49,85 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     
-    // More aggressive white background removal
-    const threshold = 220; // Lower threshold for more aggressive removal
-    const tolerance = 30;  // Higher tolerance for edge cleanup
+    const width = canvas.width;
+    const height = canvas.height;
     
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1]; 
-      const b = data[i + 2];
+    // Smart background removal - only remove edge-connected white pixels
+    const visited = new Set<number>();
+    const toRemove = new Set<number>();
+    
+    // Function to check if a pixel is white-ish
+    const isWhiteish = (r: number, g: number, b: number) => {
+      const threshold = 230; // High threshold for white detection
+      return r > threshold && g > threshold && b > threshold;
+    };
+    
+    // Function to get pixel index from coordinates
+    const getIndex = (x: number, y: number) => (y * width + x) * 4;
+    
+    // Function to get coordinates from pixel index
+    const getCoords = (index: number) => {
+      const pixelIndex = index / 4;
+      return { x: pixelIndex % width, y: Math.floor(pixelIndex / width) };
+    };
+    
+    // Flood fill from edges to find background white pixels
+    const floodFill = (startX: number, startY: number) => {
+      const stack = [{ x: startX, y: startY }];
       
-      // Check if pixel is close to white
-      if (r > threshold && g > threshold && b > threshold) {
-        // Calculate how "white" the pixel is
-        const whiteness = (r + g + b) / 3;
+      while (stack.length > 0) {
+        const { x, y } = stack.pop()!;
         
-        // More aggressive removal for very white pixels
-        if (whiteness > 240) {
-          data[i + 3] = 0; // Completely transparent
-        } else if (whiteness > threshold) {
-          // Gradually fade out near-white pixels
-          const alpha = Math.max(0, 255 - (whiteness - threshold) * 8);
-          data[i + 3] = alpha;
+        if (x < 0 || x >= width || y < 0 || y >= height) continue;
+        
+        const index = getIndex(x, y);
+        if (visited.has(index)) continue;
+        
+        visited.add(index);
+        
+        const r = data[index];
+        const g = data[index + 1];
+        const b = data[index + 2];
+        
+        if (isWhiteish(r, g, b)) {
+          toRemove.add(index);
+          // Add neighboring pixels to check
+          stack.push({ x: x + 1, y });
+          stack.push({ x: x - 1, y });
+          stack.push({ x, y: y + 1 });
+          stack.push({ x, y: y - 1 });
         }
       }
+    };
+    
+    // Start flood fill from all edge pixels
+    // Top and bottom edges
+    for (let x = 0; x < width; x++) {
+      floodFill(x, 0); // Top edge
+      floodFill(x, height - 1); // Bottom edge
+    }
+    
+    // Left and right edges
+    for (let y = 0; y < height; y++) {
+      floodFill(0, y); // Left edge
+      floodFill(width - 1, y); // Right edge
+    }
+    
+    // Remove the background pixels
+    for (const index of toRemove) {
+      const r = data[index];
+      const g = data[index + 1];
+      const b = data[index + 2];
       
-      // Additional edge cleanup - remove gray/off-white pixels near white areas
-      if (r > threshold - tolerance && g > threshold - tolerance && b > threshold - tolerance) {
-        const grayness = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
-        if (grayness < 20) { // It's grayish
-          const avgColor = (r + g + b) / 3;
-          if (avgColor > threshold - 20) {
-            data[i + 3] = Math.max(0, data[i + 3] - 100); // Reduce alpha significantly
-          }
-        }
+      // Calculate how white the pixel is for gradual removal
+      const whiteness = (r + g + b) / 3;
+      
+      if (whiteness > 245) {
+        data[index + 3] = 0; // Completely transparent for very white pixels
+      } else if (whiteness > 235) {
+        data[index + 3] = Math.max(0, data[index + 3] * 0.3); // Mostly transparent
+      } else {
+        data[index + 3] = Math.max(0, data[index + 3] * 0.7); // Partially transparent
       }
     }
     
@@ -90,7 +136,7 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
     canvas.toBlob(
       (blob) => {
         if (blob) {
-          console.log('White background removed successfully');
+          console.log('Smart white background removed successfully');
           resolve(blob);
         } else {
           reject(new Error('Failed to create blob'));
