@@ -122,12 +122,14 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   }, [getActiveImageObject]);
 
   // Duplicate the image
-  const handleDuplicate = useCallback(() => {
+  const handleDuplicate = useCallback(async () => {
     const result = getActiveImageObject();
     if (!result) return;
 
     const { canvas, activeObject } = result;
-    activeObject.clone((cloned: any) => {
+    try {
+      // Fabric.js v6 compatible clone method
+      const cloned = await activeObject.clone();
       cloned.set({
         left: activeObject.left + 20,
         top: activeObject.top + 20,
@@ -136,7 +138,10 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       canvas.setActiveObject(cloned);
       canvas.renderAll();
       toast.success("Image duplicated");
-    });
+    } catch (error) {
+      console.error('Clone error:', error);
+      toast.error("Failed to duplicate image");
+    }
   }, [getActiveImageObject]);
 
   // Delete the image
