@@ -75,11 +75,6 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
           y: top - offset, 
           visible: true 
         },
-        scale: { 
-          x: left + width + offset, 
-          y: top + height + offset, 
-          visible: true 
-        },
         layers: { 
           x: left - offset, 
           y: top + height + offset, 
@@ -88,6 +83,11 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         stretchH: { 
           x: left + width + offset, 
           y: top + height / 2, 
+          visible: true 
+        },
+        scale: { 
+          x: left + width + offset, 
+          y: top + height + offset, 
           visible: true 
         },
         stretchV: { 
@@ -128,20 +128,76 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
   const handleRotate = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (canvas && selectedObject) {
-      // Enable rotation by temporarily showing rotate control
-      selectedObject.set({
-        hasRotatingPoint: true,
-      });
-      canvas.requestRenderAll();
+      // Start rotation interaction
+      const startRotation = (event: MouseEvent) => {
+        const pointer = canvas.getPointer(event);
+        const center = selectedObject.getCenterPoint();
+        let startAngle = Math.atan2(pointer.y - center.y, pointer.x - center.x);
+        const originalAngle = selectedObject.angle || 0;
+
+        const doRotate = (moveEvent: MouseEvent) => {
+          const movePointer = canvas.getPointer(moveEvent);
+          const currentAngle = Math.atan2(movePointer.y - center.y, movePointer.x - center.x);
+          const angleDiff = (currentAngle - startAngle) * (180 / Math.PI);
+          
+          selectedObject.set({
+            angle: originalAngle + angleDiff,
+          });
+          canvas.requestRenderAll();
+        };
+
+        const endRotate = () => {
+          document.removeEventListener('mousemove', doRotate);
+          document.removeEventListener('mouseup', endRotate);
+          canvas.fire('object:modified', { target: selectedObject });
+        };
+
+        document.addEventListener('mousemove', doRotate);
+        document.addEventListener('mouseup', endRotate);
+      };
+
+      startRotation(e.nativeEvent);
     }
   };
 
   const handleScale = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Just let Fabric.js handle the scaling with default controls
     if (canvas && selectedObject) {
-      canvas.setActiveObject(selectedObject);
-      canvas.requestRenderAll();
+      // Start uniform scaling interaction
+      const startScaling = (event: MouseEvent) => {
+        const pointer = canvas.getPointer(event);
+        const center = selectedObject.getCenterPoint();
+        const startDistance = Math.sqrt(
+          Math.pow(pointer.x - center.x, 2) + Math.pow(pointer.y - center.y, 2)
+        );
+        const originalScaleX = selectedObject.scaleX || 1;
+        const originalScaleY = selectedObject.scaleY || 1;
+
+        const doScale = (moveEvent: MouseEvent) => {
+          const movePointer = canvas.getPointer(moveEvent);
+          const currentDistance = Math.sqrt(
+            Math.pow(movePointer.x - center.x, 2) + Math.pow(movePointer.y - center.y, 2)
+          );
+          const scaleFactor = Math.max(0.1, currentDistance / startDistance);
+          
+          selectedObject.set({
+            scaleX: originalScaleX * scaleFactor,
+            scaleY: originalScaleY * scaleFactor,
+          });
+          canvas.requestRenderAll();
+        };
+
+        const endScale = () => {
+          document.removeEventListener('mousemove', doScale);
+          document.removeEventListener('mouseup', endScale);
+          canvas.fire('object:modified', { target: selectedObject });
+        };
+
+        document.addEventListener('mousemove', doScale);
+        document.addEventListener('mouseup', endScale);
+      };
+
+      startScaling(e.nativeEvent);
     }
   };
 
@@ -161,21 +217,69 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
 
   const handleStretchH = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Simple horizontal scaling
     if (canvas && selectedObject) {
-      const currentScaleX = selectedObject.scaleX || 1;
-      selectedObject.set({ scaleX: currentScaleX * 1.1 });
-      canvas.requestRenderAll();
+      // Start horizontal stretching
+      const startStretch = (event: MouseEvent) => {
+        const pointer = canvas.getPointer(event);
+        const startX = pointer.x;
+        const originalScaleX = selectedObject.scaleX || 1;
+
+        const doStretch = (moveEvent: MouseEvent) => {
+          const movePointer = canvas.getPointer(moveEvent);
+          const deltaX = (movePointer.x - startX) / 50; // Adjust sensitivity
+          const scaleFactor = Math.max(0.1, 1 + deltaX);
+          
+          selectedObject.set({
+            scaleX: originalScaleX * scaleFactor,
+          });
+          canvas.requestRenderAll();
+        };
+
+        const endStretch = () => {
+          document.removeEventListener('mousemove', doStretch);
+          document.removeEventListener('mouseup', endStretch);
+          canvas.fire('object:modified', { target: selectedObject });
+        };
+
+        document.addEventListener('mousemove', doStretch);
+        document.addEventListener('mouseup', endStretch);
+      };
+
+      startStretch(e.nativeEvent);
     }
   };
 
   const handleStretchV = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Simple vertical scaling
     if (canvas && selectedObject) {
-      const currentScaleY = selectedObject.scaleY || 1;
-      selectedObject.set({ scaleY: currentScaleY * 1.1 });
-      canvas.requestRenderAll();
+      // Start vertical stretching
+      const startStretch = (event: MouseEvent) => {
+        const pointer = canvas.getPointer(event);
+        const startY = pointer.y;
+        const originalScaleY = selectedObject.scaleY || 1;
+
+        const doStretch = (moveEvent: MouseEvent) => {
+          const movePointer = canvas.getPointer(moveEvent);
+          const deltaY = (movePointer.y - startY) / 50; // Adjust sensitivity
+          const scaleFactor = Math.max(0.1, 1 + deltaY);
+          
+          selectedObject.set({
+            scaleY: originalScaleY * scaleFactor,
+          });
+          canvas.requestRenderAll();
+        };
+
+        const endStretch = () => {
+          document.removeEventListener('mousemove', doStretch);
+          document.removeEventListener('mouseup', endStretch);
+          canvas.fire('object:modified', { target: selectedObject });
+        };
+
+        document.addEventListener('mousemove', doStretch);
+        document.addEventListener('mouseup', endStretch);
+      };
+
+      startStretch(e.nativeEvent);
     }
   };
 
