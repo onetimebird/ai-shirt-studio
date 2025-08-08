@@ -151,46 +151,46 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     toast.success("Image deleted");
   }, [getActiveImageObject, onClose]);
 
-  // Remove background using AI
+  // Remove background using Replicate AI
   const handleRemoveBackground = useCallback(async () => {
     setIsRemovingBackground(true);
     try {
-      // Import background removal function
-      const { removeBackground } = await import('@/lib/backgroundRemoval');
+      // Import supabase client
+      const { supabase } = await import('@/integrations/supabase/client');
       
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      
-      img.onload = async () => {
-        try {
-          const backgroundRemovedBlob = await removeBackground(img);
-          const backgroundRemovedDataUrl = URL.createObjectURL(backgroundRemovedBlob);
-          
-          const result = getActiveImageObject();
-          if (result) {
-            const { canvas, activeObject } = result;
-            
-            // Update the image source
-            activeObject.setSrc(backgroundRemovedDataUrl, () => {
-              canvas.renderAll();
-              setBackgroundRemoved(true);
-              toast.success("Background removed successfully!");
-            });
-          }
-        } catch (error) {
-          console.error('Background removal error:', error);
-          toast.error("Failed to remove background");
+      // Call Replicate background removal
+      const { data, error } = await supabase.functions.invoke('remove-background-replicate', {
+        body: { 
+          imageUrl: imageUrl,
+          model: 'u2net' // Best model for t-shirt graphics
         }
-      };
+      });
+
+      if (error) {
+        console.error('Replicate removal error:', error);
+        throw new Error(error.message || 'Background removal failed');
+      }
+
+      if (!data?.success || !data?.output_url) {
+        throw new Error('No output from background removal');
+      }
+
+      const backgroundRemovedDataUrl = data.output_url;
       
-      img.onerror = () => {
-        toast.error("Failed to load image");
-      };
-      
-      img.src = imageUrl;
+      const result = getActiveImageObject();
+      if (result) {
+        const { canvas, activeObject } = result;
+        
+        // Update the image source
+        activeObject.setSrc(backgroundRemovedDataUrl, () => {
+          canvas.renderAll();
+          setBackgroundRemoved(true);
+          toast.success(`Background removed in ${data.processing_time}s`);
+        });
+      }
     } catch (error) {
-      console.error('Import error:', error);
-      toast.error("Background removal feature not available");
+      console.error('Background removal error:', error);
+      toast.error("Failed to remove background");
     } finally {
       setIsRemovingBackground(false);
     }

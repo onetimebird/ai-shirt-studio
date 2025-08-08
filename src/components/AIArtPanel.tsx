@@ -323,18 +323,6 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               </button>
             </div>
             
-            {/* Background Removal Info */}
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div>
-                <p className="text-sm font-medium">Background Removal</p>
-                <p className="text-xs text-muted-foreground">
-                  Professional AI powered by Replicate
-                </p>
-              </div>
-              <div className="text-xs bg-green-500/20 text-green-600 px-2 py-1 rounded">
-                Active
-              </div>
-            </div>
 
             <Button 
               onClick={handleGenerate} 

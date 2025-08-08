@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { removeBackground, loadImage } from "@/lib/backgroundRemoval";
+import { supabase } from "@/integrations/supabase/client";
 import { openAIService } from "@/services/openai";
 import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
@@ -1373,9 +1373,34 @@ and return a high-quality transparent PNG suitable for print.
                           onClick={async () => {
                             setIsRemovingBackground(true);
                             try {
-                              const imageElement = await loadImage(uploadedFile);
-                              const processedBlob = await removeBackground(imageElement);
-                              const processedFile = new File([processedBlob], `${uploadedFile.name.split('.')[0]}_no_bg.png`, { type: 'image/png' });
+                              // Convert file to data URL for Replicate
+                              const reader = new FileReader();
+                              const imageDataUrl = await new Promise<string>((resolve) => {
+                                reader.onloadend = () => resolve(reader.result as string);
+                                reader.readAsDataURL(uploadedFile);
+                              });
+                              
+                              // Call Replicate background removal
+                              const { data, error } = await supabase.functions.invoke('remove-background-replicate', {
+                                body: { 
+                                  imageUrl: imageDataUrl,
+                                  model: 'u2net' // Best model for t-shirt graphics
+                                }
+                              });
+
+                              if (error) {
+                                console.error('Replicate removal error:', error);
+                                throw new Error(error.message || 'Background removal failed');
+                              }
+
+                              if (!data?.success || !data?.output_url) {
+                                throw new Error('No output from background removal');
+                              }
+
+                              // Fetch the processed image
+                              const response = await fetch(data.output_url);
+                              const blob = await response.blob();
+                              const processedFile = new File([blob], `${uploadedFile.name.split('.')[0]}_no_bg.png`, { type: 'image/png' });
                               
                               // Find and remove the original uploaded image if it exists
                               if ((window as any).designCanvas?.canvas && uploadedImageObject) {
@@ -1396,7 +1421,7 @@ and return a high-quality transparent PNG suitable for print.
                               
                               // Add the processed image
                               onImageUpload(processedFile);
-                              toast.success("Background removed successfully!");
+                              toast.success(`Background removed in ${data.processing_time}s`);
                               setUploadedImageObject(null);
                             } catch (error) {
                               toast.error("Failed to remove background");
