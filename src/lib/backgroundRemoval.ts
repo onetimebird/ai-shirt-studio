@@ -226,13 +226,15 @@ function expandMaskToWhiteAreas(mask: Float32Array, data: Uint8ClampedArray, wid
   return expanded;
 }
 
-// Pass 3: Clean up internal white spaces
+// Pass 3: Aggressively clean up internal white spaces and shadows
 function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width: number, height: number): Float32Array {
   const cleaned = new Float32Array(mask);
   
-  // Find white pixels that are surrounded by non-white content
-  for (let y = 2; y < height - 2; y++) {
-    for (let x = 2; x < width - 2; x++) {
+  // Multiple passes for thorough cleanup
+  
+  // First pass: Remove any white/light gray that's not part of the main design
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
       const idx = y * width + x;
       
       // Skip if already marked for removal
@@ -243,29 +245,138 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
       const g = data[dataIdx + 1];
       const b = data[dataIdx + 2];
       
-      // Check if this is white
+      // Check for white, near-white, and light gray (shadows)
       const brightness = (r + g + b) / 3;
-      if (brightness > 245) {
-        // Check in a larger radius if we're enclosed by removed areas
-        let removedCount = 0;
-        let totalChecked = 0;
+      const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
+      
+      // Remove if it's bright and has low color variance (white/gray)
+      // This catches shadows (gray) and white spaces
+      if (brightness > 220 && colorVariance < 40) {
+        // Look around to see if this pixel is isolated or part of background
+        let nonWhiteNeighbors = 0;
+        let whiteNeighbors = 0;
         
+        // Check in 5x5 area for context
         for (let dy = -2; dy <= 2; dy++) {
           for (let dx = -2; dx <= 2; dx++) {
-            if (dx === 0 && dy === 0) continue;
+            if (Math.abs(dx) + Math.abs(dy) === 0) continue;
             
-            const checkIdx = (y + dy) * width + (x + dx);
-            if (checkIdx >= 0 && checkIdx < mask.length) {
-              totalChecked++;
-              if (mask[checkIdx] === 0) {
-                removedCount++;
+            const nIdx = (y + dy) * width + (x + dx);
+            if (nIdx >= 0 && nIdx < mask.length) {
+              const nDataIdx = nIdx * 4;
+              const nBrightness = (data[nDataIdx] + data[nDataIdx + 1] + data[nDataIdx + 2]) / 3;
+              
+              if (nBrightness > 220) {
+                whiteNeighbors++;
+              } else if (nBrightness < 200) {
+                nonWhiteNeighbors++;
               }
             }
           }
         }
         
-        // If mostly surrounded by removed areas, this is likely internal white space
-        if (removedCount > totalChecked * 0.6) {
+        // If surrounded by non-white or mix of white/non-white, it's likely trapped background
+        if (nonWhiteNeighbors > 0 || mask[idx - width] === 0 || mask[idx + width] === 0) {
+          cleaned[idx] = 0;
+        }
+      }
+    }
+  }
+  
+  // Second pass: Region growing to catch connected white/gray areas
+  const visited = new Set<number>();
+  
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      
+      if (cleaned[idx] === 0 || visited.has(idx)) continue;
+      
+      const dataIdx = idx * 4;
+      const brightness = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
+      
+      // Start region growing from bright pixels
+      if (brightness > 230) {
+        const region = new Set<number>();
+        const stack = [idx];
+        let hasColorfulNeighbor = false;
+        
+        while (stack.length > 0) {
+          const currentIdx = stack.pop()!;
+          if (visited.has(currentIdx)) continue;
+          
+          visited.add(currentIdx);
+          region.add(currentIdx);
+          
+          const cx = currentIdx % width;
+          const cy = Math.floor(currentIdx / width);
+          
+          // Check 4-connected neighbors
+          const neighbors = [
+            currentIdx - 1, currentIdx + 1,
+            currentIdx - width, currentIdx + width
+          ];
+          
+          for (const nIdx of neighbors) {
+            if (nIdx < 0 || nIdx >= mask.length) continue;
+            
+            const nDataIdx = nIdx * 4;
+            const nR = data[nDataIdx];
+            const nG = data[nDataIdx + 1];
+            const nB = data[nDataIdx + 2];
+            const nBrightness = (nR + nG + nB) / 3;
+            const nColorVariance = Math.abs(nR - nG) + Math.abs(nG - nB) + Math.abs(nR - nB);
+            
+            // Check if neighbor is colorful (part of design)
+            if (nColorVariance > 50 || nBrightness < 180) {
+              hasColorfulNeighbor = true;
+            }
+            
+            // Add to region if it's also white/gray
+            if (nBrightness > 220 && nColorVariance < 45 && !visited.has(nIdx)) {
+              stack.push(nIdx);
+            }
+          }
+        }
+        
+        // If this white region touches colorful areas, it's likely trapped background
+        if (hasColorfulNeighbor && region.size < 10000) { // Don't remove huge regions
+          for (const rIdx of region) {
+            cleaned[rIdx] = 0;
+          }
+        }
+      }
+    }
+  }
+  
+  // Third pass: Clean up any remaining isolated white pixels
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      
+      if (cleaned[idx] === 0) continue;
+      
+      const dataIdx = idx * 4;
+      const brightness = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
+      
+      if (brightness > 240) {
+        // Count removed neighbors
+        let removedNeighbors = 0;
+        const neighbors = [
+          idx - 1, idx + 1,
+          idx - width, idx + width,
+          idx - width - 1, idx - width + 1,
+          idx + width - 1, idx + width + 1
+        ];
+        
+        for (const nIdx of neighbors) {
+          if (nIdx >= 0 && nIdx < cleaned.length && cleaned[nIdx] === 0) {
+            removedNeighbors++;
+          }
+        }
+        
+        // If mostly surrounded by removed pixels, remove this one too
+        if (removedNeighbors >= 4) {
           cleaned[idx] = 0;
         }
       }
@@ -275,50 +386,105 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
   return cleaned;
 }
 
-// Pass 4: Smooth edges for professional look
+// Pass 4: Professional edge smoothing with sub-pixel precision
 function smoothMaskEdges(mask: Float32Array, width: number, height: number): Float32Array {
   const smoothed = new Float32Array(mask);
   
-  // Apply light Gaussian blur only at edges
+  // First, detect all edge pixels
+  const edgePixels = new Set<number>();
+  
   for (let y = 1; y < height - 1; y++) {
     for (let x = 1; x < width - 1; x++) {
       const idx = y * width + x;
       
-      // Check if at edge (transition between 0 and 1)
-      let isEdge = false;
+      // Check 8-connected neighbors for edge detection
       const neighbors = [
         mask[idx - 1], mask[idx + 1],
-        mask[idx - width], mask[idx + width]
+        mask[idx - width], mask[idx + width],
+        mask[idx - width - 1], mask[idx - width + 1],
+        mask[idx + width - 1], mask[idx + width + 1]
       ];
       
+      let hasTransition = false;
       for (const n of neighbors) {
-        if (n !== mask[idx]) {
-          isEdge = true;
+        if (Math.abs(n - mask[idx]) > 0.1) {
+          hasTransition = true;
           break;
         }
       }
       
-      if (isEdge) {
-        // Apply 3x3 averaging for smooth edge
-        let sum = 0;
-        let count = 0;
-        
-        for (let dy = -1; dy <= 1; dy++) {
-          for (let dx = -1; dx <= 1; dx++) {
-            const nIdx = (y + dy) * width + (x + dx);
-            if (nIdx >= 0 && nIdx < mask.length) {
-              sum += mask[nIdx];
-              count++;
-            }
-          }
-        }
-        
-        smoothed[idx] = sum / count;
+      if (hasTransition) {
+        edgePixels.add(idx);
       }
     }
   }
   
-  return smoothed;
+  // Apply sophisticated smoothing only to edge pixels
+  for (const idx of edgePixels) {
+    const x = idx % width;
+    const y = Math.floor(idx / width);
+    
+    // Use a weighted kernel for better edge quality
+    const weights = [
+      0.05, 0.1, 0.05,  // Top row
+      0.1,  0.4, 0.1,   // Middle row (center has highest weight)
+      0.05, 0.1, 0.05   // Bottom row
+    ];
+    
+    let weightedSum = 0;
+    let totalWeight = 0;
+    
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const nx = x + dx;
+        const ny = y + dy;
+        
+        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+          const nIdx = ny * width + nx;
+          const weight = weights[(dy + 1) * 3 + (dx + 1)];
+          weightedSum += mask[nIdx] * weight;
+          totalWeight += weight;
+        }
+      }
+    }
+    
+    if (totalWeight > 0) {
+      smoothed[idx] = weightedSum / totalWeight;
+    }
+  }
+  
+  // Second pass: Apply subtle feathering for ultra-smooth edges
+  const feathered = new Float32Array(smoothed);
+  
+  for (const idx of edgePixels) {
+    const x = idx % width;
+    const y = Math.floor(idx / width);
+    
+    // Sample in a small radius for feathering
+    let sum = 0;
+    let count = 0;
+    
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const nx = x + dx;
+        const ny = y + dy;
+        
+        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+          const nIdx = ny * width + nx;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const weight = distance === 0 ? 1 : 1 / distance;
+          sum += smoothed[nIdx] * weight;
+          count += weight;
+        }
+      }
+    }
+    
+    if (count > 0) {
+      feathered[idx] = sum / count;
+    }
+  }
+  
+  return feathered;
 }
 
 // Apply final mask to image
