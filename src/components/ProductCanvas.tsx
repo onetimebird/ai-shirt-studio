@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas as FabricCanvas, FabricImage } from "fabric";
+import { Canvas as FabricCanvas, FabricImage, FabricObject } from "fabric";
 import { getColorByName } from "@/data/gildan2000Colors";
 import { Button } from "@/components/ui/button";
 import { QuantityModal } from "@/components/QuantityModal";
 import { EmbroideryBoundingBox } from "@/components/EmbroideryBoundingBox";
 import { ScreenPrintBoundingBox } from "@/components/ScreenPrintBoundingBox";
+import { ObjectOverlayControls } from "@/components/ObjectOverlayControls";
 import { ArrowRight } from "lucide-react";
 import "./ProductCanvas.css";
 
@@ -19,6 +20,7 @@ interface ProductCanvasProps {
 export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onCanvasReady, decorationMethod }: ProductCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
+  const [selectedObject, setSelectedObject] = useState<FabricObject | null>(null);
   const [isQuantityModalOpen, setIsQuantityModalOpen] = useState(false);
   const [showCenterGuide, setShowCenterGuide] = useState(false);
   const [tshirtDimensions, setTshirtDimensions] = useState({ top: 0, scale: 1, height: 0 });
@@ -53,12 +55,48 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       setShowCenterGuide(false);
     });
     
-    canvas.on('selection:cleared', () => {
-      setShowCenterGuide(false);
-    });
-    
     canvas.on('mouse:up', () => {
       setShowCenterGuide(false);
+    });
+
+    // Track selected object for HTML overlay controls
+    canvas.on('selection:created', (e) => {
+      if (e.selected && e.selected.length === 1) {
+        const obj = e.selected[0];
+        // Hide default Fabric.js controls for cleaner look
+        obj.set({
+          borderColor: 'transparent',
+          cornerColor: 'transparent', 
+          cornerSize: 0,
+          transparentCorners: true,
+          controls: {},
+        });
+        setSelectedObject(obj);
+        canvas.requestRenderAll();
+      }
+    });
+
+    canvas.on('selection:updated', (e) => {
+      if (e.selected && e.selected.length === 1) {
+        const obj = e.selected[0];
+        // Hide default Fabric.js controls
+        obj.set({
+          borderColor: 'transparent',
+          cornerColor: 'transparent',
+          cornerSize: 0,
+          transparentCorners: true,
+          controls: {},
+        });
+        setSelectedObject(obj);
+        canvas.requestRenderAll();
+      } else {
+        setSelectedObject(null);
+      }
+    });
+
+    canvas.on('selection:cleared', () => {
+      setShowCenterGuide(false);
+      setSelectedObject(null);
     });
     
     console.log('[ProductCanvas] Canvas created, calling onCanvasReady');
@@ -192,6 +230,12 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
             )}
           </>
         )}
+
+        {/* HTML Overlay Controls - positioned over canvas */}
+        <ObjectOverlayControls 
+          canvas={fabricCanvas}
+          selectedObject={selectedObject}
+        />
       </div>
       
       {/* Quantity Modal */}

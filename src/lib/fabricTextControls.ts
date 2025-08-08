@@ -22,10 +22,14 @@ async function renderSVGIcon(ctx: CanvasRenderingContext2D, svgPath: string, col
     fetch(svgPath)
       .then(response => response.text())
       .then(svgText => {
-        // Replace stroke colors in SVG to match our theme
+        // Replace both stroke and fill colors to match our theme
+        // Handle various black color formats and gray strokes from your SVGs
         const coloredSvg = svgText
           .replace(/stroke="#808080"/g, `stroke="${color}"`)
-          .replace(/fill="#000000"/g, `fill="${color}"`);
+          .replace(/stroke="#838484"/g, `stroke="${color}"`)  // For RotateIcon.svg
+          .replace(/fill="#000000"/g, `fill="${color}"`)
+          .replace(/fill="#060808"/g, `fill="${color}"`)      // For RotateIcon.svg dark fill
+          .replace(/fill="#ffffff"/g, 'fill="none"');          // Remove white backgrounds
         
         const blob = new Blob([coloredSvg], { type: 'image/svg+xml' });
         const url = URL.createObjectURL(blob);
@@ -233,26 +237,9 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw clean rotate icon (circular arrows)
+        // Draw your clean SVG rotate icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        ctx.strokeStyle = iconColor;
-        ctx.fillStyle = iconColor;
-        ctx.lineWidth = 1.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        // Main circular arrow
-        ctx.beginPath();
-        ctx.arc(0, 0, 4, 0, Math.PI * 1.5, false);
-        ctx.stroke();
-        
-        // Arrow head
-        ctx.beginPath();
-        ctx.moveTo(-4, -1);
-        ctx.lineTo(-2, -3);
-        ctx.lineTo(-2, 1);
-        ctx.closePath();
-        ctx.fill();
+        renderSVGIcon(ctx, '/src/assets/icons/RotateIcon.svg', iconColor, 16).catch(console.warn);
         
         ctx.restore();
       },
@@ -336,35 +323,9 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw clean horizontal stretch arrows
+        // Draw your clean SVG horizontal stretch icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        ctx.strokeStyle = iconColor;
-        ctx.fillStyle = iconColor;
-        ctx.lineWidth = 1.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        // Horizontal line
-        ctx.beginPath();
-        ctx.moveTo(-3, 0);
-        ctx.lineTo(3, 0);
-        ctx.stroke();
-        
-        // Left arrow head
-        ctx.beginPath();
-        ctx.moveTo(-5, 0);
-        ctx.lineTo(-2, -2);
-        ctx.lineTo(-2, 2);
-        ctx.closePath();
-        ctx.fill();
-        
-        // Right arrow head
-        ctx.beginPath();
-        ctx.moveTo(5, 0);
-        ctx.lineTo(2, -2);
-        ctx.lineTo(2, 2);
-        ctx.closePath();
-        ctx.fill();
+        renderSVGIcon(ctx, '/src/assets/icons/StretchHorizontal.svg', iconColor, 16).catch(console.warn);
         
         ctx.restore();
       },
@@ -405,35 +366,9 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw clean vertical stretch arrows
+        // Draw your clean SVG vertical stretch icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        ctx.strokeStyle = iconColor;
-        ctx.fillStyle = iconColor;
-        ctx.lineWidth = 1.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        // Vertical line
-        ctx.beginPath();
-        ctx.moveTo(0, -3);
-        ctx.lineTo(0, 3);
-        ctx.stroke();
-        
-        // Top arrow head
-        ctx.beginPath();
-        ctx.moveTo(0, -5);
-        ctx.lineTo(-2, -2);
-        ctx.lineTo(2, -2);
-        ctx.closePath();
-        ctx.fill();
-        
-        // Bottom arrow head
-        ctx.beginPath();
-        ctx.moveTo(0, 5);
-        ctx.lineTo(-2, 2);
-        ctx.lineTo(2, 2);
-        ctx.closePath();
-        ctx.fill();
+        renderSVGIcon(ctx, '/src/assets/icons/StrechVertical.svg', iconColor, 16).catch(console.warn);
         
         ctx.restore();
       },

@@ -1,0 +1,116 @@
+/* HTML Overlay Controls - RushOrderTees Style */
+
+.object-overlay-controls {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Allow clicks to pass through */
+  z-index: 1000;
+}
+
+.overlay-control {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border: 2px solid #8138ff;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto; /* Re-enable clicks for controls */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.overlay-control:hover {
+  background: #8138ff;
+  border-color: white;
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(129, 56, 255, 0.25);
+}
+
+.overlay-control img {
+  width: 14px;
+  height: 14px;
+  transition: filter 0.15s ease;
+  /* Default purple filter for the icons */
+  filter: brightness(0) saturate(100%) invert(36%) sepia(75%) saturate(4657%) hue-rotate(262deg) brightness(96%) contrast(96%);
+}
+
+.overlay-control:hover img {
+  /* White filter on hover */
+  filter: brightness(0) saturate(100%) invert(100%);
+}
+
+/* Specific control styles */
+.overlay-control-delete {
+  /* Delete control positioned at top-left */
+}
+
+.overlay-control-rotate {
+  /* Rotate control positioned at top-right */
+  cursor: crosshair;
+}
+
+.overlay-control-scale {
+  /* Scale control positioned at bottom-right */
+  cursor: nw-resize;
+}
+
+.overlay-control-layers {
+  /* Layer control positioned at bottom-left */
+}
+
+.overlay-control-stretch-h {
+  /* Horizontal stretch control positioned at middle-right */
+  cursor: ew-resize;
+}
+
+.overlay-control-stretch-v {
+  /* Vertical stretch control positioned at middle-bottom */
+  cursor: ns-resize;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .overlay-control {
+    width: 28px;
+    height: 28px;
+    border-width: 2px;
+  }
+  
+  .overlay-control svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Animation for control appearance */
+.overlay-control {
+  animation: controlFadeIn 0.2s ease-out;
+}
+
+@keyframes controlFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Prevent text selection on controls */
+.overlay-control * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
