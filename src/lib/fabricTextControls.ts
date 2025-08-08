@@ -211,7 +211,18 @@ export function initializeTextControls() {
       offsetX: 8,
       offsetY: -8,
       cursorStyleHandler: () => 'crosshair',
-      actionHandler: controlsUtils.rotationWithSnapping,
+      actionHandler: (eventData: MouseEvent, transform: Transform, x: number, y: number) => {
+        // Ensure the object rotates from its center
+        const target = transform.target;
+        target.set({
+          originX: 'center',
+          originY: 'center',
+          centeredRotation: true
+        });
+        
+        // Use the standard rotation handler
+        return controlsUtils.rotationWithSnapping(eventData, transform, x, y);
+      },
       render: (ctx, left, top) => {
         const size = 20; // Match RushOrderTees size
         ctx.save();
@@ -463,10 +474,16 @@ export function applyCustomControlsToObject(obj: any) {
       (canvas as any).hasHoverListeners = true;
     }
     
-    // Ensure rotation happens from center
-    obj.set('originX', 'center');
-    obj.set('originY', 'center');
-    obj.set('centeredRotation', true);
+    // Ensure rotation happens from center - force these settings
+    obj.set({
+      originX: 'center',
+      originY: 'center',
+      centeredRotation: true,
+      centeredScaling: true
+    });
+    
+    // Force update the object's transform origin
+    obj.setCoords();
     
     // Apply dotted border styling
     obj.borderColor = '#8138ff'; // Purple color to match icons
