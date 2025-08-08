@@ -103,22 +103,16 @@ function createSmartMask(data: Uint8ClampedArray, width: number, height: number)
     return { l, a: a, b: bLab };
   };
   
-  // Advanced background detection using LAB color space
+  // Ultra-conservative background detection - only pure white
   const isBackground = (r: number, g: number, b: number, alpha: number) => {
-    const lab = rgbToLab(r, g, b);
-    const whiteLabDistance = Math.sqrt(
-      Math.pow(lab.l - 95, 2) + Math.pow(lab.a - 0, 2) + Math.pow(lab.b - 0, 2)
-    );
-    
-    // Multi-criteria background detection
-    const brightness = lab.l;
-    const colorfulness = Math.sqrt(lab.a * lab.a + lab.b * lab.b);
-    const isHighBrightness = brightness > 85;
-    const isLowColor = colorfulness < 15;
+    // Only target very pure white pixels - ignore grays and light colors completely
+    const isVeryWhite = r > 250 && g > 250 && b > 250;
+    const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
+    const isLowVariance = colorVariance < 10; // Very strict
     const isFullyOpaque = alpha > 250;
-    const isWhiteDistance = whiteLabDistance < 25;
     
-    return (isHighBrightness && isLowColor && isFullyOpaque) || isWhiteDistance;
+    // ONLY remove if it's almost pure white with minimal color variation
+    return isVeryWhite && isLowVariance && isFullyOpaque;
   };
   
   // Find all edge pixels that are white
@@ -224,11 +218,11 @@ function expandMaskToWhiteAreas(mask: Float32Array, data: Uint8ClampedArray, wid
       const g = data[dataIdx + 1];
       const b = data[dataIdx + 2];
       
-      // Check if this is a white/near-white pixel
-      const brightness = (r + g + b) / 3;
+      // Check if this is pure white (not gray or light colors)
+      const isPureWhite = r > 248 && g > 248 && b > 248;
       const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
       
-      if (brightness > 235 && colorVariance < 20) {
+      if (isPureWhite && colorVariance < 8) {
         // Check if adjacent to removed area (likely a halo)
         const neighbors = [
           idx - 1, idx + 1,
@@ -276,8 +270,8 @@ function detectEnclosedSpaces(mask: Float32Array, data: Uint8ClampedArray, width
       const brightness = (r + g + b) / 3;
       const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
       
-      // Look for very bright pixels that are definitely background spaces
-      if (brightness > 245 && colorVariance < 15) {
+      // Look for pure white pixels only (not gray, beige, or light colors)
+      if (r > 250 && g > 250 && b > 250 && colorVariance < 8) {
         const region = new Set<number>();
         const stack = [idx];
         let minX = width, maxX = 0, minY = height, maxY = 0;
@@ -405,8 +399,8 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
       const brightness = (r + g + b) / 3;
       const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
       
-      // Only target pure white/very light gray that's clearly background
-      if (brightness > 230 && colorVariance < 25) {
+      // Only target pure white (not gray, sand, beige, or any design colors)
+      if (r > 248 && g > 248 && b > 248 && colorVariance < 10) {
         // Check if this white area is surrounded by design elements (enclosed)
         let designElementsNearby = 0;
         let backgroundRemoved = 0;
@@ -467,10 +461,13 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
       if (cleaned[idx] === 0 || visited.has(idx)) continue;
       
       const dataIdx = idx * 4;
-      const brightness = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      const brightness = (r + g + b) / 3;
       
-      // Start region growing from very bright pixels only
-      if (brightness > 240) {
+      // Start region growing from pure white pixels only
+      if (r > 250 && g > 250 && b > 250 && brightness > 250) {
         const region = new Set<number>();
         const stack = [idx];
         let hasBackgroundConnection = false;
@@ -517,8 +514,8 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
               touchesDesignBorder = true;
             }
             
-            // Only add very similar white pixels to region
-            if (nBrightness > 235 && nColorVariance < 30 && !visited.has(nIdx)) {
+            // Only add pure white pixels to region
+            if (nR > 248 && nG > 248 && nB > 248 && nColorVariance < 10 && !visited.has(nIdx)) {
               stack.push(nIdx);
             }
           }
@@ -547,9 +544,12 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
       if (cleaned[idx] === 0) continue;
       
       const dataIdx = idx * 4;
-      const brightness = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
       
-      if (brightness > 240) {
+      // Only target pure white pixels
+      if (r > 250 && g > 250 && b > 250) {
         // Count removed neighbors
         let removedNeighbors = 0;
         const neighbors = [
