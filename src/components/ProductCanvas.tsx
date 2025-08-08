@@ -63,9 +63,10 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     canvas.on('selection:created', (e) => {
       if (e.selected && e.selected.length === 1) {
         const obj = e.selected[0];
-        // Hide default Fabric.js controls for cleaner look
+        // Keep border but hide corner controls - like RushOrderTees
         obj.set({
-          borderColor: 'transparent',
+          borderColor: '#8138ff',
+          borderDashArray: [3, 3],
           cornerColor: 'transparent', 
           cornerSize: 0,
           transparentCorners: true,
@@ -79,9 +80,10 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     canvas.on('selection:updated', (e) => {
       if (e.selected && e.selected.length === 1) {
         const obj = e.selected[0];
-        // Hide default Fabric.js controls
+        // Keep border but hide corner controls
         obj.set({
-          borderColor: 'transparent',
+          borderColor: '#8138ff',
+          borderDashArray: [3, 3],
           cornerColor: 'transparent',
           cornerSize: 0,
           transparentCorners: true,

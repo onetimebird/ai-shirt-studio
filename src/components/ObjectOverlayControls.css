@@ -35,17 +35,15 @@
   box-shadow: 0 4px 12px rgba(129, 56, 255, 0.25);
 }
 
-.overlay-control img {
+.overlay-control svg {
   width: 14px;
   height: 14px;
-  transition: filter 0.15s ease;
-  /* Default purple filter for the icons */
-  filter: brightness(0) saturate(100%) invert(36%) sepia(75%) saturate(4657%) hue-rotate(262deg) brightness(96%) contrast(96%);
+  color: #8138ff;
+  transition: color 0.15s ease;
 }
 
-.overlay-control:hover img {
-  /* White filter on hover */
-  filter: brightness(0) saturate(100%) invert(100%);
+.overlay-control:hover svg {
+  color: white;
 }
 
 /* Specific control styles */
