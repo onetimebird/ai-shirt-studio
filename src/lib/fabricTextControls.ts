@@ -3,6 +3,115 @@ import * as fabric from "fabric";
 
 console.log('🔧 fabricTextControls.ts loaded');
 
+// Clean vector-based icon rendering functions
+function drawTrashIcon(ctx: CanvasRenderingContext2D, color: string) {
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  
+  // Trash can lid
+  ctx.beginPath();
+  ctx.rect(-6, -7, 12, 1.5);
+  ctx.fill();
+  
+  // Lid handles
+  ctx.beginPath();
+  ctx.rect(-3, -8, 1, 2);
+  ctx.rect(2, -8, 1, 2);
+  ctx.fill();
+  
+  // Trash can body
+  ctx.beginPath();
+  ctx.moveTo(-5, -5);
+  ctx.lineTo(-4, 6);
+  ctx.lineTo(4, 6);
+  ctx.lineTo(5, -5);
+  ctx.closePath();
+  ctx.stroke();
+  
+  // Vertical lines inside
+  ctx.beginPath();
+  ctx.moveTo(-2, -3);
+  ctx.lineTo(-1.5, 4);
+  ctx.moveTo(0, -3);
+  ctx.lineTo(0, 4);
+  ctx.moveTo(2, -3);
+  ctx.lineTo(1.5, 4);
+  ctx.stroke();
+}
+
+function drawScaleIcon(ctx: CanvasRenderingContext2D, color: string) {
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  
+  // Top-left arrow
+  ctx.beginPath();
+  ctx.moveTo(-6, -6);
+  ctx.lineTo(-3, -6);
+  ctx.moveTo(-6, -6);
+  ctx.lineTo(-6, -3);
+  ctx.stroke();
+  
+  // Diagonal line from top-left to bottom-right
+  ctx.beginPath();
+  ctx.moveTo(-4, -4);
+  ctx.lineTo(4, 4);
+  ctx.stroke();
+  
+  // Bottom-right arrow
+  ctx.beginPath();
+  ctx.moveTo(6, 6);
+  ctx.lineTo(3, 6);
+  ctx.moveTo(6, 6);
+  ctx.lineTo(6, 3);
+  ctx.stroke();
+}
+
+function drawLayersIcon(ctx: CanvasRenderingContext2D, color: string) {
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  
+  // Draw three stacked diamond/hexagon shapes
+  // Top layer
+  ctx.beginPath();
+  ctx.moveTo(0, -6);
+  ctx.lineTo(4, -4);
+  ctx.lineTo(4, -2);
+  ctx.lineTo(0, -4);
+  ctx.lineTo(-4, -2);
+  ctx.lineTo(-4, -4);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Middle layer
+  ctx.beginPath();
+  ctx.moveTo(0, -2);
+  ctx.lineTo(5, 0);
+  ctx.lineTo(5, 2);
+  ctx.lineTo(0, 0);
+  ctx.lineTo(-5, 2);
+  ctx.lineTo(-5, 0);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Bottom layer
+  ctx.beginPath();
+  ctx.moveTo(0, 2);
+  ctx.lineTo(6, 4);
+  ctx.lineTo(6, 6);
+  ctx.lineTo(0, 4);
+  ctx.lineTo(-6, 6);
+  ctx.lineTo(-6, 4);
+  ctx.closePath();
+  ctx.fill();
+}
+
 // Track hover states for controls
 let hoveredControl: string | null = null;
 
@@ -12,19 +121,42 @@ function addHoverListeners(canvas: any) {
     const pointer = canvas.getPointer(options.e);
     const activeObject = canvas.getActiveObject();
     
-    if (activeObject) {
-      // Check which control is being hovered - using correct v6 method
-      let control = null;
-      try {
-        // Use the correct method for Fabric.js v6
-        control = activeObject.findControl(pointer) || null;
-      } catch (e) {
-        // Fallback if method doesn't exist
-        control = null;
+    if (activeObject && activeObject.controls) {
+      let newHoveredControl = null;
+      
+      // Check each control position manually for more reliable hover detection
+      const controls = activeObject.controls;
+      const objectBounds = activeObject.getBoundingRect();
+      const zoom = canvas.getZoom();
+      
+      // Define control positions based on object bounds
+      const controlPositions = {
+        'tl': { x: objectBounds.left - 24, y: objectBounds.top - 24 },
+        'tr': { x: objectBounds.left + objectBounds.width + 24, y: objectBounds.top - 24 },
+        'br': { x: objectBounds.left + objectBounds.width + 24, y: objectBounds.top + objectBounds.height + 24 },
+        'bl': { x: objectBounds.left - 24, y: objectBounds.top + objectBounds.height + 24 },
+        'mr': { x: objectBounds.left + objectBounds.width + 24, y: objectBounds.top + objectBounds.height / 2 },
+        'mb': { x: objectBounds.left + objectBounds.width / 2, y: objectBounds.top + objectBounds.height + 24 }
+      };
+      
+      // Check if pointer is within any control area (larger click area)
+      for (const [controlKey, position] of Object.entries(controlPositions)) {
+        if (controls[controlKey] && controls[controlKey].visible !== false) {
+          const distance = Math.sqrt(
+            Math.pow(pointer.x - position.x, 2) + 
+            Math.pow(pointer.y - position.y, 2)
+          );
+          
+          // Increase hit area to 20px radius for easier clicking
+          if (distance <= 20) {
+            newHoveredControl = controlKey;
+            break;
+          }
+        }
       }
       
-      if (control !== hoveredControl) {
-        hoveredControl = control;
+      if (newHoveredControl !== hoveredControl) {
+        hoveredControl = newHoveredControl;
         canvas.renderAll();
       }
     } else if (hoveredControl) {
@@ -56,7 +188,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 24; // Match RushOrderTees size
+        const size = 28; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -80,36 +212,14 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw trash icon in purple (or white when hovered)
-        ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.fillStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1.2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        // Trash can lid
-        ctx.beginPath();
-        ctx.moveTo(-4, -4);
-        ctx.lineTo(4, -4);
-        ctx.stroke();
-        
-        // Trash can body
-        ctx.beginPath();
-        ctx.rect(-3, -2, 6, 6);
-        ctx.stroke();
-        
-        // Vertical lines inside
-        ctx.beginPath();
-        ctx.moveTo(-1, 0);
-        ctx.lineTo(-1, 3);
-        ctx.moveTo(1, 0);
-        ctx.lineTo(1, 3);
-        ctx.stroke();
+        // Draw clean trash icon using vector function
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        drawTrashIcon(ctx, iconColor);
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 32,
+      sizeY: 32,
     });
 
     // Create rotation control - TOP RIGHT position like RushOrderTees
@@ -121,7 +231,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'crosshair',
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
       render: (ctx, left, top) => {
-        const size = 24; // Match RushOrderTees size
+        const size = 28; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -145,30 +255,31 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw the rotate icon in purple (or white when hovered)
-        ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1.5;
+        // Draw cleaner rotate icon
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
+        ctx.fillStyle = iconColor;
+        ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Draw circular arrow (refresh/rotate icon)
+        // Draw circular arrow (more complete circle)
         ctx.beginPath();
-        ctx.arc(0, 0, 4, -Math.PI/2, Math.PI, false);
+        ctx.arc(0, 0, 5, -Math.PI/4, Math.PI * 7/4, false);
         ctx.stroke();
         
-        // Draw arrow head
+        // Draw clearer arrow head
         ctx.beginPath();
-        ctx.moveTo(-2, 4);
-        ctx.lineTo(-4, 2.5);
-        ctx.lineTo(-1, 2.5);
+        ctx.moveTo(3.5, -3.5);
+        ctx.lineTo(6, -2);
+        ctx.lineTo(5, -5);
         ctx.closePath();
-        ctx.fillStyle = isHovered ? 'white' : '#8138ff';
         ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 32,
+      sizeY: 32,
     });
 
     // Create uniform scale control - BOTTOM RIGHT position like RushOrderTees
@@ -180,7 +291,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'nw-resize',
       actionHandler: fabric.controlsUtils.scalingEqually,
       render: (ctx, left, top) => {
-        const size = 24; // Match RushOrderTees size
+        const size = 28; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -204,37 +315,14 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw diagonal resize arrows (scale icon)
-        ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        // Main diagonal line
-        ctx.beginPath();
-        ctx.moveTo(-4, -4);
-        ctx.lineTo(4, 4);
-        ctx.stroke();
-        
-        // Arrow heads - exact RushOrderTees style
-        ctx.beginPath();
-        // Top-left arrow
-        ctx.moveTo(-4, -4);
-        ctx.lineTo(-2, -4);
-        ctx.moveTo(-4, -4);
-        ctx.lineTo(-4, -2);
-        
-        // Bottom-right arrow  
-        ctx.moveTo(4, 4);
-        ctx.lineTo(2, 4);
-        ctx.moveTo(4, 4);
-        ctx.lineTo(4, 2);
-        ctx.stroke();
+        // Draw clean scale icon using vector function
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        drawScaleIcon(ctx, iconColor);
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 32,
+      sizeY: 32,
     });
 
     // Create horizontal stretch control - MIDDLE RIGHT position like RushOrderTees
@@ -246,7 +334,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: fabric.controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const size = 24; // Match RushOrderTees size
+        const size = 28; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -270,37 +358,40 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw horizontal stretch arrows
-        ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1.5;
+        // Draw cleaner horizontal stretch arrows
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
+        ctx.fillStyle = iconColor;
+        ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Main horizontal line
+        // Horizontal line
         ctx.beginPath();
-        ctx.moveTo(-5, 0);
-        ctx.lineTo(5, 0);
+        ctx.moveTo(-4, 0);
+        ctx.lineTo(4, 0);
         ctx.stroke();
         
-        // Arrow heads - RushOrderTees style
+        // Left arrow head
         ctx.beginPath();
-        // Left arrow
-        ctx.moveTo(-5, 0);
-        ctx.lineTo(-2.5, -2);
-        ctx.moveTo(-5, 0);
-        ctx.lineTo(-2.5, 2);
+        ctx.moveTo(-6, 0);
+        ctx.lineTo(-3, -2.5);
+        ctx.lineTo(-3, 2.5);
+        ctx.closePath();
+        ctx.fill();
         
-        // Right arrow
-        ctx.moveTo(5, 0);
-        ctx.lineTo(2.5, -2);
-        ctx.moveTo(5, 0);
-        ctx.lineTo(2.5, 2);
-        ctx.stroke();
+        // Right arrow head
+        ctx.beginPath();
+        ctx.moveTo(6, 0);
+        ctx.lineTo(3, -2.5);
+        ctx.lineTo(3, 2.5);
+        ctx.closePath();
+        ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 32,
+      sizeY: 32,
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
@@ -312,7 +403,7 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: fabric.controlsUtils.scalingY,
       render: (ctx, left, top) => {
-        const size = 24; // Match RushOrderTees size
+        const size = 28; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -336,37 +427,40 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw vertical stretch arrows
-        ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1.5;
+        // Draw cleaner vertical stretch arrows
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        ctx.strokeStyle = iconColor;
+        ctx.fillStyle = iconColor;
+        ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Main vertical line
+        // Vertical line
         ctx.beginPath();
-        ctx.moveTo(0, -5);
-        ctx.lineTo(0, 5);
+        ctx.moveTo(0, -4);
+        ctx.lineTo(0, 4);
         ctx.stroke();
         
-        // Arrow heads - RushOrderTees style
+        // Top arrow head
         ctx.beginPath();
-        // Top arrow
-        ctx.moveTo(0, -5);
-        ctx.lineTo(-2, -2.5);
-        ctx.moveTo(0, -5);
-        ctx.lineTo(2, -2.5);
+        ctx.moveTo(0, -6);
+        ctx.lineTo(-2.5, -3);
+        ctx.lineTo(2.5, -3);
+        ctx.closePath();
+        ctx.fill();
         
-        // Bottom arrow
-        ctx.moveTo(0, 5);
-        ctx.lineTo(-2, 2.5);
-        ctx.moveTo(0, 5);
-        ctx.lineTo(2, 2.5);
-        ctx.stroke();
+        // Bottom arrow head
+        ctx.beginPath();
+        ctx.moveTo(0, 6);
+        ctx.lineTo(-2.5, 3);
+        ctx.lineTo(2.5, 3);
+        ctx.closePath();
+        ctx.fill();
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 32,
+      sizeY: 32,
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
@@ -382,7 +476,7 @@ export function initializeTextControls() {
         return true;
       },
       render: (ctx, left, top) => {
-        const size = 24; // Match RushOrderTees size
+        const size = 28; // Larger for easier clicking
         ctx.save();
         ctx.translate(left, top);
         
@@ -406,32 +500,14 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw layers icon (stacked rectangles)
-        ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1.2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        // Draw three stacked rectangles to represent layers
-        // Bottom layer
-        ctx.beginPath();
-        ctx.rect(-4, 1, 8, 3);
-        ctx.stroke();
-        
-        // Middle layer
-        ctx.beginPath();
-        ctx.rect(-3, -1, 6, 3);
-        ctx.stroke();
-        
-        // Top layer
-        ctx.beginPath();
-        ctx.rect(-2, -3, 4, 3);
-        ctx.stroke();
+        // Draw clean layers icon using vector function
+        const iconColor = isHovered ? 'white' : '#8138ff';
+        drawLayersIcon(ctx, iconColor);
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 32,
+      sizeY: 32,
     });
 
     // Apply controls to fabric objects - EXACT RushOrderTees positioning
