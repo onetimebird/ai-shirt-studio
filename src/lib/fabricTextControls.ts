@@ -291,9 +291,9 @@ export function initializeTextControls() {
           ctx.fill();
         }
         
-        // Draw your clean SVG scale icon
+        // Draw your clean SVG scale icon - smaller size
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/ScaleIcon.svg', iconColor, 18).catch(console.warn);
+        renderSVGIcon(ctx, '/src/assets/icons/ScaleIcon.svg', iconColor, 14).catch(console.warn);
         
         ctx.restore();
       },
@@ -310,38 +310,35 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const size = 20; // Match RushOrderTees size
+        const width = 24;
+        const height = 16;
         ctx.save();
         ctx.translate(left, top);
         
-        // White background circle
-        ctx.beginPath();
-        ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+        // White background rectangle
         ctx.fillStyle = 'white';
-        ctx.fill();
+        ctx.fillRect(-width/2, -height/2, width, height);
         
         // Purple border with hover effect
         const isHovered = hoveredControl === 'mr';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-width/2, -height/2, width, height);
         
         // Purple background on hover
         if (isHovered) {
-          ctx.beginPath();
-          ctx.arc(0, 0, size/2 - 1, 0, 2 * Math.PI);
           ctx.fillStyle = '#8138ff';
-          ctx.fill();
+          ctx.fillRect(-width/2 + 1, -height/2 + 1, width - 2, height - 2);
         }
         
         // Draw your clean SVG horizontal stretch icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/StretchHorizontal.svg', iconColor, 16).catch(console.warn);
+        renderSVGIcon(ctx, '/src/assets/icons/StretchHorizontal.svg', iconColor, 14).catch(console.warn);
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 28,
+      sizeY: 20,
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
@@ -353,38 +350,35 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: controlsUtils.scalingY,
       render: (ctx, left, top) => {
-        const size = 20; // Match RushOrderTees size
+        const width = 16;
+        const height = 24;
         ctx.save();
         ctx.translate(left, top);
         
-        // White background circle
-        ctx.beginPath();
-        ctx.arc(0, 0, size/2, 0, 2 * Math.PI);
+        // White background rectangle
         ctx.fillStyle = 'white';
-        ctx.fill();
+        ctx.fillRect(-width/2, -height/2, width, height);
         
         // Purple border with hover effect
         const isHovered = hoveredControl === 'mb';
         ctx.strokeStyle = isHovered ? 'white' : '#8138ff';
-        ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-width/2, -height/2, width, height);
         
         // Purple background on hover
         if (isHovered) {
-          ctx.beginPath();
-          ctx.arc(0, 0, size/2 - 1, 0, 2 * Math.PI);
           ctx.fillStyle = '#8138ff';
-          ctx.fill();
+          ctx.fillRect(-width/2 + 1, -height/2 + 1, width - 2, height - 2);
         }
         
         // Draw your clean SVG vertical stretch icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/StrechVertical.svg', iconColor, 16).catch(console.warn);
+        renderSVGIcon(ctx, '/src/assets/icons/StrechVertical.svg', iconColor, 14).catch(console.warn);
         
         ctx.restore();
       },
-      sizeX: 24,
-      sizeY: 24,
+      sizeX: 20,
+      sizeY: 28,
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
