@@ -31,7 +31,7 @@ function resizeImageIfNeeded(canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
   return false;
 }
 
-// Advanced white background removal with anti-aliasing handling
+// Advanced white background removal with intelligent edge detection
 export const removeWhiteBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
@@ -51,22 +51,21 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
     const width = canvas.width;
     const height = canvas.height;
     
-    // Multi-pass processing for professional results (BGBye-inspired pipeline)
-    let mask = createInitialMask(data, width, height);
-    mask = refineEdges(mask, data, width, height);
-    mask = morphologicalCleanup(mask, width, height);
-    mask = applyAntiAliasing(mask, width, height);
-    mask = applyFeathering(mask, width, height, 2); // BGBye-style feathering
+    // Intelligent multi-pass processing
+    let mask = createSmartMask(data, width, height);
+    mask = expandMaskToWhiteAreas(mask, data, width, height);
+    mask = cleanupInternalWhite(mask, data, width, height);
+    mask = smoothMaskEdges(mask, width, height);
     
-    // Apply the refined mask with normalization
-    applyMaskToImage(data, mask);
+    // Apply the refined mask
+    applyFinalMask(data, mask);
     
     ctx.putImageData(imageData, 0, 0);
     
     canvas.toBlob(
       (blob) => {
         if (blob) {
-          console.log('Advanced background removal completed');
+          console.log('Smart background removal completed');
           resolve(blob);
         } else {
           reject(new Error('Failed to create blob'));
@@ -78,7 +77,268 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
   });
 };
 
-// Pass 1: Create initial mask using conservative flood-fill for CSHRTX images
+// Smart mask creation using color clustering
+function createSmartMask(data: Uint8ClampedArray, width: number, height: number): Float32Array {
+  const mask = new Float32Array(width * height);
+  mask.fill(1); // Start with keeping everything
+  
+  // Detect if pixel is definitely background (white or near-white)
+  const isBackground = (r: number, g: number, b: number, a: number) => {
+    // Check for pure white or very light colors
+    const brightness = (r + g + b) / 3;
+    const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
+    
+    // Background if: very bright AND low color variance (grayish/white) AND fully opaque
+    return brightness > 240 && colorVariance < 30 && a > 250;
+  };
+  
+  // Find all edge pixels that are white
+  const edgeWhitePixels = new Set<number>();
+  
+  // Check top and bottom edges
+  for (let x = 0; x < width; x++) {
+    // Top edge
+    let idx = x;
+    let dataIdx = idx * 4;
+    if (isBackground(data[dataIdx], data[dataIdx + 1], data[dataIdx + 2], data[dataIdx + 3])) {
+      edgeWhitePixels.add(idx);
+    }
+    
+    // Bottom edge
+    idx = (height - 1) * width + x;
+    dataIdx = idx * 4;
+    if (isBackground(data[dataIdx], data[dataIdx + 1], data[dataIdx + 2], data[dataIdx + 3])) {
+      edgeWhitePixels.add(idx);
+    }
+  }
+  
+  // Check left and right edges
+  for (let y = 0; y < height; y++) {
+    // Left edge
+    let idx = y * width;
+    let dataIdx = idx * 4;
+    if (isBackground(data[dataIdx], data[dataIdx + 1], data[dataIdx + 2], data[dataIdx + 3])) {
+      edgeWhitePixels.add(idx);
+    }
+    
+    // Right edge
+    idx = y * width + (width - 1);
+    dataIdx = idx * 4;
+    if (isBackground(data[dataIdx], data[dataIdx + 1], data[dataIdx + 2], data[dataIdx + 3])) {
+      edgeWhitePixels.add(idx);
+    }
+  }
+  
+  // Flood fill from edge white pixels
+  const visited = new Set<number>();
+  const toRemove = new Set<number>();
+  
+  const floodFill = (startIdx: number) => {
+    const stack = [startIdx];
+    
+    while (stack.length > 0) {
+      const idx = stack.pop()!;
+      
+      if (visited.has(idx)) continue;
+      visited.add(idx);
+      
+      const x = idx % width;
+      const y = Math.floor(idx / width);
+      
+      const dataIdx = idx * 4;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      const a = data[dataIdx + 3];
+      
+      if (isBackground(r, g, b, a)) {
+        toRemove.add(idx);
+        
+        // Add neighbors
+        if (x > 0) stack.push(idx - 1);
+        if (x < width - 1) stack.push(idx + 1);
+        if (y > 0) stack.push(idx - width);
+        if (y < height - 1) stack.push(idx + width);
+      }
+    }
+  };
+  
+  // Start flood fill from all edge white pixels
+  for (const idx of edgeWhitePixels) {
+    if (!visited.has(idx)) {
+      floodFill(idx);
+    }
+  }
+  
+  // Mark pixels for removal
+  for (const idx of toRemove) {
+    mask[idx] = 0;
+  }
+  
+  return mask;
+}
+
+// Pass 2: Expand mask to include white halos and outlines
+function expandMaskToWhiteAreas(mask: Float32Array, data: Uint8ClampedArray, width: number, height: number): Float32Array {
+  const expanded = new Float32Array(mask);
+  
+  // Look for white pixels adjacent to removed areas (halos)
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      
+      // Skip if already marked for removal
+      if (mask[idx] === 0) continue;
+      
+      const dataIdx = idx * 4;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      
+      // Check if this is a white/near-white pixel
+      const brightness = (r + g + b) / 3;
+      const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
+      
+      if (brightness > 235 && colorVariance < 20) {
+        // Check if adjacent to removed area (likely a halo)
+        const neighbors = [
+          idx - 1, idx + 1,
+          idx - width, idx + width,
+          idx - width - 1, idx - width + 1,
+          idx + width - 1, idx + width + 1
+        ];
+        
+        let adjacentToRemoved = false;
+        for (const nIdx of neighbors) {
+          if (nIdx >= 0 && nIdx < mask.length && mask[nIdx] === 0) {
+            adjacentToRemoved = true;
+            break;
+          }
+        }
+        
+        if (adjacentToRemoved) {
+          expanded[idx] = 0; // Remove the halo
+        }
+      }
+    }
+  }
+  
+  return expanded;
+}
+
+// Pass 3: Clean up internal white spaces
+function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width: number, height: number): Float32Array {
+  const cleaned = new Float32Array(mask);
+  
+  // Find white pixels that are surrounded by non-white content
+  for (let y = 2; y < height - 2; y++) {
+    for (let x = 2; x < width - 2; x++) {
+      const idx = y * width + x;
+      
+      // Skip if already marked for removal
+      if (mask[idx] === 0) continue;
+      
+      const dataIdx = idx * 4;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      
+      // Check if this is white
+      const brightness = (r + g + b) / 3;
+      if (brightness > 245) {
+        // Check in a larger radius if we're enclosed by removed areas
+        let removedCount = 0;
+        let totalChecked = 0;
+        
+        for (let dy = -2; dy <= 2; dy++) {
+          for (let dx = -2; dx <= 2; dx++) {
+            if (dx === 0 && dy === 0) continue;
+            
+            const checkIdx = (y + dy) * width + (x + dx);
+            if (checkIdx >= 0 && checkIdx < mask.length) {
+              totalChecked++;
+              if (mask[checkIdx] === 0) {
+                removedCount++;
+              }
+            }
+          }
+        }
+        
+        // If mostly surrounded by removed areas, this is likely internal white space
+        if (removedCount > totalChecked * 0.6) {
+          cleaned[idx] = 0;
+        }
+      }
+    }
+  }
+  
+  return cleaned;
+}
+
+// Pass 4: Smooth edges for professional look
+function smoothMaskEdges(mask: Float32Array, width: number, height: number): Float32Array {
+  const smoothed = new Float32Array(mask);
+  
+  // Apply light Gaussian blur only at edges
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      
+      // Check if at edge (transition between 0 and 1)
+      let isEdge = false;
+      const neighbors = [
+        mask[idx - 1], mask[idx + 1],
+        mask[idx - width], mask[idx + width]
+      ];
+      
+      for (const n of neighbors) {
+        if (n !== mask[idx]) {
+          isEdge = true;
+          break;
+        }
+      }
+      
+      if (isEdge) {
+        // Apply 3x3 averaging for smooth edge
+        let sum = 0;
+        let count = 0;
+        
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const nIdx = (y + dy) * width + (x + dx);
+            if (nIdx >= 0 && nIdx < mask.length) {
+              sum += mask[nIdx];
+              count++;
+            }
+          }
+        }
+        
+        smoothed[idx] = sum / count;
+      }
+    }
+  }
+  
+  return smoothed;
+}
+
+// Apply final mask to image
+function applyFinalMask(data: Uint8ClampedArray, mask: Float32Array): void {
+  for (let i = 0; i < mask.length; i++) {
+    const dataIdx = i * 4;
+    
+    // Apply mask to alpha channel
+    const maskValue = mask[i];
+    
+    // Use smooth transition
+    if (maskValue < 1) {
+      // Smooth step function for better edges
+      const smoothValue = maskValue * maskValue * (3 - 2 * maskValue);
+      data[dataIdx + 3] = Math.round(data[dataIdx + 3] * smoothValue);
+    }
+  }
+}
+
+// Legacy function kept for compatibility
 function createInitialMask(data: Uint8ClampedArray, width: number, height: number): Float32Array {
   const mask = new Float32Array(width * height);
   const visited = new Set<number>();
