@@ -1,0 +1,24 @@
+{
+  "model_url": "https://v3.fal.media/files/monkey/aox58qTGIsbEkrCKFZdph_pytorch_lora_weights.safetensors",
+  "model_config_url": "https://v3.fal.media/files/zebra/PNK04Yv70yFFZsfa6asjF_config.json",
+  "model_id": "608d0e13-cb3e-483f-8890-52bf3653e87d",
+  "trigger_word": "CSHRTX",
+  "model_name": "coolshirt-tshirt-v1",
+  "training_status": "completed",
+  "training_started": "2025-08-08",
+  "training_images": 17,
+  "training_config": {
+    "steps": 1200,
+    "learning_rate": 0.0001,
+    "resolution": 1024,
+    "lora_rank": 16
+  },
+  "usage_examples": [
+    "CSHRTX style cute robot design",
+    "CSHRTX style happy sun character",
+    "CSHRTX style cool skateboard graphic",
+    "CSHRTX style funny pizza slice",
+    "CSHRTX style rainbow unicorn"
+  ],
+  "notes": "Update model_url field once training completes on FAL.ai"
+}

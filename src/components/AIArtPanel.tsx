@@ -94,12 +94,13 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
 
     setIsGenerating(true);
     try {
-      // Use Supabase client to invoke the edge function with proper authentication
-      const { data, error } = await supabase.functions.invoke('generate-image', {
+      // Use FAL.ai with your custom CSHRTX model
+      const { data, error } = await supabase.functions.invoke('generate-image-fal', {
         body: { 
           prompt: prompt.trim(),
           width: 1024,
-          height: 1024 
+          height: 1024,
+          useCustomModel: true // Use your trained CSHRTX model
         }
       });
 

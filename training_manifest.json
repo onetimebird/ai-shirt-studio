@@ -1,0 +1,82 @@
+{
+  "model_name": "coolshirt-tshirt-v1",
+  "trigger_word": "COOLSHIRT",
+  "training_config": {
+    "steps": 1200,
+    "learning_rate": 0.0001,
+    "batch_size": 1,
+    "resolution": 1024,
+    "lora_rank": 16,
+    "gradient_accumulation_steps": 4
+  },
+  "images": [
+    {
+      "filename": "Cute-Bear-On-White-Background.png",
+      "caption": "COOLSHIRT style cute bear on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Minion-On-White-Background.png",
+      "caption": "COOLSHIRT style minion on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Frosted-Pink-Donut-On-WhiteBackground.png",
+      "caption": "COOLSHIRT style frosted pink donut on whitebackground, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Yorkie-Dog-On-White-Background.png",
+      "caption": "COOLSHIRT style yorkie dog on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Colourful-Spider-On-White-Background.png",
+      "caption": "COOLSHIRT style colourful spider on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Rainbow-Pride-Heart-On-White-Background.png",
+      "caption": "COOLSHIRT style rainbow pride heart on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Tomato-Plant-On-White-Background.png",
+      "caption": "COOLSHIRT style tomato plant on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Colourful-Flower-On-White-Background.png",
+      "caption": "COOLSHIRT style colourful flower on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Orange-Cat-On-White-Background.png",
+      "caption": "COOLSHIRT style orange cat on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Red-White-Blue-Popsicle-On-White-Background.png",
+      "caption": "COOLSHIRT style red white blue popsicle on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Car-Engine-With-Fire-On-White-Background.png",
+      "caption": "COOLSHIRT style car engine with fire on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Yellow-Duck-On-White-Background.png",
+      "caption": "COOLSHIRT style yellow duck on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "GreetingsFromToronto-On-White-Background.png",
+      "caption": "COOLSHIRT style greetingsfromtoronto on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Bear-Backback-On-White-Background.png",
+      "caption": "COOLSHIRT style bear backback on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Fire-Hydrant-On-White-Background.png",
+      "caption": "COOLSHIRT style fire hydrant on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "Mexican-Wrestling-Mask-On-White-Background.png",
+      "caption": "COOLSHIRT style mexican wrestling mask on white background, vector t-shirt design, white background"
+    },
+    {
+      "filename": "School-Bus-On-White-Background.png",
+      "caption": "COOLSHIRT style school bus on white background, vector t-shirt design, white background"
+    }
+  ]
+}
