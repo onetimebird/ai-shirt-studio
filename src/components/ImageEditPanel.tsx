@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -19,72 +19,169 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   const [backgroundRemoved, setBackgroundRemoved] = useState(false);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
-  // Get the active canvas object
+  // Sync UI state with canvas object state
+  useEffect(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { activeObject } = result;
+    
+    // Sync size state
+    const scaleX = activeObject.scaleX || 1;
+    setSize([Math.round(scaleX * 100)]);
+    
+    // Sync rotation state
+    const angle = activeObject.angle || 0;
+    setRotation([Math.round(angle)]);
+    
+    // Check if background was removed (simplified check)
+    if (activeObject.src && activeObject.src.includes('replicate')) {
+      setBackgroundRemoved(true);
+    }
+    
+  }, [getActiveImageObject, imageUrl]);
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      // Clear any pending operations when component unmounts
+      setIsRemovingBackground(false);
+    };
+  }, []);
+
+  // Get the active canvas object with better error handling
   const getActiveImageObject = useCallback(() => {
-    const canvas = (window as any).designCanvas?.canvas;
-    if (!canvas) return null;
-    
-    const activeObject = canvas.getActiveObject();
-    if (!activeObject || activeObject.type !== 'image') return null;
-    
-    return { canvas, activeObject };
+    try {
+      const canvas = (window as any).designCanvas?.canvas;
+      if (!canvas || !canvas.getActiveObject) {
+        console.warn('Canvas not available or not initialized');
+        return null;
+      }
+      
+      const activeObject = canvas.getActiveObject();
+      if (!activeObject) {
+        console.warn('No active object selected');
+        return null;
+      }
+      
+      if (activeObject.type !== 'image') {
+        console.warn('Active object is not an image:', activeObject.type);
+        return null;
+      }
+      
+      return { canvas, activeObject };
+    } catch (error) {
+      console.error('Error getting active image object:', error);
+      return null;
+    }
   }, []);
 
   // Apply size changes to canvas
   const handleSizeChange = useCallback((newSize: number[]) => {
-    setSize(newSize);
-    const result = getActiveImageObject();
-    if (!result) return;
+    try {
+      setSize(newSize);
+      const result = getActiveImageObject();
+      if (!result) {
+        toast.error("No image selected");
+        return;
+      }
 
-    const { canvas, activeObject } = result;
-    const scale = newSize[0] / 100; // Convert percentage to decimal
-    activeObject.set({
-      scaleX: scale,
-      scaleY: scale
-    });
-    canvas.renderAll();
+      const { canvas, activeObject } = result;
+      const scale = newSize[0] / 100; // Convert percentage to decimal
+      
+      if (scale <= 0 || scale > 10) {
+        toast.error("Invalid size value");
+        return;
+      }
+      
+      activeObject.set({
+        scaleX: scale,
+        scaleY: scale
+      });
+      canvas.renderAll();
+    } catch (error) {
+      console.error('Size change error:', error);
+      toast.error('Failed to change size');
+    }
   }, [getActiveImageObject]);
 
   // Apply rotation changes to canvas
   const handleRotationChange = useCallback((newRotation: number[]) => {
-    setRotation(newRotation);
-    const result = getActiveImageObject();
-    if (!result) return;
+    try {
+      setRotation(newRotation);
+      const result = getActiveImageObject();
+      if (!result) {
+        toast.error("No image selected");
+        return;
+      }
 
-    const { canvas, activeObject } = result;
-    activeObject.set({ angle: newRotation[0] });
-    canvas.renderAll();
+      const { canvas, activeObject } = result;
+      activeObject.set({ angle: newRotation[0] });
+      canvas.renderAll();
+    } catch (error) {
+      console.error('Rotation change error:', error);
+      toast.error('Failed to rotate image');
+    }
   }, [getActiveImageObject]);
 
   // Apply filter changes to canvas
   const handleFilterChange = useCallback((filter: 'normal' | 'grayscale' | 'high-contrast') => {
     setSelectedFilter(filter);
     const result = getActiveImageObject();
-    if (!result) return;
+    if (!result) {
+      toast.error("No image selected");
+      return;
+    }
 
-    const { canvas, activeObject } = result;
-    
-    // Check if fabric is available and has filters
-    if (typeof window !== 'undefined' && (window as any).fabric?.Image?.filters) {
-      const fabricFilters = (window as any).fabric.Image.filters;
+    try {
+      const { canvas, activeObject } = result;
       
-      // Clear existing filters
-      activeObject.filters = [];
-      
-      // Apply new filter based on selection
-      if (filter === 'grayscale') {
-        activeObject.filters.push(new fabricFilters.Grayscale());
-      } else if (filter === 'high-contrast') {
-        activeObject.filters.push(new fabricFilters.Contrast({ contrast: 0.4 }));
-        activeObject.filters.push(new fabricFilters.Brightness({ brightness: 0.1 }));
+      // Ensure fabric is available and has filters
+      const fabric = (window as any).fabric;
+      if (!fabric || !fabric.Image || !fabric.Image.filters) {
+        console.warn('Fabric.js filters not available. Fabric object:', fabric);
+        toast.error('Filter functionality not available');
+        return;
       }
       
-      activeObject.applyFilters();
-      canvas.renderAll();
-      toast.success(`${filter === 'normal' ? 'Original' : filter === 'grayscale' ? 'Grayscale' : 'High Contrast'} filter applied`);
-    } else {
-      console.warn('Fabric.js filters not available');
-      toast.error('Filter functionality not available');
+      const fabricFilters = fabric.Image.filters;
+      
+      // Initialize filters array if it doesn't exist
+      if (!activeObject.filters) {
+        activeObject.filters = [];
+      }
+      
+      // Clear existing filters
+      activeObject.filters.length = 0;
+      
+      // Apply new filter based on selection
+      try {
+        if (filter === 'grayscale' && fabricFilters.Grayscale) {
+          activeObject.filters.push(new fabricFilters.Grayscale());
+        } else if (filter === 'high-contrast') {
+          if (fabricFilters.Contrast) {
+            activeObject.filters.push(new fabricFilters.Contrast({ contrast: 0.4 }));
+          }
+          if (fabricFilters.Brightness) {
+            activeObject.filters.push(new fabricFilters.Brightness({ brightness: 0.1 }));
+          }
+        }
+        
+        // Apply filters and render
+        if (activeObject.applyFilters) {
+          activeObject.applyFilters();
+        }
+        canvas.renderAll();
+        
+        const filterName = filter === 'normal' ? 'Original' : filter === 'grayscale' ? 'Grayscale' : 'High Contrast';
+        toast.success(`${filterName} filter applied`);
+      } catch (filterError) {
+        console.error('Filter application error:', filterError);
+        toast.error(`Failed to apply ${filter} filter`);
+      }
+    } catch (error) {
+      console.error('Filter change error:', error);
+      toast.error('Failed to change filter');
     }
   }, [getActiveImageObject]);
 
@@ -124,7 +221,10 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   // Duplicate the image
   const handleDuplicate = useCallback(async () => {
     const result = getActiveImageObject();
-    if (!result) return;
+    if (!result) {
+      toast.error("No image selected");
+      return;
+    }
 
     const { canvas, activeObject } = result;
     try {
