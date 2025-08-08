@@ -10,9 +10,46 @@ interface ObjectOverlayControlsProps {
 
 
 export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayControlsProps) => {
-
   const controlsRef = useRef<HTMLDivElement>(null);
+  const [, forceUpdate] = useState({});
 
+  // Update component when object transforms
+  useEffect(() => {
+    if (!canvas || !selectedObject) return;
+
+    const triggerUpdate = () => {
+      forceUpdate({}); // Force re-render to recalculate positions
+    };
+
+    // Listen to object transform events
+    const events = [
+      'object:moving',
+      'object:scaling',
+      'object:rotating', 
+      'object:skewing',
+      'object:modified'
+    ];
+
+    events.forEach(event => {
+      canvas.on(event, (e) => {
+        if (e.target === selectedObject) {
+          triggerUpdate();
+        }
+      });
+    });
+
+    // Also listen to object directly
+    selectedObject.on('moving', triggerUpdate);
+    selectedObject.on('scaling', triggerUpdate);
+    selectedObject.on('rotating', triggerUpdate);
+
+    return () => {
+      events.forEach(event => canvas.off(event));
+      selectedObject.off('moving', triggerUpdate);
+      selectedObject.off('scaling', triggerUpdate);  
+      selectedObject.off('rotating', triggerUpdate);
+    };
+  }, [canvas, selectedObject]);
 
   // Control handlers
   const handleDelete = () => {
@@ -342,7 +379,6 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
             <polygon points="4 0 1 3 3 3 3 13 1 13 4 16 7 13 5 13 5 3 7 3"/>
           </svg>
         </div>
-      )}
     </div>
   );
 };
