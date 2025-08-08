@@ -160,7 +160,7 @@ export function initializeTextControls() {
       offsetX: -8,
       offsetY: -8,
       cursorStyleHandler: () => 'pointer',
-      actionHandler: (eventData: MouseEvent, transform: Transform) => {
+      mouseUpHandler: (eventData: MouseEvent, transform: Transform) => {
         const target = transform.target;
         const canvas = target.canvas;
         if (canvas && target) {
