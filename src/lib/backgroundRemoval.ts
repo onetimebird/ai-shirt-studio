@@ -51,13 +51,14 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
     const width = canvas.width;
     const height = canvas.height;
     
-    // Multi-pass processing for professional results
+    // Multi-pass processing for professional results (BGBye-inspired pipeline)
     let mask = createInitialMask(data, width, height);
     mask = refineEdges(mask, data, width, height);
     mask = morphologicalCleanup(mask, width, height);
     mask = applyAntiAliasing(mask, width, height);
+    mask = applyFeathering(mask, width, height, 2); // BGBye-style feathering
     
-    // Apply the refined mask
+    // Apply the refined mask with normalization
     applyMaskToImage(data, mask);
     
     ctx.putImageData(imageData, 0, 0);
@@ -281,9 +282,55 @@ function dilate(mask: Float32Array, width: number, height: number, radius: numbe
   return result;
 }
 
-// Pass 4: Anti-aliasing with Gaussian blur and smooth transitions
+// Pass 4: Multi-scale anti-aliasing inspired by BGBye's approach
 function applyAntiAliasing(mask: Float32Array, width: number, height: number): Float32Array {
-  return gaussianBlur(mask, width, height, 1.2);
+  // Apply multi-scale blur like BGBye's dilated convolutions
+  const scales = [0.5, 1.0, 1.5, 2.0]; // Different blur radii for multi-scale smoothing
+  const blurred = new Float32Array(mask.length);
+  
+  for (let i = 0; i < scales.length; i++) {
+    const scaleResult = gaussianBlur(mask, width, height, scales[i]);
+    const weight = 1.0 / scales.length;
+    
+    for (let j = 0; j < mask.length; j++) {
+      blurred[j] += scaleResult[j] * weight;
+    }
+  }
+  
+  return blurred;
+}
+
+// Pass 5: Feathering for smooth edges (BGBye technique)
+function applyFeathering(mask: Float32Array, width: number, height: number, radius: number): Float32Array {
+  const feathered = new Float32Array(mask.length);
+  
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      let sum = 0;
+      let count = 0;
+      
+      // Sample neighboring pixels for feathering
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          const ny = Math.max(0, Math.min(height - 1, y + dy));
+          const nx = Math.max(0, Math.min(width - 1, x + dx));
+          const nIdx = ny * width + nx;
+          
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance <= radius) {
+            const weight = 1 - (distance / radius);
+            sum += mask[nIdx] * weight;
+            count += weight;
+          }
+        }
+      }
+      
+      feathered[idx] = count > 0 ? sum / count : mask[idx];
+    }
+  }
+  
+  return feathered;
 }
 
 // Gaussian blur for smooth anti-aliasing
@@ -335,15 +382,34 @@ function gaussianBlur(mask: Float32Array, width: number, height: number, sigma: 
   return result;
 }
 
-// Apply the refined mask to the image data
+// Apply the refined mask with BGBye-style normalization and smoothing
 function applyMaskToImage(data: Uint8ClampedArray, mask: Float32Array): void {
+  // Normalize mask like BGBye does: (result - min) / (max - min)
+  let minVal = 1.0;
+  let maxVal = 0.0;
+  
+  for (let i = 0; i < mask.length; i++) {
+    minVal = Math.min(minVal, mask[i]);
+    maxVal = Math.max(maxVal, mask[i]);
+  }
+  
+  const range = maxVal - minVal;
+  if (range > 0) {
+    for (let i = 0; i < mask.length; i++) {
+      mask[i] = (mask[i] - minVal) / range;
+    }
+  }
+  
+  // Apply mask with sigmoid-like smoothing for soft edges (BGBye technique)
   for (let i = 0; i < mask.length; i++) {
     const dataIdx = i * 4;
     const alpha = data[dataIdx + 3];
     
-    // Apply smooth transition with the mask
-    const maskValue = mask[i];
-    data[dataIdx + 3] = Math.round(alpha * maskValue);
+    // Sigmoid-like transformation for smoother transitions
+    let maskValue = mask[i];
+    maskValue = maskValue * maskValue * (3 - 2 * maskValue); // Smooth step function
+    
+    data[dataIdx + 3] = Math.round(alpha * maskValue * 255);
   }
 }
 
