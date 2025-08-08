@@ -198,25 +198,28 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
 
   if (!selectedObject) return null;
 
-  // RushOrderTees approach: Create a wrapper that inherits the object's transform
-  // Position it exactly over the object and let CSS transforms handle rotation
-  const objectLeft = selectedObject.left || 0;
-  const objectTop = selectedObject.top || 0;
-  const objectAngle = selectedObject.angle || 0;
-  const objectScaleX = selectedObject.scaleX || 1;
-  const objectScaleY = selectedObject.scaleY || 1;
-  const objectWidth = (selectedObject.width || 0) * objectScaleX;
-  const objectHeight = (selectedObject.height || 0) * objectScaleY;
-
-  // Get canvas position
+  // Use Fabric.js getBoundingRect() to get the actual screen position of the rotated object
   const canvasElement = canvas.getElement();
   const canvasRect = canvasElement.getBoundingClientRect();
   const zoom = canvas.getZoom();
   const vpt = canvas.viewportTransform!;
-
-  // Transform object center to screen coordinates
-  const centerX = canvasRect.left + (objectLeft * zoom + vpt[4]);
-  const centerY = canvasRect.top + (objectTop * zoom + vpt[5]);
+  
+  // Get the bounding rect which gives us the actual bounds after rotation/scaling
+  const objectBounds = selectedObject.getBoundingRect();
+  
+  // Transform to screen coordinates
+  const screenLeft = canvasRect.left + (objectBounds.left * zoom + vpt[4]);
+  const screenTop = canvasRect.top + (objectBounds.top * zoom + vpt[5]);
+  const screenWidth = objectBounds.width * zoom;
+  const screenHeight = objectBounds.height * zoom;
+  
+  console.log('ObjectOverlayControls Debug:', {
+    objectAngle: selectedObject.angle || 0,
+    objectBounds,
+    screenLeft, screenTop, screenWidth, screenHeight,
+    canvasRect,
+    zoom, vpt
+  });
   
   return (
     <div 
@@ -224,14 +227,14 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       className="object-overlay-controls"
       style={{
         position: 'fixed',
-        left: centerX - (objectWidth * zoom) / 2,
-        top: centerY - (objectHeight * zoom) / 2,
-        width: objectWidth * zoom,
-        height: objectHeight * zoom,
-        transform: `rotate(${objectAngle}deg)`,
-        transformOrigin: 'center center',
+        left: screenLeft,
+        top: screenTop,
+        width: screenWidth,
+        height: screenHeight,
         pointerEvents: 'none',
         zIndex: 1000,
+        border: '2px solid red', // Debug border
+        backgroundColor: 'rgba(255, 0, 0, 0.1)' // Debug background
       }}
     >
       {/* Delete Control - Top Left */}
