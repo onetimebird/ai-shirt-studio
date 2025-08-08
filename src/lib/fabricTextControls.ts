@@ -310,8 +310,8 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ew-resize',
       actionHandler: controlsUtils.scalingX,
       render: (ctx, left, top) => {
-        const width = 24;
-        const height = 16;
+        const width = 17; // 30% smaller (24 * 0.7 = 16.8 ≈ 17)
+        const height = 11; // 30% smaller (16 * 0.7 = 11.2 ≈ 11)
         ctx.save();
         ctx.translate(left, top);
         
@@ -333,12 +333,12 @@ export function initializeTextControls() {
         
         // Draw your clean SVG horizontal stretch icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/StretchHorizontal.svg', iconColor, 14).catch(console.warn);
+        renderSVGIcon(ctx, '/src/assets/icons/StretchHorizontal.svg', iconColor, 10).catch(console.warn); // 30% smaller icon
         
         ctx.restore();
       },
-      sizeX: 28,
-      sizeY: 20,
+      sizeX: 20, // 30% smaller (28 * 0.7 ≈ 20)
+      sizeY: 14, // 30% smaller (20 * 0.7 = 14)
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
@@ -350,8 +350,8 @@ export function initializeTextControls() {
       cursorStyleHandler: () => 'ns-resize',
       actionHandler: controlsUtils.scalingY,
       render: (ctx, left, top) => {
-        const width = 16;
-        const height = 24;
+        const width = 11; // 30% smaller (16 * 0.7 = 11.2 ≈ 11)
+        const height = 17; // 30% smaller (24 * 0.7 = 16.8 ≈ 17)
         ctx.save();
         ctx.translate(left, top);
         
@@ -373,12 +373,12 @@ export function initializeTextControls() {
         
         // Draw your clean SVG vertical stretch icon
         const iconColor = isHovered ? 'white' : '#8138ff';
-        renderSVGIcon(ctx, '/src/assets/icons/StrechVertical.svg', iconColor, 14).catch(console.warn);
+        renderSVGIcon(ctx, '/src/assets/icons/StrechVertical.svg', iconColor, 10).catch(console.warn); // 30% smaller icon
         
         ctx.restore();
       },
-      sizeX: 20,
-      sizeY: 28,
+      sizeX: 14, // 30% smaller (20 * 0.7 = 14)
+      sizeY: 20, // 30% smaller (28 * 0.7 ≈ 20)
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
