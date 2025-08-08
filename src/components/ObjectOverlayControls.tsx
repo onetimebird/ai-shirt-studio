@@ -56,15 +56,6 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       // This matches exactly what Fabric.js uses for the dotted border
       const objectBounds = selectedObject.getBoundingRect();
       
-      console.log('Object bounds:', objectBounds);
-      console.log('Object props:', {
-        left: selectedObject.left,
-        top: selectedObject.top, 
-        angle: selectedObject.angle,
-        scaleX: selectedObject.scaleX,
-        scaleY: selectedObject.scaleY
-      });
-      
       // Use Fabric.js coordinate transformation
       const zoom = canvas.getZoom();
       const vpt = canvas.viewportTransform!;
@@ -74,8 +65,6 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       const top = canvasRect.top + (objectBounds.top * zoom + vpt[5]);
       const width = objectBounds.width * zoom;
       const height = objectBounds.height * zoom;
-      
-      console.log('Screen coords:', { left, top, width, height });
       
       const offset = 2;
       
@@ -151,36 +140,6 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     selectedObject.on('rotating', immediateUpdate);
     selectedObject.on('skewing', immediateUpdate);
     selectedObject.on('modified', immediateUpdate);
-    
-    // High frequency polling during active interactions to ensure perfect tracking
-    let animationFrame: number | null = null;
-    let isInteracting = false;
-    
-    const startHighFrequencyUpdates = () => {
-      if (isInteracting) return;
-      isInteracting = true;
-      
-      const updateLoop = () => {
-        if (isInteracting) {
-          immediateUpdate();
-          animationFrame = requestAnimationFrame(updateLoop);
-        }
-      };
-      updateLoop();
-    };
-    
-    const stopHighFrequencyUpdates = () => {
-      isInteracting = false;
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-        animationFrame = null;
-      }
-    };
-    
-    // Start high-frequency updates during interactions
-    canvas.on('mouse:down', startHighFrequencyUpdates);
-    canvas.on('mouse:up', stopHighFrequencyUpdates);
-    canvas.on('selection:cleared', stopHighFrequencyUpdates);
 
     // Window events
     const handleWindowEvent = () => updatePositions();
@@ -188,17 +147,10 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     window.addEventListener('scroll', handleWindowEvent);
 
     return () => {
-      // Stop high frequency updates
-      stopHighFrequencyUpdates();
-      
       // Clean up canvas event listeners
       canvasEvents.forEach(event => {
         canvas.off(event);
       });
-      
-      canvas.off('mouse:down', startHighFrequencyUpdates);
-      canvas.off('mouse:up', stopHighFrequencyUpdates);
-      canvas.off('selection:cleared', stopHighFrequencyUpdates);
       
       // Clean up object-specific event listeners
       if (selectedObject) {
