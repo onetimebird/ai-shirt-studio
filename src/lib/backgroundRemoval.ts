@@ -249,12 +249,12 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
       const brightness = (r + g + b) / 3;
       const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
       
-      // Remove if it's bright and has low color variance (white/gray)
-      // This catches shadows (gray) and white spaces
-      if (brightness > 220 && colorVariance < 40) {
-        // Look around to see if this pixel is isolated or part of background
-        let nonWhiteNeighbors = 0;
-        let whiteNeighbors = 0;
+      // Only target pure white/very light gray that's clearly background
+      if (brightness > 230 && colorVariance < 25) {
+        // Check if this white area is surrounded by design elements (enclosed)
+        let designElementsNearby = 0;
+        let backgroundRemoved = 0;
+        let totalChecked = 0;
         
         // Check in 5x5 area for context
         for (let dy = -2; dy <= 2; dy++) {
@@ -263,20 +263,38 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
             
             const nIdx = (y + dy) * width + (x + dx);
             if (nIdx >= 0 && nIdx < mask.length) {
-              const nDataIdx = nIdx * 4;
-              const nBrightness = (data[nDataIdx] + data[nDataIdx + 1] + data[nDataIdx + 2]) / 3;
+              totalChecked++;
               
-              if (nBrightness > 220) {
-                whiteNeighbors++;
-              } else if (nBrightness < 200) {
-                nonWhiteNeighbors++;
+              // Check if this neighbor was already removed (background)
+              if (mask[nIdx] === 0) {
+                backgroundRemoved++;
+                continue;
+              }
+              
+              const nDataIdx = nIdx * 4;
+              const nR = data[nDataIdx];
+              const nG = data[nDataIdx + 1];
+              const nB = data[nDataIdx + 2];
+              const nBrightness = (nR + nG + nB) / 3;
+              const nColorVariance = Math.abs(nR - nG) + Math.abs(nG - nB) + Math.abs(nR - nB);
+              
+              // This is a colorful design element (not white/gray)
+              if (nBrightness < 200 || nColorVariance > 60) {
+                designElementsNearby++;
               }
             }
           }
         }
         
-        // If surrounded by non-white or mix of white/non-white, it's likely trapped background
-        if (nonWhiteNeighbors > 0 || mask[idx - width] === 0 || mask[idx + width] === 0) {
+        // Only remove if:
+        // 1. Mostly surrounded by already removed background, OR
+        // 2. Touching background areas from above/below (like between legs)
+        const surroundedByBackground = backgroundRemoved > totalChecked * 0.5;
+        const touchingVerticalBackground = (
+          mask[idx - width] === 0 || mask[idx + width] === 0
+        ) && designElementsNearby > 3;
+        
+        if (surroundedByBackground || touchingVerticalBackground) {
           cleaned[idx] = 0;
         }
       }
@@ -295,11 +313,12 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
       const dataIdx = idx * 4;
       const brightness = (data[dataIdx] + data[dataIdx + 1] + data[dataIdx + 2]) / 3;
       
-      // Start region growing from bright pixels
-      if (brightness > 230) {
+      // Start region growing from very bright pixels only
+      if (brightness > 240) {
         const region = new Set<number>();
         const stack = [idx];
-        let hasColorfulNeighbor = false;
+        let hasBackgroundConnection = false;
+        let touchesDesignBorder = false;
         
         while (stack.length > 0) {
           const currentIdx = stack.pop()!;
@@ -310,6 +329,11 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
           
           const cx = currentIdx % width;
           const cy = Math.floor(currentIdx / width);
+          
+          // Check if this region connects to already removed background
+          if (cleaned[currentIdx] === 0) {
+            hasBackgroundConnection = true;
+          }
           
           // Check 4-connected neighbors
           const neighbors = [
@@ -327,20 +351,30 @@ function cleanupInternalWhite(mask: Float32Array, data: Uint8ClampedArray, width
             const nBrightness = (nR + nG + nB) / 3;
             const nColorVariance = Math.abs(nR - nG) + Math.abs(nG - nB) + Math.abs(nR - nB);
             
-            // Check if neighbor is colorful (part of design)
-            if (nColorVariance > 50 || nBrightness < 180) {
-              hasColorfulNeighbor = true;
+            // Check if neighbor connects to background
+            if (cleaned[nIdx] === 0) {
+              hasBackgroundConnection = true;
             }
             
-            // Add to region if it's also white/gray
-            if (nBrightness > 220 && nColorVariance < 45 && !visited.has(nIdx)) {
+            // Check if we're at the border of a design element
+            if (nColorVariance > 80 || nBrightness < 150) {
+              touchesDesignBorder = true;
+            }
+            
+            // Only add very similar white pixels to region
+            if (nBrightness > 235 && nColorVariance < 30 && !visited.has(nIdx)) {
               stack.push(nIdx);
             }
           }
         }
         
-        // If this white region touches colorful areas, it's likely trapped background
-        if (hasColorfulNeighbor && region.size < 10000) { // Don't remove huge regions
+        // Only remove if region connects to background AND is small
+        // Don't remove if it's a large central design element
+        const isSmallTrappedRegion = region.size < 5000;
+        const isBackgroundConnected = hasBackgroundConnection;
+        const isNotCentralDesign = touchesDesignBorder || region.size < 1000;
+        
+        if (isBackgroundConnected && isSmallTrappedRegion && isNotCentralDesign) {
           for (const rIdx of region) {
             cleaned[rIdx] = 0;
           }
