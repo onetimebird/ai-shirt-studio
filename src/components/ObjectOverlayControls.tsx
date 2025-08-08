@@ -52,51 +52,83 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
       const canvasElement = canvas.getElement();
       const canvasRect = canvasElement.getBoundingClientRect();
       
-      // Get object bounds in canvas coordinates
-      const objectBounds = selectedObject.getBoundingRect();
+      // Get object's actual transform properties
+      const objLeft = selectedObject.left || 0;
+      const objTop = selectedObject.top || 0;
+      const objWidth = selectedObject.width || 0;
+      const objHeight = selectedObject.height || 0;
+      const objScaleX = selectedObject.scaleX || 1;
+      const objScaleY = selectedObject.scaleY || 1;
+      const objAngle = selectedObject.angle || 0;
       
-      // Use Fabric.js proper coordinate transformation
+      // Calculate actual display dimensions
+      const scaledWidth = objWidth * objScaleX;
+      const scaledHeight = objHeight * objScaleY;
+      
+      // Use Fabric.js coordinate transformation with zoom and viewport
       const zoom = canvas.getZoom();
       const vpt = canvas.viewportTransform!;
       
-      // Transform canvas coordinates to screen coordinates
-      // Formula: screen = (canvas * zoom + viewportOffset) + canvasElementOffset
-      const left = canvasRect.left + (objectBounds.left * zoom + vpt[4]);
-      const top = canvasRect.top + (objectBounds.top * zoom + vpt[5]);
-      const width = objectBounds.width * zoom;
-      const height = objectBounds.height * zoom;
+      // Transform object center to screen coordinates
+      const centerX = canvasRect.left + (objLeft * zoom + vpt[4]);
+      const centerY = canvasRect.top + (objTop * zoom + vpt[5]);
+      
+      // Calculate rotated corner positions
+      const angleRad = (objAngle * Math.PI) / 180;
+      const cos = Math.cos(angleRad);
+      const sin = Math.sin(angleRad);
+      
+      const halfWidth = (scaledWidth * zoom) / 2;
+      const halfHeight = (scaledHeight * zoom) / 2;
+      
+      // Calculate the four corners of the rotated bounding box
+      const corners = [
+        { x: -halfWidth, y: -halfHeight }, // top-left
+        { x: halfWidth, y: -halfHeight },  // top-right  
+        { x: halfWidth, y: halfHeight },   // bottom-right
+        { x: -halfWidth, y: halfHeight }   // bottom-left
+      ];
+      
+      // Rotate corners around center
+      const rotatedCorners = corners.map(corner => ({
+        x: centerX + (corner.x * cos - corner.y * sin),
+        y: centerY + (corner.x * sin + corner.y * cos)
+      }));
       
       const offset = 2; // Tighter to bounding box
       
+      // Position controls relative to rotated corners
+      const [topLeft, topRight, bottomRight, bottomLeft] = rotatedCorners;
+      
       setControlPositions({
         delete: { 
-          x: left - offset, 
-          y: top - offset, 
+          x: topLeft.x - offset, 
+          y: topLeft.y - offset, 
           visible: true 
         },
         rotate: { 
-          x: left + width + offset, 
-          y: top - offset, 
+          x: topRight.x + offset, 
+          y: topRight.y - offset, 
           visible: true 
         },
         layers: { 
-          x: left - offset, 
-          y: top + height + offset, 
+          x: bottomLeft.x - offset, 
+          y: bottomLeft.y + offset, 
           visible: true 
         },
         stretchH: { 
-          x: left + width + offset, 
-          y: top + height / 2, 
+          x: topRight.x + offset, 
+          y: (topRight.y + bottomRight.y) / 2, 
           visible: true 
         },
         scale: { 
-          x: left + width + offset, 
-          y: top + height + offset, 
+          x: bottomRight.x + offset, 
+          y: bottomRight.y + offset, 
           visible: true 
         },
         stretchV: { 
-          x: left + width / 2, 
-          y: top + height + offset, 
+          x: (bottomLeft.x + bottomRight.x) / 2, 
+          y: bottomLeft.y + offset, 
           visible: true 
         },
       });
