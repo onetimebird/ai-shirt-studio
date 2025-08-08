@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { QuantityModal } from "@/components/QuantityModal";
 import { EmbroideryBoundingBox } from "@/components/EmbroideryBoundingBox";
 import { ScreenPrintBoundingBox } from "@/components/ScreenPrintBoundingBox";
-import { ObjectOverlayControls } from "@/components/ObjectOverlayControls";
+import { initializeTextControls, applyCustomControlsToObject } from "@/lib/fabricTextControls";
 import { ArrowRight } from "lucide-react";
 import "./ProductCanvas.css";
 
@@ -59,20 +59,14 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
       setShowCenterGuide(false);
     });
 
-    // Track selected object for HTML overlay controls
+    // Initialize custom controls
+    initializeTextControls();
+
+    // Track selected object for custom controls
     canvas.on('selection:created', (e) => {
       if (e.selected && e.selected.length === 1) {
         const obj = e.selected[0];
-        // Keep border but hide corner controls - like RushOrderTees
-        obj.set({
-          borderColor: '#8138ff',
-          borderDashArray: [2, 2], // Smaller dotted lines like RushOrderTees
-          borderScaleFactor: 1, // Thinner border
-          cornerColor: 'transparent', 
-          cornerSize: 0,
-          transparentCorners: true,
-          controls: {},
-        });
+        applyCustomControlsToObject(obj);
         setSelectedObject(obj);
         canvas.requestRenderAll();
       }
@@ -81,16 +75,7 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     canvas.on('selection:updated', (e) => {
       if (e.selected && e.selected.length === 1) {
         const obj = e.selected[0];
-        // Keep border but hide corner controls
-        obj.set({
-          borderColor: '#8138ff',
-          borderDashArray: [2, 2], // Smaller dotted lines like RushOrderTees
-          borderScaleFactor: 1, // Thinner border
-          cornerColor: 'transparent',
-          cornerSize: 0,
-          transparentCorners: true,
-          controls: {},
-        });
+        applyCustomControlsToObject(obj);
         setSelectedObject(obj);
         canvas.requestRenderAll();
       } else {
@@ -235,11 +220,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
           </>
         )}
 
-        {/* HTML Overlay Controls - positioned over canvas */}
-        <ObjectOverlayControls 
-          canvas={fabricCanvas}
-          selectedObject={selectedObject}
-        />
       </div>
       
       {/* Quantity Modal */}

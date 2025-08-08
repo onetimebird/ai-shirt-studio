@@ -1,5 +1,5 @@
 
-import * as fabric from "fabric";
+import { fabric, Control } from "fabric";
 
 console.log('🔧 fabricTextControls.ts loaded');
 
@@ -154,7 +154,7 @@ export function initializeTextControls() {
   
   try {
     // Create delete control - TOP LEFT position like RushOrderTees
-    const deleteControl = new fabric.Control({
+    const deleteControl = new Control({
       x: -0.5,
       y: -0.5,
       offsetX: -8,
@@ -205,7 +205,7 @@ export function initializeTextControls() {
     });
 
     // Create rotation control - TOP RIGHT position like RushOrderTees
-    const rotateControl = new fabric.Control({
+    const rotateControl = new Control({
       x: 0.5,
       y: -0.5,
       offsetX: 8,
@@ -248,7 +248,7 @@ export function initializeTextControls() {
     });
 
     // Create uniform scale control - BOTTOM RIGHT position like RushOrderTees
-    const scaleControl = new fabric.Control({
+    const scaleControl = new Control({
       x: 0.5,
       y: 0.5,
       offsetX: 8,
@@ -291,7 +291,7 @@ export function initializeTextControls() {
     });
 
     // Create horizontal stretch control - MIDDLE RIGHT position like RushOrderTees
-    const stretchHorizontalControl = new fabric.Control({
+    const stretchHorizontalControl = new Control({
       x: 0.5,
       y: 0, // Middle right
       offsetX: 8,
@@ -334,7 +334,7 @@ export function initializeTextControls() {
     });
 
     // Create vertical stretch control - MIDDLE BOTTOM position like RushOrderTees
-    const stretchVerticalControl = new fabric.Control({
+    const stretchVerticalControl = new Control({
       x: 0,
       y: 0.5, // Position at bottom edge
       offsetX: 0,
@@ -377,7 +377,7 @@ export function initializeTextControls() {
     });
 
     // Create layer control - BOTTOM LEFT position like RushOrderTees (from your screenshot)
-    const layerControl = new fabric.Control({
+    const layerControl = new Control({
       x: -0.5,
       y: 0.5,
       offsetX: -8,
@@ -432,9 +432,9 @@ export function initializeTextControls() {
       br: scaleControl,          // Scale on bottom-right - EXACTLY like RushOrderTees
       bl: layerControl,          // Layer control on bottom-left - EXACTLY like RushOrderTees
       // Hide default controls we don't want
-      ml: new fabric.Control({ visible: false }),
-      mt: new fabric.Control({ visible: false }),
-      mtr: new fabric.Control({ visible: false }),
+      ml: new Control({ visible: false }),
+      mt: new Control({ visible: false }),
+      mtr: new Control({ visible: false }),
     };
     
     // Store controls globally for use
@@ -450,7 +450,7 @@ export function initializeTextControls() {
 }
 
 // Function to apply controls to objects
-export function applyCustomControlsToObject(obj: fabric.Object) {
+export function applyCustomControlsToObject(obj: any) {
   console.log('🎯 Applying ROT-style controls to:', obj.type);
   const customControls = (window as any).customFabricControls;
   if (customControls && obj) {
