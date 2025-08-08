@@ -78,19 +78,47 @@ export const removeWhiteBackground = async (imageElement: HTMLImageElement): Pro
   });
 };
 
-// Smart mask creation using color clustering
+// Smart mask creation using BGBye-inspired color analysis
 function createSmartMask(data: Uint8ClampedArray, width: number, height: number): Float32Array {
   const mask = new Float32Array(width * height);
   mask.fill(1); // Start with keeping everything
   
-  // Detect if pixel is definitely background (white or near-white)
-  const isBackground = (r: number, g: number, b: number, a: number) => {
-    // Check for pure white or very light colors
-    const brightness = (r + g + b) / 3;
-    const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
+  // Convert RGB to LAB color space for better perceptual accuracy (BGBye technique)
+  const rgbToLab = (r: number, g: number, b: number) => {
+    // Simplified RGB to LAB conversion
+    const rNorm = r / 255;
+    const gNorm = g / 255;
+    const bNorm = b / 255;
     
-    // Background if: very bright AND low color variance (grayish/white) AND fully opaque
-    return brightness > 240 && colorVariance < 30 && a > 250;
+    // Convert to XYZ first (simplified)
+    const x = rNorm * 0.4124 + gNorm * 0.3576 + bNorm * 0.1805;
+    const y = rNorm * 0.2126 + gNorm * 0.7152 + bNorm * 0.0722;
+    const z = rNorm * 0.0193 + gNorm * 0.1192 + bNorm * 0.9505;
+    
+    // Convert XYZ to LAB (simplified)
+    const l = 116 * Math.cbrt(y) - 16;
+    const a = 500 * (Math.cbrt(x) - Math.cbrt(y));
+    const bLab = 200 * (Math.cbrt(y) - Math.cbrt(z));
+    
+    return { l, a: a, b: bLab };
+  };
+  
+  // Advanced background detection using LAB color space
+  const isBackground = (r: number, g: number, b: number, alpha: number) => {
+    const lab = rgbToLab(r, g, b);
+    const whiteLabDistance = Math.sqrt(
+      Math.pow(lab.l - 95, 2) + Math.pow(lab.a - 0, 2) + Math.pow(lab.b - 0, 2)
+    );
+    
+    // Multi-criteria background detection
+    const brightness = lab.l;
+    const colorfulness = Math.sqrt(lab.a * lab.a + lab.b * lab.b);
+    const isHighBrightness = brightness > 85;
+    const isLowColor = colorfulness < 15;
+    const isFullyOpaque = alpha > 250;
+    const isWhiteDistance = whiteLabDistance < 25;
+    
+    return (isHighBrightness && isLowColor && isFullyOpaque) || isWhiteDistance;
   };
   
   // Find all edge pixels that are white
@@ -248,8 +276,8 @@ function detectEnclosedSpaces(mask: Float32Array, data: Uint8ClampedArray, width
       const brightness = (r + g + b) / 3;
       const colorVariance = Math.abs(r - g) + Math.abs(g - b) + Math.abs(r - b);
       
-      // Look for bright pixels that could be enclosed spaces
-      if (brightness > 235 && colorVariance < 25) {
+      // Look for very bright pixels that are definitely background spaces
+      if (brightness > 245 && colorVariance < 15) {
         const region = new Set<number>();
         const stack = [idx];
         let minX = width, maxX = 0, minY = height, maxY = 0;
@@ -337,8 +365,11 @@ function detectEnclosedSpaces(mask: Float32Array, data: Uint8ClampedArray, width
             }
           }
           
-          // If mostly surrounded by design elements, remove this enclosed space
-          if (surroundingDesignPixels > totalSurrounding * 0.4) {
+          // Very conservative - only remove if strongly surrounded by design AND very small
+          const stronglySurrounded = surroundingDesignPixels > totalSurrounding * 0.7;
+          const verySmall = region.size < 500;
+          
+          if (stronglySurrounded && verySmall) {
             for (const rIdx of region) {
               enhanced[rIdx] = 0;
             }
@@ -646,21 +677,89 @@ function smoothMaskEdges(mask: Float32Array, width: number, height: number): Flo
   return feathered;
 }
 
-// Apply final mask to image
+// Apply final mask with BGBye-style normalization and advanced blending
 function applyFinalMask(data: Uint8ClampedArray, mask: Float32Array): void {
+  // BGBye-style min-max normalization for consistent quality
+  let minVal = 1.0;
+  let maxVal = 0.0;
+  
   for (let i = 0; i < mask.length; i++) {
-    const dataIdx = i * 4;
-    
-    // Apply mask to alpha channel
-    const maskValue = mask[i];
-    
-    // Use smooth transition
-    if (maskValue < 1) {
-      // Smooth step function for better edges
-      const smoothValue = maskValue * maskValue * (3 - 2 * maskValue);
-      data[dataIdx + 3] = Math.round(data[dataIdx + 3] * smoothValue);
+    minVal = Math.min(minVal, mask[i]);
+    maxVal = Math.max(maxVal, mask[i]);
+  }
+  
+  const range = maxVal - minVal;
+  if (range > 0) {
+    for (let i = 0; i < mask.length; i++) {
+      mask[i] = (mask[i] - minVal) / range;
     }
   }
+  
+  // Multi-scale alpha blending inspired by BGBye's FBA matting
+  for (let i = 0; i < mask.length; i++) {
+    const dataIdx = i * 4;
+    const originalAlpha = data[dataIdx + 3];
+    
+    let maskValue = mask[i];
+    
+    // Advanced smooth transition (sigmoid-like)
+    if (maskValue < 1) {
+      // Trimap-inspired blending: definite foreground, uncertain region, definite background
+      if (maskValue > 0.8) {
+        // Definite foreground - preserve with minimal processing
+        maskValue = 0.9 + maskValue * 0.1; // Scale 0.8-1 to 0.9-1
+      } else if (maskValue > 0.2) {
+        // Uncertain region - apply sophisticated blending
+        const t = (maskValue - 0.2) / 0.6; // Normalize to 0-1
+        // Use smoothstep function for natural falloff
+        maskValue = t * t * (3 - 2 * t);
+      } else {
+        // Definite background - strong removal
+        maskValue = maskValue * maskValue; // Quadratic falloff for background
+      }
+    }
+    
+    // Apply mask with alpha preservation
+    data[dataIdx + 3] = Math.round(originalAlpha * maskValue);
+  }
+}
+
+// BGBye-inspired bilinear upsampling for smooth edges
+function bilinearUpsample(mask: Float32Array, width: number, height: number, targetWidth: number, targetHeight: number): Float32Array {
+  if (width === targetWidth && height === targetHeight) return mask;
+  
+  const result = new Float32Array(targetWidth * targetHeight);
+  const xRatio = width / targetWidth;
+  const yRatio = height / targetHeight;
+  
+  for (let y = 0; y < targetHeight; y++) {
+    for (let x = 0; x < targetWidth; x++) {
+      const srcX = x * xRatio;
+      const srcY = y * yRatio;
+      
+      const x1 = Math.floor(srcX);
+      const y1 = Math.floor(srcY);
+      const x2 = Math.min(x1 + 1, width - 1);
+      const y2 = Math.min(y1 + 1, height - 1);
+      
+      const dx = srcX - x1;
+      const dy = srcY - y1;
+      
+      // Bilinear interpolation
+      const val11 = mask[y1 * width + x1];
+      const val12 = mask[y2 * width + x1];
+      const val21 = mask[y1 * width + x2];
+      const val22 = mask[y2 * width + x2];
+      
+      const val1 = val11 * (1 - dx) + val21 * dx;
+      const val2 = val12 * (1 - dx) + val22 * dx;
+      const finalVal = val1 * (1 - dy) + val2 * dy;
+      
+      result[y * targetWidth + x] = finalVal;
+    }
+  }
+  
+  return result;
 }
 
 // Legacy function kept for compatibility
