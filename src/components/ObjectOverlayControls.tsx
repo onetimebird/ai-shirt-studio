@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { Canvas as FabricCanvas, FabricObject } from 'fabric';
 import './ObjectOverlayControls.css';
 
@@ -50,19 +51,22 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     const updatePositions = () => {
       const canvasElement = canvas.getElement();
       const canvasRect = canvasElement.getBoundingClientRect();
+      
+      // Get object bounds in canvas coordinates
       const objectBounds = selectedObject.getBoundingRect();
       
-      // Calculate zoom and viewport transform
+      // Use Fabric.js proper coordinate transformation
       const zoom = canvas.getZoom();
       const vpt = canvas.viewportTransform!;
       
-      // Transform object bounds to screen coordinates
-      const left = canvasRect.left + (objectBounds.left + vpt[4]) * zoom;
-      const top = canvasRect.top + (objectBounds.top + vpt[5]) * zoom;
+      // Transform canvas coordinates to screen coordinates
+      // Formula: screen = (canvas * zoom + viewportOffset) + canvasElementOffset
+      const left = canvasRect.left + (objectBounds.left * zoom + vpt[4]);
+      const top = canvasRect.top + (objectBounds.top * zoom + vpt[5]);
       const width = objectBounds.width * zoom;
       const height = objectBounds.height * zoom;
       
-      const offset = 2; // Tighter to bounding box - almost touching
+      const offset = 2; // Tighter to bounding box
       
       setControlPositions({
         delete: { 
@@ -100,43 +104,39 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
 
     updatePositions();
 
-    // High-frequency polling during interactions for real-time tracking
-    let isTransforming = false;
-    let pollInterval: NodeJS.Timeout;
-    
-    const startPolling = () => {
-      if (!isTransforming) {
-        isTransforming = true;
-        // Poll every 16ms (~60fps) during active transforms
-        pollInterval = setInterval(updatePositions, 16);
-      }
-    };
-    
-    const stopPolling = () => {
-      if (isTransforming) {
-        isTransforming = false;
-        clearInterval(pollInterval);
-      }
+    // Use flushSync for immediate DOM updates during transforms
+    const immediateUpdate = () => {
+      // Force immediate DOM update instead of batched React update
+      flushSync(() => {
+        updatePositions();
+      });
     };
 
-    // Canvas events with polling during transforms
-    const events = {
-      'mouse:down': startPolling,
-      'object:moving': updatePositions,
-      'object:scaling': updatePositions,
-      'object:rotating': updatePositions,
-      'object:modified': () => {
-        updatePositions();
-        stopPolling();
-      },
-      'mouse:up': stopPolling,
-      'selection:cleared': stopPolling,
-      'canvas:viewportTransform': updatePositions
-    };
-    
-    Object.entries(events).forEach(([event, handler]) => {
-      canvas.on(event, handler);
+    // Listen to both canvas events and object-specific events
+    const canvasEvents = [
+      'object:moving',
+      'object:scaling', 
+      'object:rotating',
+      'object:transforming', // This fires during active transforms
+      'object:modified',
+      'canvas:viewportTransform'
+    ];
+
+    // Add event listeners
+    canvasEvents.forEach(event => {
+      canvas.on(event, (e) => {
+        // Only update if it's our selected object
+        if (e.target === selectedObject || event === 'canvas:viewportTransform') {
+          immediateUpdate();
+        }
+      });
     });
+
+    // Also listen directly to the selected object's events
+    selectedObject.on('moving', immediateUpdate);
+    selectedObject.on('scaling', immediateUpdate);
+    selectedObject.on('rotating', immediateUpdate);
+    selectedObject.on('modified', immediateUpdate);
 
     // Window events
     const handleWindowEvent = () => updatePositions();
@@ -144,12 +144,20 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
     window.addEventListener('scroll', handleWindowEvent);
 
     return () => {
-      // Stop polling and clean up
-      stopPolling();
-      
-      Object.entries(events).forEach(([event, handler]) => {
-        canvas.off(event, handler);
+      // Clean up canvas event listeners
+      canvasEvents.forEach(event => {
+        canvas.off(event);
       });
+      
+      // Clean up object-specific event listeners
+      if (selectedObject) {
+        selectedObject.off('moving');
+        selectedObject.off('scaling');
+        selectedObject.off('rotating');
+        selectedObject.off('modified');
+      }
+      
+      // Clean up window event listeners
       window.removeEventListener('resize', handleWindowEvent);
       window.removeEventListener('scroll', handleWindowEvent);
     };
