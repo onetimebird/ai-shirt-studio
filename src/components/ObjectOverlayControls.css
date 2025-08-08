@@ -12,8 +12,8 @@
 
 .overlay-control {
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 20px; /* Reduced from 24px by 20% */
+  height: 20px; /* Reduced from 24px by 20% */
   background: white;
   border: 2px solid #8138ff;
   border-radius: 50%;
@@ -36,8 +36,8 @@
 }
 
 .overlay-control svg {
-  width: 14px;
-  height: 14px;
+  width: 12px; /* Reduced from 14px by ~20% */
+  height: 12px; /* Reduced from 14px by ~20% */
   color: #8138ff;
   transition: color 0.15s ease;
 }
@@ -68,11 +68,17 @@
 .overlay-control-stretch-h {
   /* Horizontal stretch control positioned at middle-right */
   cursor: ew-resize;
+  border-radius: 4px; /* Rectangular instead of circular */
+  width: 24px; /* Slightly wider for horizontal stretch */
+  height: 18px; /* Shorter height for rectangular look */
 }
 
 .overlay-control-stretch-v {
   /* Vertical stretch control positioned at middle-bottom */
   cursor: ns-resize;
+  border-radius: 4px; /* Rectangular instead of circular */
+  width: 18px; /* Narrower width for vertical stretch */
+  height: 24px; /* Taller height for rectangular look */
 }
 
 /* Mobile responsiveness */

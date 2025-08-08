@@ -100,8 +100,16 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
 
     updatePositions();
 
-    // Listen for object transformations and canvas changes
-    const events = ['object:moving', 'object:scaling', 'object:rotating', 'object:modified', 'canvas:viewportTransform'];
+    // Listen for object transformations and canvas changes - more events for smoother tracking
+    const events = [
+      'object:moving', 
+      'object:scaling', 
+      'object:rotating', 
+      'object:modified', 
+      'object:transform',
+      'canvas:viewportTransform',
+      'after:render'
+    ];
     events.forEach(event => canvas.on(event, updatePositions));
 
     // Also update on window resize/scroll
@@ -163,7 +171,9 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
   const handleScale = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (canvas && selectedObject) {
-      // Start uniform scaling interaction
+      // Ultra-smooth scaling with requestAnimationFrame
+      let animationFrame: number | null = null;
+      
       const startScaling = (event: MouseEvent) => {
         const pointer = canvas.getPointer(event);
         const center = selectedObject.getCenterPoint();
@@ -174,20 +184,33 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         const originalScaleY = selectedObject.scaleY || 1;
 
         const doScale = (moveEvent: MouseEvent) => {
-          const movePointer = canvas.getPointer(moveEvent);
-          const currentDistance = Math.sqrt(
-            Math.pow(movePointer.x - center.x, 2) + Math.pow(movePointer.y - center.y, 2)
-          );
-          const scaleFactor = Math.max(0.1, currentDistance / startDistance);
+          if (animationFrame) cancelAnimationFrame(animationFrame);
           
-          selectedObject.set({
-            scaleX: originalScaleX * scaleFactor,
-            scaleY: originalScaleY * scaleFactor,
+          animationFrame = requestAnimationFrame(() => {
+            const movePointer = canvas.getPointer(moveEvent);
+            const currentDistance = Math.sqrt(
+              Math.pow(movePointer.x - center.x, 2) + Math.pow(movePointer.y - center.y, 2)
+            );
+            
+            // Smoother scaling with easing
+            let scaleFactor = currentDistance / startDistance;
+            scaleFactor = Math.max(0.1, Math.min(5, scaleFactor)); // Reasonable limits
+            
+            selectedObject.set({
+              scaleX: originalScaleX * scaleFactor,
+              scaleY: originalScaleY * scaleFactor,
+            });
+            
+            canvas.requestRenderAll();
+            animationFrame = null;
           });
-          canvas.requestRenderAll();
         };
 
         const endScale = () => {
+          if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = null;
+          }
           document.removeEventListener('mousemove', doScale);
           document.removeEventListener('mouseup', endScale);
           canvas.fire('object:modified', { target: selectedObject });
@@ -292,8 +315,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-delete"
           style={{
-            left: controlPositions.delete.x - 12, // Center the 24px control
-            top: controlPositions.delete.y - 12,
+            left: controlPositions.delete.x - 10, // Center the 20px control
+            top: controlPositions.delete.y - 10,
           }}
           onClick={handleDelete}
           title="Delete"
@@ -310,8 +333,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-rotate"
           style={{
-            left: controlPositions.rotate.x - 12,
-            top: controlPositions.rotate.y - 12,
+            left: controlPositions.rotate.x - 10,
+            top: controlPositions.rotate.y - 10,
           }}
           onMouseDown={handleRotate}
           title="Rotate"
@@ -327,8 +350,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-scale"
           style={{
-            left: controlPositions.scale.x - 12,
-            top: controlPositions.scale.y - 12,
+            left: controlPositions.scale.x - 10,
+            top: controlPositions.scale.y - 10,
           }}
           onMouseDown={handleScale}
           title="Resize"
@@ -345,8 +368,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-layers"
           style={{
-            left: controlPositions.layers.x - 12,
-            top: controlPositions.layers.y - 12,
+            left: controlPositions.layers.x - 10,
+            top: controlPositions.layers.y - 10,
           }}
           onClick={handleLayers}
           title="Layer Order"
@@ -362,8 +385,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-stretch-h"
           style={{
-            left: controlPositions.stretchH.x - 12,
-            top: controlPositions.stretchH.y - 12,
+            left: controlPositions.stretchH.x - 12, // Center wider rectangular control (24px)
+            top: controlPositions.stretchH.y - 9,   // Center shorter rectangular control (18px)
           }}
           onMouseDown={handleStretchH}
           title="Change Width"
@@ -379,8 +402,8 @@ export const ObjectOverlayControls = ({ canvas, selectedObject }: ObjectOverlayC
         <div 
           className="overlay-control overlay-control-stretch-v"
           style={{
-            left: controlPositions.stretchV.x - 12,
-            top: controlPositions.stretchV.y - 12,
+            left: controlPositions.stretchV.x - 9,   // Center narrower rectangular control (18px)
+            top: controlPositions.stretchV.y - 12,   // Center taller rectangular control (24px)
           }}
           onMouseDown={handleStretchV}
           title="Change Height"

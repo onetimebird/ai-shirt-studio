@@ -66,7 +66,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         // Keep border but hide corner controls - like RushOrderTees
         obj.set({
           borderColor: '#8138ff',
-          borderDashArray: [3, 3],
+          borderDashArray: [2, 2], // Smaller dotted lines like RushOrderTees
+          borderScaleFactor: 1, // Thinner border
           cornerColor: 'transparent', 
           cornerSize: 0,
           transparentCorners: true,
@@ -83,7 +84,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         // Keep border but hide corner controls
         obj.set({
           borderColor: '#8138ff',
-          borderDashArray: [3, 3],
+          borderDashArray: [2, 2], // Smaller dotted lines like RushOrderTees
+          borderScaleFactor: 1, // Thinner border
           cornerColor: 'transparent',
           cornerSize: 0,
           transparentCorners: true,
