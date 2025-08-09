@@ -53,8 +53,8 @@ const LayerForwardIcon = () => <img src="/icons/layer-forward.svg" className="w-
 const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
 const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
 const UploadImageIcon = () => <img src="/icons/image.svg" className="w-4 h-4" alt="Image" />;
-const FolderPlusIcon = () => <img src="/icons/folder-plus.svg" className="w-4 h-4" alt="Choose File" />;
-const GoogleDriveIcon = () => <img src="/icons/google-drive.svg" className="w-5 h-5" alt="Google Drive" />;
+const FolderPlusIcon = () => <img src="/icons/folder-plus.svg" className="w-4 h-4 brightness-0 invert" alt="Choose File" />;
+const GoogleDriveUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-5 h-5 brightness-0 invert" alt="Upload to Drive" />;
 
 interface RightPanelProps {
   activeTool: string;
@@ -1734,7 +1734,7 @@ and return a high-quality transparent PNG suitable for print.
                   {/* Google Drive Upload */}
                   <div className="border border-border rounded-lg p-4 text-center">
                     <div className="flex items-center justify-center gap-2 mb-3">
-                      <GoogleDriveIcon />
+                      <GoogleDriveUploadIcon />
                       <span className="text-sm font-medium">Google Drive</span>
                     </div>
                     <Button 
