@@ -390,7 +390,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   }, [imageUrl, onSave, onClose]);
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col relative" style={{ zIndex: 9999, pointerEvents: 'auto' }}>
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -406,7 +406,12 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         </p>
       </CardHeader>
 
-      <CardContent className="flex-1 space-y-6 overflow-y-auto">
+      <CardContent 
+        className="flex-1 space-y-6 overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         {/* Image Preview */}
         <div className="flex justify-center">
           <div className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden border-2 border-border">
