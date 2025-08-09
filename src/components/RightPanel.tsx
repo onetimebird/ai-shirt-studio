@@ -1427,26 +1427,6 @@ and return a high-quality transparent PNG suitable for print.
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* File Type Information */}
-                  <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-xl p-4 border border-blue-200/30 dark:border-blue-800/30">
-                    <div className="text-center mb-3">
-                      <h4 className="text-sm font-semibold text-foreground mb-2">Upload ANY file type</h4>
-                      <p className="text-xs text-muted-foreground mb-3">
-                        We prefer vector, high-res, or large files such as:
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2 text-center">
-                      {['ai', 'eps', 'pdf', 'tiff', 'psd', 'jpg', 'png'].map((format, index) => (
-                        <div 
-                          key={format}
-                          className="bg-white/80 dark:bg-gray-800/80 rounded-lg px-2 py-1 text-xs font-mono font-semibold text-primary border border-primary/20 hover:border-primary/40 transition-colors duration-200"
-                        >
-                          {format.toUpperCase()}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Local File Upload */}
                   <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
                     <ImageIcon className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
@@ -1771,6 +1751,26 @@ and return a high-quality transparent PNG suitable for print.
                     <p className="text-xs text-muted-foreground mt-2">
                       Upload images from your Google Drive
                     </p>
+                  </div>
+
+                  {/* File Type Information */}
+                  <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-xl p-4 border border-blue-200/30 dark:border-blue-800/30">
+                    <div className="text-center mb-3">
+                      <h4 className="text-sm font-semibold text-foreground mb-2">Upload ANY file type</h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        We prefer vector, high-res, or large files such as:
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 text-center">
+                      {['ai', 'eps', 'pdf', 'tiff', 'psd', 'jpg', 'png'].map((format, index) => (
+                        <div 
+                          key={format}
+                          className="bg-white/80 dark:bg-gray-800/80 rounded-lg px-2 py-1 text-xs font-mono font-semibold text-primary border border-primary/20 hover:border-primary/40 transition-colors duration-200"
+                        >
+                          {format.toUpperCase()}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
