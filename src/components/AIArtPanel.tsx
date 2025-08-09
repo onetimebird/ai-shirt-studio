@@ -326,7 +326,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               )}
             </Button>
 
-            <div className="flex justify-between items-center text-xs mb-4">
+            <div className="flex items-center justify-start gap-4 text-xs mb-4">
               {promptHistory.length > 0 && (
                 <select
                   className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer text-xs"
