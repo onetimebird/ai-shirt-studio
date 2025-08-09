@@ -25,36 +25,61 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   const [showCenterGuide, setShowCenterGuide] = useState(false);
   const [tshirtDimensions, setTshirtDimensions] = useState({ top: 0, scale: 1, height: 0 });
 
+  // Shared function to calculate canvas dimensions
+  const calculateCanvasDimensions = () => {
+    const isMobile = window.innerWidth < 768;
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1280;
+    
+    if (isMobile) {
+      return {
+        width: Math.min(420, window.innerWidth - 10),
+        height: Math.min(600, window.innerHeight - 150)
+      };
+    }
+    
+    // On desktop/tablet: calculate available space
+    // Account for left sidebar (~280px) + right panel (320px on xl, 384px on 2xl) + padding
+    const rightPanelWidth = window.innerWidth >= 1536 ? 384 : 320; // 2xl:w-96 vs w-80
+    const leftSidebarWidth = 280;
+    const padding = 32; // p-4 = 16px * 2
+    
+    const availableWidth = window.innerWidth - leftSidebarWidth - rightPanelWidth - padding;
+    const maxWidth = Math.min(1012, Math.max(400, availableWidth)); // Keep within reasonable bounds
+    
+    return {
+      width: maxWidth,
+      height: Math.min(1113, window.innerHeight - 200)
+    };
+  };
+
+  // Shared function to calculate t-shirt scale and position
+  const calculateTshirtTransform = (img: FabricImage, canvasWidth: number, canvasHeight: number) => {
+    const isMobile = canvasWidth < 500;
+    let scaleFactor = isMobile ? 1.05 : 0.79;
+    if (!isMobile && currentSide === "back") {
+      scaleFactor *= 0.9;
+    }
+    
+    const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
+    const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
+    const scale = Math.min(scaleX, scaleY);
+    const topPosition = canvasHeight / 2;
+    
+    return {
+      scale,
+      topPosition,
+      left: canvasWidth / 2,
+      dimensions: {
+        top: topPosition - (img.height * scale / 2),
+        scale: scale,
+        height: img.height
+      }
+    };
+  };
+
   // Initialize Fabric.js canvas ONLY ONCE
   useEffect(() => {
     if (!canvasRef.current) return;
-
-    // Calculate responsive canvas dimensions
-    const calculateCanvasDimensions = () => {
-      const isMobile = window.innerWidth < 768;
-      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1280;
-      
-      if (isMobile) {
-        return {
-          width: Math.min(420, window.innerWidth - 10),
-          height: Math.min(600, window.innerHeight - 150)
-        };
-      }
-      
-      // On desktop/tablet: calculate available space
-      // Account for left sidebar (~280px) + right panel (320px on xl, 384px on 2xl) + padding
-      const rightPanelWidth = window.innerWidth >= 1536 ? 384 : 320; // 2xl:w-96 vs w-80
-      const leftSidebarWidth = 280;
-      const padding = 32; // p-4 = 16px * 2
-      
-      const availableWidth = window.innerWidth - leftSidebarWidth - rightPanelWidth - padding;
-      const maxWidth = Math.min(1012, Math.max(400, availableWidth)); // Keep within reasonable bounds
-      
-      return {
-        width: maxWidth,
-        height: Math.min(1113, window.innerHeight - 200)
-      };
-    };
     
     const { width: canvasWidth, height: canvasHeight } = calculateCanvasDimensions();
 
@@ -116,11 +141,28 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     onCanvasReady?.(canvas);
     console.log('[ProductCanvas] onCanvasReady called');
 
-    // Add window resize listener to update canvas dimensions
+    // Add window resize listener to update canvas dimensions and rescale t-shirt
     const handleResize = () => {
       const { width: newWidth, height: newHeight } = calculateCanvasDimensions();
       if (canvas.width !== newWidth || canvas.height !== newHeight) {
         canvas.setDimensions({ width: newWidth, height: newHeight });
+        
+        // Rescale the t-shirt background image to fit the new canvas size
+        if (canvas.backgroundImage) {
+          const img = canvas.backgroundImage as FabricImage;
+          const transform = calculateTshirtTransform(img, newWidth, newHeight);
+          
+          img.set({
+            scaleX: transform.scale,
+            scaleY: transform.scale,
+            left: transform.left,
+            top: transform.topPosition,
+          });
+          
+          // Update t-shirt dimensions for bounding boxes
+          setTshirtDimensions(transform.dimensions);
+        }
+        
         canvas.renderAll();
       }
     };
@@ -151,44 +193,25 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     FabricImage.fromURL(imageUrl, {
       crossOrigin: "anonymous",
     }).then((img) => {
-      // Calculate scale to make t-shirt much larger, especially on desktop
       const canvasWidth = fabricCanvas.width || 600;
       const canvasHeight = fabricCanvas.height || 700;
       
-      // Keep t-shirt at reasonable size within the larger canvas
-      const isMobile = canvasWidth < 500;
-      // Keep mobile unchanged at 1.05, desktop at 0.79
-      let scaleFactor = isMobile ? 1.05 : 0.79;
-      // Scale down back images by 10% on desktop only
-      if (!isMobile && currentSide === "back") {
-        scaleFactor *= 0.9;
-      }
-      
-      const scaleX = (canvasWidth * scaleFactor) / (img.width || 1);
-      const scaleY = (canvasHeight * scaleFactor) / (img.height || 1);
-      const scale = Math.min(scaleX, scaleY);
-
-      // Set as background image - this keeps it behind all user content
-      // Center the t-shirt properly within the smaller scale
-      const topPosition = canvasHeight / 2;
+      // Use shared function to calculate t-shirt transform
+      const transform = calculateTshirtTransform(img, canvasWidth, canvasHeight);
       
       img.set({
-        scaleX: scale,
-        scaleY: scale,
+        scaleX: transform.scale,
+        scaleY: transform.scale,
         originX: "center",
         originY: "center",
-        left: canvasWidth / 2,
-        top: topPosition,
+        left: transform.left,
+        top: transform.topPosition,
         selectable: false,
         evented: false,
       });
       
       // Store t-shirt dimensions for bounding box positioning
-      setTshirtDimensions({
-        top: topPosition - (img.height * scale / 2),
-        scale: scale,
-        height: img.height
-      });
+      setTshirtDimensions(transform.dimensions);
       
       fabricCanvas.backgroundImage = img;
       fabricCanvas.renderAll();
