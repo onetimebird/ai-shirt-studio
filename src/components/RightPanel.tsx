@@ -18,6 +18,7 @@ import { ProductSelector } from "@/components/ProductSelector";
 import { ImageEditPanel } from "@/components/ImageEditPanel";
 import {
   Type,
+  ChevronDown,
   Palette,
   Image as ImageIcon,
   Bold,
@@ -1835,6 +1836,117 @@ and return a high-quality transparent PNG suitable for print.
                       title={color}
                     />
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Layer Management - Show for any selected object */}
+          {selectedObject && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                    <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  Layer Order
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      console.log('Bring to Front clicked from RightPanel');
+                      const canvas = (window as any).designCanvas?.canvas;
+                      if (canvas && selectedObject) {
+                        const objects = canvas.getObjects();
+                        console.log('Bringing to front. Objects before:', objects.length, 'Current index:', objects.indexOf(selectedObject));
+                        canvas.bringToFront(selectedObject);
+                        selectedObject.setCoords();
+                        canvas.renderAll();
+                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
+                        toast.success("Brought to front");
+                      }
+                    }}
+                  >
+                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
+                    </svg>
+                    To Front
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      console.log('Send to Back clicked from RightPanel');
+                      const canvas = (window as any).designCanvas?.canvas;
+                      if (canvas && selectedObject) {
+                        const objects = canvas.getObjects();
+                        console.log('Sending to back. Objects before:', objects.length, 'Current index:', objects.indexOf(selectedObject));
+                        canvas.sendToBack(selectedObject);
+                        selectedObject.setCoords();
+                        canvas.renderAll();
+                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
+                        toast.success("Sent to back");
+                      }
+                    }}
+                  >
+                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
+                    </svg>
+                    To Back
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      console.log('Bring Forward clicked from RightPanel');
+                      const canvas = (window as any).designCanvas?.canvas;
+                      if (canvas && selectedObject) {
+                        const objects = canvas.getObjects();
+                        console.log('Bringing forward. Current index:', objects.indexOf(selectedObject));
+                        canvas.bringForward(selectedObject);
+                        selectedObject.setCoords();
+                        canvas.renderAll();
+                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
+                        toast.success("Brought forward");
+                      }
+                    }}
+                  >
+                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
+                      <polygon points="7,6 17,6 21,10"/>
+                    </svg>
+                    Forward
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      console.log('Send Backward clicked from RightPanel');
+                      const canvas = (window as any).designCanvas?.canvas;
+                      if (canvas && selectedObject) {
+                        const objects = canvas.getObjects();
+                        console.log('Sending backward. Current index:', objects.indexOf(selectedObject));
+                        canvas.sendBackwards(selectedObject);
+                        selectedObject.setCoords();
+                        canvas.renderAll();
+                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
+                        toast.success("Sent backward");
+                      }
+                    }}
+                  >
+                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
+                      <polygon points="17,18 7,18 3,14"/>
+                    </svg>
+                    Backward
+                  </Button>
                 </div>
               </CardContent>
             </Card>
