@@ -390,7 +390,12 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   }, [imageUrl, onSave, onClose]);
 
   return (
-    <Card className="h-full flex flex-col relative" style={{ zIndex: 9999, pointerEvents: 'auto' }}>
+    <Card className="h-full flex flex-col relative" style={{ 
+      zIndex: 9999, 
+      pointerEvents: 'auto',
+      backgroundColor: 'rgba(255, 0, 0, 0.1)', // Debug: red tint
+      border: '2px solid red' // Debug: red border
+    }}>
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -408,9 +413,18 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
       <CardContent 
         className="flex-1 space-y-6 overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-        onMouseDown={(e) => e.stopPropagation()}
-        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          console.log('ImageEditPanel clicked!', e.target);
+          e.stopPropagation();
+        }}
+        onMouseDown={(e) => {
+          console.log('ImageEditPanel mouseDown!', e.target);
+          e.stopPropagation();
+        }}
+        onPointerDown={(e) => {
+          console.log('ImageEditPanel pointerDown!', e.target);
+          e.stopPropagation();
+        }}
       >
         {/* Image Preview */}
         <div className="flex justify-center">
