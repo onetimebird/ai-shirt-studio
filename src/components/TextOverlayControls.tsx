@@ -88,21 +88,37 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
         <Copy size={14} />
       </button>
 
-      {/* Layers Dropdown - Bottom Left */}
+      {/* Layers Dropdown - Bottom Left - DEBUG VERSION */}
       <div 
-        className="bottom-left"
         style={{ 
           position: 'absolute',
           bottom: '-18px',
           left: '-18px',
-          pointerEvents: 'auto'
+          pointerEvents: 'auto',
+          zIndex: 10000,
+          backgroundColor: 'red', // DEBUG: Make it visible
+          width: '40px',
+          height: '40px',
+          border: '3px solid yellow' // DEBUG: Make it very obvious
         }}
       >
         <LayersDropdown
-          onBringToFront={onBringToFront}
-          onSendToBack={onSendToBack}
-          onBringForward={onBringForward}
-          onSendBackward={onSendBackward}
+          onBringToFront={() => {
+            console.log('onBringToFront called');
+            onBringToFront?.();
+          }}
+          onSendToBack={() => {
+            console.log('onSendToBack called');
+            onSendToBack?.();
+          }}
+          onBringForward={() => {
+            console.log('onBringForward called');
+            onBringForward?.();
+          }}
+          onSendBackward={() => {
+            console.log('onSendBackward called');
+            onSendBackward?.();
+          }}
         />
       </div>
     </div>
