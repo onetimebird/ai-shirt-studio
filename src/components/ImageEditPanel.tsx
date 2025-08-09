@@ -287,12 +287,15 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
 
     const { canvas, activeObject } = result;
-    console.log('Bringing to front:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    const objects = canvas.getObjects();
+    console.log('Bringing to front. Objects before:', objects.length, 'Current index:', objects.indexOf(activeObject));
     
-    // Use correct Fabric.js method
+    // Move object to the top of the stack (highest index)
     canvas.bringToFront(activeObject);
     activeObject.setCoords();
-    canvas.requestRenderAll();
+    canvas.renderAll();
+    
+    console.log('Objects after:', canvas.getObjects().length, 'New index:', canvas.getObjects().indexOf(activeObject));
     toast.success("Brought to front");
   }, [getActiveImageObject]);
 
@@ -304,12 +307,15 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
 
     const { canvas, activeObject } = result;
-    console.log('Sending to back:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    const objects = canvas.getObjects();
+    console.log('Sending to back. Objects before:', objects.length, 'Current index:', objects.indexOf(activeObject));
     
-    // Use correct Fabric.js method  
+    // Move object to the bottom of the stack (index 0)  
     canvas.sendToBack(activeObject);
     activeObject.setCoords();
-    canvas.requestRenderAll();
+    canvas.renderAll();
+    
+    console.log('Objects after:', canvas.getObjects().length, 'New index:', canvas.getObjects().indexOf(activeObject));
     toast.success("Sent to back");
   }, [getActiveImageObject]);
 
@@ -321,12 +327,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
 
     const { canvas, activeObject } = result;
-    console.log('Bringing forward:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    const objects = canvas.getObjects();
+    const currentIndex = objects.indexOf(activeObject);
+    console.log('Bringing forward. Current index:', currentIndex, 'Total objects:', objects.length);
     
-    // Use correct Fabric.js method
+    // Move object up one layer
     canvas.bringForward(activeObject);
     activeObject.setCoords();
-    canvas.requestRenderAll();
+    canvas.renderAll();
+    
+    console.log('New index:', canvas.getObjects().indexOf(activeObject));
     toast.success("Brought forward");
   }, [getActiveImageObject]);
 
@@ -338,12 +348,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
 
     const { canvas, activeObject } = result;
-    console.log('Sending backward:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    const objects = canvas.getObjects();
+    const currentIndex = objects.indexOf(activeObject);
+    console.log('Sending backward. Current index:', currentIndex, 'Total objects:', objects.length);
     
-    // Use correct Fabric.js method
+    // Move object down one layer
     canvas.sendBackwards(activeObject);
     activeObject.setCoords();
-    canvas.requestRenderAll();
+    canvas.renderAll();
+    
+    console.log('New index:', canvas.getObjects().indexOf(activeObject));
     toast.success("Sent backward");
   }, [getActiveImageObject]);
 
