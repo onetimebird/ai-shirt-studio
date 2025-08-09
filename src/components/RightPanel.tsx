@@ -1843,6 +1843,11 @@ and return a high-quality transparent PNG suitable for print.
 
           {/* Layer Management - Show for any selected object */}
           {selectedObject && (
+            <div>
+              <p style={{color: 'red', fontWeight: 'bold'}}>DEBUG: Layer section is rendering for selectedObject: {selectedObject.type}</p>
+            </div>
+          )}
+          {selectedObject && (
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
@@ -1859,6 +1864,7 @@ and return a high-quality transparent PNG suitable for print.
                     variant="outline" 
                     size="sm"
                     onClick={() => {
+                      alert('Button clicked!'); // Simple test
                       console.log('=== BRING TO FRONT DEBUG ===');
                       console.log('selectedObject:', selectedObject);
                       console.log('selectedObject type:', selectedObject?.type);
