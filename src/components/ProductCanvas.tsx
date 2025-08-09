@@ -55,7 +55,8 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   // Shared function to calculate t-shirt scale and position
   const calculateTshirtTransform = (img: FabricImage, canvasWidth: number, canvasHeight: number) => {
     const isMobile = canvasWidth < 500;
-    let scaleFactor = isMobile ? 1.05 : 0.79;
+    // Increase desktop scale by 30%, keep mobile unchanged for now
+    let scaleFactor = isMobile ? 1.05 : 0.79 * 1.3;
     if (!isMobile && currentSide === "back") {
       scaleFactor *= 0.9;
     }
