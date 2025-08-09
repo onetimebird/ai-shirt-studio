@@ -1859,17 +1859,45 @@ and return a high-quality transparent PNG suitable for print.
                     variant="outline" 
                     size="sm"
                     onClick={() => {
-                      console.log('Bring to Front clicked from RightPanel');
+                      console.log('=== BRING TO FRONT DEBUG ===');
+                      console.log('selectedObject:', selectedObject);
+                      console.log('selectedObject type:', selectedObject?.type);
+                      
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (canvas && selectedObject) {
-                        const objects = canvas.getObjects();
-                        console.log('Bringing to front. Objects before:', objects.length, 'Current index:', objects.indexOf(selectedObject));
-                        canvas.bringToFront(selectedObject);
-                        selectedObject.setCoords();
-                        canvas.renderAll();
-                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
-                        toast.success("Brought to front");
+                      console.log('canvas from window.designCanvas:', canvas);
+                      console.log('canvas exists:', !!canvas);
+                      
+                      if (!canvas) {
+                        console.error('Canvas not found!');
+                        toast.error("Canvas not found");
+                        return;
                       }
+                      
+                      if (!selectedObject) {
+                        console.error('No selected object!');
+                        toast.error("No object selected");
+                        return;
+                      }
+                      
+                      const objects = canvas.getObjects();
+                      console.log('Canvas objects:', objects);
+                      console.log('Objects count:', objects.length);
+                      console.log('selectedObject in canvas objects:', objects.indexOf(selectedObject));
+                      
+                      if (objects.indexOf(selectedObject) === -1) {
+                        console.error('Selected object not found in canvas objects!');
+                        toast.error("Object not found on canvas");
+                        return;
+                      }
+                      
+                      console.log('Bringing to front...');
+                      canvas.bringToFront(selectedObject);
+                      selectedObject.setCoords();
+                      canvas.renderAll();
+                      
+                      const newIndex = canvas.getObjects().indexOf(selectedObject);
+                      console.log('New index after bringToFront:', newIndex);
+                      toast.success("Brought to front");
                     }}
                   >
                     <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
