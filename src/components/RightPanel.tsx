@@ -47,10 +47,10 @@ const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[14px] h
 const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Italic" />;
 const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Underline" />;
 const LayersIcon = () => <img src="/icons/layers.svg" className="w-4 h-4" alt="Layers" />;
-const FrontIcon = () => <img src="/icons/front.svg" className="w-4 h-4" alt="Bring to Front" />;
-const BackIcon = () => <img src="/icons/back.svg" className="w-4 h-4" alt="Send to Back" />;
-const LayerForwardIcon = () => <img src="/icons/layer-forward.svg" className="w-4 h-4" alt="Bring Forward" />;
-const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
+const FrontIcon = () => <img src="/icons/front.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Bring to Front" />;
+const BackIcon = () => <img src="/icons/back.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Send to Back" />;
+const LayerForwardIcon = () => <img src="/icons/layer-forward.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Bring Forward" />;
+const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Send Backward" />;
 const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
 const UploadImageIcon = () => <img src="/icons/image.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Image" />;
 const FolderPlusIcon = () => <img src="/icons/folder-plus.svg" className="w-4 h-4 brightness-0 invert" alt="Choose File" />;
@@ -1028,8 +1028,9 @@ and return a high-quality transparent PNG suitable for print.
                         size="sm"
                         onClick={() => handleLayerAction('bringToFront')}
                         disabled={!selectedObject}
-                        className="text-xs h-8"
+                        className="text-xs h-8 flex items-center gap-1"
                       >
+                        <FrontIcon />
                         Bring to Front
                       </Button>
                       <Button
@@ -1037,8 +1038,9 @@ and return a high-quality transparent PNG suitable for print.
                         size="sm"
                         onClick={() => handleLayerAction('bringForward')}
                         disabled={!selectedObject}
-                        className="text-xs h-8"
+                        className="text-xs h-8 flex items-center gap-1"
                       >
+                        <LayerForwardIcon />
                         Bring Forward
                       </Button>
                       <Button
@@ -1046,8 +1048,9 @@ and return a high-quality transparent PNG suitable for print.
                         size="sm"
                         onClick={() => handleLayerAction('sendBackward')}
                         disabled={!selectedObject}
-                        className="text-xs h-8"
+                        className="text-xs h-8 flex items-center gap-1"
                       >
+                        <LayerBackwardIcon />
                         Send Backward
                       </Button>
                       <Button
@@ -1055,8 +1058,9 @@ and return a high-quality transparent PNG suitable for print.
                         size="sm"
                         onClick={() => handleLayerAction('sendToBack')}
                         disabled={!selectedObject}
-                        className="text-xs h-8"
+                        className="text-xs h-8 flex items-center gap-1"
                       >
+                        <BackIcon />
                         Send to Back
                       </Button>
                     </div>
