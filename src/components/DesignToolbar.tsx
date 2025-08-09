@@ -6,13 +6,13 @@ import { Slider } from "@/components/ui/slider";
 import { Image as ImageIcon, RotateCw, Copy, Trash2 } from "lucide-react";
 
 // Bootstrap Icons as React Components
-const FontsIcon = () => <img src="/src/assets/icons/fonts.svg" className="w-4 h-4" alt="Fonts" />;
-const TypeBoldIcon = () => <img src="/src/assets/icons/type-bold.svg" className="w-[18px] h-[18px]" alt="Bold" />;
-const TypeItalicIcon = () => <img src="/src/assets/icons/type-italic.svg" className="w-[18px] h-[18px]" alt="Italic" />;
-const TypeUnderlineIcon = () => <img src="/src/assets/icons/type-underline.svg" className="w-[18px] h-[18px]" alt="Underline" />;
-const TextLeftIcon = () => <img src="/src/assets/icons/text-left.svg" className="w-[18px] h-[18px]" alt="Align Left" />;
-const TextCenterIcon = () => <img src="/src/assets/icons/text-center.svg" className="w-[18px] h-[18px]" alt="Align Center" />;
-const TextRightIcon = () => <img src="/src/assets/icons/text-right.svg" className="w-[18px] h-[18px]" alt="Align Right" />;
+const FontsIcon = () => <img src="/icons/fonts.svg" className="w-4 h-4" alt="Fonts" />;
+const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[18px] h-[18px]" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[18px] h-[18px]" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[18px] h-[18px]" alt="Underline" />;
+const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[18px] h-[18px]" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[18px] h-[18px]" alt="Align Center" />;
+const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[18px] h-[18px]" alt="Align Right" />;
 import { toast } from "sonner";
 
 interface DesignToolbarProps {

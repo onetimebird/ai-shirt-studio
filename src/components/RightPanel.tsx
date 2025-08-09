@@ -40,17 +40,17 @@ import { BELLA_3719_COLORS } from "../data/bella3719Colors";
 import LayersDropdown from "./LayersDropdown";
 
 // Bootstrap Icons as React Components
-const TextLeftIcon = () => <img src="/src/assets/icons/text-left.svg" className="w-[14px] h-[14px]" alt="Align Left" />;
-const TextCenterIcon = () => <img src="/src/assets/icons/text-center.svg" className="w-[14px] h-[14px]" alt="Align Center" />;
-const TextRightIcon = () => <img src="/src/assets/icons/text-right.svg" className="w-[14px] h-[14px]" alt="Align Right" />;
-const TypeBoldIcon = () => <img src="/src/assets/icons/type-bold.svg" className="w-[14px] h-[14px]" alt="Bold" />;
-const TypeItalicIcon = () => <img src="/src/assets/icons/type-italic.svg" className="w-[14px] h-[14px]" alt="Italic" />;
-const TypeUnderlineIcon = () => <img src="/src/assets/icons/type-underline.svg" className="w-[14px] h-[14px]" alt="Underline" />;
-const LayersIcon = () => <img src="/src/assets/icons/layers.svg" className="w-4 h-4" alt="Layers" />;
-const FrontIcon = () => <img src="/src/assets/icons/front.svg" className="w-4 h-4" alt="Bring to Front" />;
-const BackIcon = () => <img src="/src/assets/icons/back.svg" className="w-4 h-4" alt="Send to Back" />;
-const LayerForwardIcon = () => <img src="/src/assets/icons/layer-forward.svg" className="w-4 h-4" alt="Bring Forward" />;
-const LayerBackwardIcon = () => <img src="/src/assets/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
+const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[14px] h-[14px]" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[14px] h-[14px]" alt="Align Center" />;
+const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[14px] h-[14px]" alt="Align Right" />;
+const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[14px] h-[14px]" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[14px] h-[14px]" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[14px] h-[14px]" alt="Underline" />;
+const LayersIcon = () => <img src="/icons/layers.svg" className="w-4 h-4" alt="Layers" />;
+const FrontIcon = () => <img src="/icons/front.svg" className="w-4 h-4" alt="Bring to Front" />;
+const BackIcon = () => <img src="/icons/back.svg" className="w-4 h-4" alt="Send to Back" />;
+const LayerForwardIcon = () => <img src="/icons/layer-forward.svg" className="w-4 h-4" alt="Bring Forward" />;
+const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
 
 interface RightPanelProps {
   activeTool: string;
