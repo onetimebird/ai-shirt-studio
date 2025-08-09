@@ -534,14 +534,20 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <span className="text-sm">Size</span>
               <span className="text-sm text-muted-foreground">{size[0]}%</span>
             </div>
-            <Slider
-              value={size}
-              onValueChange={handleSizeChange}
-              max={300}
-              min={10}
-              step={10}
-              className="w-full"
-            />
+            <div 
+              onMouseDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Slider
+                value={size}
+                onValueChange={handleSizeChange}
+                max={300}
+                min={10}
+                step={10}
+                className="w-full"
+              />
+            </div>
           </div>
 
           {/* Rotation Slider */}
@@ -550,14 +556,20 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <span className="text-sm">Rotation</span>
               <span className="text-sm text-muted-foreground">{rotation[0]}°</span>
             </div>
-            <Slider
-              value={rotation}
-              onValueChange={handleRotationChange}
-              max={360}
-              min={-360}
-              step={15}
-              className="w-full"
-            />
+            <div 
+              onMouseDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Slider
+                value={rotation}
+                onValueChange={handleRotationChange}
+                max={360}
+                min={-360}
+                step={15}
+                className="w-full"
+              />
+            </div>
           </div>
         </div>
 
