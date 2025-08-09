@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { QuantityModal } from "@/components/QuantityModal";
 import { EmbroideryBoundingBox } from "@/components/EmbroideryBoundingBox";
 import { ScreenPrintBoundingBox } from "@/components/ScreenPrintBoundingBox";
-import { ObjectOverlayControls } from "@/components/ObjectOverlayControls";
 import { initializeTextControls, applyCustomControlsToObject } from "@/lib/fabricTextControls";
 import { ArrowRight } from "lucide-react";
 import "./ProductCanvas.css";
@@ -282,12 +281,6 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
         )}
 
       </div>
-      
-      {/* Object Overlay Controls */}
-      <ObjectOverlayControls 
-        canvas={fabricCanvas}
-        selectedObject={selectedObject}
-      />
       
       {/* Quantity Modal */}
       <QuantityModal 
