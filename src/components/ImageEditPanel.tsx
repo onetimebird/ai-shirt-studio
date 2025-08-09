@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ImageEditPanelProps {
@@ -260,15 +261,49 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     toast.success("Image centered to t-shirt");
   }, [getActiveImageObject]);
 
-  // Send image to back layer
+  // Layer management functions
+  const handleBringToFront = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    canvas.bringObjectToFront(activeObject);
+    activeObject.setCoords();
+    canvas.requestRenderAll();
+    toast.success("Brought to front");
+  }, [getActiveImageObject]);
+
   const handleSendToBack = useCallback(() => {
     const result = getActiveImageObject();
     if (!result) return;
 
     const { canvas, activeObject } = result;
-    canvas.sendToBack(activeObject);
-    canvas.renderAll();
-    toast.success("Image sent to back layer");
+    canvas.sendObjectToBack(activeObject);
+    activeObject.setCoords();
+    canvas.requestRenderAll();
+    toast.success("Sent to back");
+  }, [getActiveImageObject]);
+
+  const handleBringForward = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    canvas.bringObjectForward(activeObject);
+    activeObject.setCoords();
+    canvas.requestRenderAll();
+    toast.success("Brought forward");
+  }, [getActiveImageObject]);
+
+  const handleSendBackward = useCallback(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { canvas, activeObject } = result;
+    canvas.sendObjectBackwards(activeObject);
+    activeObject.setCoords();
+    canvas.requestRenderAll();
+    toast.success("Sent backward");
   }, [getActiveImageObject]);
 
   // Flip image horizontally
@@ -589,13 +624,48 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <Move className="w-3 h-3 mr-2" />
               Center
             </Button>
-            <Button variant="outline" size="sm" onClick={handleSendToBack}>
-              <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
-              </svg>
-              Layer
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                    <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  Layer
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem onClick={handleBringToFront}>
+                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
+                  </svg>
+                  Bring to Front
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSendToBack}>
+                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
+                  </svg>
+                  Send to Back
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleBringForward}>
+                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
+                    <polygon points="7,6 17,6 21,10"/>
+                  </svg>
+                  Bring Forward
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSendBackward}>
+                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
+                    <polygon points="17,18 7,18 3,14"/>
+                  </svg>
+                  Send Backwards
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="outline" size="sm" onClick={handleFlip}>
               <RotateCw className="w-3 h-3 mr-2" />
               Flip
