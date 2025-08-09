@@ -75,7 +75,10 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
     <div className="relative inline-block" ref={dropdownRef}>
       {/* Layer Icon Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          console.log('LayersDropdown button clicked, current isOpen:', isOpen);
+          setIsOpen(!isOpen);
+        }}
         className="w-9 h-9 bg-white border-2 border-[#8138ff] rounded-full shadow-md hover:shadow-lg flex items-center justify-center
         transition-all duration-200 hover:bg-[#8138ff] hover:text-white text-[#8138ff]"
         title="Layer Options"

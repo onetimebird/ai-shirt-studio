@@ -90,29 +90,19 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
 
       {/* Layers Dropdown - Bottom Left */}
       <div 
-        className="overlay-handle bottom-left"
-        style={{ pointerEvents: 'auto' }}
+        className="bottom-left"
+        style={{ 
+          position: 'absolute',
+          bottom: '-18px',
+          left: '-18px',
+          pointerEvents: 'auto'
+        }}
       >
         <LayersDropdown
           onBringToFront={onBringToFront}
           onSendToBack={onSendToBack}
           onBringForward={onBringForward}
           onSendBackward={onSendBackward}
-          trigger={
-            <button 
-              className="overlay-btn-layers" 
-              title="Layers"
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                pointerEvents: 'auto'
-              }}
-            >
-              <Layers size={14} />
-            </button>
-          }
-          align="start"
         />
       </div>
     </div>
