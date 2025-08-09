@@ -518,7 +518,7 @@ export const BottomBar = ({
             onClick={handleNextStep}
             className={`bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-lg px-8 py-4 h-16 min-w-[200px] ${hasDesignOnCanvas() ? 'subtle-glow' : ''}`}
           >
-            <ArrowRight className="w-6 h-6 mr-3" strokeWidth={2.5} />
+            <img src="/icons/long-arrow-right.png" className="w-8 h-8 mr-3" alt="Next Step" />
             Next Step
           </Button>
         </div>
