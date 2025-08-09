@@ -5,7 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
-import { LayersDropdown } from '@/components/LayersDropdown';
+import LayersDropdown from '@/components/LayersDropdown';
 
 interface ImageEditPanelProps {
   imageUrl: string;

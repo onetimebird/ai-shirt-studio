@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { Canvas as FabricCanvas, FabricObject } from 'fabric';
 import './ObjectOverlayControls.css';
-import { LayersDropdown } from '@/components/LayersDropdown';
+import LayersDropdown from '@/components/LayersDropdown';
 
 interface ObjectOverlayControlsProps {
   canvas: FabricCanvas | null;

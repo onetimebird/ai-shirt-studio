@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trash2, RotateCw, Move, Copy, ArrowLeftRight, Maximize2, ChevronsUpDown, Layers } from 'lucide-react';
-import { LayersDropdown } from './LayersDropdown';
+import LayersDropdown from './LayersDropdown';
 import './TextOverlayControls.css';
 
 interface TextOverlayProps {
