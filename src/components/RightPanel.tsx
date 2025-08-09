@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { openAIService } from "@/services/openai";
+import googleDriveService from "@/services/googleDriveService";
 import { Text as FabricText, Textbox as FabricTextbox } from "fabric";
 import { AIArtPanel } from "@/components/AIArtPanel";
 import { CustomColorPicker } from "@/components/CustomColorPicker";
@@ -241,6 +242,8 @@ export const RightPanel = ({
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
   const [isUpscaling, setIsUpscaling] = useState(false);
   const [lovableApiKey, setLovableApiKey] = useState<string>(localStorage.getItem('lovable_ai_key') || '');
+  const [isGoogleDriveLoading, setIsGoogleDriveLoading] = useState(false);
+  const [isGoogleDriveSignedIn, setIsGoogleDriveSignedIn] = useState(false);
 
   const UPSCALE_PROMPT = `
 Enhance the resolution of this image by a factor of 4.
@@ -1694,26 +1697,59 @@ and return a high-quality transparent PNG suitable for print.
                       variant="outline" 
                       size="lg"
                       className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
-                      onClick={() => {
-                        // Initialize Google Drive picker
-                        if (typeof window !== 'undefined' && (window as any).google?.picker) {
-                          const picker = new (window as any).google.picker.PickerBuilder()
-                            .addView((window as any).google.picker.ViewId.DOCS_IMAGES)
-                            .setOAuthToken('ya29.demo') // This would need real OAuth token
-                            .setCallback((data: any) => {
-                              if (data.action === (window as any).google.picker.Action.PICKED) {
-                                const file = data.docs[0];
-                                const imageUrl = `https://drive.google.com/uc?id=${file.id}`;
-                                if ((window as any).designCanvas?.addImageFromUrl) {
-                                  (window as any).designCanvas.addImageFromUrl(imageUrl);
-                                  toast.success("Image uploaded from Google Drive!");
+                      disabled={isGoogleDriveLoading}
+                      onClick={async () => {
+                        setIsGoogleDriveLoading(true);
+                        
+                        try {
+                          // Initialize Google Drive if not already done
+                          if (!isGoogleDriveSignedIn) {
+                            await googleDriveService.init();
+                            await googleDriveService.signIn();
+                            setIsGoogleDriveSignedIn(true);
+                          }
+                          
+                          // Open the Google Drive picker
+                          googleDriveService.createPicker(async (data: any) => {
+                            if (data.action === 'picked') {
+                              const file = data.docs[0];
+                              
+                              try {
+                                // Check file size (10MB limit)
+                                const metadata = await googleDriveService.getFileMetadata(file.id);
+                                if (metadata.size > 10 * 1024 * 1024) {
+                                  toast.error('File size must be less than 10MB');
+                                  return;
                                 }
+                                
+                                // Check if it's an image
+                                if (!metadata.mimeType.startsWith('image/')) {
+                                  toast.error('Please select an image file');
+                                  return;
+                                }
+                                
+                                // Download the file as blob
+                                toast.info('Downloading image from Google Drive...');
+                                const blob = await googleDriveService.getFileAsBlob(file.id);
+                                
+                                // Convert blob to File object
+                                const fileObject = new File([blob], file.name, { type: file.mimeType });
+                                
+                                // Upload the file using the existing upload handler
+                                onImageUpload(fileObject);
+                                toast.success('Image uploaded from Google Drive!');
+                                
+                              } catch (error) {
+                                console.error('Error processing Google Drive file:', error);
+                                toast.error('Failed to upload file from Google Drive');
                               }
-                            })
-                            .build();
-                          picker.setVisible(true);
-                        } else {
-                          // Fallback: show a simple URL input for Google Drive links
+                            }
+                          });
+                          
+                        } catch (error) {
+                          console.error('Google Drive error:', error);
+                          
+                          // Fallback to URL input method
                           const url = prompt("Paste a Google Drive image share link:");
                           if (url) {
                             // Extract file ID from various Google Drive URL formats
@@ -1734,23 +1770,57 @@ and return a high-quality transparent PNG suitable for print.
                             
                             if (fileId) {
                               const directUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-                              if ((window as any).designCanvas?.addImageFromUrl) {
-                                (window as any).designCanvas.addImageFromUrl(directUrl);
+                              
+                              // Fetch the image and convert to File
+                              try {
+                                const response = await fetch(directUrl);
+                                const blob = await response.blob();
+                                const fileName = `google-drive-image-${Date.now()}.png`;
+                                const file = new File([blob], fileName, { type: blob.type });
+                                onImageUpload(file);
                                 toast.success("Image uploaded from Google Drive!");
+                              } catch (fetchError) {
+                                console.error('Error fetching Google Drive image:', fetchError);
+                                toast.error('Failed to download image from Google Drive. Make sure the link is publicly accessible.');
                               }
                             } else {
                               toast.error("Invalid Google Drive link. Please use a shareable link.");
                             }
                           }
+                        } finally {
+                          setIsGoogleDriveLoading(false);
                         }
                       }}
                     >
-                      <GoogleDriveFolderIcon />
-                      Upload from Drive
+                      {isGoogleDriveLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        <>
+                          <GoogleDriveFolderIcon />
+                          {isGoogleDriveSignedIn ? 'Select from Drive' : 'Upload from Drive'}
+                        </>
+                      )}
                     </Button>
                     <p className="text-xs text-muted-foreground mt-2">
                       Upload images from your Google Drive
                     </p>
+                    {isGoogleDriveSignedIn && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 text-xs"
+                        onClick={async () => {
+                          await googleDriveService.signOut();
+                          setIsGoogleDriveSignedIn(false);
+                          toast.info('Signed out from Google Drive');
+                        }}
+                      >
+                        Sign out from Google
+                      </Button>
+                    )}
                   </div>
 
                   {/* File Type Information */}
