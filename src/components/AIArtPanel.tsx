@@ -310,7 +310,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
               className={`w-full mb-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold transition-all duration-300 ${
-                prompt.trim() && !isGenerating ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-[length:200%_200%] animate-shimmer' : ''
+                prompt.trim() && !isGenerating ? 'relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite]' : ''
               }`}
             >
               {isGenerating ? (
