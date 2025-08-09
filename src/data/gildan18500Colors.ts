@@ -19,7 +19,7 @@ export const GILDAN_18500_COLORS: Gildan18500Color[] = [
   { name: "cardinal-red", label: "Cardinal Red", value: "#C41E3A", frontImage: "/gildan-18500/cardinal-red-front.jpg", backImage: "/gildan-18500/cardinal-red-back.jpg", available: true },
   { name: "carolina-blue", label: "Carolina Blue", value: "#56A0D3", frontImage: "/gildan-18500/carolina-blue-front.jpg", backImage: "/gildan-18500/carolina-blue-back.jpg", available: true },
   { name: "charcoal", label: "Charcoal", value: "#36454F", frontImage: "/gildan-18500/charcoal-front.jpg", backImage: "/gildan-18500/charcoal-back.jpg", available: true },
-  { name: "cherry-red", label: "Cherry Red", value: "#DE3163", frontImage: "/gildan-18500/cherry-red-front.jpg", backImage: "/gildan-18500/cherry-red-back.jpg", available: true },
+  { name: "cherry-red", label: "Cherry Reds", value: "#DE3163", frontImage: "/gildan-18500/cherry-red-front.jpg", backImage: "/gildan-18500/cherry-red-back.jpg", available: true },
   { name: "dark-chocolate", label: "Dark Chocolate", value: "#3C2415", frontImage: "/gildan-18500/dark-chocolate-front.jpg", backImage: "/gildan-18500/dark-chocolate-back.jpg", available: true },
   { name: "dark-heather", label: "Dark Heather", value: "#616161", frontImage: "/gildan-18500/dark-heather-front.jpg", backImage: "/gildan-18500/dark-heather-back.jpg", available: true },
   { name: "forest", label: "Forest", value: "#013220", frontImage: "/gildan-18500/forest-front.jpg", backImage: "/gildan-18500/forest-back.jpg", available: true },
