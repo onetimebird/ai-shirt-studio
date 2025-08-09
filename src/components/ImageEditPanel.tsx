@@ -371,7 +371,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               alt="Preview" 
               className="w-full h-full object-contain"
               style={{
-                transform: `scale(${size[0] / 100}) rotate(${rotation[0]}deg)`,
+                transform: `scale(${(size[0] / 100) * 1.75}) rotate(${rotation[0]}deg)`,
                 filter: selectedFilter === 'grayscale' ? 'grayscale(100%)' : 
                        selectedFilter === 'high-contrast' ? 'contrast(150%)' : 'none'
               }}
