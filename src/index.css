@@ -313,3 +313,12 @@ All colors MUST be HSL.
     display: none;
   }
 }
+
+/* AI Brain Icon Dark Mode Fix */
+.ai-brain-icon {
+  filter: hue-rotate(260deg) saturate(1.5) brightness(1.2);
+}
+
+.dark .ai-brain-icon {
+  filter: brightness(0) invert(1) !important;
+}
