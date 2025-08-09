@@ -54,8 +54,8 @@ const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="
 const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
 const UploadImageIcon = () => <img src="/icons/image.svg" className="w-4 h-4" alt="Image" />;
 const FolderPlusIcon = () => <img src="/icons/folder-plus.svg" className="w-4 h-4 brightness-0 invert" alt="Choose File" />;
-const GoogleDriveIcon = () => <img src="/icons/google-drive-white-new.png" className="w-5 h-5" alt="Google Drive" />;
-const GoogleDriveFolderIcon = () => <img src="/icons/google-drive-white-new.png" className="w-4 h-4 mr-2" alt="Google Drive" />;
+const GoogleDriveIcon = () => <img src="/icons/google-drive-2020.svg" className="w-5 h-5" alt="Google Drive" />;
+const GoogleDriveFolderIcon = () => <img src="/icons/google-drive-2020.svg" className="w-4 h-4 mr-2" alt="Google Drive" />;
 
 interface RightPanelProps {
   activeTool: string;
