@@ -13,7 +13,7 @@ interface LayersDropdownProps {
   align?: "start" | "center" | "end";
 }
 
-const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, onBringForward, onSendBackward }: LayersDropdownProps) => {
+const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, onBringForward, onSendBackward, trigger }: LayersDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -75,20 +75,29 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
 
   return (
     <div className="relative inline-block" ref={dropdownRef}>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => {
+      {trigger ? (
+        <div onClick={() => {
           console.log('LayersDropdown button clicked, current isOpen:', isOpen);
           setIsOpen(!isOpen);
-        }}
-      >
-        <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-          <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
-        </svg>
-        Layers
-      </Button>
+        }}>
+          {trigger}
+        </div>
+      ) : (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            console.log('LayersDropdown button clicked, current isOpen:', isOpen);
+            setIsOpen(!isOpen);
+          }}
+        >
+          <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+            <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+          </svg>
+          Layers
+        </Button>
+      )}
 
       {/* Dropdown Menu */}
       {isOpen && (
