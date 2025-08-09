@@ -268,10 +268,9 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
             <img 
               src={aiBrainIcon} 
               alt="AI Brain" 
-              className="w-8 h-8 animate-pulse dark:animate-none dark:filter dark:brightness-0 dark:invert dark:transition-transform dark:duration-1000 dark:hover:scale-110 dark:hover:rotate-6"
+              className="w-8 h-8 animate-pulse dark:animate-none dark:filter dark:brightness-0 dark:invert"
               style={{
                 filter: 'hue-rotate(260deg) saturate(1.5) brightness(1.2)',
-                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
               }}
             />
             <div className="absolute inset-0 w-8 h-8 bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 dark:hidden rounded-full opacity-30 animate-pulse blur-sm"></div>
