@@ -79,8 +79,17 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
         <Maximize2 size={14} />
       </div>
 
-      {/* Layers - Bottom Center */}
-      <div className="overlay-handle bottom-center">
+      {/* Duplicate - Bottom Center */}
+      <button
+        className="overlay-btn bottom-center"
+        onClick={onDuplicate}
+        title="Duplicate"
+      >
+        <Copy size={14} />
+      </button>
+
+      {/* Layers Dropdown - Bottom Left */}
+      <div className="overlay-handle bottom-left">
         <LayersDropdown
           onBringToFront={onBringToFront}
           onSendToBack={onSendToBack}
@@ -91,18 +100,9 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
               <Layers size={14} />
             </button>
           }
-          align="center"
+          align="start"
         />
       </div>
-
-      {/* Duplicate - Bottom Left */}
-      <button
-        className="overlay-btn bottom-left"
-        onClick={onDuplicate}
-        title="Duplicate"
-      >
-        <Copy size={14} />
-      </button>
     </div>
   );
 }
