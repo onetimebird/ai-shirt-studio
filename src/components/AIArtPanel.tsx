@@ -51,6 +51,16 @@ const exampleImages = [
     title: 'Cyberpunk Samurai',
     type: 'futuristic'
   },
+  {
+    url: '/lovable-uploads/51cd48a4-a574-494b-afa1-9cdb3c40bf92.png',
+    title: 'Tiger Roar',
+    type: 'wildlife'
+  },
+  {
+    url: '/lovable-uploads/a299bd7a-5644-4c6d-aa46-c3bf885764f9.png',
+    title: 'Cosmic Whale',
+    type: 'fantasy'
+  },
 ];
 
 interface AIArtPanelProps {
