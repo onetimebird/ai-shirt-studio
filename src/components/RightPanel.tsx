@@ -1260,6 +1260,49 @@ and return a high-quality transparent PNG suitable for print.
                       </div>
                     </div>
 
+                    {/* Layer Controls */}
+                    <div>
+                      <Label className="text-xs mb-1">Layer Controls</Label>
+                      <div className="grid grid-cols-2 gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleLayerAction('bringToFront')}
+                          disabled={!selectedObject}
+                          className="text-xs px-2 py-1"
+                        >
+                          Bring to Front
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleLayerAction('bringForward')}
+                          disabled={!selectedObject}
+                          className="text-xs px-2 py-1"
+                        >
+                          Bring Forward
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleLayerAction('sendBackward')}
+                          disabled={!selectedObject}
+                          className="text-xs px-2 py-1"
+                        >
+                          Send Backward
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleLayerAction('sendToBack')}
+                          disabled={!selectedObject}
+                          className="text-xs px-2 py-1"
+                        >
+                          Send to Back
+                        </Button>
+                      </div>
+                    </div>
+
                     {/* Scale */}
                     <div>
                       <Label className="text-xs">Scale: {scalePercent}%</Label>
