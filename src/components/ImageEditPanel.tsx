@@ -19,28 +19,6 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   const [backgroundRemoved, setBackgroundRemoved] = useState(false);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
 
-  // Sync UI state with canvas object state
-  useEffect(() => {
-    const result = getActiveImageObject();
-    if (!result) return;
-
-    const { activeObject } = result;
-    
-    // Sync size state
-    const scaleX = activeObject.scaleX || 1;
-    setSize([Math.round(scaleX * 100)]);
-    
-    // Sync rotation state
-    const angle = activeObject.angle || 0;
-    setRotation([Math.round(angle)]);
-    
-    // Check if background was removed (simplified check)
-    if (activeObject.src && activeObject.src.includes('replicate')) {
-      setBackgroundRemoved(true);
-    }
-    
-  }, [getActiveImageObject, imageUrl]);
-
   // Cleanup effect
   useEffect(() => {
     return () => {
@@ -75,6 +53,28 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       return null;
     }
   }, []);
+
+  // Sync UI state with canvas object state
+  useEffect(() => {
+    const result = getActiveImageObject();
+    if (!result) return;
+
+    const { activeObject } = result;
+    
+    // Sync size state
+    const scaleX = activeObject.scaleX || 1;
+    setSize([Math.round(scaleX * 100)]);
+    
+    // Sync rotation state
+    const angle = activeObject.angle || 0;
+    setRotation([Math.round(angle)]);
+    
+    // Check if background was removed (simplified check)
+    if (activeObject.src && activeObject.src.includes('replicate')) {
+      setBackgroundRemoved(true);
+    }
+    
+  }, [getActiveImageObject, imageUrl]);
 
   // Apply size changes to canvas
   const handleSizeChange = useCallback((newSize: number[]) => {
