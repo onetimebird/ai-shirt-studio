@@ -1260,16 +1260,16 @@ and return a high-quality transparent PNG suitable for print.
                       </div>
                     </div>
 
-                    {/* Layer Controls */}
+                    {/* Layer Controls - prominently placed */}
                     <div>
-                      <Label className="text-xs mb-1">Layer Controls</Label>
-                      <div className="grid grid-cols-2 gap-1">
+                      <Label className="text-xs mb-1 font-medium">Layer Controls</Label>
+                      <div className="grid grid-cols-2 gap-2">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleLayerAction('bringToFront')}
                           disabled={!selectedObject}
-                          className="text-xs px-2 py-1"
+                          className="text-xs h-8"
                         >
                           Bring to Front
                         </Button>
@@ -1278,7 +1278,7 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('bringForward')}
                           disabled={!selectedObject}
-                          className="text-xs px-2 py-1"
+                          className="text-xs h-8"
                         >
                           Bring Forward
                         </Button>
@@ -1287,7 +1287,7 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('sendBackward')}
                           disabled={!selectedObject}
-                          className="text-xs px-2 py-1"
+                          className="text-xs h-8"
                         >
                           Send Backward
                         </Button>
@@ -1296,12 +1296,13 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('sendToBack')}
                           disabled={!selectedObject}
-                          className="text-xs px-2 py-1"
+                          className="text-xs h-8"
                         >
                           Send to Back
                         </Button>
                       </div>
                     </div>
+
 
                     {/* Scale */}
                     <div>
