@@ -229,15 +229,22 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
   }, [getActiveImageObject]);
 
-  // Center the image on canvas
+  // Center the image to the t-shirt center line
   const handleCenter = useCallback(() => {
     const result = getActiveImageObject();
     if (!result) return;
 
     const { canvas, activeObject } = result;
-    activeObject.center();
+    
+    // Center horizontally to the t-shirt center line (50% of canvas width)
+    // Keep the current vertical position
+    activeObject.set({
+      left: canvas.width / 2,
+      originX: 'center'
+    });
+    
     canvas.renderAll();
-    toast.success("Image centered");
+    toast.success("Image centered to t-shirt");
   }, [getActiveImageObject]);
 
   // Send image to back layer
