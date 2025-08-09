@@ -16,6 +16,7 @@ import { AIArtPanel } from "@/components/AIArtPanel";
 import { CustomColorPicker } from "@/components/CustomColorPicker";
 import { ProductSelector } from "@/components/ProductSelector";
 import { ImageEditPanel } from "@/components/ImageEditPanel";
+import { LayersDropdown } from "@/components/LayersDropdown";
 import {
   Type,
   ChevronDown,
@@ -43,7 +44,6 @@ import { BELLA_6400_COLORS } from "../data/bella6400Colors";
 import { GILDAN_18000_COLORS } from "../data/gildan18000Colors";
 import { GILDAN_18500_COLORS } from "../data/gildan18500Colors";
 import { BELLA_3719_COLORS } from "../data/bella3719Colors";
-import { LayersDropdown } from "@/components/LayersDropdown";
 
 interface RightPanelProps {
   activeTool: string;
