@@ -11,6 +11,12 @@ import infoIcon from '@/assets/icons/info.svg';
 import trashIcon from '@/assets/icons/trash.svg';
 import magicWandIcon from '@/assets/icons/magic-wand.svg';
 import aiBrainIcon from '@/assets/icons/ai-brain.svg';
+import geometricLion from '@/assets/preview-images/geometric-lion.png';
+import synthwaveMountain from '@/assets/preview-images/synthwave-mountain.png';
+import cosmicMandala from '@/assets/preview-images/cosmic-mandala.png';
+import japaneseWave from '@/assets/preview-images/japanese-wave.png';
+import cyberSkull from '@/assets/preview-images/cyber-skull.png';
+import rainbowPhoenix from '@/assets/preview-images/rainbow-phoenix.png';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,34 +27,34 @@ const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generat
 
 const exampleImages = [
   {
-    url: '/lovable-uploads/1e61cc5e-ffd2-4396-91c9-be996d67de2d.png',
-    title: 'Glow like the Galaxy',
-    type: 'galaxy'
+    url: geometricLion,
+    title: 'Geometric Lion',
+    type: 'logo'
   },
   {
-    url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop',
-    title: 'Matrix Style',
-    type: 'tech'
+    url: synthwaveMountain,
+    title: 'Synthwave Mountain',
+    type: 'retro'
   },
   {
-    url: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=400&fit=crop',
-    title: 'Starry Night',
-    type: 'space'
+    url: cosmicMandala,
+    title: 'Cosmic Mandala',
+    type: 'spiritual'
   },
   {
-    url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=400&h=400&fit=crop',
-    title: 'Ocean Wave',
-    type: 'nature'
+    url: japaneseWave,
+    title: 'Japanese Wave',
+    type: 'minimalist'
   },
   {
-    url: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=400&h=400&fit=crop',
-    title: 'Forest Light',
-    type: 'nature'
+    url: cyberSkull,
+    title: 'Cyber Skull',
+    type: 'cyberpunk'
   },
   {
-    url: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400&h=400&fit=crop',
-    title: 'Yellow Lights',
-    type: 'abstract'
+    url: rainbowPhoenix,
+    title: 'Rainbow Phoenix',
+    type: 'fantasy'
   },
 ];
 
