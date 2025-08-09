@@ -7,12 +7,12 @@ import { Image as ImageIcon, RotateCw, Copy, Trash2 } from "lucide-react";
 
 // Bootstrap Icons as React Components
 const FontsIcon = () => <img src="/icons/fonts.svg" className="w-4 h-4" alt="Fonts" />;
-const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[18px] h-[18px]" alt="Bold" />;
-const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[18px] h-[18px]" alt="Italic" />;
-const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[18px] h-[18px]" alt="Underline" />;
-const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[18px] h-[18px]" alt="Align Left" />;
-const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[18px] h-[18px]" alt="Align Center" />;
-const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[18px] h-[18px]" alt="Align Right" />;
+const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[18px] h-[18px] dark:filter dark:brightness-0 dark:invert" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[18px] h-[18px] dark:filter dark:brightness-0 dark:invert" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[18px] h-[18px] dark:filter dark:brightness-0 dark:invert" alt="Underline" />;
+const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[18px] h-[18px] dark:filter dark:brightness-0 dark:invert" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[18px] h-[18px] dark:filter dark:brightness-0 dark:invert" alt="Align Center" />;
+const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[18px] h-[18px] dark:filter dark:brightness-0 dark:invert" alt="Align Right" />;
 const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
 import { toast } from "sonner";
 

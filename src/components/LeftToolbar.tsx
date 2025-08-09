@@ -29,11 +29,11 @@ interface LeftToolbarProps {
 }
 
 const tools = [
-  { id: "upload", label: "Upload Image", icon: () => <img src="/icons/cloud-upload.svg" className="w-5 h-5" alt="Upload" /> },
+  { id: "upload", label: "Upload Image", icon: () => <img src="/icons/cloud-upload.svg" className="w-5 h-5 dark:filter dark:brightness-0 dark:invert" alt="Upload" /> },
   { id: "text", label: "Add Text", icon: Type },
   { id: "ai", label: "AI Image Generator", icon: Wand2 },
-  { id: "products", label: "Change Product", icon: () => <img src="/icons/tshirt.svg" className="w-5 h-5" alt="T-Shirt" /> },
-  { id: "reset", label: "Reset Design", icon: () => <img src="/icons/reset-design.png" className="w-5 h-5" alt="Reset Design" /> },
+  { id: "products", label: "Change Product", icon: () => <img src="/icons/tshirt.svg" className="w-5 h-5 dark:filter dark:brightness-0 dark:invert" alt="T-Shirt" /> },
+  { id: "reset", label: "Reset Design", icon: () => <img src="/icons/reset-design.png" className="w-5 h-5 dark:filter dark:brightness-0 dark:invert" alt="Reset Design" /> },
 ];
 
 export const LeftToolbar = ({ 
@@ -82,7 +82,7 @@ export const LeftToolbar = ({
             <p className="text-xs text-muted-foreground">Create your custom design</p>
           </div>
           <div className="lg:hidden flex justify-center">
-            <img src="/icons/swatch.png" className="w-6 h-6 text-primary icon-hover gentle-pulse" alt="Color Swatch" />
+            <img src="/icons/swatch.png" className="w-6 h-6 text-primary icon-hover gentle-pulse dark:filter dark:brightness-0 dark:invert" alt="Color Swatch" />
           </div>
         </div>
 

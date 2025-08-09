@@ -40,19 +40,19 @@ import { BELLA_3719_COLORS } from "../data/bella3719Colors";
 import LayersDropdown from "./LayersDropdown";
 
 // Bootstrap Icons as React Components
-const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[14px] h-[14px]" alt="Align Left" />;
-const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[14px] h-[14px]" alt="Align Center" />;
-const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[14px] h-[14px]" alt="Align Right" />;
-const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[14px] h-[14px]" alt="Bold" />;
-const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[14px] h-[14px]" alt="Italic" />;
-const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[14px] h-[14px]" alt="Underline" />;
+const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Align Center" />;
+const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Align Right" />;
+const TypeBoldIcon = () => <img src="/icons/type-bold.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/icons/type-italic.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="w-[14px] h-[14px] dark:filter dark:brightness-0 dark:invert" alt="Underline" />;
 const LayersIcon = () => <img src="/icons/layers.svg" className="w-4 h-4" alt="Layers" />;
 const FrontIcon = () => <img src="/icons/front.svg" className="w-4 h-4" alt="Bring to Front" />;
 const BackIcon = () => <img src="/icons/back.svg" className="w-4 h-4" alt="Send to Back" />;
 const LayerForwardIcon = () => <img src="/icons/layer-forward.svg" className="w-4 h-4" alt="Bring Forward" />;
 const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
 const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
-const UploadImageIcon = () => <img src="/icons/image.svg" className="w-4 h-4" alt="Image" />;
+const UploadImageIcon = () => <img src="/icons/image.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Image" />;
 const FolderPlusIcon = () => <img src="/icons/folder-plus.svg" className="w-4 h-4 brightness-0 invert" alt="Choose File" />;
 const GoogleDriveIcon = () => <img src="/icons/google-drive-2020.svg" className="w-5 h-5" alt="Google Drive" />;
 const GoogleDriveFolderIcon = () => <img src="/icons/google-drive-2020.svg" className="w-4 h-4 mr-2" alt="Google Drive" />;
