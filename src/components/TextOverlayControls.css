@@ -5,7 +5,8 @@
 }
 
 .overlay-btn,
-.overlay-handle {
+.overlay-handle,
+.overlay-btn-layers {
   position: absolute;
   width: 36px;
   height: 36px;
@@ -24,7 +25,8 @@
 }
 
 .overlay-btn:hover,
-.overlay-handle:hover {
+.overlay-handle:hover,
+.overlay-btn-layers:hover {
   background: #8138ff;
   border-color: #8138ff;
   box-shadow: 0 6px 20px rgba(129, 56, 255, 0.4);
@@ -68,6 +70,12 @@
 .bottom-left {
   bottom: -18px;
   left: -18px;
+}
+
+.bottom-center {
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Cursor styles for different handles */

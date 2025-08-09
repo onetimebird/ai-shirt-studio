@@ -400,6 +400,45 @@ and return a high-quality transparent PNG suitable for print.
   const handleCenter = () => (window as any).designCanvas?.centerSelected();
   const handleDeselect = () => (window as any).designCanvas?.clearSelection();
 
+  const handleLayerAction = (action: string) => {
+    if (!selectedObject) return;
+    
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return;
+
+    switch (action) {
+      case 'bringToFront':
+        if (typeof selectedObject.bringToFront === 'function') {
+          selectedObject.bringToFront();
+        } else if (canvas.bringToFront) {
+          canvas.bringToFront(selectedObject);
+        }
+        break;
+      case 'sendToBack':
+        if (typeof selectedObject.sendToBack === 'function') {
+          selectedObject.sendToBack();
+        } else if (canvas.sendToBack) {
+          canvas.sendToBack(selectedObject);
+        }
+        break;
+      case 'bringForward':
+        if (typeof selectedObject.bringForward === 'function') {
+          selectedObject.bringForward();
+        } else if (canvas.bringForward) {
+          canvas.bringForward(selectedObject);
+        }
+        break;
+      case 'sendBackward':
+        if (typeof selectedObject.sendBackward === 'function') {
+          selectedObject.sendBackward();
+        } else if (canvas.sendBackward) {
+          canvas.sendBackward(selectedObject);
+        }
+        break;
+    }
+    canvas.renderAll();
+  };
+
   const handleSetApiKey = () => {
     if (!apiKey.trim()) { 
       toast.error("Please enter a valid API key"); 
@@ -1061,8 +1100,16 @@ and return a high-quality transparent PNG suitable for print.
           {activeTool === "editText" && selectedObject && (selectedObject.type === 'textbox' || selectedObject.type === 'text') && (
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Type className="w-4 h-4" /> Edit Selected Text
+                <CardTitle className="text-sm flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Type className="w-4 h-4" /> Edit Selected Text
+                  </div>
+                  <LayersDropdown
+                    onBringToFront={() => handleLayerAction('bringToFront')}
+                    onSendToBack={() => handleLayerAction('sendToBack')}
+                    onBringForward={() => handleLayerAction('bringForward')}
+                    onSendBackward={() => handleLayerAction('sendBackward')}
+                  />
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">

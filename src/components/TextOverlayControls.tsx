@@ -1,5 +1,6 @@
 import React from 'react';
-import { Trash2, RotateCw, Move, Copy, ArrowLeftRight, Maximize2, ChevronsUpDown } from 'lucide-react';
+import { Trash2, RotateCw, Move, Copy, ArrowLeftRight, Maximize2, ChevronsUpDown, Layers } from 'lucide-react';
+import { LayersDropdown } from './LayersDropdown';
 import './TextOverlayControls.css';
 
 interface TextOverlayProps {
@@ -9,6 +10,10 @@ interface TextOverlayProps {
   onStretchStart: (e: React.PointerEvent) => void;
   onScaleStart: (e: React.PointerEvent) => void;
   onDuplicate: () => void;
+  onBringToFront?: () => void;
+  onSendToBack?: () => void;
+  onBringForward?: () => void;
+  onSendBackward?: () => void;
   bounds: { x: number; y: number; width: number; height: number };
 }
 
@@ -19,6 +24,10 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
   onStretchStart,
   onScaleStart,
   onDuplicate,
+  onBringToFront,
+  onSendToBack,
+  onBringForward,
+  onSendBackward,
   bounds,
 }) => {
   const { x, y, width, height } = bounds;
@@ -68,6 +77,22 @@ export const TextOverlayControls: React.FC<TextOverlayProps> = ({
         title="Scale"
       >
         <Maximize2 size={14} />
+      </div>
+
+      {/* Layers - Bottom Center */}
+      <div className="overlay-handle bottom-center">
+        <LayersDropdown
+          onBringToFront={onBringToFront}
+          onSendToBack={onSendToBack}
+          onBringForward={onBringForward}
+          onSendBackward={onSendBackward}
+          trigger={
+            <button className="overlay-btn-layers" title="Layers">
+              <Layers size={14} />
+            </button>
+          }
+          align="center"
+        />
       </div>
 
       {/* Duplicate - Bottom Left */}
