@@ -326,10 +326,10 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               )}
             </Button>
 
-            <div className="flex items-center justify-start gap-4 text-xs mb-4">
+            <div className="flex items-center justify-between text-xs mb-4">
               {promptHistory.length > 0 && (
                 <select
-                  className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer text-xs"
+                  className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer text-xs max-w-[140px] truncate"
                   onChange={(e) => {
                     if (e.target.value) {
                       setPrompt(e.target.value);
@@ -341,13 +341,13 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                   <option value="" disabled>Previous Prompts</option>
                   {promptHistory.map((h, i) => (
                     <option key={i} value={h} className="bg-background text-foreground">
-                      {h.length > 40 ? h.substring(0, 40) + "..." : h}
+                      {h.length > 30 ? h.substring(0, 30) + "..." : h}
                     </option>
                   ))}
                 </select>
               )}
               <button 
-                className="text-primary hover:underline flex items-center gap-1 font-medium text-xs"
+                className="text-primary hover:underline flex items-center gap-1 font-medium text-xs flex-shrink-0"
                 onClick={() => setShowTips(true)}
               >
                 AI prompt guide <img src={infoIcon} alt="" className="w-3 h-3" />
