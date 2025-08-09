@@ -8,7 +8,7 @@ import xLgIcon from '@/assets/icons/x-lg.svg';
 import arrowClockwiseIcon from '@/assets/icons/arrow-clockwise.svg';
 import magicIcon from '@/assets/icons/magic.svg';
 import loaderIcon from '@/assets/icons/loader.svg';
-import paletteIcon from '@/assets/icons/palette.svg';
+import brushIcon from '/icons/brush.svg';
 import arrowsMoveIcon from '@/assets/icons/arrows-move.svg';
 import rotateCwIcon from '@/assets/icons/rotate-cw.svg';
 import copyIcon from '@/assets/icons/copy.svg';
@@ -526,7 +526,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <img src={paletteIcon} alt="" className="w-5 h-5" />
+            <img src={brushIcon} alt="" className="w-5 h-5" />
             Edit Your Artwork
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={onClose}>
@@ -589,7 +589,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
                 </>
               ) : (
                 <>
-                  <img src={eraserIcon} alt="" className="w-4 h-4 mr-2" />
+                  <img src={eraserIcon} alt="" className="w-4 h-4 mr-2 brightness-0 invert" />
                   Remove Background
                 </>
               )}
