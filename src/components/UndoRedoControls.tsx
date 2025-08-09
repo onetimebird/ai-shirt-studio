@@ -63,7 +63,7 @@ export const UndoRedoControls = () => {
           }}
           className="h-3 w-4 md:h-6 md:w-6 p-0 touch-manipulation select-none"
         >
-          <Undo className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+          <img src="/icons/undo.svg" className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 dark:filter dark:brightness-0 dark:invert" alt="Undo" />
         </Button>
         <span className="text-[10px] md:text-xs text-muted-foreground">Undo</span>
       </div>
@@ -99,7 +99,7 @@ export const UndoRedoControls = () => {
           }}
           className="h-3 w-4 md:h-6 md:w-6 p-0 touch-manipulation select-none"
         >
-          <Redo className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
+          <img src="/icons/redo.svg" className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 dark:filter dark:brightness-0 dark:invert" alt="Redo" />
         </Button>
         <span className="text-[10px] md:text-xs text-muted-foreground">Redo</span>
       </div>
