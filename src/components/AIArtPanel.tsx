@@ -5,7 +5,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Expand, Info, Trash2 } from 'lucide-react';
+// Import Bootstrap Icons
+import expandIcon from '@/assets/icons/expand.svg';
+import infoIcon from '@/assets/icons/info.svg';
+import trashIcon from '@/assets/icons/trash.svg';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 import { supabase } from '@/integrations/supabase/client';
@@ -319,7 +322,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                 className="text-primary hover:underline flex items-center gap-1 font-medium"
                 onClick={() => setShowTips(true)}
               >
-                AI prompt guide <Info className="w-4 h-4" />
+                AI prompt guide <img src={infoIcon} alt="" className="w-4 h-4" />
               </button>
             </div>
             
@@ -396,7 +399,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                       onClick={() => setGeneratedImages([])}
                       className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1"
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <img src={trashIcon} alt="" className="w-3 h-3" />
                       Clear all
                     </button>
                   </div>
@@ -419,7 +422,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                                 className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <Expand className="w-4 h-4" />
+                                <img src={expandIcon} alt="" className="w-4 h-4 filter brightness-0 invert" />
                               </button>
                             </DialogTrigger>
                             <DialogContent className="max-w-2xl p-0 bg-transparent border-0">
@@ -466,7 +469,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                             className="opacity-0 group-hover:opacity-100 bg-black/60 text-white p-1 rounded-full transition-all duration-200 hover:bg-black/80 hover:scale-110"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Expand className="w-4 h-4" />
+                            <img src={expandIcon} alt="" className="w-4 h-4 filter brightness-0 invert" />
                           </button>
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl p-0 bg-transparent border-0">

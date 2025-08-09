@@ -3,7 +3,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2, ChevronDown } from 'lucide-react';
+// Import Bootstrap Icons
+import xLgIcon from '@/assets/icons/x-lg.svg';
+import arrowClockwiseIcon from '@/assets/icons/arrow-clockwise.svg';
+import magicIcon from '@/assets/icons/magic.svg';
+import loaderIcon from '@/assets/icons/loader.svg';
+import paletteIcon from '@/assets/icons/palette.svg';
+import arrowsMoveIcon from '@/assets/icons/arrows-move.svg';
+import rotateCwIcon from '@/assets/icons/rotate-cw.svg';
+import copyIcon from '@/assets/icons/copy.svg';
+import trashIcon from '@/assets/icons/trash.svg';
+import chevronDownIcon from '@/assets/icons/chevron-down.svg';
+import checkIcon from '@/assets/icons/check.svg';
+import eraserIcon from '@/assets/icons/eraser.svg';
+import centerIcon from '@/assets/icons/center.svg';
+import flipHorizontalIcon from '@/assets/icons/flip-horizontal.svg';
+import resetIcon from '@/assets/icons/reset.svg';
+import saveIcon from '@/assets/icons/save.svg';
+import stackIcon from '@/assets/icons/stack.svg';
 import { toast } from 'sonner';
 import LayersDropdown from '@/components/LayersDropdown';
 
@@ -509,11 +526,11 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <Palette className="w-5 h-5" />
+            <img src={paletteIcon} alt="" className="w-5 h-5" />
             Edit Your Artwork
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
+            <img src={xLgIcon} alt="" className="h-4 w-4" />
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -543,9 +560,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           <div className="flex flex-col space-y-4">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.78 0-2.678-2.153-1.415-3.414l5-5A2 2 0 009 9.586V5L8 4z" />
-                </svg>
+                <img src={eraserIcon} alt="" className="w-5 h-5 text-white filter brightness-0 invert" />
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
@@ -564,21 +579,17 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
             >
               {isRemovingBackground ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <img src={loaderIcon} alt="" className="w-4 h-4 mr-2 animate-spin" />
                   Processing...
                 </>
               ) : backgroundRemoved ? (
                 <>
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+                  <img src={checkIcon} alt="" className="w-4 h-4 mr-2" />
                   Background Removed
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.78 0-2.678-2.153-1.415-3.414l5-5A2 2 0 009 9.586V5L8 4z" />
-                  </svg>
+                  <img src={eraserIcon} alt="" className="w-4 h-4 mr-2" />
                   Remove Background
                 </>
               )}
@@ -607,9 +618,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
                 {/* Selected indicator */}
                 {selectedFilter === filter.key && (
                   <div className="absolute top-2 right-2 w-4 h-4 bg-primary rounded-full flex items-center justify-center z-10 animate-scale-in">
-                    <svg className="w-2.5 h-2.5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
+                    <img src={checkIcon} alt="" className="w-2.5 h-2.5 text-primary-foreground filter brightness-0 invert" />
                   </div>
                 )}
                 
@@ -681,18 +690,15 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           <h4 className="font-medium text-sm">Actions</h4>
           <div className="grid grid-cols-2 gap-2">
             <Button variant="outline" size="sm" onClick={handleCenter}>
-              <Move className="w-3 h-3 mr-2" />
+              <img src={centerIcon} alt="" className="w-3 h-3 mr-2" />
               Center
             </Button>
             <LayersDropdown
               trigger={
                 <Button variant="outline" size="sm" className="gap-1">
-                  <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                    <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
+                  <img src={stackIcon} alt="" className="w-3 h-3 mr-2" />
                   Layer
-                  <ChevronDown className="w-3 h-3 ml-1" />
+                  <img src={chevronDownIcon} alt="" className="w-3 h-3 ml-1" />
                 </Button>
               }
               onBringToFront={handleBringToFront}
@@ -701,18 +707,18 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               onSendBackward={handleSendBackward}
             />
             <Button variant="outline" size="sm" onClick={handleFlip}>
-              <RotateCw className="w-3 h-3 mr-2" />
+              <img src={flipHorizontalIcon} alt="" className="w-3 h-3 mr-2" />
               Flip
             </Button>
             <Button variant="outline" size="sm" onClick={handleDuplicate}>
-              <Copy className="w-3 h-3 mr-2" />
+              <img src={copyIcon} alt="" className="w-3 h-3 mr-2" />
               Duplicate
             </Button>
           </div>
           
           {/* Delete Button - Full Width */}
           <Button variant="destructive" size="sm" onClick={handleDelete} className="w-full">
-            <Trash2 className="w-3 h-3 mr-2" />
+            <img src={trashIcon} alt="" className="w-3 h-3 mr-2" />
             Delete Image
           </Button>
         </div>
@@ -723,7 +729,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           onClick={handleReset}
           className="w-full"
         >
-          <RotateCcw className="w-4 h-4 mr-2" />
+          <img src={resetIcon} alt="" className="w-4 h-4 mr-2" />
           Reset to Defaults
         </Button>
 
