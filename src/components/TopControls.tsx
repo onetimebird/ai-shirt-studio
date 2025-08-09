@@ -145,7 +145,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
-                <img src="/icons/cart.png" className="w-5 h-5 filter brightness-0 invert" alt="Cart" />
+                <img src="/icons/cart.png" className="w-5 h-5 dark:filter dark:brightness-0 dark:invert" alt="Cart" />
                 <span>Cart</span>
               </div>
             </Button>
@@ -157,7 +157,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
               onClick={handleSignOut}
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
             >
-              <User className="w-5 h-5 mr-2" />
+              <img src="/icons/person.svg" className="w-5 h-5 mr-2 dark:filter dark:brightness-0 dark:invert" alt="User" />
               Sign Out
             </Button>
           ) : (
@@ -167,7 +167,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
               onClick={() => handleAuthModalChange(true)}
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:before:animation-delay-0 hover:shadow-lg hover:scale-105 transition-transform duration-300"
             >
-              <User className="w-5 h-5 mr-2" />
+              <img src="/icons/person.svg" className="w-5 h-5 mr-2 dark:filter dark:brightness-0 dark:invert" alt="User" />
               Sign In
             </Button>
           )}
@@ -213,7 +213,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
-                <img src="/icons/cart.png" className="w-4 h-4 filter brightness-0 invert" alt="Cart" />
+                <img src="/icons/cart.png" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Cart" />
               </div>
             </Button>
           </CartPopup>
@@ -224,7 +224,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
               onClick={handleSignOut}
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300 p-2"
             >
-              <User className="w-4 h-4" />
+              <img src="/icons/person.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="User" />
             </Button>
           ) : (
             <Button 
@@ -233,7 +233,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
               onClick={() => handleAuthModalChange(true)}
               className="relative overflow-hidden hover:before:absolute hover:before:inset-0 hover:before:bg-gradient-to-r hover:before:from-transparent hover:before:via-gray-300/30 hover:before:to-transparent hover:before:-translate-x-full hover:before:animate-[shimmer_2.5s_ease-in-out_infinite] hover:shadow-lg hover:scale-105 transition-all duration-300 p-2"
             >
-              <User className="w-4 h-4" />
+              <img src="/icons/person.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="User" />
             </Button>
           )}
         </div>

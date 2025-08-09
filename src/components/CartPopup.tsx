@@ -45,7 +45,7 @@ export const CartPopup = ({ children, onOpenChange }: CartPopupProps) => {
         <div className="flex flex-col flex-1 min-h-0">
           {cartItems.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-              <img src="/icons/cart.png" className="w-16 h-16 filter brightness-0 invert opacity-50" alt="Empty Cart" />
+              <img src="/icons/cart.png" className="w-16 h-16 opacity-50 dark:filter dark:brightness-0 dark:invert" alt="Empty Cart" />
               <h3 className="text-lg font-medium mb-2">Your bag is empty</h3>
               <p className="text-muted-foreground mb-6">Start designing and add some products to your bag!</p>
               <Button 
