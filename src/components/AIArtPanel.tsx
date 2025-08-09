@@ -302,43 +302,16 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="w-full min-h-[80px] resize-none"
+              className="w-full min-h-[80px] resize-none mb-3"
               rows={3}
             />
             
-            <div className="flex justify-between items-center text-sm py-2">
-              {promptHistory.length > 0 && (
-                <select
-                  className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer"
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      setPrompt(e.target.value);
-                      e.target.value = "";
-                    }
-                  }}
-                  defaultValue=""
-                >
-                  <option value="" disabled>Previous Prompts</option>
-                  {promptHistory.map((h, i) => (
-                    <option key={i} value={h} className="bg-background text-foreground">
-                      {h.length > 50 ? h.substring(0, 50) + "..." : h}
-                    </option>
-                  ))}
-                </select>
-              )}
-              <button 
-                className="text-primary hover:underline flex items-center gap-1 font-medium"
-                onClick={() => setShowTips(true)}
-              >
-                AI prompt guide <img src={infoIcon} alt="" className="w-4 h-4" />
-              </button>
-            </div>
-            
-
             <Button 
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
-              className="w-full bg-gradient-to-r from-blue-300 to-purple-300 hover:from-blue-400 hover:to-purple-400 text-white"
+              className={`w-full mb-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold transition-all duration-300 ${
+                prompt.trim() && !isGenerating ? 'animate-pulse bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-[length:200%_200%] animate-[shimmer_2s_infinite]' : ''
+              }`}
             >
               {isGenerating ? (
                 <>
@@ -352,6 +325,34 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                 </>
               )}
             </Button>
+
+            <div className="flex justify-between items-center text-xs mb-4">
+              {promptHistory.length > 0 && (
+                <select
+                  className="text-primary hover:underline font-medium bg-transparent border-none cursor-pointer text-xs"
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      setPrompt(e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Previous Prompts</option>
+                  {promptHistory.map((h, i) => (
+                    <option key={i} value={h} className="bg-background text-foreground">
+                      {h.length > 40 ? h.substring(0, 40) + "..." : h}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <button 
+                className="text-primary hover:underline flex items-center gap-1 font-medium text-xs"
+                onClick={() => setShowTips(true)}
+              >
+                AI prompt guide <img src={infoIcon} alt="" className="w-3 h-3" />
+              </button>
+            </div>
 
             {/* Image Selection UI */}
             {showImageOptions && imageOptions.length === 3 && (
