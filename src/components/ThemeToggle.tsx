@@ -17,13 +17,15 @@ export function ThemeToggle() {
 
   const getIcon = () => {
     if (theme === "dark") {
-      return <Moon className="h-4 w-4" />
+      return <img src="/icons/moon.svg" className="h-4 w-4 dark:filter dark:brightness-0 dark:invert" alt="Dark Mode" />
     } else if (theme === "light") {
-      return <Sun className="h-4 w-4" />
+      return <img src="/icons/sun.svg" className="h-4 w-4 dark:filter dark:brightness-0 dark:invert" alt="Light Mode" />
     } else {
       // System theme - show based on actual applied theme
       const isDark = document.documentElement.classList.contains("dark")
-      return isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />
+      return isDark ? 
+        <img src="/icons/moon.svg" className="h-4 w-4 dark:filter dark:brightness-0 dark:invert" alt="Dark Mode" /> : 
+        <img src="/icons/sun.svg" className="h-4 w-4 dark:filter dark:brightness-0 dark:invert" alt="Light Mode" />
     }
   }
 
@@ -62,13 +64,15 @@ export function MobileThemeToggle() {
 
   const getIcon = () => {
     if (theme === "dark") {
-      return <Moon className="h-5 w-5" />
+      return <img src="/icons/moon.svg" className="h-5 w-5 dark:filter dark:brightness-0 dark:invert" alt="Dark Mode" />
     } else if (theme === "light") {
-      return <Sun className="h-5 w-5" />
+      return <img src="/icons/sun.svg" className="h-5 w-5 dark:filter dark:brightness-0 dark:invert" alt="Light Mode" />
     } else {
       // System theme - show based on actual applied theme
       const isDark = document.documentElement.classList.contains("dark")
-      return isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />
+      return isDark ? 
+        <img src="/icons/moon.svg" className="h-5 w-5 dark:filter dark:brightness-0 dark:invert" alt="Dark Mode" /> : 
+        <img src="/icons/sun.svg" className="h-5 w-5 dark:filter dark:brightness-0 dark:invert" alt="Light Mode" />
     }
   }
 

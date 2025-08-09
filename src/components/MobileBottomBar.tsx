@@ -144,12 +144,14 @@ export const MobileBottomBar = ({
 
   const getThemeIcon = () => {
     if (theme === "dark") {
-      return <Moon className="w-4 h-4" />;
+      return <img src="/icons/moon.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Dark Mode" />;
     } else if (theme === "light") {
-      return <Sun className="w-4 h-4" />;
+      return <img src="/icons/sun.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Light Mode" />;
     } else {
       const isDark = document.documentElement.classList.contains("dark");
-      return isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />;
+      return isDark ? 
+        <img src="/icons/moon.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Dark Mode" /> : 
+        <img src="/icons/sun.svg" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" alt="Light Mode" />;
     }
   };
 
