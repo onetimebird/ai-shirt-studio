@@ -112,7 +112,7 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
             onClick={() => handleLayerAction('bring-to-front')}
             className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-3 transition-colors duration-200"
           >
-            <img src={frontIcon} alt="" className="w-4 h-4" />
+            <img src={frontIcon} alt="" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" />
             Bring to Front
           </button>
 
@@ -120,7 +120,7 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
             onClick={() => handleLayerAction('bring-forward')}
             className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-3 transition-colors duration-200"
           >
-            <img src={layerForwardIcon} alt="" className="w-4 h-4" />
+            <img src={layerForwardIcon} alt="" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" />
             Bring Forward
           </button>
 
@@ -128,7 +128,7 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
             onClick={() => handleLayerAction('send-backward')}
             className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-3 transition-colors duration-200 whitespace-nowrap"
           >
-            <img src={layerBackwardIcon} alt="" className="w-4 h-4" />
+            <img src={layerBackwardIcon} alt="" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" />
             Send Backward
           </button>
 
@@ -136,7 +136,7 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
             onClick={() => handleLayerAction('send-to-back')}
             className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-3 transition-colors duration-200"
           >
-            <img src={backIcon} alt="" className="w-4 h-4" />
+            <img src={backIcon} alt="" className="w-4 h-4 dark:filter dark:brightness-0 dark:invert" />
             Send to Back
           </button>
         </div>

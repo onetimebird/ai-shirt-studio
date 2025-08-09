@@ -81,7 +81,7 @@ export const SaveDesignModal = ({
             disabled={!designName.trim() || isLoading}
             className="bg-gradient-primary hover:bg-gradient-primary/90"
           >
-            <img src="/icons/save.png" className="w-4 h-4 mr-2 filter brightness-0 invert dark:filter-none dark:brightness-100 dark:invert-0" alt="Save" />
+            <img src="/icons/save.png" className="w-4 h-4 mr-2 filter brightness-0 invert dark:brightness-0 dark:invert" alt="Save" />
             Save Design
           </Button>
         </DialogFooter>

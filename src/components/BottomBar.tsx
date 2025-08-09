@@ -480,7 +480,7 @@ export const BottomBar = ({
             onClick={handleSaveDesign}
             className="text-base px-6 py-3 h-12"
           >
-            <img src="/icons/save.png" className="w-5 h-5 mr-2 filter brightness-0 invert dark:filter-none dark:brightness-100 dark:invert-0" alt="Save" />
+            <img src="/icons/save.png" className="w-5 h-5 mr-2 filter brightness-0 invert dark:brightness-0 dark:invert" alt="Save" />
             Save Design
           </Button>
 
@@ -518,7 +518,7 @@ export const BottomBar = ({
             onClick={handleNextStep}
             className={`bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-lg px-8 py-4 h-16 min-w-[200px] ${hasDesignOnCanvas() ? 'subtle-glow' : ''}`}
           >
-            <img src="/icons/long-arrow-right.png" className="w-12 h-8 mr-3 filter brightness-0 invert dark:filter-none dark:brightness-100 dark:invert-0" alt="Next Step" />
+            <img src="/icons/long-arrow-right.png" className="w-12 h-8 mr-3 filter brightness-0 invert dark:brightness-0 dark:invert" alt="Next Step" />
             Next Step
           </Button>
         </div>
@@ -624,7 +624,7 @@ export const BottomBar = ({
             onClick={handleSaveDesign}
             className="flex-1 text-sm px-4 py-3 h-12"
           >
-            <img src="/icons/save.png" className="w-4 h-4 mr-2 filter brightness-0 invert dark:filter-none dark:brightness-100 dark:invert-0" alt="Save" />
+            <img src="/icons/save.png" className="w-4 h-4 mr-2 filter brightness-0 invert dark:brightness-0 dark:invert" alt="Save" />
             Save
           </Button>
 
