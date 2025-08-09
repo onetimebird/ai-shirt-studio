@@ -38,7 +38,7 @@ export function LayersDropdown({
       <DropdownMenuTrigger asChild>
         {trigger ?? defaultTrigger}
       </DropdownMenuTrigger>
-      <DropdownMenuContent sideOffset={6} align={align} className="min-w-48">
+      <DropdownMenuContent sideOffset={6} align={align} className="min-w-48 z-[10000]">
         <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onBringToFront?.(); }}>
           Bring to Front
         </DropdownMenuItem>
