@@ -480,7 +480,7 @@ export const BottomBar = ({
             onClick={handleSaveDesign}
             className="text-base px-6 py-3 h-12"
           >
-            <Save className="w-5 h-5 mr-2 icon-hover" />
+            <img src="/icons/save.png" className="w-5 h-5 mr-2 filter brightness-0 invert" alt="Save" />
             Save Design
           </Button>
 
@@ -624,7 +624,7 @@ export const BottomBar = ({
             onClick={handleSaveDesign}
             className="flex-1 text-sm px-4 py-3 h-12"
           >
-            <Save className="w-4 h-4 mr-2" />
+            <img src="/icons/save.png" className="w-4 h-4 mr-2 filter brightness-0 invert" alt="Save" />
             Save
           </Button>
 

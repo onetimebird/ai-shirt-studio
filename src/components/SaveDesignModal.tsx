@@ -81,7 +81,7 @@ export const SaveDesignModal = ({
             disabled={!designName.trim() || isLoading}
             className="bg-gradient-primary hover:bg-gradient-primary/90"
           >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <img src="/icons/save.png" className="w-4 h-4 mr-2 filter brightness-0 invert" alt="Save" />
             Save Design
           </Button>
         </DialogFooter>
