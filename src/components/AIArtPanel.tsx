@@ -274,7 +274,7 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                 animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
               }}
             />
-            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 dark:from-yellow-200 dark:via-yellow-100 dark:to-white rounded-full opacity-30 animate-pulse blur-sm"></div>
+            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 dark:from-purple-200/30 dark:via-purple-300/20 dark:to-purple-400/30 rounded-full opacity-30 animate-pulse blur-sm"></div>
           </div>
           Add Art
         </h3>
