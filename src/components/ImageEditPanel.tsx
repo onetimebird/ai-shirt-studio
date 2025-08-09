@@ -142,7 +142,10 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         scaleX: scale,
         scaleY: scale
       });
-      canvas.renderAll();
+      
+      // Force update the object's bounding rect and controls
+      activeObject.setCoords();
+      canvas.requestRenderAll();
     } catch (error) {
       console.error('Size change error:', error);
       toast.error('Failed to change size');
@@ -161,7 +164,10 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
       const { canvas, activeObject } = result;
       activeObject.set({ angle: newRotation[0] });
-      canvas.renderAll();
+      
+      // Force update the object's bounding rect and controls
+      activeObject.setCoords();
+      canvas.requestRenderAll();
     } catch (error) {
       console.error('Rotation change error:', error);
       toast.error('Failed to rotate image');
