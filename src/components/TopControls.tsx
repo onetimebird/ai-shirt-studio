@@ -193,7 +193,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
             onClick={handleNextStep}
             className={`bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-xs px-4 py-2 h-8 ${hasDesignOnCanvas() ? 'subtle-glow' : ''}`}
           >
-            <img src="/icons/long-arrow-right.png" className="w-6 h-4 mr-1 dark:filter dark:brightness-0 dark:invert" alt="Next Step" />
+            <img src="/icons/long-arrow-right.png" className="w-6 h-4 mr-1 filter brightness-0 invert dark:filter-none dark:brightness-100 dark:invert-0" alt="Next Step" />
             Next Step
           </Button>
         </div>
