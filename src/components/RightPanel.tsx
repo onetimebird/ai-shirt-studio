@@ -238,6 +238,8 @@ and return a high-quality transparent PNG suitable for print.
   // Sync with selectedObject 
   useEffect(() => {
     console.log('[RightPanel] selectedObject changed:', selectedObject?.type, selectedObject);
+    console.log('[RightPanel] selectedObject truthy?', !!selectedObject);
+    console.log('[RightPanel] selectedObject type check:', selectedObject?.type);
     if (selectedObject && (selectedObject.type === "textbox" || selectedObject.type === "text")) {
       console.log('[RightPanel] Syncing text properties from selected object');
       setTextContent(selectedObject.text || "");
@@ -1842,6 +1844,10 @@ and return a high-quality transparent PNG suitable for print.
           )}
 
           {/* Layer Management - Show for any selected object */}
+          <div>
+            <p style={{color: 'blue', fontWeight: 'bold'}}>DEBUG: selectedObject = {selectedObject ? 'EXISTS' : 'NULL'}</p>
+            <p style={{color: 'blue', fontWeight: 'bold'}}>DEBUG: selectedObject.type = {selectedObject?.type || 'UNDEFINED'}</p>
+          </div>
           {selectedObject && (
             <div>
               <p style={{color: 'red', fontWeight: 'bold'}}>DEBUG: Layer section is rendering for selectedObject: {selectedObject.type}</p>
