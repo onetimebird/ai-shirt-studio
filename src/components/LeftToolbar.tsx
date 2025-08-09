@@ -125,7 +125,7 @@ export const LeftToolbar = ({
                 className="w-full justify-start h-12 lg:h-10"
                 onClick={handleShareDesign}
               >
-                <img src="/icons/share-design.png" className="w-5 h-5 lg:mr-3 icon-hover" alt="Share Design" />
+                <img src="/icons/share-design.png" className="w-5 h-5 lg:mr-3 icon-hover dark:filter dark:brightness-0 dark:invert" alt="Share Design" />
                 <span className="hidden lg:inline">Share Design</span>
               </Button>
             </TooltipTrigger>
@@ -143,7 +143,7 @@ export const LeftToolbar = ({
                 className="w-full justify-start h-12 lg:h-10"
                 onClick={() => setIsHelpChatOpen(true)}
               >
-                <img src="/icons/help.png" className="w-5 h-5 lg:mr-3 icon-hover" alt="Help" />
+                <img src="/icons/help.png" className="w-5 h-5 lg:mr-3 icon-hover dark:filter dark:brightness-0 dark:invert" alt="Help" />
                 <span className="hidden lg:inline">Help</span>
               </Button>
             </TooltipTrigger>
