@@ -243,6 +243,8 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       originX: 'center'
     });
     
+    // Ensure object remains selectable and active
+    canvas.setActiveObject(activeObject);
     canvas.renderAll();
     toast.success("Image centered to t-shirt");
   }, [getActiveImageObject]);
