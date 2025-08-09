@@ -1870,38 +1870,42 @@ and return a high-quality transparent PNG suitable for print.
                   <LayersDropdown
                     onBringToFront={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (!canvas || !selectedObject) return toast.error("No object selected");
-                      if ((canvas as any).bringObjectToFront) canvas.bringObjectToFront(selectedObject);
-                      else if ((canvas as any).bringToFront) (canvas as any).bringToFront(selectedObject);
-                      selectedObject.setCoords();
-                      canvas.renderAll();
+                      const obj = canvas?.getActiveObject?.() || selectedObject;
+                      if (!canvas || !obj) return toast.error("No object selected");
+                      if ((canvas as any).bringObjectToFront) canvas.bringObjectToFront(obj);
+                      else if ((canvas as any).bringToFront) (canvas as any).bringToFront(obj);
+                      obj.setCoords?.();
+                      canvas.renderAll?.();
                       toast.success("Brought to front");
                     }}
                     onSendToBack={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (!canvas || !selectedObject) return toast.error("No object selected");
-                      if ((canvas as any).sendObjectToBack) canvas.sendObjectToBack(selectedObject);
-                      else if ((canvas as any).sendToBack) (canvas as any).sendToBack(selectedObject);
-                      selectedObject.setCoords();
-                      canvas.renderAll();
+                      const obj = canvas?.getActiveObject?.() || selectedObject;
+                      if (!canvas || !obj) return toast.error("No object selected");
+                      if ((canvas as any).sendObjectToBack) canvas.sendObjectToBack(obj);
+                      else if ((canvas as any).sendToBack) (canvas as any).sendToBack(obj);
+                      obj.setCoords?.();
+                      canvas.renderAll?.();
                       toast.success("Sent to back");
                     }}
                     onBringForward={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (!canvas || !selectedObject) return toast.error("No object selected");
-                      if ((canvas as any).bringObjectForward) (canvas as any).bringObjectForward(selectedObject);
-                      else if ((canvas as any).bringForward) (canvas as any).bringForward(selectedObject);
-                      selectedObject.setCoords();
-                      canvas.renderAll();
+                      const obj = canvas?.getActiveObject?.() || selectedObject;
+                      if (!canvas || !obj) return toast.error("No object selected");
+                      if ((canvas as any).bringObjectForward) (canvas as any).bringObjectForward(obj);
+                      else if ((canvas as any).bringForward) (canvas as any).bringForward(obj);
+                      obj.setCoords?.();
+                      canvas.renderAll?.();
                       toast.success("Brought forward");
                     }}
                     onSendBackward={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (!canvas || !selectedObject) return toast.error("No object selected");
-                      if ((canvas as any).sendObjectBackwards) (canvas as any).sendObjectBackwards(selectedObject);
-                      else if ((canvas as any).sendBackwards) (canvas as any).sendBackwards(selectedObject);
-                      selectedObject.setCoords();
-                      canvas.renderAll();
+                      const obj = canvas?.getActiveObject?.() || selectedObject;
+                      if (!canvas || !obj) return toast.error("No object selected");
+                      if ((canvas as any).sendObjectBackwards) (canvas as any).sendObjectBackwards(obj);
+                      else if ((canvas as any).sendBackwards) (canvas as any).sendBackwards(obj);
+                      obj.setCoords?.();
+                      canvas.renderAll?.();
                       toast.success("Sent backward");
                     }}
                   />

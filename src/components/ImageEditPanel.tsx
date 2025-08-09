@@ -5,6 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { LayersDropdown } from '@/components/LayersDropdown';
 
 interface ImageEditPanelProps {
   imageUrl: string;
@@ -291,7 +292,8 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     console.log('Bringing to front. Objects before:', objects.length, 'Current index:', objects.indexOf(activeObject));
     
     // Move object to the top of the stack (highest index)
-    canvas.bringToFront(activeObject);
+    if ((canvas as any).bringObjectToFront) canvas.bringObjectToFront(activeObject);
+    else if ((canvas as any).bringToFront) (canvas as any).bringToFront(activeObject);
     activeObject.setCoords();
     canvas.renderAll();
     
@@ -310,8 +312,9 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     const objects = canvas.getObjects();
     console.log('Sending to back. Objects before:', objects.length, 'Current index:', objects.indexOf(activeObject));
     
-    // Move object to the bottom of the stack (index 0)  
-    canvas.sendToBack(activeObject);
+    // Move object to the bottom of the stack (index 0)
+    if ((canvas as any).sendObjectToBack) canvas.sendObjectToBack(activeObject);
+    else if ((canvas as any).sendToBack) (canvas as any).sendToBack(activeObject);
     activeObject.setCoords();
     canvas.renderAll();
     
@@ -332,7 +335,8 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     console.log('Bringing forward. Current index:', currentIndex, 'Total objects:', objects.length);
     
     // Move object up one layer
-    canvas.bringForward(activeObject);
+    if ((canvas as any).bringObjectForward) (canvas as any).bringObjectForward(activeObject);
+    else if ((canvas as any).bringForward) (canvas as any).bringForward(activeObject);
     activeObject.setCoords();
     canvas.renderAll();
     
@@ -353,7 +357,8 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     console.log('Sending backward. Current index:', currentIndex, 'Total objects:', objects.length);
     
     // Move object down one layer
-    canvas.sendBackwards(activeObject);
+    if ((canvas as any).sendObjectBackwards) (canvas as any).sendObjectBackwards(activeObject);
+    else if ((canvas as any).sendBackwards) (canvas as any).sendBackwards(activeObject);
     activeObject.setCoords();
     canvas.renderAll();
     
@@ -679,77 +684,22 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <Move className="w-3 h-3 mr-2" />
               Center
             </Button>
-            <div className="relative">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setIsLayerMenuOpen(!isLayerMenuOpen)}
-              >
-                <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                  <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-                Layer
-                <ChevronDown className="w-3 h-3 ml-1" />
-              </Button>
-              
-              {isLayerMenuOpen && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
-                  <button
-                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
-                    onClick={() => {
-                      handleBringToFront();
-                      setIsLayerMenuOpen(false);
-                    }}
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
-                    </svg>
-                    Bring to Front
-                  </button>
-                  <button
-                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
-                    onClick={() => {
-                      handleSendToBack();
-                      setIsLayerMenuOpen(false);
-                    }}
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
-                    </svg>
-                    Send to Back
-                  </button>
-                  <button
-                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
-                    onClick={() => {
-                      handleBringForward();
-                      setIsLayerMenuOpen(false);
-                    }}
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
-                      <polygon points="7,6 17,6 21,10"/>
-                    </svg>
-                    Bring Forward
-                  </button>
-                  <button
-                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
-                    onClick={() => {
-                      handleSendBackward();
-                      setIsLayerMenuOpen(false);
-                    }}
-                  >
-                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
-                      <polygon points="17,18 7,18 3,14"/>
-                    </svg>
-                    Send Backwards
-                  </button>
-                </div>
-              )}
-            </div>
+            <LayersDropdown
+              trigger={
+                <Button variant="outline" size="sm" className="gap-1">
+                  <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                    <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  Layer
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+              }
+              onBringToFront={handleBringToFront}
+              onSendToBack={handleSendToBack}
+              onBringForward={handleBringForward}
+              onSendBackward={handleSendBackward}
+            />
             <Button variant="outline" size="sm" onClick={handleFlip}>
               <RotateCw className="w-3 h-3 mr-2" />
               Flip
