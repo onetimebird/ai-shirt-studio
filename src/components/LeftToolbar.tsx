@@ -125,7 +125,7 @@ export const LeftToolbar = ({
                 className="w-full justify-start h-12 lg:h-10"
                 onClick={handleShareDesign}
               >
-                <Share2 className="w-4 h-4 lg:mr-3 icon-hover" />
+                <img src="/icons/share-design.png" className="w-4 h-4 lg:mr-3 icon-hover" alt="Share Design" />
                 <span className="hidden lg:inline">Share Design</span>
               </Button>
             </TooltipTrigger>

@@ -432,7 +432,7 @@ export const MobileBottomBar = ({
             onClick={handleShareDesign}
             className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
           >
-            <Share2 className="w-4 h-4" />
+            <img src="/icons/share-design.png" className="w-4 h-4" alt="Share Design" />
             <span className="text-[10px] leading-tight">Share</span>
           </Button>
 
