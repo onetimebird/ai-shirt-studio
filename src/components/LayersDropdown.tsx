@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Layers } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+
+// Import proper layer icons
+import frontIcon from "@/assets/icons/front.svg";
+import backIcon from "@/assets/icons/back.svg";
+import layerForwardIcon from "@/assets/icons/layer-forward.svg";
+import layerBackwardIcon from "@/assets/icons/layer-backward.svg";
 
 interface LayersDropdownProps {
   selectedObject?: any;
@@ -101,49 +107,36 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg 
-        py-1 z-[10000] min-w-[140px]">
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 z-[10000] min-w-[150px]">
           <button
             onClick={() => handleLayerAction('bring-to-front')}
-            className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm hover:bg-yellow-100 dark:hover:bg-yellow-900/20 flex items-center gap-3 transition-colors duration-200"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
-            </svg>
+            <img src={frontIcon} alt="" className="w-4 h-4" />
             Bring to Front
           </button>
 
           <button
             onClick={() => handleLayerAction('bring-forward')}
-            className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm hover:bg-yellow-100 dark:hover:bg-yellow-900/20 flex items-center gap-3 transition-colors duration-200"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
-              <polygon points="7,6 17,6 21,10"/>
-            </svg>
+            <img src={layerForwardIcon} alt="" className="w-4 h-4" />
             Bring Forward
           </button>
 
           <button
             onClick={() => handleLayerAction('send-backward')}
-            className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm hover:bg-yellow-100 dark:hover:bg-yellow-900/20 flex items-center gap-3 transition-colors duration-200 whitespace-nowrap"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
-              <polygon points="17,18 7,18 3,14"/>
-            </svg>
+            <img src={layerBackwardIcon} alt="" className="w-4 h-4" />
             Send Backward
           </button>
 
           <button
             onClick={() => handleLayerAction('send-to-back')}
-            className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm hover:bg-yellow-100 dark:hover:bg-yellow-900/20 flex items-center gap-3 transition-colors duration-200"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
-            </svg>
+            <img src={backIcon} alt="" className="w-4 h-4" />
             Send to Back
           </button>
         </div>
