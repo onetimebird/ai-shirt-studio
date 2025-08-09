@@ -321,4 +321,5 @@ All colors MUST be HSL.
 
 .dark .ai-brain-icon {
   filter: brightness(0) invert(1) !important;
+  drop-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
 }
