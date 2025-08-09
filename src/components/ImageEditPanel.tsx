@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { X, RotateCcw, Wand2, Loader2, Palette, Move, RotateCw, Copy, Trash2, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -19,6 +18,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   const [rotation, setRotation] = useState([0]);
   const [backgroundRemoved, setBackgroundRemoved] = useState(false);
   const [isRemovingBackground, setIsRemovingBackground] = useState(false);
+  const [isLayerMenuOpen, setIsLayerMenuOpen] = useState(false);
 
   // Cleanup effect
   useEffect(() => {
@@ -27,6 +27,23 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       setIsRemovingBackground(false);
     };
   }, []);
+
+  // Close layer menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isLayerMenuOpen) {
+        setIsLayerMenuOpen(false);
+      }
+    };
+
+    if (isLayerMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isLayerMenuOpen]);
 
   // Get the active canvas object with better error handling
   const getActiveImageObject = useCallback(() => {
@@ -624,48 +641,77 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <Move className="w-3 h-3 mr-2" />
               Center
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
-                    <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
-                  Layer
-                  <ChevronDown className="w-3 h-3 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                <DropdownMenuItem onClick={handleBringToFront}>
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
-                  </svg>
-                  Bring to Front
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSendToBack}>
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
-                  </svg>
-                  Send to Back
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleBringForward}>
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
-                    <polygon points="7,6 17,6 21,10"/>
-                  </svg>
-                  Bring Forward
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleSendBackward}>
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
-                    <polygon points="17,18 7,18 3,14"/>
-                  </svg>
-                  Send Backwards
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="relative">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsLayerMenuOpen(!isLayerMenuOpen)}
+              >
+                <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                  <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+                Layer
+                <ChevronDown className="w-3 h-3 ml-1" />
+              </Button>
+              
+              {isLayerMenuOpen && (
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
+                  <button
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
+                    onClick={() => {
+                      handleBringToFront();
+                      setIsLayerMenuOpen(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
+                    </svg>
+                    Bring to Front
+                  </button>
+                  <button
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
+                    onClick={() => {
+                      handleSendToBack();
+                      setIsLayerMenuOpen(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
+                    </svg>
+                    Send to Back
+                  </button>
+                  <button
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
+                    onClick={() => {
+                      handleBringForward();
+                      setIsLayerMenuOpen(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
+                      <polygon points="7,6 17,6 21,10"/>
+                    </svg>
+                    Bring Forward
+                  </button>
+                  <button
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center text-sm"
+                    onClick={() => {
+                      handleSendBackward();
+                      setIsLayerMenuOpen(false);
+                    }}
+                  >
+                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
+                      <polygon points="17,18 7,18 3,14"/>
+                    </svg>
+                    Send Backwards
+                  </button>
+                </div>
+              )}
+            </div>
             <Button variant="outline" size="sm" onClick={handleFlip}>
               <RotateCw className="w-3 h-3 mr-2" />
               Flip
