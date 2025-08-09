@@ -43,6 +43,7 @@ import { BELLA_6400_COLORS } from "../data/bella6400Colors";
 import { GILDAN_18000_COLORS } from "../data/gildan18000Colors";
 import { GILDAN_18500_COLORS } from "../data/gildan18500Colors";
 import { BELLA_3719_COLORS } from "../data/bella3719Colors";
+import { LayersDropdown } from "@/components/LayersDropdown";
 
 interface RightPanelProps {
   activeTool: string;
@@ -1865,128 +1866,45 @@ and return a high-quality transparent PNG suitable for print.
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      alert('Button clicked!'); // Simple test
-                      console.log('=== BRING TO FRONT DEBUG ===');
-                      console.log('selectedObject:', selectedObject);
-                      console.log('selectedObject type:', selectedObject?.type);
-                      
+                <div className="flex items-center">
+                  <LayersDropdown
+                    onBringToFront={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      console.log('canvas from window.designCanvas:', canvas);
-                      console.log('canvas exists:', !!canvas);
-                      
-                      if (!canvas) {
-                        console.error('Canvas not found!');
-                        toast.error("Canvas not found");
-                        return;
-                      }
-                      
-                      if (!selectedObject) {
-                        console.error('No selected object!');
-                        toast.error("No object selected");
-                        return;
-                      }
-                      
-                      const objects = canvas.getObjects();
-                      console.log('Canvas objects:', objects);
-                      console.log('Objects count:', objects.length);
-                      console.log('selectedObject in canvas objects:', objects.indexOf(selectedObject));
-                      
-                      if (objects.indexOf(selectedObject) === -1) {
-                        console.error('Selected object not found in canvas objects!');
-                        toast.error("Object not found on canvas");
-                        return;
-                      }
-                      
-                      console.log('Bringing to front...');
-                      canvas.bringToFront(selectedObject);
+                      if (!canvas || !selectedObject) return toast.error("No object selected");
+                      if ((canvas as any).bringObjectToFront) canvas.bringObjectToFront(selectedObject);
+                      else if ((canvas as any).bringToFront) (canvas as any).bringToFront(selectedObject);
                       selectedObject.setCoords();
                       canvas.renderAll();
-                      
-                      const newIndex = canvas.getObjects().indexOf(selectedObject);
-                      console.log('New index after bringToFront:', newIndex);
                       toast.success("Brought to front");
                     }}
-                  >
-                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1"/>
-                    </svg>
-                    To Front
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      console.log('Send to Back clicked from RightPanel');
+                    onSendToBack={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (canvas && selectedObject) {
-                        const objects = canvas.getObjects();
-                        console.log('Sending to back. Objects before:', objects.length, 'Current index:', objects.indexOf(selectedObject));
-                        canvas.sendToBack(selectedObject);
-                        selectedObject.setCoords();
-                        canvas.renderAll();
-                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
-                        toast.success("Sent to back");
-                      }
+                      if (!canvas || !selectedObject) return toast.error("No object selected");
+                      if ((canvas as any).sendObjectToBack) canvas.sendObjectToBack(selectedObject);
+                      else if ((canvas as any).sendToBack) (canvas as any).sendToBack(selectedObject);
+                      selectedObject.setCoords();
+                      canvas.renderAll();
+                      toast.success("Sent to back");
                     }}
-                  >
-                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <rect x="9" y="9" width="6" height="6" rx="1" ry="1" fill="currentColor"/>
-                    </svg>
-                    To Back
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      console.log('Bring Forward clicked from RightPanel');
+                    onBringForward={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (canvas && selectedObject) {
-                        const objects = canvas.getObjects();
-                        console.log('Bringing forward. Current index:', objects.indexOf(selectedObject));
-                        canvas.bringForward(selectedObject);
-                        selectedObject.setCoords();
-                        canvas.renderAll();
-                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
-                        toast.success("Brought forward");
-                      }
+                      if (!canvas || !selectedObject) return toast.error("No object selected");
+                      if ((canvas as any).bringObjectForward) (canvas as any).bringObjectForward(selectedObject);
+                      else if ((canvas as any).bringForward) (canvas as any).bringForward(selectedObject);
+                      selectedObject.setCoords();
+                      canvas.renderAll();
+                      toast.success("Brought forward");
                     }}
-                  >
-                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polygon points="7,2 17,2 21,6 21,20 7,20 3,16 3,2"/>
-                      <polygon points="7,6 17,6 21,10"/>
-                    </svg>
-                    Forward
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      console.log('Send Backward clicked from RightPanel');
+                    onSendBackward={() => {
                       const canvas = (window as any).designCanvas?.canvas;
-                      if (canvas && selectedObject) {
-                        const objects = canvas.getObjects();
-                        console.log('Sending backward. Current index:', objects.indexOf(selectedObject));
-                        canvas.sendBackwards(selectedObject);
-                        selectedObject.setCoords();
-                        canvas.renderAll();
-                        console.log('New index:', canvas.getObjects().indexOf(selectedObject));
-                        toast.success("Sent backward");
-                      }
+                      if (!canvas || !selectedObject) return toast.error("No object selected");
+                      if ((canvas as any).sendObjectBackwards) (canvas as any).sendObjectBackwards(selectedObject);
+                      else if ((canvas as any).sendBackwards) (canvas as any).sendBackwards(selectedObject);
+                      selectedObject.setCoords();
+                      canvas.renderAll();
+                      toast.success("Sent backward");
                     }}
-                  >
-                    <svg className="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polygon points="17,22 7,22 3,18 3,4 17,4 21,8 21,22"/>
-                      <polygon points="17,18 7,18 3,14"/>
-                    </svg>
-                    Backward
-                  </Button>
+                  />
                 </div>
               </CardContent>
             </Card>
