@@ -13,6 +13,7 @@ const TypeUnderlineIcon = () => <img src="/icons/type-underline.svg" className="
 const TextLeftIcon = () => <img src="/icons/text-left.svg" className="w-[18px] h-[18px]" alt="Align Left" />;
 const TextCenterIcon = () => <img src="/icons/text-center.svg" className="w-[18px] h-[18px]" alt="Align Center" />;
 const TextRightIcon = () => <img src="/icons/text-right.svg" className="w-[18px] h-[18px]" alt="Align Right" />;
+const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
 import { toast } from "sonner";
 
 interface DesignToolbarProps {
@@ -450,7 +451,7 @@ export const DesignToolbar = ({
           <label htmlFor="image-upload">
             <Button asChild className="w-full">
               <span className="flex items-center gap-2">
-                <ImageIcon className="w-4 h-4" />
+                <CloudUploadIcon />
                 Upload Image
               </span>
             </Button>

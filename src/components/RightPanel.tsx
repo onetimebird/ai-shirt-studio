@@ -51,6 +51,10 @@ const FrontIcon = () => <img src="/icons/front.svg" className="w-4 h-4" alt="Bri
 const BackIcon = () => <img src="/icons/back.svg" className="w-4 h-4" alt="Send to Back" />;
 const LayerForwardIcon = () => <img src="/icons/layer-forward.svg" className="w-4 h-4" alt="Bring Forward" />;
 const LayerBackwardIcon = () => <img src="/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
+const CloudUploadIcon = () => <img src="/icons/cloud-upload.svg" className="w-4 h-4" alt="Upload" />;
+const UploadImageIcon = () => <img src="/icons/image.svg" className="w-4 h-4" alt="Image" />;
+const FolderPlusIcon = () => <img src="/icons/folder-plus.svg" className="w-4 h-4" alt="Choose File" />;
+const GoogleDriveIcon = () => <img src="/icons/google-drive.svg" className="w-5 h-5" alt="Google Drive" />;
 
 interface RightPanelProps {
   activeTool: string;
@@ -1414,7 +1418,7 @@ and return a high-quality transparent PNG suitable for print.
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4" /> Upload Image
+                    <UploadImageIcon /> Upload Image
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -1490,7 +1494,10 @@ and return a high-quality transparent PNG suitable for print.
                         asChild
                         className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 border-0"
                       >
-                        <span>📁 Choose File</span>
+                        <span className="flex items-center gap-2">
+                          <FolderPlusIcon />
+                          Choose File
+                        </span>
                       </Button>
                     </label>
                     <p className="text-xs text-muted-foreground mt-2">
@@ -1727,12 +1734,7 @@ and return a high-quality transparent PNG suitable for print.
                   {/* Google Drive Upload */}
                   <div className="border border-border rounded-lg p-4 text-center">
                     <div className="flex items-center justify-center gap-2 mb-3">
-                      <svg className="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6.26 10.5l2.25-3.9L16.66 6l-2.25 3.9L6.26 10.5z"/>
-                        <path d="M19.19 11.5l-2.26-3.91L9.74 7.59l2.26 3.91l7.19-.01z"/>
-                        <path d="M11.26 17.5H4.74L1.5 12l3.24 5.5h6.52z"/>
-                        <path d="M15.26 17.5H8.74l3.26-5.65L15.26 17.5z"/>
-                      </svg>
+                      <GoogleDriveIcon />
                       <span className="text-sm font-medium">Google Drive</span>
                     </div>
                     <Button 
