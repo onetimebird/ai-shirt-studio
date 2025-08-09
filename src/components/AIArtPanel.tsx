@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import expandIcon from '@/assets/icons/expand.svg';
 import infoIcon from '@/assets/icons/info.svg';
 import trashIcon from '@/assets/icons/trash.svg';
+import magicWandIcon from '@/assets/icons/magic-wand.svg';
+import aiBrainIcon from '@/assets/icons/ai-brain.svg';
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 import { supabase } from '@/integrations/supabase/client';
@@ -261,9 +263,21 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
   return (
     <Card className="h-full flex flex-col">
       <CardContent className="p-6 flex-1 flex flex-col">
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4 flex items-center">
+          <div className="relative mr-3">
+            <img 
+              src={aiBrainIcon} 
+              alt="AI Brain" 
+              className="w-8 h-8 filter brightness-0 saturate-100 hue-rotate-[260deg] animate-pulse"
+              style={{
+                filter: 'hue-rotate(260deg) saturate(1.5) brightness(1.2)',
+                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+              }}
+            />
+            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 rounded-full opacity-30 animate-pulse blur-sm"></div>
+          </div>
           Add Art{' '}
-          <span className="ml-1 px-2 py-0.5 text-xs font-normal bg-gradient-to-r from-blue-300 to-purple-300 text-white rounded">
+          <span className="ml-1 px-2 py-0.5 text-xs font-normal bg-gradient-to-r from-purple-400 to-purple-600 text-white rounded animate-pulse">
             AI
           </span>
         </h3>
@@ -338,7 +352,10 @@ export function AIArtPanel({ onImageGenerated }: AIArtPanelProps) {
                   Generating...
                 </>
               ) : (
-                <>✨ Generate 3 Options</>
+                <>
+                  <img src={magicWandIcon} alt="Magic Wand" className="w-4 h-4 filter brightness-0 invert mr-2" />
+                  Generate 3 Options
+                </>
               )}
             </Button>
 
