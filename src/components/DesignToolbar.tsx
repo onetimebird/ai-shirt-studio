@@ -7,13 +7,12 @@ import { Image as ImageIcon, RotateCw, Copy, Trash2 } from "lucide-react";
 
 // Bootstrap Icons as React Components
 const FontsIcon = () => <img src="/src/assets/icons/fonts.svg" className="w-4 h-4" alt="Fonts" />;
-const PlusSquareIcon = () => <img src="/src/assets/icons/plus-square.svg" className="w-4 h-4" alt="Add" />;
-const TypeBoldIcon = () => <img src="/src/assets/icons/type-bold.svg" className="w-4 h-4" alt="Bold" />;
-const TypeItalicIcon = () => <img src="/src/assets/icons/type-italic.svg" className="w-4 h-4" alt="Italic" />;
-const TypeUnderlineIcon = () => <img src="/src/assets/icons/type-underline.svg" className="w-4 h-4" alt="Underline" />;
-const TextLeftIcon = () => <img src="/src/assets/icons/text-left.svg" className="w-4 h-4" alt="Align Left" />;
-const TextCenterIcon = () => <img src="/src/assets/icons/text-center.svg" className="w-4 h-4" alt="Align Center" />;
-const TextRightIcon = () => <img src="/src/assets/icons/text-right.svg" className="w-4 h-4" alt="Align Right" />;
+const TypeBoldIcon = () => <img src="/src/assets/icons/type-bold.svg" className="w-[18px] h-[18px]" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/src/assets/icons/type-italic.svg" className="w-[18px] h-[18px]" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/src/assets/icons/type-underline.svg" className="w-[18px] h-[18px]" alt="Underline" />;
+const TextLeftIcon = () => <img src="/src/assets/icons/text-left.svg" className="w-[18px] h-[18px]" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/src/assets/icons/text-center.svg" className="w-[18px] h-[18px]" alt="Align Center" />;
+const TextRightIcon = () => <img src="/src/assets/icons/text-right.svg" className="w-[18px] h-[18px]" alt="Align Right" />;
 import { toast } from "sonner";
 
 interface DesignToolbarProps {
@@ -285,9 +284,8 @@ export const DesignToolbar = ({
                 onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
                 className="flex-1"
               />
-              <Button onClick={handleAddText} className="flex items-center gap-2">
-                <PlusSquareIcon />
-                Add
+              <Button onClick={handleAddText}>
+                Add New
               </Button>
             </div>
 
