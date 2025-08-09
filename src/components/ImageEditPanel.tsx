@@ -526,11 +526,11 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <img src={brushIcon} alt="" className="w-5 h-5" />
+            <img src={brushIcon} alt="" className="w-5 h-5 dark:filter dark:brightness-0 dark:invert" />
             Edit Your Artwork
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={onClose}>
-            <img src={xLgIcon} alt="" className="h-4 w-4" />
+            <img src={xLgIcon} alt="" className="h-4 w-4 dark:filter dark:brightness-0 dark:invert" />
           </Button>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -618,7 +618,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
                 {/* Selected indicator */}
                 {selectedFilter === filter.key && (
                   <div className="absolute top-2 right-2 w-4 h-4 bg-primary rounded-full flex items-center justify-center z-10 animate-scale-in">
-                    <img src={checkIcon} alt="" className="w-2.5 h-2.5 text-primary-foreground filter brightness-0 invert" />
+                    <img src={checkIcon} alt="" className="w-2.5 h-2.5 text-primary-foreground filter brightness-0 invert dark:filter-none dark:brightness-100 dark:invert-0" />
                   </div>
                 )}
                 
@@ -690,15 +690,15 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           <h4 className="font-medium text-sm">Actions</h4>
           <div className="grid grid-cols-2 gap-2">
             <Button variant="outline" size="sm" onClick={handleCenter}>
-              <img src={centerIcon} alt="" className="w-3 h-3 mr-2" />
+              <img src={centerIcon} alt="" className="w-3 h-3 mr-2 dark:filter dark:brightness-0 dark:invert" />
               Center
             </Button>
             <LayersDropdown
               trigger={
-                <Button variant="outline" size="sm" className="gap-1">
-                  <img src={stackIcon} alt="" className="w-3 h-3 mr-2" />
+                <Button variant="outline" size="sm" className="gap-1 w-full">
+                  <img src={stackIcon} alt="" className="w-3 h-3 mr-2 dark:filter dark:brightness-0 dark:invert" />
                   Layer
-                  <img src={chevronDownIcon} alt="" className="w-3 h-3 ml-1" />
+                  <img src={chevronDownIcon} alt="" className="w-3 h-3 ml-1 dark:filter dark:brightness-0 dark:invert" />
                 </Button>
               }
               onBringToFront={handleBringToFront}
@@ -707,18 +707,18 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               onSendBackward={handleSendBackward}
             />
             <Button variant="outline" size="sm" onClick={handleFlip}>
-              <img src={flipHorizontalIcon} alt="" className="w-3 h-3 mr-2" />
+              <img src={flipHorizontalIcon} alt="" className="w-3 h-3 mr-2 dark:filter dark:brightness-0 dark:invert" />
               Flip
             </Button>
             <Button variant="outline" size="sm" onClick={handleDuplicate}>
-              <img src={copyIcon} alt="" className="w-3 h-3 mr-2" />
+              <img src={copyIcon} alt="" className="w-3 h-3 mr-2 dark:filter dark:brightness-0 dark:invert" />
               Duplicate
             </Button>
           </div>
           
           {/* Delete Button - Full Width */}
           <Button variant="destructive" size="sm" onClick={handleDelete} className="w-full">
-            <img src={trashIcon} alt="" className="w-3 h-3 mr-2" />
+            <img src={trashIcon} alt="" className="w-3 h-3 mr-2 filter brightness-0 invert" />
             Delete Image
           </Button>
         </div>
