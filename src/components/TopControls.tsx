@@ -145,7 +145,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
-                <ShoppingCart className="w-5 h-5" />
+                <img src="/icons/cart.png" className="w-5 h-5 filter brightness-0 invert" alt="Cart" />
                 <span>Cart</span>
               </div>
             </Button>
@@ -213,7 +213,7 @@ export const TopControls = ({ onAuthModalChange, onCartModalChange, selectedProd
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
-                <ShoppingCart className="w-4 h-4" />
+                <img src="/icons/cart.png" className="w-4 h-4 filter brightness-0 invert" alt="Cart" />
               </div>
             </Button>
           </CartPopup>

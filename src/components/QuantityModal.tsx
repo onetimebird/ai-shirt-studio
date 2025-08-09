@@ -552,7 +552,7 @@ export const QuantityModal = ({ isOpen, onClose, selectedProduct, selectedColor,
               className="w-full h-10 lg:h-16 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium text-sm lg:text-xl shadow-lg transition-all duration-300 hover:shadow-xl"
               onClick={handleAddToCart}
             >
-              <ShoppingCart className="w-4 h-4 lg:w-5 lg:h-5 mr-2" />
+              <img src="/icons/cart.png" className="w-4 h-4 lg:w-5 lg:h-5 mr-2 filter brightness-0 invert" alt="Cart" />
               ADD TO CART - ${totalPrice.toFixed(2)}
             </Button>
           )}
