@@ -11,12 +11,7 @@ import infoIcon from '@/assets/icons/info.svg';
 import trashIcon from '@/assets/icons/trash.svg';
 import magicWandIcon from '@/assets/icons/magic-wand.svg';
 import aiBrainIcon from '@/assets/icons/ai-brain.svg';
-import geometricLion from '@/assets/preview-images/geometric-lion.png';
-import synthwaveMountain from '@/assets/preview-images/synthwave-mountain.png';
-import cosmicMandala from '@/assets/preview-images/cosmic-mandala.png';
-import japaneseWave from '@/assets/preview-images/japanese-wave.png';
-import cyberSkull from '@/assets/preview-images/cyber-skull.png';
-import rainbowPhoenix from '@/assets/preview-images/rainbow-phoenix.png';
+// Using uploaded preview images
 import { toast } from 'sonner';
 import { openAIService } from '@/services/openai';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,34 +22,34 @@ const FUNCTION_URL = "https://rdrkdxvucggzagbcunyn.functions.supabase.co/generat
 
 const exampleImages = [
   {
-    url: geometricLion,
-    title: 'Geometric Lion',
-    type: 'logo'
+    url: '/lovable-uploads/bbdaf894-6648-48c9-ab37-cbcfbfdc6682.png',
+    title: 'Perfect Drive Golf',
+    type: 'vintage'
   },
   {
-    url: synthwaveMountain,
-    title: 'Synthwave Mountain',
-    type: 'retro'
+    url: '/lovable-uploads/4f6c1a10-98e5-45b2-b7e5-4cdcc23e9446.png',
+    title: 'Graffiti Dragon',
+    type: 'street-art'
   },
   {
-    url: cosmicMandala,
-    title: 'Cosmic Mandala',
-    type: 'spiritual'
+    url: '/lovable-uploads/20a9986d-97a7-4131-84a9-21991a21dbf4.png',
+    title: 'Game Over Retro',
+    type: 'arcade'
   },
   {
-    url: japaneseWave,
-    title: 'Japanese Wave',
-    type: 'minimalist'
+    url: '/lovable-uploads/e3117a9a-ae83-4442-b009-a2ee296cba79.png',
+    title: 'Cool Shirt AI',
+    type: 'cosmic'
   },
   {
-    url: cyberSkull,
-    title: 'Cyber Skull',
-    type: 'cyberpunk'
+    url: '/lovable-uploads/384a21de-2906-462d-a051-13bfb51a97b8.png',
+    title: 'Rock & Roll',
+    type: 'music'
   },
   {
-    url: rainbowPhoenix,
-    title: 'Rainbow Phoenix',
-    type: 'fantasy'
+    url: '/lovable-uploads/72e53754-7334-4390-a463-88941b6e6d52.png',
+    title: 'Cyberpunk Samurai',
+    type: 'futuristic'
   },
 ];
 
