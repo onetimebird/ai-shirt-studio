@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Layers } from "lucide-react";
 
 interface LayersDropdownProps {
   selectedObject?: any;
@@ -73,18 +75,18 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
 
   return (
     <div className="relative inline-block" ref={dropdownRef}>
-      {/* Layer Text Button */}
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={() => {
           console.log('LayersDropdown button clicked, current isOpen:', isOpen);
           setIsOpen(!isOpen);
         }}
-        className="px-3 py-1.5 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 
-        transition-all duration-200 text-gray-700"
-        title="Layer Options"
+        className="h-8 text-xs"
       >
+        <Layers className="w-3 h-3 mr-1" />
         Layers
-      </button>
+      </Button>
 
       {/* Dropdown Menu */}
       {isOpen && (
