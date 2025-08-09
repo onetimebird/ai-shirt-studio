@@ -183,7 +183,7 @@ export const MobileBottomBar = ({
                 className="flex flex-col items-center gap-1 h-auto py-2 px-3 min-w-[60px] relative overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex items-center gap-1">
-                  <ShirtIcon className="w-3 h-3" />
+                  <img src="/icons/tshirt.svg" className="w-3 h-3" alt="T-Shirt" />
                   <div 
                     className="w-3 h-3 rounded border border-border" 
                     style={{ backgroundColor: currentColor?.value }}

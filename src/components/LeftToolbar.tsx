@@ -32,7 +32,7 @@ const tools = [
   { id: "upload", label: "Upload Image", icon: () => <img src="/icons/cloud-upload.svg" className="w-5 h-5" alt="Upload" /> },
   { id: "text", label: "Add Text", icon: Type },
   { id: "ai", label: "AI Image Generator", icon: Wand2 },
-  { id: "products", label: "Change Product", icon: Shirt },
+  { id: "products", label: "Change Product", icon: () => <img src="/icons/tshirt.svg" className="w-5 h-5" alt="T-Shirt" /> },
   { id: "reset", label: "Reset Design", icon: RotateCcw },
 ];
 
