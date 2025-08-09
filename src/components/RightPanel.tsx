@@ -21,12 +21,6 @@ import {
   ChevronDown,
   Palette,
   Image as ImageIcon,
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
   RotateCw,
   Copy,
   Trash2,
@@ -43,7 +37,20 @@ import { BELLA_6400_COLORS } from "../data/bella6400Colors";
 import { GILDAN_18000_COLORS } from "../data/gildan18000Colors";
 import { GILDAN_18500_COLORS } from "../data/gildan18500Colors";
 import { BELLA_3719_COLORS } from "../data/bella3719Colors";
-import LayersDropdown from "@/components/LayersDropdown";
+import LayersDropdown from "./LayersDropdown";
+
+// Bootstrap Icons as React Components
+const TextLeftIcon = () => <img src="/src/assets/icons/text-left.svg" className="w-3 h-3" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/src/assets/icons/text-center.svg" className="w-3 h-3" alt="Align Center" />;
+const TextRightIcon = () => <img src="/src/assets/icons/text-right.svg" className="w-3 h-3" alt="Align Right" />;
+const TypeBoldIcon = () => <img src="/src/assets/icons/type-bold.svg" className="w-3 h-3" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/src/assets/icons/type-italic.svg" className="w-3 h-3" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/src/assets/icons/type-underline.svg" className="w-3 h-3" alt="Underline" />;
+const LayersIcon = () => <img src="/src/assets/icons/layers.svg" className="w-4 h-4" alt="Layers" />;
+const FrontIcon = () => <img src="/src/assets/icons/front.svg" className="w-4 h-4" alt="Bring to Front" />;
+const BackIcon = () => <img src="/src/assets/icons/back.svg" className="w-4 h-4" alt="Send to Back" />;
+const LayerForwardIcon = () => <img src="/src/assets/icons/layer-forward.svg" className="w-4 h-4" alt="Bring Forward" />;
+const LayerBackwardIcon = () => <img src="/src/assets/icons/layer-backward.svg" className="w-4 h-4" alt="Send Backward" />;
 
 interface RightPanelProps {
   activeTool: string;
@@ -847,7 +854,7 @@ and return a high-quality transparent PNG suitable for print.
                         }}
                         className="h-7 w-7 p-0"
                       >
-                        <Bold className="w-3 h-3"/>
+                        <TypeBoldIcon />
                       </Button>
                       <Button 
                         variant={isItalic ? 'default' : 'outline'} 
@@ -859,7 +866,7 @@ and return a high-quality transparent PNG suitable for print.
                         }}
                         className="h-7 w-7 p-0"
                       >
-                        <Italic className="w-3 h-3"/>
+                        <TypeItalicIcon />
                       </Button>
                       <Button 
                         variant={isUnderline ? 'default' : 'outline'} 
@@ -871,7 +878,7 @@ and return a high-quality transparent PNG suitable for print.
                         }}
                         className="h-7 w-7 p-0"
                       >
-                        <Underline className="w-3 h-3"/>
+                        <TypeUnderlineIcon />
                       </Button>
                     </div>
                   </div>
@@ -891,7 +898,7 @@ and return a high-quality transparent PNG suitable for print.
                         }}
                         className="h-7 w-7 p-0"
                       >
-                        <AlignLeft className="w-3 h-3"/>
+                        <TextLeftIcon />
                       </Button>
                       <Button 
                         variant={(selectedObject ? (selectedObject.textAlign || 'left') : textAlign)==='center'?'default':'outline'} 
@@ -904,7 +911,7 @@ and return a high-quality transparent PNG suitable for print.
                         }}
                         className="h-7 w-7 p-0"
                       >
-                        <AlignCenter className="w-3 h-3"/>
+                        <TextCenterIcon />
                       </Button>
                       <Button 
                         variant={(selectedObject ? (selectedObject.textAlign || 'left') : textAlign)==='right'?'default':'outline'} 
@@ -917,7 +924,7 @@ and return a high-quality transparent PNG suitable for print.
                         }}
                         className="h-7 w-7 p-0"
                       >
-                        <AlignRight className="w-3 h-3"/>
+                        <TextRightIcon />
                       </Button>
                     </div>
                   </div>
@@ -1241,7 +1248,7 @@ and return a high-quality transparent PNG suitable for print.
                             updateTextProperty('fontWeight', !isBold ? 'bold' : 'normal');
                           }}
                         >
-                          <Bold className="w-3 h-3"/>
+                          <TypeBoldIcon />
                         </Button>
                         <Button 
                           variant={isItalic ? 'default' : 'outline'} 
@@ -1251,7 +1258,7 @@ and return a high-quality transparent PNG suitable for print.
                             updateTextProperty('fontStyle', !isItalic ? 'italic' : 'normal');
                           }}
                         >
-                          <Italic className="w-3 h-3"/>
+                          <TypeItalicIcon />
                         </Button>
                         <Button 
                           variant={isUnderline ? 'default' : 'outline'} 
@@ -1261,7 +1268,7 @@ and return a high-quality transparent PNG suitable for print.
                             updateTextProperty('underline', !isUnderline);
                           }}
                         >
-                          <Underline className="w-3 h-3"/>
+                          <TypeUnderlineIcon />
                         </Button>
                       </div>
                     </div>
@@ -1278,7 +1285,7 @@ and return a high-quality transparent PNG suitable for print.
                             updateTextProperty('textAlign', 'left');
                           }}
                         >
-                          <AlignLeft className="w-3 h-3"/>
+                          <TextLeftIcon />
                         </Button>
                         <Button 
                           variant={textAlign==='center'?'default':'outline'} 
@@ -1288,7 +1295,7 @@ and return a high-quality transparent PNG suitable for print.
                             updateTextProperty('textAlign', 'center');
                           }}
                         >
-                          <AlignCenter className="w-3 h-3"/>
+                          <TextCenterIcon />
                         </Button>
                         <Button 
                           variant={textAlign==='right'?'default':'outline'} 
@@ -1298,7 +1305,7 @@ and return a high-quality transparent PNG suitable for print.
                             updateTextProperty('textAlign', 'right');
                           }}
                         >
-                          <AlignRight className="w-3 h-3"/>
+                          <TextRightIcon />
                         </Button>
                       </div>
                     </div>
@@ -1312,8 +1319,9 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('bringToFront')}
                           disabled={!selectedObject}
-                          className="text-xs h-8"
+                          className="text-xs h-8 flex items-center gap-1"
                         >
+                          <FrontIcon />
                           Bring to Front
                         </Button>
                         <Button
@@ -1321,8 +1329,9 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('bringForward')}
                           disabled={!selectedObject}
-                          className="text-xs h-8"
+                          className="text-xs h-8 flex items-center gap-1"
                         >
+                          <LayerForwardIcon />
                           Bring Forward
                         </Button>
                         <Button
@@ -1330,8 +1339,9 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('sendBackward')}
                           disabled={!selectedObject}
-                          className="text-xs h-8"
+                          className="text-xs h-8 flex items-center gap-1"
                         >
+                          <LayerBackwardIcon />
                           Send Backward
                         </Button>
                         <Button
@@ -1339,8 +1349,9 @@ and return a high-quality transparent PNG suitable for print.
                           size="sm"
                           onClick={() => handleLayerAction('sendToBack')}
                           disabled={!selectedObject}
-                          className="text-xs h-8"
+                          className="text-xs h-8 flex items-center gap-1"
                         >
+                          <BackIcon />
                           Send to Back
                         </Button>
                       </div>

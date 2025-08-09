@@ -3,7 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Type, Image as ImageIcon, Palette, Bold, Italic, Underline, AlignCenter, AlignLeft, AlignRight, RotateCw, Copy, Trash2 } from "lucide-react";
+import { Image as ImageIcon, RotateCw, Copy, Trash2 } from "lucide-react";
+
+// Bootstrap Icons as React Components
+const FontsIcon = () => <img src="/src/assets/icons/fonts.svg" className="w-4 h-4" alt="Fonts" />;
+const PlusSquareIcon = () => <img src="/src/assets/icons/plus-square.svg" className="w-4 h-4" alt="Add" />;
+const TypeBoldIcon = () => <img src="/src/assets/icons/type-bold.svg" className="w-4 h-4" alt="Bold" />;
+const TypeItalicIcon = () => <img src="/src/assets/icons/type-italic.svg" className="w-4 h-4" alt="Italic" />;
+const TypeUnderlineIcon = () => <img src="/src/assets/icons/type-underline.svg" className="w-4 h-4" alt="Underline" />;
+const TextLeftIcon = () => <img src="/src/assets/icons/text-left.svg" className="w-4 h-4" alt="Align Left" />;
+const TextCenterIcon = () => <img src="/src/assets/icons/text-center.svg" className="w-4 h-4" alt="Align Center" />;
+const TextRightIcon = () => <img src="/src/assets/icons/text-right.svg" className="w-4 h-4" alt="Align Right" />;
 import { toast } from "sonner";
 
 interface DesignToolbarProps {
@@ -232,7 +242,7 @@ export const DesignToolbar = ({
           onClick={() => setActiveTab("text")}
           className="flex items-center gap-2 whitespace-nowrap"
         >
-          <Type className="w-4 h-4" />
+          <FontsIcon />
           <span className="hidden sm:inline">Text</span>
         </Button>
         
@@ -275,7 +285,10 @@ export const DesignToolbar = ({
                 onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
                 className="flex-1"
               />
-              <Button onClick={handleAddText}>Add</Button>
+              <Button onClick={handleAddText} className="flex items-center gap-2">
+                <PlusSquareIcon />
+                Add
+              </Button>
             </div>
 
             {/* Font selection for new text */}
@@ -353,21 +366,21 @@ export const DesignToolbar = ({
                     variant={isBold ? "default" : "outline"}
                     onClick={() => setIsBold(!isBold)}
                   >
-                    <Bold className="w-4 h-4" />
+                    <TypeBoldIcon />
                   </Button>
                   <Button
                     size="sm"
                     variant={isItalic ? "default" : "outline"}
                     onClick={() => setIsItalic(!isItalic)}
                   >
-                    <Italic className="w-4 h-4" />
+                    <TypeItalicIcon />
                   </Button>
                   <Button
                     size="sm"
                     variant={isUnderline ? "default" : "outline"}
                     onClick={() => setIsUnderline(!isUnderline)}
                   >
-                    <Underline className="w-4 h-4" />
+                    <TypeUnderlineIcon />
                   </Button>
                 </div>
                 
@@ -379,21 +392,21 @@ export const DesignToolbar = ({
                     variant={textAlign === "left" ? "default" : "outline"}
                     onClick={() => setTextAlign("left")}
                   >
-                    <AlignLeft className="w-4 h-4" />
+                    <TextLeftIcon />
                   </Button>
                   <Button
                     size="sm"
                     variant={textAlign === "center" ? "default" : "outline"}
                     onClick={() => setTextAlign("center")}
                   >
-                    <AlignCenter className="w-4 h-4" />
+                    <TextCenterIcon />
                   </Button>
                   <Button
                     size="sm"
                     variant={textAlign === "right" ? "default" : "outline"}
                     onClick={() => setTextAlign("right")}
                   >
-                    <AlignRight className="w-4 h-4" />
+                    <TextRightIcon />
                   </Button>
                 </div>
 
