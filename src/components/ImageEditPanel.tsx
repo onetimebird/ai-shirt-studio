@@ -729,7 +729,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
           onClick={handleReset}
           className="w-full"
         >
-          <img src={resetIcon} alt="" className="w-4 h-4 mr-2" />
+          <img src="/icons/reset-design.png" alt="" className="w-4 h-4 mr-2" />
           Reset to Defaults
         </Button>
 

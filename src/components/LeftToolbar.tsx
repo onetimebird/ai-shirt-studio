@@ -33,7 +33,7 @@ const tools = [
   { id: "text", label: "Add Text", icon: Type },
   { id: "ai", label: "AI Image Generator", icon: Wand2 },
   { id: "products", label: "Change Product", icon: () => <img src="/icons/tshirt.svg" className="w-5 h-5" alt="T-Shirt" /> },
-  { id: "reset", label: "Reset Design", icon: RotateCcw },
+  { id: "reset", label: "Reset Design", icon: () => <img src="/icons/reset-design.png" className="w-5 h-5" alt="Reset Design" /> },
 ];
 
 export const LeftToolbar = ({ 
