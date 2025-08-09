@@ -281,10 +281,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   // Layer management functions
   const handleBringToFront = useCallback(() => {
     const result = getActiveImageObject();
-    if (!result) return;
+    if (!result) {
+      toast.error("No image selected for layer operation");
+      return;
+    }
 
     const { canvas, activeObject } = result;
-    canvas.bringObjectToFront(activeObject);
+    console.log('Bringing to front:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    
+    // Use correct Fabric.js method
+    canvas.bringToFront(activeObject);
     activeObject.setCoords();
     canvas.requestRenderAll();
     toast.success("Brought to front");
@@ -292,10 +298,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
   const handleSendToBack = useCallback(() => {
     const result = getActiveImageObject();
-    if (!result) return;
+    if (!result) {
+      toast.error("No image selected for layer operation");
+      return;
+    }
 
     const { canvas, activeObject } = result;
-    canvas.sendObjectToBack(activeObject);
+    console.log('Sending to back:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    
+    // Use correct Fabric.js method  
+    canvas.sendToBack(activeObject);
     activeObject.setCoords();
     canvas.requestRenderAll();
     toast.success("Sent to back");
@@ -303,10 +315,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
   const handleBringForward = useCallback(() => {
     const result = getActiveImageObject();
-    if (!result) return;
+    if (!result) {
+      toast.error("No image selected for layer operation");
+      return;
+    }
 
     const { canvas, activeObject } = result;
-    canvas.bringObjectForward(activeObject);
+    console.log('Bringing forward:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    
+    // Use correct Fabric.js method
+    canvas.bringForward(activeObject);
     activeObject.setCoords();
     canvas.requestRenderAll();
     toast.success("Brought forward");
@@ -314,10 +332,16 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
 
   const handleSendBackward = useCallback(() => {
     const result = getActiveImageObject();
-    if (!result) return;
+    if (!result) {
+      toast.error("No image selected for layer operation");
+      return;
+    }
 
     const { canvas, activeObject } = result;
-    canvas.sendObjectBackwards(activeObject);
+    console.log('Sending backward:', activeObject, 'Canvas objects:', canvas.getObjects().length);
+    
+    // Use correct Fabric.js method
+    canvas.sendBackwards(activeObject);
     activeObject.setCoords();
     canvas.requestRenderAll();
     toast.success("Sent backward");
