@@ -29,10 +29,34 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Calculate larger canvas dimensions to accommodate full t-shirt
-    const isMobile = window.innerWidth < 768;
-    const canvasWidth = isMobile ? Math.min(420, window.innerWidth - 10) : 1012; // Increased mobile width slightly
-    const canvasHeight = isMobile ? Math.min(600, (window.innerHeight - 150)) : 1113; // Increased mobile height to prevent cutoff
+    // Calculate responsive canvas dimensions
+    const calculateCanvasDimensions = () => {
+      const isMobile = window.innerWidth < 768;
+      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1280;
+      
+      if (isMobile) {
+        return {
+          width: Math.min(420, window.innerWidth - 10),
+          height: Math.min(600, window.innerHeight - 150)
+        };
+      }
+      
+      // On desktop/tablet: calculate available space
+      // Account for left sidebar (~280px) + right panel (320px on xl, 384px on 2xl) + padding
+      const rightPanelWidth = window.innerWidth >= 1536 ? 384 : 320; // 2xl:w-96 vs w-80
+      const leftSidebarWidth = 280;
+      const padding = 32; // p-4 = 16px * 2
+      
+      const availableWidth = window.innerWidth - leftSidebarWidth - rightPanelWidth - padding;
+      const maxWidth = Math.min(1012, Math.max(400, availableWidth)); // Keep within reasonable bounds
+      
+      return {
+        width: maxWidth,
+        height: Math.min(1113, window.innerHeight - 200)
+      };
+    };
+    
+    const { width: canvasWidth, height: canvasHeight } = calculateCanvasDimensions();
 
     const canvas = new FabricCanvas(canvasRef.current, {
       width: canvasWidth,
@@ -92,7 +116,19 @@ export const ProductCanvas = ({ selectedColor, currentSide, selectedProduct, onC
     onCanvasReady?.(canvas);
     console.log('[ProductCanvas] onCanvasReady called');
 
+    // Add window resize listener to update canvas dimensions
+    const handleResize = () => {
+      const { width: newWidth, height: newHeight } = calculateCanvasDimensions();
+      if (canvas.width !== newWidth || canvas.height !== newHeight) {
+        canvas.setDimensions({ width: newWidth, height: newHeight });
+        canvas.renderAll();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       canvas.dispose();
     };
   }, []); // NO dependencies - only run once on mount

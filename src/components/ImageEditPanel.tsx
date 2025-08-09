@@ -390,12 +390,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
   }, [imageUrl, onSave, onClose]);
 
   return (
-    <Card className="h-full flex flex-col relative" style={{ 
-      zIndex: 9999, 
-      pointerEvents: 'auto',
-      backgroundColor: 'rgba(255, 0, 0, 0.1)', // Debug: red tint
-      border: '2px solid red' // Debug: red border
-    }}>
+    <Card className="h-full flex flex-col relative">
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -411,21 +406,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
         </p>
       </CardHeader>
 
-      <CardContent 
-        className="flex-1 space-y-6 overflow-y-auto"
-        onClick={(e) => {
-          console.log('ImageEditPanel clicked!', e.target);
-          e.stopPropagation();
-        }}
-        onMouseDown={(e) => {
-          console.log('ImageEditPanel mouseDown!', e.target);
-          e.stopPropagation();
-        }}
-        onPointerDown={(e) => {
-          console.log('ImageEditPanel pointerDown!', e.target);
-          e.stopPropagation();
-        }}
-      >
+      <CardContent className="flex-1 space-y-6 overflow-y-auto">
         {/* Image Preview */}
         <div className="flex justify-center">
           <div className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden border-2 border-border">
@@ -553,20 +534,14 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <span className="text-sm">Size</span>
               <span className="text-sm text-muted-foreground">{size[0]}%</span>
             </div>
-            <div 
-              onMouseDown={(e) => e.stopPropagation()}
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Slider
-                value={size}
-                onValueChange={handleSizeChange}
-                max={300}
-                min={10}
-                step={10}
-                className="w-full"
-              />
-            </div>
+            <Slider
+              value={size}
+              onValueChange={handleSizeChange}
+              max={300}
+              min={10}
+              step={10}
+              className="w-full"
+            />
           </div>
 
           {/* Rotation Slider */}
@@ -575,20 +550,14 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
               <span className="text-sm">Rotation</span>
               <span className="text-sm text-muted-foreground">{rotation[0]}°</span>
             </div>
-            <div 
-              onMouseDown={(e) => e.stopPropagation()}
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Slider
-                value={rotation}
-                onValueChange={handleRotationChange}
-                max={360}
-                min={-360}
-                step={15}
-                className="w-full"
-              />
-            </div>
+            <Slider
+              value={rotation}
+              onValueChange={handleRotationChange}
+              max={360}
+              min={-360}
+              step={15}
+              className="w-full"
+            />
           </div>
         </div>
 
