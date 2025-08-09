@@ -409,7 +409,7 @@ export const BottomBar = ({
 
           {/* Color Picker */}
           <div className="flex items-center gap-2">
-            <Palette className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" />
+            <img src="/icons/swatch.png" className="w-4 h-4 text-muted-foreground icon-hover flex-shrink-0" alt="Color Swatch" />
             <Select value={selectedColor} onValueChange={onColorChange}>
               <SelectTrigger className="w-48 h-14 text-base relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:-translate-x-full before:animate-[shimmer_3s_ease-in-out_infinite] hover:shadow-md hover:scale-[1.02] hover:bg-accent/20 transition-all duration-300">
                 <SelectValue placeholder="Change Color">

@@ -82,7 +82,7 @@ export const LeftToolbar = ({
             <p className="text-xs text-muted-foreground">Create your custom design</p>
           </div>
           <div className="lg:hidden flex justify-center">
-            <Palette className="w-6 h-6 text-primary icon-hover gentle-pulse" />
+            <img src="/icons/swatch.png" className="w-6 h-6 text-primary icon-hover gentle-pulse" alt="Color Swatch" />
           </div>
         </div>
 

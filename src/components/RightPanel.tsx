@@ -1933,7 +1933,7 @@ and return a high-quality transparent PNG suitable for print.
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
-                <Palette className="w-4 h-4" /> T-Shirt Colors
+                <img src="/icons/swatch.png" className="w-4 h-4" alt="Color Swatch" /> T-Shirt Colors
               </CardTitle>
             </CardHeader>
             <CardContent>
