@@ -1427,56 +1427,24 @@ and return a high-quality transparent PNG suitable for print.
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Action Buttons Row */}
-                  <div className="grid grid-cols-4 gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.centerSelected) {
-                          (window as any).designCanvas.centerSelected();
-                        }
-                      }}
-                      className="h-8 text-xs"
-                    >
-                      Center
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.duplicateSelected) {
-                          (window as any).designCanvas.duplicateSelected();
-                        }
-                      }}
-                      className="h-8 text-xs"
-                    >
-                      Duplicate
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.rotateSelected) {
-                          (window as any).designCanvas.rotateSelected();
-                        }
-                      }}
-                      className="h-8 text-xs"
-                    >
-                      Rotate
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if ((window as any).designCanvas?.deleteSelected) {
-                          (window as any).designCanvas.deleteSelected();
-                        }
-                      }}
-                      className="h-8 text-xs text-destructive"
-                    >
-                      Delete
-                    </Button>
+                  {/* File Type Information */}
+                  <div className="bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-xl p-4 border border-blue-200/30 dark:border-blue-800/30">
+                    <div className="text-center mb-3">
+                      <h4 className="text-sm font-semibold text-foreground mb-2">Upload ANY file type</h4>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        We prefer vector, high-res, or large files such as:
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 text-center">
+                      {['ai', 'eps', 'pdf', 'tiff', 'psd', 'jpg', 'png'].map((format, index) => (
+                        <div 
+                          key={format}
+                          className="bg-white/80 dark:bg-gray-800/80 rounded-lg px-2 py-1 text-xs font-mono font-semibold text-primary border border-primary/20 hover:border-primary/40 transition-colors duration-200"
+                        >
+                          {format.toUpperCase()}
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Local File Upload */}
@@ -1506,7 +1474,7 @@ and return a high-quality transparent PNG suitable for print.
                       </Button>
                     </label>
                     <p className="text-xs text-muted-foreground mt-2">
-                      PNG, JPEG, SVG up to 10MB
+                      Up to 10MB
                     </p>
                   </div>
 
