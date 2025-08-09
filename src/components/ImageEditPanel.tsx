@@ -54,7 +54,7 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
   }, []);
 
-  // Sync UI state with canvas object state
+  // Sync UI state with canvas object state - Initial sync
   useEffect(() => {
     const result = getActiveImageObject();
     if (!result) return;
@@ -75,6 +75,50 @@ export function ImageEditPanel({ imageUrl, onClose, onSave }: ImageEditPanelProp
     }
     
   }, [getActiveImageObject, imageUrl]);
+
+  // Listen to canvas object modifications to sync sliders
+  useEffect(() => {
+    const canvas = (window as any).designCanvas?.canvas;
+    if (!canvas) return;
+
+    // Function to sync sliders when object is modified on canvas
+    const handleObjectModified = (e: any) => {
+      if (!e.target || e.target.type !== 'image') return;
+      
+      // Update size slider
+      const scaleX = e.target.scaleX || 1;
+      setSize([Math.round(scaleX * 100)]);
+      
+      // Update rotation slider
+      const angle = e.target.angle || 0;
+      setRotation([Math.round(angle)]);
+    };
+
+    // Function to handle real-time updates during transformation
+    const handleObjectScaling = (e: any) => {
+      if (!e.target || e.target.type !== 'image') return;
+      const scaleX = e.target.scaleX || 1;
+      setSize([Math.round(scaleX * 100)]);
+    };
+
+    const handleObjectRotating = (e: any) => {
+      if (!e.target || e.target.type !== 'image') return;
+      const angle = e.target.angle || 0;
+      setRotation([Math.round(angle)]);
+    };
+
+    // Add event listeners
+    canvas.on('object:modified', handleObjectModified);
+    canvas.on('object:scaling', handleObjectScaling);
+    canvas.on('object:rotating', handleObjectRotating);
+
+    // Cleanup
+    return () => {
+      canvas.off('object:modified', handleObjectModified);
+      canvas.off('object:scaling', handleObjectScaling);
+      canvas.off('object:rotating', handleObjectRotating);
+    };
+  }, []);
 
   // Apply size changes to canvas
   const handleSizeChange = useCallback((newSize: number[]) => {
