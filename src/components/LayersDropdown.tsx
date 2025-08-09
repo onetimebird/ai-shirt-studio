@@ -82,9 +82,11 @@ const LayersDropdown = ({ selectedObject, canvas, onBringToFront, onSendToBack, 
           console.log('LayersDropdown button clicked, current isOpen:', isOpen);
           setIsOpen(!isOpen);
         }}
-        className="h-8 text-xs"
       >
-        <Layers className="w-3 h-3 mr-1" />
+        <svg className="w-3 h-3 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+          <rect x="9" y="9" width="6" height="6" stroke="currentColor" strokeWidth="2"/>
+        </svg>
         Layers
       </Button>
 
