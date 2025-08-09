@@ -1007,6 +1007,49 @@ and return a high-quality transparent PNG suitable for print.
                     </div>
                   </div>
 
+                  {/* Layer Controls */}
+                  <div className="mt-4 space-y-2">
+                    <Label className="text-sm font-medium">Layer Controls</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleLayerAction('bringToFront')}
+                        disabled={!selectedObject}
+                        className="text-xs h-8"
+                      >
+                        Bring to Front
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleLayerAction('bringForward')}
+                        disabled={!selectedObject}
+                        className="text-xs h-8"
+                      >
+                        Bring Forward
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleLayerAction('sendBackward')}
+                        disabled={!selectedObject}
+                        className="text-xs h-8"
+                      >
+                        Send Backward
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleLayerAction('sendToBack')}
+                        disabled={!selectedObject}
+                        className="text-xs h-8"
+                      >
+                        Send to Back
+                      </Button>
+                    </div>
+                  </div>
+
                   {/* Add Text Button - Prominent placement */}
                   <Button 
                     className="w-full mt-4 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200" 
